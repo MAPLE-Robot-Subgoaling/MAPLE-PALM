@@ -37,8 +37,6 @@ public class L1StateMapper implements StateMapping{
         for(TaxiPassenger p0 : sL0.passengers){
             int xp = p0.x;
             int yp = p0.y;
-            // initialize the passenger to be on road
-//            TaxiL1Passenger p1 = new TaxiL1Passenger(p0.name()+"-L1", p0.inTaxi, p0.goalLocation, ON_ROAD, p0.pickedUpAtLeastOnce);
             TaxiL1Passenger p1 = new TaxiL1Passenger(p0.name(), p0.inTaxi, p0.goalLocation, ON_ROAD, p0.pickedUpAtLeastOnce);
             for(TaxiLocation l0 : sL0.locations){
                 if(xp==l0.x && yp==l0.y){

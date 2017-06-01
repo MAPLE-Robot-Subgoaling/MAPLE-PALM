@@ -3,10 +3,13 @@ package ramdp.framework;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 import burlap.mdp.core.action.Action;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.environment.EnvironmentOutcome;
 import burlap.mdp.singleagent.environment.SimulatedEnvironment;
+import rmaxq.framework.GroundedTask;
 
 public class GroundedTask {
 
@@ -51,7 +54,40 @@ public class GroundedTask {
 		}
 		return gts;
 	}
+
+	/**
+	 * Determines if this task is terminated
+	 * @param s the current state
+	 * @return if this task is terminal in s
+	 */
+	public boolean isTerminal(State s){
+		return t.isTerminal(s, action);
+	}
 	
+    @Override
+    public boolean equals(Object other) {
+        if (this == other) {
+            return true;
+        }
+
+        if (!(other instanceof GroundedTask)) {
+            return false;
+        }
+
+        GroundedTask o = (GroundedTask) other;
+        if(!this.action.actionName().equals(o.action.actionName())){
+            return false; 
+        }
+        
+        return true;
+    }
+     
+    @Override
+    public int hashCode() {
+        HashCodeBuilder hashCodeBuilder = new HashCodeBuilder(31, 7);
+        hashCodeBuilder.append(action.actionName());
+        return hashCodeBuilder.toHashCode();
+    }
 	/**
 	 * observe the result of executing an action ing the task's domain
 	 * @param s the current state to perform the action in
@@ -61,5 +97,9 @@ public class GroundedTask {
 	public EnvironmentOutcome executeAction(State s, Action a){
 		SimulatedEnvironment env = new SimulatedEnvironment(t.getDomain(), s);
 		return env.executeAction(a);
+	}
+	
+	public State mapState(State s){
+		return t.projectState(s);
 	}
 }

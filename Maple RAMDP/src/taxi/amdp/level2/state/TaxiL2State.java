@@ -26,10 +26,6 @@ public class TaxiL2State implements MutableOOState{
     public List<TaxiL2Location> locations = new ArrayList<TaxiL2Location>();
     public List<TaxiL2Passenger> passengers = new ArrayList<TaxiL2Passenger>();
 
-
-//    public boolean pickUpLeagal = false;
-//    public boolean dropOffLeagal = false;
-
     public TaxiL2State(List<TaxiL2Passenger> passengers, List<TaxiL2Location> locations) {
         this.passengers = passengers;
         this.locations = locations;

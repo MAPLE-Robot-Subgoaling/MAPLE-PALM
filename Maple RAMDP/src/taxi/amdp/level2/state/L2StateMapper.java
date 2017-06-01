@@ -1,15 +1,16 @@
 package taxi.amdp.level2.state;
 
-import burlap.mdp.auxiliary.StateMapping;
-import burlap.mdp.core.state.State;
-import taxi.amdp.level1.state.TaxiL1Location;
-import taxi.amdp.level1.state.TaxiL1Passenger;
-import taxi.amdp.level1.state.TaxiL1State;
-
-import static taxi.amdp.level2.TaxiL2Domain.*;
+import static taxi.amdp.level1.TaxiL1Domain.ON_ROAD;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import burlap.mdp.auxiliary.StateMapping;
+import burlap.mdp.core.state.State;
+import taxi.amdp.level1.state.TaxiL1Passenger;
+import taxi.state.TaxiLocation;
+import taxi.state.TaxiPassenger;
+import taxi.state.TaxiState;
 
 
 /**
@@ -18,27 +19,28 @@ import java.util.List;
 public class L2StateMapper implements StateMapping{
     @Override
     public State mapState(State s) {
-        TaxiL1State sL1 = (TaxiL1State)s;
+        TaxiState sL0 = (TaxiState)s;
         List<TaxiL2Location> locationsL1 = new ArrayList<TaxiL2Location>();
 
-        for(TaxiL1Location l0 : sL1.locations){
-
-//            TaxiL2Location l1 = new TaxiL2Location(l0.name().split("-")[0]+"-L2",l0.colour);
+        for(TaxiLocation l0 : sL0.locations){
             TaxiL2Location l1 = new TaxiL2Location(l0.name() ,l0.colour);
             locationsL1.add(l1);
         }
 
         List<TaxiL2Passenger> passengersL1 = new ArrayList<TaxiL2Passenger>();
 
-        for(TaxiL1Passenger p1 : sL1.passengers){
-
-            // initialize the passenger to be on road
-//            TaxiL2Passenger p2 = new TaxiL2Passenger(p1.name().split("-")[0]+"-L2", p1.inTaxi, p1.goalLocation, p1.currentLocation, p1.pickUpOnce);
-            TaxiL2Passenger p2 = new TaxiL2Passenger(p1.name(), p1.inTaxi, p1.goalLocation, p1.currentLocation, p1.pickUpOnce);
-
-            passengersL1.add(p2);
+        for(TaxiPassenger p0 : sL0.passengers){
+        	int xp = p0.x;
+            int yp = p0.y;
+            TaxiL2Passenger p1 = new TaxiL2Passenger(p0.name(), p0.inTaxi, p0.goalLocation, ON_ROAD, p0.pickedUpAtLeastOnce);
+            for(TaxiLocation l0 : sL0.locations){
+                if(xp==l0.x && yp==l0.y){
+                    p1.currentLocation = l0.colour;
+                    break;
+                }
+            }
+            passengersL1.add(p1);
         }
-
         return new TaxiL2State(passengersL1,locationsL1);
     }
 }
