@@ -7,7 +7,6 @@ import java.util.List;
 
 import burlap.mdp.auxiliary.StateMapping;
 import burlap.mdp.core.state.State;
-import taxi.amdp.level1.state.TaxiL1Passenger;
 import taxi.state.TaxiLocation;
 import taxi.state.TaxiPassenger;
 import taxi.state.TaxiState;
