@@ -1,4 +1,4 @@
-package ramdp.framework;
+package ramdp.agent;
 
 import java.util.HashMap;
 import java.util.List;
@@ -14,6 +14,7 @@ import burlap.mdp.singleagent.environment.Environment;
 import burlap.mdp.singleagent.environment.EnvironmentOutcome;
 import burlap.mdp.singleagent.oo.OOSADomain;
 import burlap.statehashing.HashableStateFactory;
+import hierarchy.framework.GroundedTask;
 import utilities.ValueIteration;
 
 public class RAMDPLearningAgent implements LearningAgent{
@@ -95,20 +96,19 @@ public class RAMDPLearningAgent implements LearningAgent{
 			if(action.isPrimitive()){
 				result = baseEnv.executeAction(a);
 				e.transition(result);
+				currentState = result.op;
 				steps++;
 			}else{
 				//get child task
 				result = task.executeAction(currentState, a);
 				e = solveTask(action, e, baseEnv, maxSteps);
+				
+				baseState = e.stateSequence.get(e.stateSequence.size() - 1);
+				currentState = task.mapState(baseState);
+				result.op = currentState;
+				task.fixReward(result);
 			}
 			
-			baseState = e.stateSequence.get(e.stateSequence.size() - 1);
-			currentState = task.mapState(baseState);
-			result.op = currentState;
-			
-			if(task.isTerminal(currentState) && !task.isPrimitive()){
-				System.out.println(result.r);
-			}
 			//update task model
 			RAMDPModel model = getModel(task, currentState);
 			model.updateModel(result);
@@ -126,7 +126,7 @@ public class RAMDPLearningAgent implements LearningAgent{
 	
 	protected Action nextAction(GroundedTask task, State s){
 		OOSADomain domain = task.getDomain(getModel(task, s));
-		Planner plan = new ValueIteration(domain, gamma, hashingFactory, 0.01, 1);
+		Planner plan = new ValueIteration(domain, gamma, hashingFactory, 0.01, 100);
 		Policy p = plan.planFromState(s);
 		return p.action(s);
 	}

@@ -1,4 +1,4 @@
-package ramdp.framework;
+package hierarchy.framework;
 
 import burlap.mdp.auxiliary.StateMapping;
 import burlap.mdp.core.state.State;

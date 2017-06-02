@@ -1,4 +1,4 @@
-package ramdp.framework;
+package hierarchy.framework;
 
 import java.util.ArrayList; 
 import java.util.List;
@@ -116,5 +116,20 @@ public class GroundedTask {
 	
 	public boolean isPrimitive(){
 		return t.isPrimitive();
+	}
+	
+	public void fixReward(EnvironmentOutcome eo){
+		if(!t.isPrimitive()){
+			NonprimitiveTask npt = (NonprimitiveTask) t;
+			eo.r = npt.reward(eo.op, action);
+		}
+	}
+	
+	public double reward(State s){
+		if(!t.isPrimitive()){
+			NonprimitiveTask npt = (NonprimitiveTask) t;
+			return npt.reward(s, action);
+		}
+		return 0;
 	}
 }

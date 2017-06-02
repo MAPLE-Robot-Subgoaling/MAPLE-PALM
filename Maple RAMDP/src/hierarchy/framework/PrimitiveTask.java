@@ -1,4 +1,4 @@
-package ramdp.framework;
+package hierarchy.framework;
 
 import burlap.mdp.core.action.Action;
 import burlap.mdp.core.action.ActionType;
@@ -13,7 +13,7 @@ public class PrimitiveTask extends Task{
 
 	@Override
 	public boolean isTerminal(State s, Action a) {
-		return false;
+		return true;
 	}
 
 	@Override

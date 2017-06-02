@@ -1,4 +1,4 @@
-package rmaxq.framework;
+package rmaxq.agent;
 
 import burlap.behavior.policy.EnumerablePolicy;
 import burlap.behavior.policy.support.ActionProb;

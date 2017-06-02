@@ -1,4 +1,4 @@
-package rmaxq.framework;
+package rmaxq.agent;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,6 +15,8 @@ import burlap.mdp.singleagent.environment.Environment;
 import burlap.mdp.singleagent.environment.EnvironmentOutcome;
 import burlap.statehashing.HashableState;
 import burlap.statehashing.HashableStateFactory;
+import hierarchy.framework.GroundedTask;
+import hierarchy.framework.Task;
 
 public class RmaxQLearningAgent implements LearningAgent {
 
@@ -53,7 +55,7 @@ public class RmaxQLearningAgent implements LearningAgent {
 	
 	private double dynamicPrgEpsilon;
 	private int threshold;
-	private TaskNode root;
+	private Task root;
 	private HashableStateFactory hashingFactory;
 	private double Vmax;
 	private Environment env;
@@ -62,7 +64,7 @@ public class RmaxQLearningAgent implements LearningAgent {
 	private long time = 0;
 	private int timestep;
 
-	public RmaxQLearningAgent(TaskNode root, HashableStateFactory hs, State initState, double vmax, int threshold, double maxDelta){
+	public RmaxQLearningAgent(Task root, HashableStateFactory hs, State initState, double vmax, int threshold, double maxDelta){
 		this.root = root;
 		this.reward = new HashMap<GroundedTask, Map<HashableState,Double>>();
 		this.transition = new HashMap<GroundedTask, Map<HashableState, Map<HashableState, Double>>>();
@@ -93,7 +95,7 @@ public class RmaxQLearningAgent implements LearningAgent {
 	public Episode runLearningEpisode(Environment env, int maxSteps) {
 		this.env = env;
 		Episode e = new Episode(initialState);
-		GroundedTask rootSolve = root.getApplicableGroundedTasks(env.currentObservation()).get(0);
+		GroundedTask rootSolve = root.getAllGroundedTasks(env.currentObservation()).get(0);
 		timestep = 0;
 		actionTimestaps.clear();
 		
@@ -106,7 +108,7 @@ public class RmaxQLearningAgent implements LearningAgent {
 	}
 
 	protected Episode R_MaxQ(HashableState hs, GroundedTask task, Episode e){
-		if(task.t.isTaskPrimitive()){
+		if(task.isPrimitive()){
 			Action a = task.getAction();
 			EnvironmentOutcome outcome = env.executeAction(a);
 			e.transition(outcome);
@@ -202,7 +204,7 @@ public class RmaxQLearningAgent implements LearningAgent {
 				State s = e.stateSequence.get(e.stateSequence.size() - 1);
 				hs = hashingFactory.hashState(s);
 
-				terminal = task.t.terminal(s, task.action);
+				terminal = task.isTerminal(s);
 			}while(!terminal);
 
 			return e;
@@ -241,12 +243,12 @@ public class RmaxQLearningAgent implements LearningAgent {
 			double maxDelta = 0;
 			for(HashableState hsprime : envolopA){
 
-				List<GroundedTask> ActionIns = getTaskActions(task, hsprime.s());
+				List<GroundedTask> ActionIns = task.getGroundedChildTasks(hsprime.s());
 				for(GroundedTask a : ActionIns){
-					double oldQ = qp.qValue(hsprime.s(), a.action);
+					double oldQ = qp.qValue(hsprime.s(), a.getAction());
 
 					double newQ = epuation_1(qp, hsprime, a);
-					qp.update(hsprime.s(), a.action, newQ);
+					qp.update(hsprime.s(), a.getAction(), newQ);
 
 					if(Math.abs(oldQ - newQ) > maxDelta)
 						maxDelta = Math.abs(oldQ - newQ);
@@ -263,7 +265,7 @@ public class RmaxQLearningAgent implements LearningAgent {
 		List<HashableState> envelope = envolope.get(task);
 		if(!envelope.contains(hs)){
 			envelope.add(hs);
-			List<GroundedTask> ActionIns = getTaskActions(task, hs.s());
+			List<GroundedTask> ActionIns = task.getGroundedChildTasks(hs.s());
 			for(GroundedTask a : ActionIns){
 				compute_model(hs, a); 
 
@@ -288,7 +290,7 @@ public class RmaxQLearningAgent implements LearningAgent {
 	}
 
 	private void compute_model(HashableState hs, GroundedTask task){
-		if(task.t.isTaskPrimitive()){
+		if(task.isPrimitive()){
 			//n(s, a)
 			Map<GroundedTask, Integer> scount = actionCount.get(hs);
 			if(scount == null){
@@ -511,7 +513,7 @@ public class RmaxQLearningAgent implements LearningAgent {
 		double weightedReward = 0;
 		for(HashableState hnext : childProbabilities.keySet()){
 			//get Ra(nextstate)
-			if(task.t.terminal(hnext.s(), task.action))
+			if(task.isTerminal(hnext.s()))
 				continue;
 
 			Double nextReward = rewtask.get(hnext);
@@ -537,7 +539,7 @@ public class RmaxQLearningAgent implements LearningAgent {
 		double weightedTransition = 0;
 		//sum over all p pia(s) (s',.)
 		for(HashableState hnext: childProbabilities.keySet()){
-			if(task.t.terminal(hnext.s(), task.action))
+			if(task.isTerminal(hnext.s()))
 				continue;
 
 			double psprimeTospprime = childProbabilities.get(hnext);
@@ -560,12 +562,12 @@ public class RmaxQLearningAgent implements LearningAgent {
 	}
 		
 	protected void addChildTasks(GroundedTask task, State s){
-		if(!task.t.isTaskPrimitive()){
-			List<GroundedTask> childGroundedTasks =  getTaskActions(task, s);
+		if(!task.isPrimitive()){
+			List<GroundedTask> childGroundedTasks =  task.getGroundedChildTasks(s);
 
 			for(GroundedTask gt : childGroundedTasks){
-				if(!groundedTaskMap.containsKey(gt.action.actionName()))
-					groundedTaskMap.put(gt.action.actionName(), gt);
+				if(!groundedTaskMap.containsKey(gt.getAction().actionName()))
+					groundedTaskMap.put(gt.getAction().actionName(), gt);
 			}
 		}
 	}
@@ -575,7 +577,7 @@ public class RmaxQLearningAgent implements LearningAgent {
 			return terminal.get(t);
 		List<HashableState> terminals = new ArrayList<HashableState>();
 		for(HashableState s :reachableStates){
-			if(t.t.terminal(s.s(), t.getAction()))
+			if(t.isTerminal(s.s()))
 				terminals.add(s);
 		}
 
@@ -583,14 +585,5 @@ public class RmaxQLearningAgent implements LearningAgent {
 		if(terminals.size() == 0)
 			throw new RuntimeException("no terminal");
 		return terminals;
-	}
-
-	public List<GroundedTask> getTaskActions(GroundedTask task, State s){
-		TaskNode[] children = task.t.getChildren();
-		List<GroundedTask> childTasks = new ArrayList<GroundedTask>();
-		for(TaskNode t: children){
-			childTasks.addAll(t.getApplicableGroundedTasks(s));
-		}
-		return childTasks;
 	}
 }

@@ -1,6 +1,6 @@
-package rmaxq.framework;
+package rmaxq.agent;
 
-import java.util.ArrayList;
+import java.util.ArrayList; 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,6 +16,8 @@ import burlap.mdp.singleagent.SADomain;
 import burlap.mdp.singleagent.model.SampleModel;
 import burlap.statehashing.HashableState;
 import burlap.statehashing.HashableStateFactory;
+import hierarchy.framework.GroundedTask;
+import hierarchy.framework.NonprimitiveTask;
 
 public class QProviderRmaxQ implements QProvider, MDPSolverInterface{
 
@@ -43,9 +45,8 @@ public class QProviderRmaxQ implements QProvider, MDPSolverInterface{
 	}
 
 	public double value(State s) {
-		if(!task.t.isTaskPrimitive() && task.t.terminal(s, task.getAction())){
-			NonPrimitiveTaskNode npt = (NonPrimitiveTaskNode)task.t;
-			return npt.pseudoRewardFunction(s, task.getAction());
+		if(!task.isPrimitive() && task.isTerminal(s)){
+			return task.reward(s);
 		}
 				
 		return QProvider.Helper.maxQ(this, s);
@@ -66,17 +67,9 @@ public class QProviderRmaxQ implements QProvider, MDPSolverInterface{
 		HashableState hs = hashingFactory.hashState(s);
 		if(!qvals.containsKey(hs)){
 			List<QValue> qs = new ArrayList<QValue>();
-			if(task.t.isTaskPrimitive()){
-				qs.add(new QValue(s, task.action, 0));
-			}else{
-			
-				TaskNode[] children = ((NonPrimitiveTaskNode)task.t).getChildren();
-				for(TaskNode child: children){
-					List<GroundedTask> tasks = child.getApplicableGroundedTasks(s);
-					for(GroundedTask a : tasks){
-						qs.add(new QValue(s, a.action, 0));
-					}
-				}
+			List<GroundedTask> gts = task.getGroundedChildTasks(s);
+			for(GroundedTask a : gts){
+				qs.add(new QValue(s, a.getAction(), 0));
 			}
 			qvals.put(hs, qs);
 		}

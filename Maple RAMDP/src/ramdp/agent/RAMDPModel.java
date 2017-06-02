@@ -1,4 +1,4 @@
-package ramdp.framework;
+package ramdp.agent;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,6 +12,7 @@ import burlap.mdp.singleagent.model.FullModel;
 import burlap.mdp.singleagent.model.TransitionProb;
 import burlap.statehashing.HashableState;
 import burlap.statehashing.HashableStateFactory;
+import hierarchy.framework.GroundedTask;
 
 public class RAMDPModel implements FullModel{
 

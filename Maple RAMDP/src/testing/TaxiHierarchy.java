@@ -1,4 +1,4 @@
-package taxi.ramdp;
+package testing;
 
 import burlap.mdp.auxiliary.StateMapping;
 import burlap.mdp.core.TerminalFunction;

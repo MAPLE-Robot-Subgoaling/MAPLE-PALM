@@ -5,8 +5,8 @@ import burlap.mdp.core.action.Action;
 import burlap.mdp.core.action.ActionType;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.oo.OOSADomain;
-import ramdp.framework.NonprimitiveTask;
-import ramdp.framework.Task;
+import hierarchy.framework.NonprimitiveTask;
+import hierarchy.framework.Task;
 import taxi.state.TaxiAgent;
 import taxi.state.TaxiState;
 
