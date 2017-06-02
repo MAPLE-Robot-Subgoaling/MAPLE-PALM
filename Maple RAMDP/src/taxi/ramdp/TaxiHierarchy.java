@@ -6,6 +6,7 @@ import burlap.mdp.core.action.ActionType;
 import burlap.mdp.singleagent.common.GoalBasedRF;
 import burlap.mdp.singleagent.model.RewardFunction;
 import burlap.mdp.singleagent.oo.OOSADomain;
+import ramdp.framework.IdentityMap;
 import ramdp.framework.PrimitiveTask;
 import ramdp.framework.RootTask;
 import ramdp.framework.Task;
@@ -27,16 +28,21 @@ import taxi.state.TaxiState;
 
 public class TaxiHierarchy {
 
+	private static OOSADomain l0Domain;
 	/**
 	 * Creates the standard task hierarchy
 	 * @param s The initial state
 	 * @return a root of the taxi hierarchy
 	 */
-	public static Task createHierarchy(TaxiState s){
+	public static Task createHierarchy(TaxiState s, boolean fickle){
 		//domains generators
 		TerminalFunction tf0 = new TaxiTerminationFunction();
 		RewardFunction rf0 = new TaxiRewardFunction(s.passengers.size(), tf0);
 		TaxiDomain baseGenerator = new TaxiDomain(rf0, tf0);
+		baseGenerator.setFickleTaxi(fickle);
+		baseGenerator.setIncludeFuel(false);
+		if(fickle)
+			baseGenerator.setTransitionDynamicsLikeFickleTaxiProlem();
 		
 		TerminalFunction tf1 = new TaxiL1TerminalFunction();
 		RewardFunction rf1 = new GoalBasedRF(tf1);
@@ -47,11 +53,12 @@ public class TaxiHierarchy {
 		TaxiL2Domain l2Generator = new TaxiL2Domain(rf2, tf2);
 		
 		//domains
-		OOSADomain l0Domain = baseGenerator.generateDomain();
+		l0Domain = baseGenerator.generateDomain();
 		OOSADomain l1Domain = l1Generator.generateDomain();
 		OOSADomain l2Domain = l2Generator.generateDomain();
 		
 		//state mappers
+		StateMapping l0Map = new IdentityMap();
 		StateMapping l1Map = new L1StateMapper();
 		StateMapping l2Map = new L2StateMapper();
 		
@@ -84,17 +91,17 @@ public class TaxiHierarchy {
 		OOSADomain pickupDomain = baseGenerator.generateDomain();
 		pickupDomain.clearActionTypes();
 		pickupDomain.addActionType(pickup);
-		PickupL1Task pickupl1Task = new PickupL1Task(pickupsub, pickupL1, pickupDomain, l1Map);
+		PickupL1Task pickupl1Task = new PickupL1Task(pickupsub, pickupL1, pickupDomain, l0Map);
 		
 		OOSADomain navDomain = baseGenerator.generateDomain();
 		navDomain.clearActionTypes();
 		navDomain.addActionTypes(north, east, south, west);
-		NavigateTask navigateTask = new NavigateTask(navSubs, navigate, navDomain, l1Map);
+		NavigateTask navigateTask = new NavigateTask(navSubs, navigate, navDomain, l0Map);
 		
 		OOSADomain dropoffDomain = baseGenerator.generateDomain();
 		dropoffDomain.clearActionTypes();
 		dropoffDomain.addActionType(dropoff);
-		DropoffL1Task dropoffL1Task = new DropoffL1Task(dropoffsub, dropoffL1, dropoffDomain, l1Map);
+		DropoffL1Task dropoffL1Task = new DropoffL1Task(dropoffsub, dropoffL1, dropoffDomain, l0Map);
 		
 		Task[] getSubs = new Task[]{pickupl1Task, navigateTask};
 		Task[] putSubs = new Task[]{navigateTask, dropoffL1Task};
@@ -102,15 +109,19 @@ public class TaxiHierarchy {
 		OOSADomain getDoman = l1Generator.generateDomain();
 		getDoman.clearActionTypes();
 		getDoman.addActionTypes(pickupL1, navigate);
-		GetTask getTask = new GetTask(getSubs, get, getDoman, l2Map);
+		GetTask getTask = new GetTask(getSubs, get, getDoman, l1Map);
 		
 		OOSADomain putDomain = l1Generator.generateDomain();
 		putDomain.clearActionTypes();
 		putDomain.addActionTypes(navigate, dropoffL1);
-		PutTask putTask = new PutTask(putSubs, put, putDomain, l2Map);
+		PutTask putTask = new PutTask(putSubs, put, putDomain, l1Map);
 		
 		Task[] rootsubs = new Task[]{getTask, putTask};
 		RootTask root = new RootTask(rootsubs, l2Domain, l2Map);
 		return root;
+	}
+	
+	public static OOSADomain getGroundDomain(){
+		return l0Domain;
 	}
 }

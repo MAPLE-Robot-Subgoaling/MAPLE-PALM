@@ -1,4 +1,4 @@
-package state.hashing.simple;
+package utilities;
 
 import burlap.mdp.core.state.State; 
 import burlap.statehashing.HashableState;

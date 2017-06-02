@@ -1,4 +1,4 @@
-package state.hashing.simple;
+package utilities;
 
 import burlap.mdp.core.oo.state.OOState;
 import burlap.mdp.core.oo.state.ObjectInstance;

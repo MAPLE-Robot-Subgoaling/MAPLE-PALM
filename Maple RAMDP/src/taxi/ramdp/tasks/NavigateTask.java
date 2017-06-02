@@ -8,8 +8,9 @@ import burlap.mdp.singleagent.oo.OOSADomain;
 import ramdp.framework.NonprimitiveTask;
 import ramdp.framework.Task;
 import taxi.amdp.level1.TaxiL1Domain.NavigateType.NavigateAction;
-import taxi.amdp.level1.state.TaxiL1Location;
-import taxi.amdp.level1.state.TaxiL1State;
+import taxi.state.TaxiAgent;
+import taxi.state.TaxiLocation;
+import taxi.state.TaxiState;
 
 public class NavigateTask extends NonprimitiveTask {
 
@@ -26,11 +27,12 @@ public class NavigateTask extends NonprimitiveTask {
 
 	@Override
 	public boolean isTerminal(State s, Action a) {
-		TaxiL1State state = (TaxiL1State) s;
+		TaxiState state = (TaxiState) s;
 		NavigateAction action = (NavigateAction) a;
 		String goalLocation = action.location;
-		TaxiL1Location goal = state.touchLocation(state.locationIndWithColour(goalLocation));
+		TaxiLocation goal = state.touchLocation(state.locationIndWithColour(goalLocation));
+		TaxiAgent t = state.taxi;
 		
-		return state.taxi.currentLocation.equals(goal.colour);
+		return t.x == goal.x && t.y == goal.y; 
 	}
 }

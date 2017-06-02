@@ -957,60 +957,52 @@ public class TaxiDomain implements DomainGenerator{
         return false;
     }
 
-    public static State getTinyClassicState(Domain domain, boolean usesFuel){
+    public static TaxiState getTinyClassicState( boolean usesFuel){
     	
-    	        TaxiAgent taxiAgent = new TaxiAgent(TAXICLASS+0,0,0);
-    	
-    	        TaxiPassenger p1 = new TaxiPassenger(PASSENGERCLASS+0, 0, 1, RED, BLUE);
-    	
-    	        TaxiLocation l0 = new TaxiLocation(0, 0,LOCATIONCLASS+0,RED);
-    	        TaxiLocation l1 = new TaxiLocation(0, 1,LOCATIONCLASS+1,BLUE);
-    	//        TaxiLocation l2 = new TaxiLocation(0, 2,LOCATIONCLASS+2,YELLOW);
-    	//        TaxiLocation l3 = new TaxiLocation(0, 3,LOCATIONCLASS+3,GREEN);
-    	
-    	        List<TaxiLocation> taxiLocations = new ArrayList<TaxiLocation>();
-    	        List<TaxiPassenger> taxiPassengers= new ArrayList<TaxiPassenger>();
-    	
-    	        if(usesFuel){
-    	            TaxiLocation lFuel = new TaxiLocation(2,1,LOCATIONCLASS+4,FUEL);
-    	            taxiLocations.add(lFuel);
-    	        }
-    	        taxiLocations.add(l0);
-    	        taxiLocations.add(l1);
-    	//        taxiLocations.add(l2);
-    	//        taxiLocations.add(l3);
-    	
-    	        taxiPassengers.add(p1);
-    	
-    	        TaxiMapWall wall0 = new TaxiMapWall(WALLCLASS+0,0, 5, 0, false);
-    	        TaxiMapWall wall1 = new TaxiMapWall(WALLCLASS+1,0, 5, 5, false);
-    	        TaxiMapWall wall2 = new TaxiMapWall(WALLCLASS+2,0, 5, 0, true);
-    	        TaxiMapWall wall3 = new TaxiMapWall(WALLCLASS+3,0, 5, 5, true);
-    	        TaxiMapWall wall4 = new TaxiMapWall(WALLCLASS+4,0, 5, 1, true);
-    	        TaxiMapWall wall5 = new TaxiMapWall(WALLCLASS+5,3, 5, 2, true);
-    	        TaxiMapWall wall6 = new TaxiMapWall(WALLCLASS+6,0, 2, 3, true);
-    	        TaxiMapWall wall7 = new TaxiMapWall(WALLCLASS+7,0, 2, 2, false);
-    	
-    	        List<TaxiMapWall> walls = new ArrayList<TaxiMapWall>();
-    	        walls.add(wall0);
-    	        walls.add(wall1);
-    	        walls.add(wall2);
-    	        walls.add(wall3);
-    	        walls.add(wall4);
-    	        walls.add(wall5);
-    	        walls.add(wall6);
-    	        walls.add(wall7);
-    	
-    	
-    	        State s = new TaxiState(walls,taxiPassengers,taxiLocations,taxiAgent);
-    	
-    	
-    	        return s;
-    	
-    	    
-    	    }
+        TaxiAgent taxiAgent = new TaxiAgent(TAXICLASS+0,0,0);
 
-    public static State getClassicState(Domain domain, boolean usesFuel){
+        TaxiPassenger p1 = new TaxiPassenger(PASSENGERCLASS+0, 0, 1, RED, BLUE);
+
+        TaxiLocation l0 = new TaxiLocation(0, 0,LOCATIONCLASS+0,RED);
+        TaxiLocation l1 = new TaxiLocation(0, 1,LOCATIONCLASS+1,BLUE);
+
+        List<TaxiLocation> taxiLocations = new ArrayList<TaxiLocation>();
+        List<TaxiPassenger> taxiPassengers= new ArrayList<TaxiPassenger>();
+
+        if(usesFuel){
+            TaxiLocation lFuel = new TaxiLocation(2,1,LOCATIONCLASS+4,FUEL);
+            taxiLocations.add(lFuel);
+        }
+        taxiLocations.add(l0);
+        taxiLocations.add(l1);
+
+        taxiPassengers.add(p1);
+
+        TaxiMapWall wall0 = new TaxiMapWall(WALLCLASS+0,0, 5, 0, false);
+        TaxiMapWall wall1 = new TaxiMapWall(WALLCLASS+1,0, 5, 5, false);
+        TaxiMapWall wall2 = new TaxiMapWall(WALLCLASS+2,0, 5, 0, true);
+        TaxiMapWall wall3 = new TaxiMapWall(WALLCLASS+3,0, 5, 5, true);
+        TaxiMapWall wall4 = new TaxiMapWall(WALLCLASS+4,0, 5, 1, true);
+        TaxiMapWall wall5 = new TaxiMapWall(WALLCLASS+5,3, 5, 2, true);
+        TaxiMapWall wall6 = new TaxiMapWall(WALLCLASS+6,0, 2, 3, true);
+        TaxiMapWall wall7 = new TaxiMapWall(WALLCLASS+7,0, 2, 2, false);
+
+        List<TaxiMapWall> walls = new ArrayList<TaxiMapWall>();
+        walls.add(wall0);
+        walls.add(wall1);
+        walls.add(wall2);
+        walls.add(wall3);
+        walls.add(wall4);
+        walls.add(wall5);
+        walls.add(wall6);
+        walls.add(wall7);
+
+        TaxiState s = new TaxiState(walls,taxiPassengers,taxiLocations,taxiAgent);
+
+        return s;
+    }
+
+    public static TaxiState getClassicState(boolean usesFuel){
 
         TaxiAgent taxiAgent = new TaxiAgent(TAXICLASS+0,0,3);
 
@@ -1052,17 +1044,13 @@ public class TaxiDomain implements DomainGenerator{
         walls.add(wall5);
         walls.add(wall6);
 
-
-        State s = new TaxiState(walls,taxiPassengers,taxiLocations,taxiAgent);
-
+        TaxiState s = new TaxiState(walls,taxiPassengers,taxiLocations,taxiAgent);
 
         return s;
 
     }
 
-    public static State getComplexState(boolean usesFuel){
-        //TODO: create a random start state with passengers at different locations
-
+    public static TaxiState getComplexState(boolean usesFuel){
         TaxiAgent taxiAgent = new TaxiAgent(TAXICLASS+0,0,3);
 
         TaxiPassenger p1 = new TaxiPassenger(PASSENGERCLASS+0,0, 0, BLUE, YELLOW);
@@ -1087,7 +1075,6 @@ public class TaxiDomain implements DomainGenerator{
 
         taxiPassengers.add(p2);
         taxiPassengers.add(p1);
-//        taxiPassengers.add(p2);
 
         TaxiMapWall h1 = new TaxiMapWall(WALLCLASS+0,0, 5, 0,false);
         TaxiMapWall h2 = new TaxiMapWall(WALLCLASS+1,0, 5, 5,false);
@@ -1106,21 +1093,14 @@ public class TaxiDomain implements DomainGenerator{
         walls.add(v4);
         walls.add(v5);
 
-
-        State s = new TaxiState(walls,taxiPassengers,taxiLocations,taxiAgent);
-
+        TaxiState s = new TaxiState(walls,taxiPassengers,taxiLocations,taxiAgent);
 
         return s;
-
-
-
     }
 
-    public static State getRandomClassicState(Random rand, Domain domain, boolean usesFuel){
-
+    public static TaxiState getRandomClassicState(Random rand, boolean usesFuel){
         TaxiAgent taxiAgent = new TaxiAgent(TAXICLASS+0, rand.nextInt(maxX),rand.nextInt(maxY));
 
-
         TaxiLocation l0 = new TaxiLocation(0, 0,LOCATIONCLASS+0,YELLOW);
         TaxiLocation l1 = new TaxiLocation(0, 4,LOCATIONCLASS+1,RED);
         TaxiLocation l2 = new TaxiLocation(3, 0,LOCATIONCLASS+2,BLUE);
@@ -1140,7 +1120,6 @@ public class TaxiDomain implements DomainGenerator{
 
         TaxiLocation tempStartLocation = taxiLocations.get(rand.nextInt(taxiLocations.size()));
         TaxiLocation tempGoalLocation = taxiLocations.get(rand.nextInt(taxiLocations.size()));
-
 
         TaxiPassenger p1 = new TaxiPassenger(PASSENGERCLASS+0,tempStartLocation.x, tempStartLocation.y, tempGoalLocation.colour, tempStartLocation.colour);
         taxiPassengers.add(p1);
@@ -1162,19 +1141,15 @@ public class TaxiDomain implements DomainGenerator{
         walls.add(v4);
         walls.add(v5);
 
-
-        State s = new TaxiState(walls,taxiPassengers,taxiLocations,taxiAgent);
-
+        TaxiState s = new TaxiState(walls,taxiPassengers,taxiLocations,taxiAgent);
 
         return s;
 
     }
 
-    public static State getStartStateFromTaxiPosition(int TaxiX, int TaxiY, Random rand, Domain domain, boolean usesFuel){
-
+    public static TaxiState getStartStateFromTaxiPosition(int TaxiX, int TaxiY, Random rand, boolean usesFuel){
         TaxiAgent taxiAgent = new TaxiAgent(TAXICLASS+0, TaxiX, TaxiY);
 
-
         TaxiLocation l0 = new TaxiLocation(0, 0,LOCATIONCLASS+0,YELLOW);
         TaxiLocation l1 = new TaxiLocation(0, 4,LOCATIONCLASS+1,RED);
         TaxiLocation l2 = new TaxiLocation(3, 0,LOCATIONCLASS+2,BLUE);
@@ -1194,7 +1169,6 @@ public class TaxiDomain implements DomainGenerator{
 
         TaxiLocation tempStartLocation = taxiLocations.get(rand.nextInt(taxiLocations.size()));
         TaxiLocation tempGoalLocation = taxiLocations.get(rand.nextInt(taxiLocations.size()));
-
 
         TaxiPassenger p1 = new TaxiPassenger(PASSENGERCLASS+0,tempStartLocation.x, tempStartLocation.y, tempGoalLocation.colour, tempStartLocation.colour);
         taxiPassengers.add(p1);
@@ -1216,16 +1190,12 @@ public class TaxiDomain implements DomainGenerator{
         walls.add(v4);
         walls.add(v5);
 
-
-        State s = new TaxiState(walls,taxiPassengers,taxiLocations,taxiAgent);
-
+        TaxiState s = new TaxiState(walls,taxiPassengers,taxiLocations,taxiAgent);
 
         return s;
-
     }
     
-    public static State getSmallClassicState(Domain domain, boolean usesFuel){
-
+    public static TaxiState getSmallClassicState(boolean usesFuel){
         TaxiAgent taxiAgent = new TaxiAgent(TAXICLASS+0,0,0);
 
         TaxiPassenger p1 = new TaxiPassenger(PASSENGERCLASS+0, 0, 1, RED, BLUE);
@@ -1266,13 +1236,8 @@ public class TaxiDomain implements DomainGenerator{
         walls.add(wall5);
         walls.add(wall6);
 
-
-        State s = new TaxiState(walls,taxiPassengers,taxiLocations,taxiAgent);
-
+        TaxiState s = new TaxiState(walls,taxiPassengers,taxiLocations,taxiAgent);
 
         return s;
-
-    
     }
-
 }

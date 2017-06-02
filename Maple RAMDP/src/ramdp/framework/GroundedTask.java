@@ -6,21 +6,24 @@ import java.util.List;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import burlap.mdp.core.action.Action;
+import burlap.mdp.core.action.ActionType;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.environment.EnvironmentOutcome;
 import burlap.mdp.singleagent.environment.SimulatedEnvironment;
+import burlap.mdp.singleagent.model.FullModel;
+import burlap.mdp.singleagent.oo.OOSADomain;
 
 public class GroundedTask {
 
 	/**
 	 * specific action in a task
 	 */
-	Action action;
+	private Action action;
 	
 	/**
 	 * the general task node which this grounded task is part of
 	 */
-	Task t;
+	private Task t;
 	
 	/**
 	 * each grounded task has an action and task
@@ -40,6 +43,15 @@ public class GroundedTask {
 		return action;
 	}
 	
+	public OOSADomain getDomain(FullModel model){
+		OOSADomain d = new OOSADomain();
+		d.setModel(model);
+		List<ActionType> acts = t.domain.getActionTypes();
+		for(ActionType a : acts){
+			d.addActionType(a);
+		}
+		return d;
+	}
 	/**
 	 * gets a executable tasks that are children of the task 
 	 * @param s the current task

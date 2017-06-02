@@ -7,9 +7,9 @@ import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.oo.OOSADomain;
 import ramdp.framework.NonprimitiveTask;
 import ramdp.framework.Task;
+import taxi.amdp.level1.state.TaxiL1Passenger;
+import taxi.amdp.level1.state.TaxiL1State;
 import taxi.amdp.level2.TaxiL2Domain.GetType.GetAction;
-import taxi.amdp.level2.state.TaxiL2Passenger;
-import taxi.amdp.level2.state.TaxiL2State;
 
 public class GetTask extends NonprimitiveTask {
 
@@ -28,8 +28,8 @@ public class GetTask extends NonprimitiveTask {
 	public boolean isTerminal(State s, Action a) {
 		GetAction action = (GetAction) a;
 		String passname = action.passenger;
-		TaxiL2State state = (TaxiL2State) s;
-		TaxiL2Passenger pass = state.touchPassenger(passname);
+		TaxiL1State state = (TaxiL1State) s;
+		TaxiL1Passenger pass = state.touchPassenger(passname);
 		
 		return pass.inTaxi;
 	}
