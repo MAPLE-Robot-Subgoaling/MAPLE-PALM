@@ -35,7 +35,7 @@ public class PutTask extends NonprimitiveTask{
 		TaxiL1Passenger pass = state.touchPassenger(passname);
 		if(!state.taxi.taxiOccupied)
 			return true;
-		return pass.currentLocation.equals(goalLocation);
+		return pass.currentLocation.equals(goalLocation) && pass.pickUpOnce;
 	}
 
 	public class PutRF implements RewardFunction{
@@ -48,7 +48,7 @@ public class PutTask extends NonprimitiveTask{
 			String passname = action.passenger;
 			TaxiL1Passenger pass = state.touchPassenger(passname);
 
-			if(pass.currentLocation.equals(goalLocation) && !state.taxi.taxiOccupied)
+			if(pass.currentLocation.equals(goalLocation) && !pass.inTaxi && pass.pickUpOnce)
 				return 1;
 			else
 				return 0;

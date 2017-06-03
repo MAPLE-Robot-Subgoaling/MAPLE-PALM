@@ -1,4 +1,4 @@
-package taxi.ramdp;
+package taxi.hierarchies;
 
 import burlap.mdp.auxiliary.StateMapping;
 import burlap.mdp.core.TerminalFunction;
@@ -131,8 +131,38 @@ public class TaxiHierarchy {
 		if(fickle)
 			baseGenerator.setTransitionDynamicsLikeFickleTaxiProlem();
 		
-		OOSADomain l0Domain = 
+		OOSADomain l0Domain = baseGenerator.generateDomain();
 		
+		ActionType pickup = l0Domain.getAction(TaxiDomain.ACTION_PICKUP);
+		ActionType dropoff = l0Domain.getAction(TaxiDomain.ACTION_DROPOFF);
+		ActionType north = l0Domain.getAction(TaxiDomain.ACTION_NORTH);
+		ActionType east = l0Domain.getAction(TaxiDomain.ACTION_EAST);
+		ActionType south = l0Domain.getAction(TaxiDomain.ACTION_SOUTH);
+		ActionType west = l0Domain.getAction(TaxiDomain.ACTION_WEST);
+		
+		PrimitiveTask pickupL0Task = new PrimitiveTask(pickup, l0Domain);
+		PrimitiveTask dropoffTask = new PrimitiveTask(dropoff, l0Domain);
+		PrimitiveTask northTask = new PrimitiveTask(north, l0Domain);
+		PrimitiveTask eastTask = new PrimitiveTask(east, l0Domain);
+		PrimitiveTask southTask = new PrimitiveTask(south, l0Domain);
+		PrimitiveTask westTask = new PrimitiveTask(west, l0Domain);
+		
+		Task[] navSubs = new Task[]{northTask, eastTask, southTask, westTask};
+
+		taxi.rmaxq.tasks.NavigateTask nav = new taxi.rmaxq.tasks.NavigateTask(navSubs);
+		
+		Task[] getsubs = new Task[]{pickupL0Task, nav};
+		Task[] putsubs = new Task[]{nav, dropoffTask};
+		
+		taxi.rmaxq.tasks.GetTask get = new taxi.rmaxq.tasks.GetTask(getsubs);
+		taxi.rmaxq.tasks.PutTask put = new taxi.rmaxq.tasks.PutTask(putsubs);
+		
+		Task[] rootsubs = new Task[]{get, put};
+		IdentityMap map0 = new IdentityMap();
+		
+		RootTask root = new RootTask(rootsubs, l0Domain, map0, rf0);
+		
+		return root;
 	}
 	public static OOSADomain getGroundDomain(){
 		return l0Domain;

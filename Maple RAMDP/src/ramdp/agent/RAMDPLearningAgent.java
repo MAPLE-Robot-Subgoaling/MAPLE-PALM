@@ -53,12 +53,14 @@ public class RAMDPLearningAgent implements LearningAgent{
 	
 	private HashableStateFactory hashingFactory;
 	
+	private double maxDelta;
 	/**
 	 * 
 	 * @param root
 	 * @param threshold
 	 */
-	public RAMDPLearningAgent(GroundedTask root, int threshold, double discount, double rmax, HashableStateFactory hs) {
+	public RAMDPLearningAgent(GroundedTask root, int threshold, double discount, double rmax,
+			HashableStateFactory hs, double delta) {
 		this.rmaxThreshold = threshold;
 		this.root = root;
 		this.gamma = discount;
@@ -66,6 +68,7 @@ public class RAMDPLearningAgent implements LearningAgent{
 		this.rmax = rmax;
 		this.models = new HashMap<GroundedTask, RAMDPModel>();
 		this.taskNames = new HashMap<String, GroundedTask>();
+		this.maxDelta = delta;
 	}
 	
 	@Override
@@ -126,7 +129,7 @@ public class RAMDPLearningAgent implements LearningAgent{
 	
 	protected Action nextAction(GroundedTask task, State s){
 		OOSADomain domain = task.getDomain(getModel(task, s));
-		Planner plan = new ValueIteration(domain, gamma, hashingFactory, 0.01, 100);
+		Planner plan = new ValueIteration(domain, gamma, hashingFactory, maxDelta, 100);
 		Policy p = plan.planFromState(s);
 		return p.action(s);
 	}

@@ -187,10 +187,6 @@ public class TaxiL2Domain implements DomainGenerator {
      * Describes the navigate action at level 1 of the AMDP
      */
     public static class GetType implements ActionType {
-
-
-        public GetType() { }
-
         @Override
         public String typeName() {
             return ACTION_GET;
@@ -258,10 +254,7 @@ public class TaxiL2Domain implements DomainGenerator {
 
     public static class PutType implements ActionType {
 
-
-        public PutType() { }
-
-        @Override
+    	@Override
         public String typeName() {
             return ACTION_PUT;
         }
