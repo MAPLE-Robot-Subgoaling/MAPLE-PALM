@@ -30,7 +30,7 @@ public class SolveActionType implements ActionType{
 
 		@Override
 		public String actionName() {
-			return "Solve";
+			return "solve";
 		}
 
 		@Override

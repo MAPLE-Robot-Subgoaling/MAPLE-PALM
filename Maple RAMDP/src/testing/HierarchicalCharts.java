@@ -22,15 +22,16 @@ import utilities.SimpleHashableStateFactory;
 
 public class HierarchicalCharts {
 
-	public static void createCrarts(State s, OOSADomain domain, Task RAMDPRoot, Task RMEXQRoot, 
-			int rmax, int threshold, double maxDelta, double discount, int numEpisode, int numTrial){
-		HashableStateFactory hs = new SimpleHashableStateFactory();
-		GroundedTask RAMDPGroot = RAMDPRoot.getAllGroundedTasks(s).get(0); 
+	public static void createCrarts(final State s, OOSADomain domain, final Task RAMDPRoot, final Task RMEXQRoot, 
+			final int rmax, final int threshold, final double maxDelta, final double discount, int numEpisode, int numTrial){
+		final HashableStateFactory hs = new SimpleHashableStateFactory();
+		final GroundedTask RAMDPGroot = RAMDPRoot.getAllGroundedTasks(s).get(0); 
+		
 		SimulatedEnvironment env = new SimulatedEnvironment(domain, s);
-		VisualActionObserver obs = new VisualActionObserver(domain, TaxiVisualizer.getVisualizer(5, 5));
-        obs.initGUI();
-        obs.setDefaultCloseOperation(obs.EXIT_ON_CLOSE);
-        env.addObservers(obs);
+//		VisualActionObserver obs = new VisualActionObserver(domain, TaxiVisualizer.getVisualizer(5, 5));
+//        obs.initGUI();
+//        obs.setDefaultCloseOperation(obs.EXIT_ON_CLOSE);
+//        env.addObservers(obs);
 		
 		LearningAgentFactory rmaxq = new LearningAgentFactory() {
 			
@@ -58,22 +59,22 @@ public class HierarchicalCharts {
 			}
 		};
 		
-		LearningAlgorithmExperimenter exp = new LearningAlgorithmExperimenter(env, numTrial, numEpisode, ramdp, rmaxq);
-		exp.setUpPlottingConfiguration(900, 500, 2, 1000,
+		LearningAlgorithmExperimenter exp = new LearningAlgorithmExperimenter(env, numTrial, numEpisode, rmaxq, ramdp);
+		exp.setUpPlottingConfiguration(500, 300, 2, 1000,
 				TrialMode.MOST_RECENT_AND_AVERAGE,
 				PerformanceMetric.CUMULATIVE_REWARD_PER_EPISODE
 				);
 		
 		exp.startExperiment();
-		exp.writeEpisodeDataToCSV("C:\\Users\\mland\\Box Sync\\Maple\\hierarchical learning data\\ramdp full state data2.csv");
+		exp.writeEpisodeDataToCSV("/tmp/guest-gny6nj/ramdp full state data2.csv");
 	}
 	
 	public static void main(String[] args) {
 		boolean ficjle = false;
-		TaxiState s = TaxiDomain.getClassicState(false);
+		TaxiState s = TaxiDomain.getSmallClassicState(false);
 		Task RAMDProot = TaxiHierarchy.createRAMDPHierarchy(s, ficjle);
 		OOSADomain base = TaxiHierarchy.getGroundDomain();
 		Task RMAXQroot = TaxiHierarchy.createRMAXQHierarchy(s, ficjle);
-		createCrarts(s, base, RAMDProot, RMAXQroot, 30, 3, 0.01, 0.9, 150, 5);
+		createCrarts(s, base, RAMDProot, RMAXQroot, 30, 5, 0.01, 0.9, 100, 2);
 	}
 }

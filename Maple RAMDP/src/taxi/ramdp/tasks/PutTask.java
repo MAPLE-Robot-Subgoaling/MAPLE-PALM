@@ -28,14 +28,10 @@ public class PutTask extends NonprimitiveTask{
 
 	@Override
 	public boolean isTerminal(State s, Action a) {
-		PutAction action = (PutAction) a;
 		TaxiL1State state = (TaxiL1State) s;
-		String goalLocation = action.location;
-		String passname = action.passenger;
-		TaxiL1Passenger pass = state.touchPassenger(passname);
 		if(!state.taxi.taxiOccupied)
 			return true;
-		return pass.currentLocation.equals(goalLocation) && pass.pickUpOnce;
+		return false;
 	}
 
 	public class PutRF implements RewardFunction{
@@ -44,14 +40,15 @@ public class PutTask extends NonprimitiveTask{
 		public double reward(State s, Action a, State sprime) {
 			PutAction action = (PutAction) a;
 			TaxiL1State state = (TaxiL1State) s;
-			String goalLocation = action.location;
-			String passname = action.passenger;
-			TaxiL1Passenger pass = state.touchPassenger(passname);
-
-			if(pass.currentLocation.equals(goalLocation) && !pass.inTaxi && pass.pickUpOnce)
-				return 1;
-			else
-				return -1;
+//			String goalLocation = action.location;
+			for(TaxiL1Passenger p : state.passengers){
+				if(p.currentLocation.equals(p.goalLocation)){
+					if(!p.inTaxi){
+						return 1;
+					}
+				}
+			}
+			return -1;
 		}
 		
 	}

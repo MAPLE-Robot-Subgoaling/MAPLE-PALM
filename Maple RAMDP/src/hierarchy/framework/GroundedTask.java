@@ -132,4 +132,8 @@ public class GroundedTask {
 		}
 		return 0;
 	}
+	
+	public String toString(){
+		return action.actionName();
+	}
 }

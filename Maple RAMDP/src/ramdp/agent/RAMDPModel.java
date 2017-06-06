@@ -120,8 +120,12 @@ public class RAMDPModel implements FullModel{
 			double newR = r_sa / n_sa;
 			setReward(hs, a, newR);
 			
-			double newP = (double) n_sasp / n_sa;
-			setTransition(hs, a, hsp, newP);
+			Map<HashableState, Integer> resultStates = this.resultingStateCount.get(hs).get(a.actionName());
+			for(HashableState hsprime : resultStates.keySet()){
+				n_sasp = resultStates.get(hsprime);
+				double newP = (double) n_sasp / n_sa;
+				setTransition(hs, a, hsprime, newP);
+			}
 		}
 	}
 	

@@ -14,6 +14,7 @@ import burlap.mdp.core.action.Action;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.environment.Environment;
 import burlap.mdp.singleagent.environment.EnvironmentOutcome;
+import burlap.mdp.singleagent.model.TransitionProb;
 import burlap.mdp.singleagent.oo.OOSADomain;
 import burlap.statehashing.HashableStateFactory;
 import hierarchy.framework.GroundedTask;
@@ -101,10 +102,11 @@ public class RAMDPLearningAgent implements LearningAgent{
 			if(action.isPrimitive()){
 				result = baseEnv.executeAction(a);
 				e.transition(result);
+				baseState = result.op;
 				currentState = result.op;
 				steps++;
 			}else{
-				System.out.print(" child " + a.actionName());
+//				System.out.println( " child " + a.actionName());//(task.getGroundedChildTasks(currentState)
 				//get child task
 				result = task.executeAction(currentState, a);
 				e = solveTask(action, e, baseEnv, maxSteps);
@@ -115,10 +117,6 @@ public class RAMDPLearningAgent implements LearningAgent{
 			}
 			task.fixReward(result);
 			
-			if(!action.isPrimitive()){
-				System.out.println(" Parent: " + task.getAction().actionName() + " " + result.r);
-				
-			}
 			//update task model
 			RAMDPModel model = getModel(task, currentState);
 			model.updateModel(result);
@@ -148,10 +146,29 @@ public class RAMDPLearningAgent implements LearningAgent{
 	
 	protected RAMDPModel getModel(GroundedTask t, State s){
 		RAMDPModel model = models.get(t);
+				
 		if(model == null){
 			model = new RAMDPModel(t, this.rmaxThreshold, this.rmax, this.hashingFactory);
 			this.models.put(t, model);
 		}
+
+//		if(t.toString().startsWith("sol")){
+//			System.out.println();
+//			System.out.println(s + "\n");
+//			List<GroundedTask> children = t.getGroundedChildTasks(s);
+//			for(GroundedTask child : children){
+//				System.out.println(child);
+////				if(child.toString().startsWith("get")){
+//					List<TransitionProb> tps = model.transitions(s, child.getAction());
+//					for(TransitionProb tp: tps){
+//						EnvironmentOutcome eo = tp.eo;
+//						System.out.println("\tProbability: " + tp.p);
+//						System.out.println("\tState:  " + eo.op);
+//						System.out.println("\tReward " + eo.r);
+//					}
+////				}
+//			}
+//		}
 		return model;
 	}
 }

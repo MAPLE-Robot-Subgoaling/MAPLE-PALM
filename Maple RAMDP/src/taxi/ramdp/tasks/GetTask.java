@@ -33,7 +33,10 @@ public class GetTask extends NonprimitiveTask {
 		TaxiL1State state = (TaxiL1State) s;
 		TaxiL1Passenger pass = state.touchPassenger(passname);
 		
-		return pass.inTaxi || state.taxi.taxiOccupied;
+		if(pass.inTaxi || state.taxi.taxiOccupied)
+			if(!pass.inTaxi)
+				System.out.print(s);
+			return pass.inTaxi || state.taxi.taxiOccupied;
 	}
 	
 	public class GetRF implements RewardFunction{
