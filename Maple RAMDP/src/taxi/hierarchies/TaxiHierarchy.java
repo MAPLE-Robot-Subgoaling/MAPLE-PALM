@@ -117,7 +117,7 @@ public class TaxiHierarchy {
 		PutTask putTask = new PutTask(putSubs, put, putDomain, l1Map);
 		
 		Task[] rootsubs = new Task[]{getTask, putTask};
-		RootTask root = new RootTask(rootsubs, l2Domain, l2Map, rf2);
+		RootTask root = new RootTask(rootsubs, l2Domain, l2Map);
 		return root;
 	}
 	
@@ -160,7 +160,7 @@ public class TaxiHierarchy {
 		Task[] rootsubs = new Task[]{get, put};
 		IdentityMap map0 = new IdentityMap();
 		
-		RootTask root = new RootTask(rootsubs, l0Domain, map0, rf0);
+		RootTask root = new RootTask(rootsubs, l0Domain, map0);
 		
 		return root;
 	}

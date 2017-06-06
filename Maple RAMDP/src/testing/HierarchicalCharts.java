@@ -74,6 +74,6 @@ public class HierarchicalCharts {
 		Task RAMDProot = TaxiHierarchy.createRAMDPHierarchy(s, ficjle);
 		OOSADomain base = TaxiHierarchy.getGroundDomain();
 		Task RMAXQroot = TaxiHierarchy.createRMAXQHierarchy(s, ficjle);
-		createCrarts(s, base, RAMDProot, RMAXQroot, 30, 5, 0.01, 0.9, 150, 5);
+		createCrarts(s, base, RAMDProot, RMAXQroot, 30, 3, 0.01, 0.9, 150, 5);
 	}
 }
