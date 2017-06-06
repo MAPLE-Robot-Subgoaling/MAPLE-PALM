@@ -8,6 +8,8 @@ import burlap.behavior.policy.Policy;
 import burlap.behavior.singleagent.Episode;
 import burlap.behavior.singleagent.learning.LearningAgent;
 import burlap.behavior.singleagent.planning.Planner;
+import burlap.behavior.singleagent.planning.stochastic.rtdp.BoundedRTDP;
+import burlap.behavior.valuefunction.ConstantValueFunction;
 import burlap.mdp.core.action.Action;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.environment.Environment;
@@ -102,6 +104,7 @@ public class RAMDPLearningAgent implements LearningAgent{
 				currentState = result.op;
 				steps++;
 			}else{
+				System.out.print(" child " + a.actionName());
 				//get child task
 				result = task.executeAction(currentState, a);
 				e = solveTask(action, e, baseEnv, maxSteps);
@@ -109,9 +112,13 @@ public class RAMDPLearningAgent implements LearningAgent{
 				baseState = e.stateSequence.get(e.stateSequence.size() - 1);
 				currentState = task.mapState(baseState);
 				result.op = currentState;
-				task.fixReward(result);
 			}
+			task.fixReward(result);
 			
+			if(!action.isPrimitive()){
+				System.out.println(" Parent: " + task.getAction().actionName() + " " + result.r);
+				
+			}
 			//update task model
 			RAMDPModel model = getModel(task, currentState);
 			model.updateModel(result);
@@ -129,7 +136,12 @@ public class RAMDPLearningAgent implements LearningAgent{
 	
 	protected Action nextAction(GroundedTask task, State s){
 		OOSADomain domain = task.getDomain(getModel(task, s));
-		Planner plan = new ValueIteration(domain, gamma, hashingFactory, maxDelta, 100);
+		
+//		BoundedRTDP plan = new BoundedRTDP(domain, gamma, hashingFactory, new ConstantValueFunction(),
+//				new ConstantValueFunction(50), 0.01, -1);
+//		plan.setMaxRolloutDepth(100);
+//        plan.toggleDebugPrinting(false);
+        ValueIteration plan = new ValueIteration(domain, gamma, hashingFactory, maxDelta, 100);
 		Policy p = plan.planFromState(s);
 		return p.action(s);
 	}

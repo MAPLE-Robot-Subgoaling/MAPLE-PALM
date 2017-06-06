@@ -45,11 +45,6 @@ public class RAMDPModel implements FullModel{
 	 */
 	private Map<HashableState, Map<String, Double>> totalReward;
 	
-	/**
-	 * list of actions
-	 */
-	private List<Action> actions;
-	
 	private GroundedTask node;
 	
 	private double rmax;
@@ -65,7 +60,6 @@ public class RAMDPModel implements FullModel{
 		this.mThreshold = threshold;
 		this.rewards = new HashMap<HashableState, Map<String, Double>>();
 		this.transitions = new HashMap<HashableState, Map<String, Map<HashableState,Double>>>();
-		this.actions = new ArrayList<>();
 		this.stateActionCount = new HashMap<HashableState, Map<String,Integer>>();
 		this.resultingStateCount = new HashMap<HashableState, Map<String, Map<HashableState, Integer>>>();
 		this.totalReward = new HashMap<HashableState, Map<String,Double>>();

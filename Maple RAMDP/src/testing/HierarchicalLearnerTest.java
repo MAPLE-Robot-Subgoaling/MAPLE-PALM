@@ -32,10 +32,10 @@ public class HierarchicalLearnerTest {
 				new SimpleHashableStateFactory(), maxDelta);
 		
 		SimulatedEnvironment env = new SimulatedEnvironment(groundDomain, initial);
-//		VisualActionObserver obs = new VisualActionObserver(groundDomain, TaxiVisualizer.getVisualizer(5, 5));
-//        obs.initGUI();
-//        obs.setDefaultCloseOperation(obs.EXIT_ON_CLOSE);
-//        env.addObservers(obs);
+		VisualActionObserver obs = new VisualActionObserver(groundDomain, TaxiVisualizer.getVisualizer(5, 5));
+        obs.initGUI();
+        obs.setDefaultCloseOperation(obs.EXIT_ON_CLOSE);
+        env.addObservers(obs);
 		
 		for(int i = 1; i <= numEpisode; i++){
 			long time = System.currentTimeMillis();
@@ -84,7 +84,7 @@ public class HierarchicalLearnerTest {
 		OOSADomain base = TaxiHierarchy.getGroundDomain();
 		Task RMAXQroot = TaxiHierarchy.createRMAXQHierarchy(s, false);
 		
-		runRAMDPEpisodes(100, 10000, RAMDProot, s, base, 5, 0.99, 30, 0.01);
+		runRAMDPEpisodes(100, 10000, RAMDProot, s, base, 5, 0.9, 30, 0.01);
 //		runRMAXQEpsodes(100, RMAXQroot, s, 30, 5, 0.01, base);
 	}
 }

@@ -51,7 +51,7 @@ public class PutTask extends NonprimitiveTask{
 			if(pass.currentLocation.equals(goalLocation) && !pass.inTaxi && pass.pickUpOnce)
 				return 1;
 			else
-				return 0;
+				return -1;
 		}
 		
 	}
