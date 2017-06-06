@@ -141,7 +141,7 @@ public class RAMDPLearningAgent implements LearningAgent{
 //				new ConstantValueFunction(50), 0.01, -1);
 //		plan.setMaxRolloutDepth(100);
 //        plan.toggleDebugPrinting(false);
-        ValueIteration plan = new ValueIteration(domain, gamma, hashingFactory, maxDelta, 100);
+        ValueIteration plan = new ValueIteration(domain, gamma, hashingFactory, maxDelta, 1000);
 		Policy p = plan.planFromState(s);
 		return p.action(s);
 	}

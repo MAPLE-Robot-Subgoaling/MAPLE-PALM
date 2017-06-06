@@ -79,10 +79,11 @@ public class HierarchicalLearnerTest {
 	}
 	
 	public static void main(String[] args) {
+		boolean fickle = false;
 		TaxiState s = TaxiDomain.getClassicState(false);
-		Task RAMDProot = TaxiHierarchy.createRAMDPHierarchy(s, true);
+		Task RAMDProot = TaxiHierarchy.createRAMDPHierarchy(s, fickle);
 		OOSADomain base = TaxiHierarchy.getGroundDomain();
-		Task RMAXQroot = TaxiHierarchy.createRMAXQHierarchy(s, false);
+		Task RMAXQroot = TaxiHierarchy.createRMAXQHierarchy(s, fickle);
 		
 		runRAMDPEpisodes(100, 10000, RAMDProot, s, base, 5, 0.9, 30, 0.01);
 //		runRMAXQEpsodes(100, RMAXQroot, s, 30, 5, 0.01, base);
