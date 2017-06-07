@@ -48,7 +48,7 @@ public class PutTask extends NonprimitiveTask{
 					}
 				}
 			}
-			return -1;
+			return 0;
 		}
 		
 	}

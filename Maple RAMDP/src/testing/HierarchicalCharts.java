@@ -59,22 +59,23 @@ public class HierarchicalCharts {
 			}
 		};
 		
-		LearningAlgorithmExperimenter exp = new LearningAlgorithmExperimenter(env, numTrial, numEpisode, rmaxq, ramdp);
+		LearningAlgorithmExperimenter exp = new LearningAlgorithmExperimenter(env, numTrial, numEpisode, ramdp);
 		exp.setUpPlottingConfiguration(500, 300, 2, 1000,
 				TrialMode.MOST_RECENT_AND_AVERAGE,
 				PerformanceMetric.CUMULATIVE_REWARD_PER_EPISODE
 				);
 		
 		exp.startExperiment();
-		exp.writeEpisodeDataToCSV("/tmp/guest-gny6nj/ramdp full state data2.csv");
+		exp.writeEpisodeDataToCSV("/tmp/ramdp full state data2.csv");
 	}
 	
 	public static void main(String[] args) {
-		boolean ficjle = false;
+		boolean fickle = true;
 		TaxiState s = TaxiDomain.getSmallClassicState(false);
-		Task RAMDProot = TaxiHierarchy.createRAMDPHierarchy(s, ficjle);
+		Task RAMDProot = TaxiHierarchy.createRAMDPHierarchy(s, fickle);
 		OOSADomain base = TaxiHierarchy.getGroundDomain();
-		Task RMAXQroot = TaxiHierarchy.createRMAXQHierarchy(s, ficjle);
-		createCrarts(s, base, RAMDProot, RMAXQroot, 30, 5, 0.01, 0.9, 100, 2);
+		Task RMAXQroot = TaxiHierarchy.createRMAXQHierarchy(s, fickle);
+		
+		createCrarts(s, base, RAMDProot, RMAXQroot, 30, 5, 0.01, 0.9, 300, 10);
 	}
 }

@@ -51,7 +51,7 @@ public class GetTask extends NonprimitiveTask {
 			if(pass.inTaxi)
 				return 1;
 			else
-				return -1;
+				return 0;
 		}
 		
 	}
