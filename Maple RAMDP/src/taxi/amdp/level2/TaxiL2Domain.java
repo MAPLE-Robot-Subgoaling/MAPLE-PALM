@@ -140,12 +140,12 @@ public class TaxiL2Domain implements DomainGenerator {
 
         private void putAction(State s, Action a, List<StateTransitionProb> transitions) {
             TaxiL2State ns = (TaxiL2State) s.copy();
-//            String location = ((PutType.PutAction) a).location;
+            String location = ((PutType.PutAction) a).location;
 
             for(TaxiL2Passenger p : ns.passengers){
             	if(p.inTaxi){
             		p.inTaxi = false;
-            		p.currentLocation = p.goalLocation;
+            		p.currentLocation = location;
             		break;
             	}
             }
@@ -262,37 +262,36 @@ public class TaxiL2Domain implements DomainGenerator {
 
         @Override
         public Action associatedAction(String strRep) {
-            return new PutAction();//(strRep.split("_")[0]);
+            return new PutAction(strRep.split("_")[0]);
         }
 
         @Override
         public List<Action> allApplicableActions(State s) {
             List<Action> actions = new ArrayList<Action>();
-            List<TaxiL2Passenger> passengers = ((TaxiL2State) s).passengers;
             List<TaxiL2Location> locations = ((TaxiL2State) s).locations;
-//            for (TaxiL2Location loc : locations) {
-            	actions.add(new PutAction());
-//            }
+            for (TaxiL2Location loc : locations) {
+            	actions.add(new PutAction(loc.colour));
+            }
 
             return actions;
         }
 
         public static class PutAction implements Action {
 
-//            public String location;
+            public String location;
 
-            public PutAction(){//(String passenger, String location) {
-//                this.location = location;
+            public PutAction( String location) {
+                this.location = location;
             }
 
             @Override
             public String actionName() {
-                return ACTION_PUT;// + "_" + location;
+                return ACTION_PUT + "_" + location;
             }
 
             @Override
             public Action copy() {
-                return new PutAction();//(location);
+                return new PutAction(location);
             }
 
             @Override
@@ -302,13 +301,13 @@ public class TaxiL2Domain implements DomainGenerator {
 
                 PutAction that = (PutAction) o;
 
-                return true;//that.passenger.equals(passenger) && that.location.equals(location);
+                return  that.location.equals(location);
 
             }
 
             @Override
             public int hashCode() {
-                String str = ACTION_PUT;// +  "_" + location;
+                String str = ACTION_PUT +  "_" + location;
                 return str.hashCode();
             }
 

@@ -1,15 +1,15 @@
 package ramdp.agent;
 
+import hierarchy.framework.GroundedTask;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import utilities.ValueIteration;
 import burlap.behavior.policy.Policy;
 import burlap.behavior.singleagent.Episode;
 import burlap.behavior.singleagent.learning.LearningAgent;
-import burlap.behavior.singleagent.planning.Planner;
-import burlap.behavior.singleagent.planning.stochastic.rtdp.BoundedRTDP;
-import burlap.behavior.valuefunction.ConstantValueFunction;
 import burlap.mdp.core.action.Action;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.environment.Environment;
@@ -17,8 +17,6 @@ import burlap.mdp.singleagent.environment.EnvironmentOutcome;
 import burlap.mdp.singleagent.model.TransitionProb;
 import burlap.mdp.singleagent.oo.OOSADomain;
 import burlap.statehashing.HashableStateFactory;
-import hierarchy.framework.GroundedTask;
-import utilities.ValueIteration;
 
 public class RAMDPLearningAgent implements LearningAgent{
 
@@ -111,12 +109,20 @@ public class RAMDPLearningAgent implements LearningAgent{
 				result = task.executeAction(currentState, a);
 				e = solveTask(action, e, baseEnv, maxSteps);
 				
-				baseState = e.stateSequence.get(e.stateSequence.size() - 1);
-				currentState = task.mapState(baseState);
-				result.op = currentState;
+				currentState = result.op;
+//				baseState = e.stateSequence.get(e.stateSequence.size() - 1);
+//				currentState = task.mapState(baseState);
+//				result.op = currentState;
 			}
 			task.fixReward(result);
 			
+			if(task.toString().startsWith("sol")){
+				System.out.println(result.o);
+				System.out.println(result.op);
+				System.out.println(result.a);
+				System.out.println(result.r);
+				System.out.println();
+			}
 			//update task model
 			RAMDPModel model = getModel(task, currentState);
 			model.updateModel(result);

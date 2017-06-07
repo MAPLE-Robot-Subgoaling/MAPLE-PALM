@@ -40,12 +40,13 @@ public class PutTask extends NonprimitiveTask{
 		public double reward(State s, Action a, State sprime) {
 			PutAction action = (PutAction) a;
 			TaxiL1State state = (TaxiL1State) s;
-//			String goalLocation = action.location;
+			String goalLocation = action.location;
 			for(TaxiL1Passenger p : state.passengers){
-				if(p.currentLocation.equals(p.goalLocation)){
+				if(p.currentLocation.equals(goalLocation)){
 					if(!p.inTaxi){
 						return 1;
 					}
+					break;
 				}
 			}
 			return 0;

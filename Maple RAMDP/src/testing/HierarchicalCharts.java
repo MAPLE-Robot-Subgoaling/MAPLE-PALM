@@ -70,12 +70,12 @@ public class HierarchicalCharts {
 	}
 	
 	public static void main(String[] args) {
-		boolean fickle = true;
+		boolean fickle = false;
 		TaxiState s = TaxiDomain.getSmallClassicState(false);
 		Task RAMDProot = TaxiHierarchy.createRAMDPHierarchy(s, fickle);
 		OOSADomain base = TaxiHierarchy.getGroundDomain();
 		Task RMAXQroot = TaxiHierarchy.createRMAXQHierarchy(s, fickle);
 		
-		createCrarts(s, base, RAMDProot, RMAXQroot, 30, 5, 0.01, 0.9, 300, 10);
+		createCrarts(s, base, RAMDProot, RMAXQroot, 30, 1, 0.01, 0.9, 300, 10);
 	}
 }
