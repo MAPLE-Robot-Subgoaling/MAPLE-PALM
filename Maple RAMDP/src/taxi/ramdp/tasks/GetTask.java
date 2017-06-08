@@ -23,36 +23,21 @@ public class GetTask extends NonprimitiveTask {
 	 */
 	public GetTask(Task[] children, ActionType aType, OOSADomain abstractDomain, StateMapping map) {
 		super(children, aType, abstractDomain, map);
-		setRF(new GetRF());
 	}
 
 	@Override
 	public boolean isTerminal(State s, Action a) {
+		TaxiL1State state = (TaxiL1State) s;
+		
+		return state.taxi.taxiOccupied;
+	}
+	
+	public boolean isComplete(State s, Action a){
 		GetAction action = (GetAction) a;
 		String passname = action.passenger;
 		TaxiL1State state = (TaxiL1State) s;
 		TaxiL1Passenger pass = state.touchPassenger(passname);
 		
-		if(pass.inTaxi || state.taxi.taxiOccupied)
-			if(!pass.inTaxi)
-				System.out.print(s);
-			return pass.inTaxi || state.taxi.taxiOccupied;
-	}
-	
-	public class GetRF implements RewardFunction{
-
-		@Override
-		public double reward(State s, Action a, State sprime) {
-			GetAction action = (GetAction) a;
-			String passname = action.passenger;
-			TaxiL1State state = (TaxiL1State) s;
-			TaxiL1Passenger pass = state.touchPassenger(passname);
-			
-			if(pass.inTaxi)
-				return 1;
-			else
-				return 0;
-		}
-		
+		return pass.inTaxi;
 	}
 }

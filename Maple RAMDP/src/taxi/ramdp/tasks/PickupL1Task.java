@@ -29,6 +29,7 @@ public class PickupL1Task extends NonprimitiveTask {
 	public boolean isTerminal(State s, Action a) {
 		TaxiState state = (TaxiState) s;
 		TaxiAgent taxi = state.taxi;
+	
 		//if there is no passenger its terminal 
 		for(TaxiPassenger p : state.passengers){
 			if(p.x == taxi.x && p.y == taxi.y)

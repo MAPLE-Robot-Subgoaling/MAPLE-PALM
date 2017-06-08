@@ -136,4 +136,8 @@ public class GroundedTask {
 	public String toString(){
 		return action.actionName();
 	}
+	
+	public boolean isComplete(State s){
+		return t.isComplete(s, action);
+	}
 }

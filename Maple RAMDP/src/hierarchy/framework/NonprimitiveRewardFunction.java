@@ -13,7 +13,7 @@ public class NonprimitiveRewardFunction implements RewardFunction{
 	}
 	@Override
 	public double reward(State s, Action a, State sprime) {
-		if(t.isTerminal(s, a))
+		if(t.isComplete(s, a))
 			return 1;
 		return 0;
 	}

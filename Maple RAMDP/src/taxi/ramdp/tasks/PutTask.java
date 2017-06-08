@@ -23,7 +23,6 @@ public class PutTask extends NonprimitiveTask{
 	 */
 	public PutTask(Task[] children, ActionType aType, OOSADomain abstractDomain, StateMapping map) {
 		super(children, aType, abstractDomain, map);
-		this.setRF(new PutRF());
 	}
 
 	@Override
@@ -34,23 +33,18 @@ public class PutTask extends NonprimitiveTask{
 		return false;
 	}
 
-	public class PutRF implements RewardFunction{
-
-		@Override
-		public double reward(State s, Action a, State sprime) {
-			PutAction action = (PutAction) a;
-			TaxiL1State state = (TaxiL1State) s;
-			String goalLocation = action.location;
-			for(TaxiL1Passenger p : state.passengers){
-				if(p.currentLocation.equals(goalLocation)){
-					if(!p.inTaxi){
-						return 1;
-					}
-					break;
+	public boolean isComplete(State s, Action a){
+		PutAction action = (PutAction) a;
+		TaxiL1State state = (TaxiL1State) s;
+		String goalLocation = action.location;
+		for(TaxiL1Passenger p : state.passengers){
+			if(p.currentLocation.equals(goalLocation)){
+				if(!p.inTaxi){
+					return true;
 				}
+				break;
 			}
-			return 0;
 		}
-		
+		return false;
 	}
 }

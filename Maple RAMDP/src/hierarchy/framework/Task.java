@@ -108,4 +108,8 @@ public abstract class Task {
 	 * primitive (true) or composite (false)
 	 */
 	public abstract boolean isPrimitive();
+	
+	public boolean isComplete(State s, Action a){
+		return isTerminal(s, a);
+	}
 }

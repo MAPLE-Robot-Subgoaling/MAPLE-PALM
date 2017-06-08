@@ -90,10 +90,9 @@ public class RAMDPLearningAgent implements LearningAgent{
 	protected boolean solveTask(GroundedTask task, Episode e, Environment baseEnv, int maxSteps){
 		State baseState = e.stateSequence.get(e.stateSequence.size() - 1);
 		State currentState = task.mapState(baseState);
-		boolean pathConverged = true;
 		
 		while(!task.isTerminal(currentState) && (steps < maxSteps || maxSteps == -1)){
-			boolean actionCoverged = false;
+			boolean subtaskCompleted = false;
 			Action a = nextAction(task, currentState);
 			EnvironmentOutcome result;
 
@@ -103,7 +102,7 @@ public class RAMDPLearningAgent implements LearningAgent{
 				action = this.taskNames.get(a.actionName());
 			}
 			if(action.isPrimitive()){
-				actionCoverged = true;
+				subtaskCompleted = true;
 				result = baseEnv.executeAction(a);
 				e.transition(result);
 				baseState = result.op;
@@ -113,7 +112,7 @@ public class RAMDPLearningAgent implements LearningAgent{
 //				System.out.println( " child " + a.actionName());//(task.getGroundedChildTasks(currentState)
 				//get child task
 				result = task.executeAction(currentState, a);
-				actionCoverged = solveTask(action, e, baseEnv, maxSteps);
+				subtaskCompleted = solveTask(action, e, baseEnv, maxSteps);
    
 				baseState = e.stateSequence.get(e.stateSequence.size() - 1);
 				currentState = task.mapState(baseState);
@@ -130,14 +129,13 @@ public class RAMDPLearningAgent implements LearningAgent{
 //			}
 			//update task model
 			RAMDPModel model = getModel(task, currentState);
-			pathConverged = pathConverged && actionCoverged && model.hasConverged(result.o, result.a);
-			if(actionCoverged){
+			if(subtaskCompleted){
 				model.updateModel(result);
-				System.out.println(task + " " + action );
+//				System.out.println(task + " " + action );
 			}
 		}
 		
-		return pathConverged;
+		return task.isComplete(currentState);
 	}
 	
 	protected void addChildrenToMap(GroundedTask gt, State s){
@@ -167,23 +165,23 @@ public class RAMDPLearningAgent implements LearningAgent{
 			this.models.put(t, model);
 		}
 
-//		if(t.toString().startsWith("sol")){
-//			System.out.println();
-//			System.out.println(s + "\n");
-//			List<GroundedTask> children = t.getGroundedChildTasks(s);
-//			for(GroundedTask child : children){
-//				System.out.println(child);
-////				if(child.toString().startsWith("get")){
-//					List<TransitionProb> tps = model.transitions(s, child.getAction());
-//					for(TransitionProb tp: tps){
-//						EnvironmentOutcome eo = tp.eo;
-//						System.out.println("\tProbability: " + tp.p);
-//						System.out.println("\tState:  " + eo.op);
-//						System.out.println("\tReward " + eo.r);
-//					}
-////				}
-//			}
-//		}
+		if(t.toString().startsWith("sol")){
+			System.out.println();
+			System.out.println(s + "\n");
+			List<GroundedTask> children = t.getGroundedChildTasks(s);
+			for(GroundedTask child : children){
+				System.out.println(child);
+//				if(child.toString().startsWith("get")){
+					List<TransitionProb> tps = model.transitions(s, child.getAction());
+					for(TransitionProb tp: tps){
+						EnvironmentOutcome eo = tp.eo;
+						System.out.println("\tProbability: " + tp.p);
+						System.out.println("\tReward " + eo.r);
+						System.out.println("\tState:  " + eo.op);
+					}
+//				}
+			}
+		}
 		return model;
 	}
 }
