@@ -221,4 +221,9 @@ public class RAMDPModel implements FullModel{
 		getResultingStates(hs, a);
 		this.transitions.get(hs).get(a.actionName()).put(hsp, probability);
 	}
+	
+	public boolean hasConverged(State s, Action a){
+		HashableState hs = this.hashingFactory.hashState(s);
+		return getStateActionCount(hs, a) >= mThreshold;
+	}
 }

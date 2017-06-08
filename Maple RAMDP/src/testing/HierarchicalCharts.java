@@ -28,10 +28,10 @@ public class HierarchicalCharts {
 		final GroundedTask RAMDPGroot = RAMDPRoot.getAllGroundedTasks(s).get(0); 
 		
 		SimulatedEnvironment env = new SimulatedEnvironment(domain, s);
-//		VisualActionObserver obs = new VisualActionObserver(domain, TaxiVisualizer.getVisualizer(5, 5));
-//        obs.initGUI();
-//        obs.setDefaultCloseOperation(obs.EXIT_ON_CLOSE);
-//        env.addObservers(obs);
+		VisualActionObserver obs = new VisualActionObserver(domain, TaxiVisualizer.getVisualizer(5, 5));
+        obs.initGUI();
+        obs.setDefaultCloseOperation(obs.EXIT_ON_CLOSE);
+        env.addObservers(obs);
 		
 		LearningAgentFactory rmaxq = new LearningAgentFactory() {
 			
@@ -76,6 +76,6 @@ public class HierarchicalCharts {
 		OOSADomain base = TaxiHierarchy.getGroundDomain();
 		Task RMAXQroot = TaxiHierarchy.createRMAXQHierarchy(s, fickle);
 		
-		createCrarts(s, base, RAMDProot, RMAXQroot, 30, 1, 0.01, 0.9, 300, 10);
+		createCrarts(s, base, RAMDProot, RMAXQroot, 30, 3, 0.01, 0.9, 300, 10);
 	}
 }

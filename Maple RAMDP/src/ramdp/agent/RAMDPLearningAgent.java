@@ -55,6 +55,8 @@ public class RAMDPLearningAgent implements LearningAgent{
 	private HashableStateFactory hashingFactory;
 	
 	private double maxDelta;
+	
+	private Episode e;
 	/**
 	 * 
 	 * @param root
@@ -80,15 +82,18 @@ public class RAMDPLearningAgent implements LearningAgent{
 	@Override
 	public Episode runLearningEpisode(Environment env, int maxSteps) {
 		steps = 0;
-		Episode e = new Episode(env.currentObservation());
-		return solveTask(root, e, env, maxSteps);
+		e = new Episode(env.currentObservation());
+		solveTask(root, e, env, maxSteps);
+		return e;
 	}
 
-	protected Episode solveTask(GroundedTask task, Episode e, Environment baseEnv, int maxSteps){
+	protected boolean solveTask(GroundedTask task, Episode e, Environment baseEnv, int maxSteps){
 		State baseState = e.stateSequence.get(e.stateSequence.size() - 1);
 		State currentState = task.mapState(baseState);
+		boolean pathConverged = true;
 		
 		while(!task.isTerminal(currentState) && (steps < maxSteps || maxSteps == -1)){
+			boolean actionCoverged = false;
 			Action a = nextAction(task, currentState);
 			EnvironmentOutcome result;
 
@@ -98,6 +103,7 @@ public class RAMDPLearningAgent implements LearningAgent{
 				action = this.taskNames.get(a.actionName());
 			}
 			if(action.isPrimitive()){
+				actionCoverged = true;
 				result = baseEnv.executeAction(a);
 				e.transition(result);
 				baseState = result.op;
@@ -107,28 +113,31 @@ public class RAMDPLearningAgent implements LearningAgent{
 //				System.out.println( " child " + a.actionName());//(task.getGroundedChildTasks(currentState)
 				//get child task
 				result = task.executeAction(currentState, a);
-				e = solveTask(action, e, baseEnv, maxSteps);
-				
-				currentState = result.op;
-//				baseState = e.stateSequence.get(e.stateSequence.size() - 1);
-//				currentState = task.mapState(baseState);
-//				result.op = currentState;
+				actionCoverged = solveTask(action, e, baseEnv, maxSteps);
+   
+				baseState = e.stateSequence.get(e.stateSequence.size() - 1);
+				currentState = task.mapState(baseState);
+				result.op = currentState;
 			}
 			task.fixReward(result);
 			
-			if(task.toString().startsWith("sol")){
-				System.out.println(result.o);
-				System.out.println(result.op);
-				System.out.println(result.a);
-				System.out.println(result.r);
-				System.out.println();
-			}
+//			if(task.toString().startsWith("sol")){
+//				System.out.println(result.o);
+//				System.out.println(result.op);
+//				System.out.println(result.a);
+//				System.out.println(result.r);
+//				System.out.println();
+//			}
 			//update task model
 			RAMDPModel model = getModel(task, currentState);
-			model.updateModel(result);
+			pathConverged = pathConverged && actionCoverged && model.hasConverged(result.o, result.a);
+			if(actionCoverged){
+				model.updateModel(result);
+				System.out.println(task + " " + action );
+			}
 		}
 		
-		return e;
+		return pathConverged;
 	}
 	
 	protected void addChildrenToMap(GroundedTask gt, State s){
