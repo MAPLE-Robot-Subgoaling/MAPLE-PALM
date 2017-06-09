@@ -1,12 +1,9 @@
 package ramdp.agent;
 
-import hierarchy.framework.GroundedTask;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import utilities.ValueIteration;
 import burlap.behavior.policy.Policy;
 import burlap.behavior.singleagent.Episode;
 import burlap.behavior.singleagent.learning.LearningAgent;
@@ -17,6 +14,9 @@ import burlap.mdp.singleagent.environment.EnvironmentOutcome;
 import burlap.mdp.singleagent.model.TransitionProb;
 import burlap.mdp.singleagent.oo.OOSADomain;
 import burlap.statehashing.HashableStateFactory;
+import hierarchy.framework.GroundedTask;
+import taxi.amdp.level1.state.TaxiL1State;
+import utilities.ValueIteration;
 
 public class RAMDPLearningAgent implements LearningAgent{
 
@@ -90,7 +90,10 @@ public class RAMDPLearningAgent implements LearningAgent{
 	protected boolean solveTask(GroundedTask task, Episode e, Environment baseEnv, int maxSteps){
 		State baseState = e.stateSequence.get(e.stateSequence.size() - 1);
 		State currentState = task.mapState(baseState);
-		
+
+		if(task.toString().startsWith("get"
+				+ ""))
+			System.out.println(currentState);
 		while(!task.isTerminal(currentState) && (steps < maxSteps || maxSteps == -1)){
 			boolean subtaskCompleted = false;
 			Action a = nextAction(task, currentState);
@@ -115,16 +118,32 @@ public class RAMDPLearningAgent implements LearningAgent{
 				subtaskCompleted = solveTask(action, e, baseEnv, maxSteps);
    
 				baseState = e.stateSequence.get(e.stateSequence.size() - 1);
+				
+				if(task.toString().startsWith("get")){
+					TaxiL1State s = (TaxiL1State) currentState;
+					currentState = task.mapState(baseState);
+					TaxiL1State sp = (TaxiL1State) currentState;
+//					if(!sp.passengers.get(0).inTaxi){
+//						if(task.isComplete(currentState)){
+//							System.out.println(s);
+//							System.out.println(a);
+//							System.out.println(sp);
+//							System.out.println();
+//						}
+//					}
+				}
+				
 				currentState = task.mapState(baseState);
 				result.op = currentState;
 			}
 			task.fixReward(result);
 			
 //			if(task.toString().startsWith("sol")){
-//				System.out.println(result.o);
-//				System.out.println(result.op);
-//				System.out.println(result.a);
-//				System.out.println(result.r);
+////				System.out.println(result.o);
+////				System.out.println(result.op);
+//				System.out.print(result.a);
+//				System.out.print(" " + result.r + " ");
+//				System.out.print(subtaskCompleted);
 //				System.out.println();
 //			}
 			//update task model
@@ -165,23 +184,26 @@ public class RAMDPLearningAgent implements LearningAgent{
 			this.models.put(t, model);
 		}
 
-		if(t.toString().startsWith("sol")){
-			System.out.println();
-			System.out.println(s + "\n");
-			List<GroundedTask> children = t.getGroundedChildTasks(s);
-			for(GroundedTask child : children){
-				System.out.println(child);
+//		if(t.toString().startsWith("sol")){
+//			System.out.println();
+//			System.out.println(s + "\n");
+//			List<GroundedTask> children = t.getGroundedChildTasks(s);
+//			for(GroundedTask child : children){
+//				System.out.println(child);
 //				if(child.toString().startsWith("get")){
-					List<TransitionProb> tps = model.transitions(s, child.getAction());
-					for(TransitionProb tp: tps){
-						EnvironmentOutcome eo = tp.eo;
-						System.out.println("\tProbability: " + tp.p);
-						System.out.println("\tReward " + eo.r);
-						System.out.println("\tState:  " + eo.op);
-					}
+//					List<TransitionProb> tps = model.transitions(s, child.getAction());
+//					for(TransitionProb tp: tps){
+//						if(tp.p != 1){
+//							EnvironmentOutcome eo = tp.eo;
+//							System.out.println("\tProbability: " + tp.p);
+//							System.out.println("\tReward " + eo.r);
+//							System.out.println("\tState:  " + eo.op);
+//							System.out.println();
+//						}
+//					}
 //				}
-			}
-		}
+//			}
+//		}
 		return model;
 	}
 }

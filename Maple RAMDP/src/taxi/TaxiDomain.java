@@ -447,10 +447,8 @@ public class TaxiDomain implements DomainGenerator{
 
                 return transitions;
             }
-            // not a move action!
             if(actionInd==4){
                 //pick
-
                 TaxiState ns = (TaxiState)s.copy();
                 TaxiAgent taxi = ns.touchTaxi();
                 int tx = taxi.x;
@@ -462,22 +460,6 @@ public class TaxiDomain implements DomainGenerator{
                     for(ObjectInstance p : passengers){
                         int px = ((TaxiPassenger)p).x;
                         int py = ((TaxiPassenger)p).y;
-                        boolean passengerPicked = ((TaxiPassenger) p).pickedUpAtLeastOnce;
-
-                        String goalLocation = ((TaxiPassenger) p).goalLocation;
-
-                        String currentLocation = "";
-                        List<TaxiLocation> locations = ns.locations;
-                        for(TaxiLocation l : locations){
-                            if (l.x==px && l.y==py){
-                                currentLocation = l.colour;
-                                break;
-                            }
-                        }
-
-                        if(currentLocation.equals(goalLocation) && passengerPicked){
-                            continue;
-                        }
 
                         if(tx == px && ty == py ){
                             int passID = ns.passengerInd(((TaxiPassenger)p).name());
@@ -490,12 +472,10 @@ public class TaxiDomain implements DomainGenerator{
                             np.pickedUpAtLeastOnce = true;
                             break;
                         }
-
                     }
                 }
                 transitions.add(new StateTransitionProb(ns, 1.0));
                 return transitions;
-
             }
 
             if(actionInd==5){
@@ -510,21 +490,16 @@ public class TaxiDomain implements DomainGenerator{
                     for(ObjectInstance p : passengers){
                         boolean in = ((TaxiPassenger)p).inTaxi;
                         if(in){
-                            String goalLocation = ((TaxiPassenger)p).goalLocation;
                             for(ObjectInstance l :locationList){
-//                                if(goalLocation.equals(((TaxiLocation)l).colour)){
-                                    if(((TaxiLocation)l).x==((TaxiPassenger)p).x
-                                            && ((TaxiLocation)l).y==((TaxiPassenger)p).y){
-                                        int passID = ns.passengerInd(((TaxiPassenger)p).name());
-                                        TaxiPassenger np = ns.touchPassenger(passID);
-                                        np.inTaxi = false;
-                                        taxi.taxiOccupied = false;
-                                        break;
-                                    }
-//                                }
+                                if(((TaxiLocation) l).x == ((TaxiPassenger) p).x
+                                        && ((TaxiLocation) l).y == ((TaxiPassenger) p).y){
+                                    int passID = ns.passengerInd(((TaxiPassenger) p).name());
+                                    TaxiPassenger np = ns.touchPassenger(passID);
+                                    np.inTaxi = false;
+                                    taxi.taxiOccupied = false;
+                                    break;
+                                }
                             }
-
-
                         }
                     }
                 }

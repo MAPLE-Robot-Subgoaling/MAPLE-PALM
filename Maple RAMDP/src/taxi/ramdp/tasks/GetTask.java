@@ -27,8 +27,7 @@ public class GetTask extends NonprimitiveTask {
 
 	@Override
 	public boolean isTerminal(State s, Action a) {
-		TaxiL1State state = (TaxiL1State) s;
-		
+		TaxiL1State state = (TaxiL1State) s;		
 		return state.taxi.taxiOccupied;
 	}
 	
