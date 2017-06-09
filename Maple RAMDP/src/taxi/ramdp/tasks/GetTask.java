@@ -28,7 +28,13 @@ public class GetTask extends NonprimitiveTask {
 	@Override
 	public boolean isTerminal(State s, Action a) {
 		TaxiL1State state = (TaxiL1State) s;		
-		return state.taxi.taxiOccupied;
+//		return state.taxi.taxiOccupied;
+		for(TaxiL1Passenger p : state.passengers){
+			if(p.inTaxi){
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	public boolean isComplete(State s, Action a){

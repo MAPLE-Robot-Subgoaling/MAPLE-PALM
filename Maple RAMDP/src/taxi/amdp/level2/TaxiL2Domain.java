@@ -114,10 +114,8 @@ public class TaxiL2Domain implements DomainGenerator {
             List<StateTransitionProb> transitions = new ArrayList<StateTransitionProb>();
             
             if (actionInd == 0) {
-                // navigate action!
                 getAction(s, a, transitions);
             } else if (actionInd == 1) {
-                // pick up
                 putAction(s, a, transitions);
             }
             return transitions;
@@ -144,8 +142,9 @@ public class TaxiL2Domain implements DomainGenerator {
 
             for(TaxiL2Passenger p : ns.passengers){
             	if(p.inTaxi){
-            		p.inTaxi = false;
-            		p.currentLocation = location;
+            		TaxiL2Passenger p2 = ns.touchPassenger(p.name());
+            		p2.inTaxi = false;
+            		p2.currentLocation = location;
             		break;
             	}
             }

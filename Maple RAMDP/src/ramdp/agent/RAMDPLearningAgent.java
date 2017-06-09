@@ -16,6 +16,7 @@ import burlap.mdp.singleagent.oo.OOSADomain;
 import burlap.statehashing.HashableStateFactory;
 import hierarchy.framework.GroundedTask;
 import taxi.amdp.level1.state.TaxiL1State;
+import taxi.amdp.level2.state.TaxiL2State;
 import utilities.ValueIteration;
 
 public class RAMDPLearningAgent implements LearningAgent{
@@ -83,22 +84,24 @@ public class RAMDPLearningAgent implements LearningAgent{
 	public Episode runLearningEpisode(Environment env, int maxSteps) {
 		steps = 0;
 		e = new Episode(env.currentObservation());
-		solveTask(root, e, env, maxSteps);
+		solveTask(root, env, maxSteps);
 		return e;
 	}
 
-	protected boolean solveTask(GroundedTask task, Episode e, Environment baseEnv, int maxSteps){
+	protected boolean solveTask(GroundedTask task, Environment baseEnv, int maxSteps){
 		State baseState = e.stateSequence.get(e.stateSequence.size() - 1);
 		State currentState = task.mapState(baseState);
 
-		if(task.toString().startsWith("get"
-				+ ""))
-			System.out.println(currentState);
+		
 		while(!task.isTerminal(currentState) && (steps < maxSteps || maxSteps == -1)){
 			boolean subtaskCompleted = false;
 			Action a = nextAction(task, currentState);
 			EnvironmentOutcome result;
 
+//			if(task.toString().startsWith("get")){
+//				System.out.println(a);
+//				System.out.println(currentState);
+//			}
 			GroundedTask action = this.taskNames.get(a.actionName());
 			if(action == null){
 				addChildrenToMap(task, currentState);
@@ -115,26 +118,20 @@ public class RAMDPLearningAgent implements LearningAgent{
 //				System.out.println( " child " + a.actionName());//(task.getGroundedChildTasks(currentState)
 				//get child task
 				result = task.executeAction(currentState, a);
-				subtaskCompleted = solveTask(action, e, baseEnv, maxSteps);
+				subtaskCompleted = solveTask(action, baseEnv, maxSteps);
    
 				baseState = e.stateSequence.get(e.stateSequence.size() - 1);
 				
-				if(task.toString().startsWith("get")){
-					TaxiL1State s = (TaxiL1State) currentState;
-					currentState = task.mapState(baseState);
-					TaxiL1State sp = (TaxiL1State) currentState;
-//					if(!sp.passengers.get(0).inTaxi){
-//						if(task.isComplete(currentState)){
-//							System.out.println(s);
-//							System.out.println(a);
-//							System.out.println(sp);
-//							System.out.println();
-//						}
-//					}
-				}
-				
 				currentState = task.mapState(baseState);
 				result.op = currentState;
+				
+	   			if(action.toString().startsWith("get")){
+					TaxiL2State sp = (TaxiL2State) result.op;
+					if(!sp.passengers.get(0).inTaxi){
+						System.out.println(sp);
+						System.out.println();
+					}
+				}
 			}
 			task.fixReward(result);
 			
@@ -154,6 +151,19 @@ public class RAMDPLearningAgent implements LearningAgent{
 			}
 		}
 		
+//		if(task.toString().startsWith("get")){
+//			if(task.isComplete(currentState)){
+//				System.out.println(currentState);
+//				task.isTerminal(currentState);
+//				task.isComplete(currentState);
+//			}
+//		}
+//		if(task.toString().startsWith("get")){
+//			TaxiL1State test = (TaxiL1State) currentState;
+//			if(!test.passengers.get(0).inTaxi){
+////				System.out.println(test);
+//			}
+//		}
 		return task.isComplete(currentState);
 	}
 	
@@ -186,7 +196,7 @@ public class RAMDPLearningAgent implements LearningAgent{
 
 //		if(t.toString().startsWith("sol")){
 //			System.out.println();
-//			System.out.println(s + "\n");
+////			System.out.println(s + "\n");
 //			List<GroundedTask> children = t.getGroundedChildTasks(s);
 //			for(GroundedTask child : children){
 //				System.out.println(child);
@@ -197,7 +207,8 @@ public class RAMDPLearningAgent implements LearningAgent{
 //							EnvironmentOutcome eo = tp.eo;
 //							System.out.println("\tProbability: " + tp.p);
 //							System.out.println("\tReward " + eo.r);
-//							System.out.println("\tState:  " + eo.op);
+//							System.out.println("s: " + eo.o);
+//							System.out.println("\tSp:  " + eo.op);
 //							System.out.println();
 //						}
 //					}

@@ -10,6 +10,7 @@ import burlap.mdp.singleagent.common.VisualActionObserver;
 import burlap.mdp.singleagent.environment.SimulatedEnvironment;
 import burlap.mdp.singleagent.oo.OOSADomain;
 import burlap.statehashing.HashableStateFactory;
+import burlap.statehashing.simple.SimpleHashableStateFactory;
 import hierarchy.framework.GroundedTask;
 import hierarchy.framework.Task;
 import ramdp.agent.RAMDPLearningAgent;
@@ -17,8 +18,8 @@ import rmaxq.agent.RmaxQLearningAgent;
 import taxi.TaxiDomain;
 import taxi.TaxiVisualizer;
 import taxi.hierarchies.TaxiHierarchy;
+
 import taxi.state.TaxiState;
-import utilities.SimpleHashableStateFactory;
 
 public class HierarchicalLearnerTest {
 
@@ -29,7 +30,7 @@ public class HierarchicalLearnerTest {
 		GroundedTask rootgt = root.getAllGroundedTasks(initial).get(0);
 		
 		RAMDPLearningAgent ramdp = new RAMDPLearningAgent(rootgt, threshold, discount, rmax, 
-				new SimpleHashableStateFactory(), maxDelta);
+				new SimpleHashableStateFactory(true), maxDelta);
 		
 		SimulatedEnvironment env = new SimulatedEnvironment(groundDomain, initial);
 		VisualActionObserver obs = new VisualActionObserver(groundDomain, TaxiVisualizer.getVisualizer(5, 5));
@@ -54,7 +55,7 @@ public class HierarchicalLearnerTest {
 	
 	public static void runRMAXQEpsodes(int numEpisodes, Task root, State initState, double vmax,
 			int threshold, double maxDelta, OOSADomain domain){
-		HashableStateFactory hs = new SimpleHashableStateFactory();
+		HashableStateFactory hs = new SimpleHashableStateFactory(true);
 		
 		SimulatedEnvironment env = new SimulatedEnvironment(domain, initState);
 //		VisualActionObserver obs = new VisualActionObserver(domain, TaxiVisualizer.getVisualizer(5, 5));

@@ -1,6 +1,6 @@
 package ramdp.agent;
 
-import java.util.ArrayList;
+import java.util.ArrayList; 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -97,7 +97,8 @@ public class RAMDPModel implements FullModel{
 		for(HashableState hsprime : resultingStates.keySet()){
 			EnvironmentOutcome eo = new EnvironmentOutcome(s, a, hsprime.s(),
 					reward, node.isTerminal(hsprime.s()));
-			tps.add(new TransitionProb(resultingStates.get(hsprime), eo));
+			double p = resultingStates.get(hsprime);
+			tps.add( new TransitionProb(p, eo));
 		}
 		return tps; 
 	}

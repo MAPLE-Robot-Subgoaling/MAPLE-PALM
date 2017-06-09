@@ -34,7 +34,7 @@ public class L2StateMapper implements StateMapping{
             TaxiL2Passenger p1 = new TaxiL2Passenger(p0.name(), p0.inTaxi, p0.goalLocation, ON_ROAD, p0.pickedUpAtLeastOnce);
             for(TaxiLocation l0 : sL0.locations){
                 if(xp==l0.x && yp==l0.y){
-                    p1.currentLocation = l0.colour;
+                     p1.currentLocation = l0.colour;
                     break;
                 }
             }
