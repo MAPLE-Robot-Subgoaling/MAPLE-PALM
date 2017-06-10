@@ -98,10 +98,6 @@ public class RAMDPLearningAgent implements LearningAgent{
 			Action a = nextAction(task, currentState);
 			EnvironmentOutcome result;
 
-//			if(task.toString().startsWith("get")){
-//				System.out.println(a);
-//				System.out.println(currentState);
-//			}
 			GroundedTask action = this.taskNames.get(a.actionName());
 			if(action == null){
 				addChildrenToMap(task, currentState);
@@ -115,34 +111,21 @@ public class RAMDPLearningAgent implements LearningAgent{
 				currentState = result.op;
 				steps++;
 			}else{
-//				System.out.println( " child " + a.actionName());//(task.getGroundedChildTasks(currentState)
-				//get child task
 				result = task.executeAction(currentState, a);
 				subtaskCompleted = solveTask(action, baseEnv, maxSteps);
    
 				baseState = e.stateSequence.get(e.stateSequence.size() - 1);
-				
 				currentState = task.mapState(baseState);
 				result.op = currentState;
-				
-	   			if(action.toString().startsWith("get")){
-					TaxiL2State sp = (TaxiL2State) result.op;
-					if(!sp.passengers.get(0).inTaxi){
-						System.out.println(sp);
-						System.out.println();
-					}
-				}
 			}
-			task.fixReward(result);
 			
-//			if(task.toString().startsWith("sol")){
-////				System.out.println(result.o);
-////				System.out.println(result.op);
-//				System.out.print(result.a);
-//				System.out.print(" " + result.r + " ");
-//				System.out.print(subtaskCompleted);
-//				System.out.println();
-//			}
+			task.fixReward(result);
+
+			if(task.toString().startsWith("sol")){
+				System.out.print(result.a);
+				System.out.print(" \t" + result.r);
+				System.out.println("\t" + subtaskCompleted);
+			}
 			//update task model
 			RAMDPModel model = getModel(task, currentState);
 			if(subtaskCompleted){
@@ -196,22 +179,17 @@ public class RAMDPLearningAgent implements LearningAgent{
 
 //		if(t.toString().startsWith("sol")){
 //			System.out.println();
-////			System.out.println(s + "\n");
 //			List<GroundedTask> children = t.getGroundedChildTasks(s);
 //			for(GroundedTask child : children){
 //				System.out.println(child);
-//				if(child.toString().startsWith("get")){
-//					List<TransitionProb> tps = model.transitions(s, child.getAction());
-//					for(TransitionProb tp: tps){
-//						if(tp.p != 1){
-//							EnvironmentOutcome eo = tp.eo;
-//							System.out.println("\tProbability: " + tp.p);
-//							System.out.println("\tReward " + eo.r);
-//							System.out.println("s: " + eo.o);
-//							System.out.println("\tSp:  " + eo.op);
-//							System.out.println();
-//						}
-//					}
+//				List<TransitionProb> tps = model.transitions(s, child.getAction());
+//				for(TransitionProb tp: tps){
+//					EnvironmentOutcome eo = tp.eo;
+//					System.out.println("\tProbability: " + tp.p);
+//					System.out.println("\tReward " + eo.r);
+//					System.out.println("s: " + eo.o);
+//					System.out.println("\tSp:  " + eo.op);
+//					System.out.println();
 //				}
 //			}
 //		}

@@ -24,7 +24,7 @@ import taxi.state.TaxiState;
 public class HierarchicalCharts {
 
 	public static void createCrarts(final State s, OOSADomain domain, final Task RAMDPRoot, final Task RMEXQRoot, 
-			final int rmax, final int threshold, final double maxDelta, final double discount, int numEpisode, int numTrial){
+			final double rmax, final int threshold, final double maxDelta, final double discount, int numEpisode, int numTrial){
 		final HashableStateFactory hs = new SimpleHashableStateFactory(true);
 		final GroundedTask RAMDPGroot = RAMDPRoot.getAllGroundedTasks(s).get(0); 
 		
@@ -77,6 +77,12 @@ public class HierarchicalCharts {
 		OOSADomain base = TaxiHierarchy.getGroundDomain();
 		Task RMAXQroot = TaxiHierarchy.createRMAXQHierarchy(s, fickle);
 		
-		createCrarts(s, base, RAMDProot, RMAXQroot, 20, 1, 0.01, 0.9, 300, 10);
+		double rmax = 20;
+		int threshold = 1;
+		double viDelta = 0.01;
+		double gamma = 0.9;
+		int episodeCount = 100;
+		int trialCount = 10;
+		createCrarts(s, base, RAMDProot, RMAXQroot, rmax, threshold, viDelta, gamma, episodeCount, trialCount);
 	}
 }
