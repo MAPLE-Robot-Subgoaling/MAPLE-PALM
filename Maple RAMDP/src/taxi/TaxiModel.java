@@ -221,6 +221,10 @@ public class TaxiModel implements FullStateModel{
 			return Taxi.IND_SOUTH;
 		else if(aname.equals(Taxi.ACTION_WEST))
 			return Taxi.IND_WEST;
+		else if(aname.equals(Taxi.ACTION_PICKUP))
+			return Taxi.IND_PICKUP;
+		else if(aname.equals(Taxi.ACTION_DROPOFF))
+			return Taxi.IND_DROPOFF;
 		throw new RuntimeException("Invalid action " + aname);
 	}
 }

@@ -7,6 +7,7 @@ import burlap.behavior.policy.Policy;
 import burlap.behavior.policy.PolicyUtils;
 import burlap.behavior.singleagent.Episode;
 import burlap.behavior.singleagent.auxiliary.EpisodeSequenceVisualizer;
+import burlap.behavior.singleagent.learning.tdmethods.QLearning;
 import burlap.behavior.singleagent.planning.stochastic.valueiteration.ValueIteration;
 import burlap.mdp.auxiliary.DomainGenerator;
 import burlap.mdp.core.TerminalFunction;
@@ -59,7 +60,10 @@ public class Taxi implements DomainGenerator{
 	public static final String COLOR_RED = 					"red";
 	public static final String COLOR_YELLOW = 				"yellow";
 	public static final String COLOR_GREEN = 				"green";
-	public static final String COLOR_GLUE = 				"blue";
+	public static final String COLOR_BLUE = 				"blue";
+	public static final String COLOR_MAGENTA =				"magenta";
+	public static final String COLOR_BLACK = 				"black";
+	public static final String COLOR_GRAY =					"gray";
 	
 	//actions
 	public static final int NUM_MOVE_ACTIONS = 				4;
@@ -164,17 +168,20 @@ public class Taxi implements DomainGenerator{
 		OOSADomain domain = taxiBuild.generateDomain();
 				
 		HashableStateFactory hs = new SimpleHashableStateFactory();
-		ValueIteration vi = new ValueIteration(domain, 0.95, hs, 0.01, 10);
-		
+
 		State s = TaxiStateFactory.createClassicState();
-		Policy p = vi.planFromState(s);
-		
 		SimulatedEnvironment env = new SimulatedEnvironment(domain, s);
-		Episode e = PolicyUtils.rollout(p, env);
-		
+
 		List<Episode> eps = new ArrayList<Episode>();
-		eps.add(e);
-		EpisodeSequenceVisualizer v = new EpisodeSequenceVisualizer(TaxiVisualizer.getVisualizer(),
+		QLearning qagent = new QLearning(domain, 0.95, hs, 0, 0.1);
+		
+		for(int i = 0; i < 1; i++){
+			Episode e = qagent.runLearningEpisode(env, 500);
+			eps.add(e);
+			env.resetEnvironment();
+		}
+		
+		EpisodeSequenceVisualizer v = new EpisodeSequenceVisualizer(TaxiVisualizer.getVisualizer(5, 5),
 				domain, eps);
 		v.setDefaultCloseOperation(v.EXIT_ON_CLOSE);
 		v.initGUI();

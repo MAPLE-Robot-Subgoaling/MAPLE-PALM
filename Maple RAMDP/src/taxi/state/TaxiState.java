@@ -201,11 +201,19 @@ public class TaxiState implements MutableOOState{
 	
 	//get values from objects
 	public String[] getPassengers(){
-		return (String[]) passengers.keySet().toArray();
+		String[] ret = new String[passengers.size()];
+		int i = 0;
+		for(String name : passengers.keySet())
+			ret[i++] = name;
+		return ret;
 	}
 	
 	public String[] getLocations(){
-		return (String[]) locations.keySet().toArray();
+		String[] ret = new String[locations.size()];
+		int i = 0;
+		for(String name : locations.keySet())
+			ret[i++] = name;
+		return ret;
 	}
 	
 	public Object getTaxiAtt(String attName){
@@ -230,7 +238,7 @@ public class TaxiState implements MutableOOState{
 			int wlen = (int) w.get(Taxi.ATT_LENGTH);
 			if(ish){
 				//wall in above line
-				if(ty == wy + 1){
+				if(ty == wy - 1){
 					//x value in wall bounds 
 					if(tx >= wx && tx < wx + wlen){
 						return true;
@@ -251,7 +259,7 @@ public class TaxiState implements MutableOOState{
 			int wy = (int) w.get(Taxi.ATT_START_Y);
 			int wlen = (int) w.get(Taxi.ATT_LENGTH);
 			if(!ish){
-				if(tx == wx + 1){
+				if(tx == wx - 1){
 					if(ty >= wy && ty < wy + wlen){
 						return true;
 					}

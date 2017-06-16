@@ -20,7 +20,7 @@ public class TaxiLocation extends MutableObject {
 		this(name, (Object) x, (Object) y, (Object) color);
 	}
 	
-	public TaxiLocation(String name, Object x, Object y, Object color) {
+	private TaxiLocation(String name, Object x, Object y, Object color) {
 		this.set(Taxi.ATT_X, x);
 		this.set(Taxi.ATT_Y, y);
 		this.set(Taxi.ATT_COLOR, color);
