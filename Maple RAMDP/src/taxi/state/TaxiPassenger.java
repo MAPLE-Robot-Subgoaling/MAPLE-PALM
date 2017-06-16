@@ -15,29 +15,38 @@ public class TaxiPassenger extends MutableObject{
 			Taxi.ATT_Y,
 			Taxi.ATT_IN_TAXI,
 			Taxi.ATT_GOAL_LOCATION,
-			Taxi.ATT_JUST_PICKED_UP
+			Taxi.ATT_JUST_PICKED_UP,
+			Taxi.ATT_PICKED_UP_AT_LEAST_ONCE
 			);
 	
 	public TaxiPassenger(String name, int x, int y, String goalLocation){
-		this(name, (Object) x, (Object) y, (Object) goalLocation, false, false);
+		this(name, (Object) x, (Object) y, (Object) goalLocation, false, false, false);
 	}
 	
 	public TaxiPassenger(String name, int x, int y, String goalLocation, boolean inTaxi){
-		this(name, (Object) x, (Object) y, (Object) goalLocation, (Object) inTaxi, false);
+		this(name, (Object) x, (Object) y, (Object) goalLocation, (Object) inTaxi, false, false);
 	}
 	
 	public TaxiPassenger(String name, int x, int y, String goalLocation, boolean inTaxi,
 			boolean justPickedUp){
-		this(name, (Object) x, (Object) y, (Object) goalLocation, (Object) inTaxi, (Object) justPickedUp);
+		this(name, (Object) x, (Object) y, (Object) goalLocation, (Object) inTaxi, (Object) justPickedUp,
+				false);
+	}
+	
+	public TaxiPassenger(String name, int x, int y, String goalLocation, boolean inTaxi,
+			boolean justPickedUp, boolean pickedUpAlLeastOnce){
+		this(name, (Object) x, (Object) y, (Object) goalLocation, (Object) inTaxi, (Object) justPickedUp,
+				(Object) pickedUpAlLeastOnce);
 	}
 	
 	private TaxiPassenger(String name, Object x, Object y, Object goalLocation, Object inTaxi,
-			Object justPickedUp){
+			Object justPickedUp, Object pickedUpAtLeastOnce){
 		this.set(Taxi.ATT_X, x);
 		this.set(Taxi.ATT_Y, y);
 		this.set(Taxi.ATT_GOAL_LOCATION, goalLocation);
 		this.set(Taxi.ATT_IN_TAXI, inTaxi);
 		this.set(Taxi.ATT_JUST_PICKED_UP, justPickedUp);
+		this.set(Taxi.ATT_PICKED_UP_AT_LEAST_ONCE, pickedUpAtLeastOnce);
 		this.setName(name);
 	}
 	
@@ -50,13 +59,14 @@ public class TaxiPassenger extends MutableObject{
 				get(Taxi.ATT_Y),
 				get(Taxi.ATT_GOAL_LOCATION),
 				get(Taxi.ATT_IN_TAXI),
-				get(Taxi.ATT_JUST_PICKED_UP)
+				get(Taxi.ATT_JUST_PICKED_UP),
+				get(Taxi.ATT_PICKED_UP_AT_LEAST_ONCE)
 				);
 	}
 	
 	@Override
-	public State copy() {
-		return copyWithName(name());
+	public TaxiPassenger copy() {
+		return (TaxiPassenger) copyWithName(name());
 	}
 	
 	@Override

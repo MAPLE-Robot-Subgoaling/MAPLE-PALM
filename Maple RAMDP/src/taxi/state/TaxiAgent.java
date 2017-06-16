@@ -37,8 +37,8 @@ public class TaxiAgent extends MutableObject {
 	}
 
 	@Override
-	public State copy() {
-		return copyWithName(name());
+	public TaxiAgent copy() {
+		return (TaxiAgent) copyWithName(name());
 	}
 
 	@Override

@@ -35,8 +35,8 @@ public class TaxiWall extends MutableObject {
 	}
 
 	@Override
-	public State copy() {
-		return copyWithName(name());
+	public TaxiWall copy() {
+		return (TaxiWall) copyWithName(name());
 	}
 	
 	@Override

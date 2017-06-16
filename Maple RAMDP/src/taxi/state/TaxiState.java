@@ -8,6 +8,7 @@ import java.util.Map;
 
 import burlap.mdp.core.oo.state.MutableOOState;
 import burlap.mdp.core.oo.state.OOStateUtilities;
+import burlap.mdp.core.oo.state.OOVariableKey;
 import burlap.mdp.core.oo.state.ObjectInstance;
 import burlap.mdp.core.state.MutableState;
 import burlap.mdp.core.state.State;
@@ -38,6 +39,14 @@ public class TaxiState implements MutableOOState{
 		for(TaxiWall w : walls){
 			this.walls.put(w.name(), w);
 		}
+	}
+	
+	public TaxiState(TaxiAgent t, Map<String, TaxiPassenger> pass, Map<String, TaxiLocation> locs,
+			Map<String, TaxiWall> walls) {
+		this.taxi = t;
+		this.passengers = pass;
+		this.locations = locs;
+		this.walls = walls;
 	}
 	
 	@Override
@@ -85,6 +94,7 @@ public class TaxiState implements MutableOOState{
 			return new ArrayList<ObjectInstance>(locations.values());
 		else if(oclass.equals(Taxi.CLASS_WALL))
 			return new ArrayList<ObjectInstance>(walls.values());
+		throw new RuntimeException("No object class " + oclass);
 	}
 
 	@Override
@@ -98,35 +108,196 @@ public class TaxiState implements MutableOOState{
 	}
 
 	@Override
-	public State copy() {
-		List<TaxiPassenger> pass = new ArrayList<TaxiPassenger>(passengers.values());
-		List<TaxiLocation> locs = new ArrayList<TaxiLocation>(locations.values());
-		List<TaxiWall> wall = new ArrayList<TaxiWall>(walls.values());
-		return new TaxiState(taxi, pass, locs, wall);
+	public TaxiState copy() {
+		return new TaxiState(taxi, passengers, locations, walls);
 	}
 
 	@Override
 	public MutableState set(Object variableKey, Object value) {
-		// TODO Auto-generated method stub
-		return null;
+		OOVariableKey key = OOStateUtilities.generateKey(variableKey);
+		
+		if(key.obName.equals(taxi.name())){
+			touchTaxi().set(variableKey, value);
+		}else if(passengers.get(key.obName) != null){
+			touchPassenger(key.obName).set(variableKey, value);
+		}else if(locations.get(key.obName) != null){
+			touchLocation(key.obName).set(variableKey, value);
+		}else if(walls.get(key.obName) != null){
+			touchWall(key.obName).set(variableKey, value);
+		} else {
+			throw new RuntimeException("ERROR: unable to set value for " + variableKey);
+		}
+		return this;
 	}
 
 	@Override
 	public MutableOOState addObject(ObjectInstance o) {
-		// TODO Auto-generated method stub
-		return null;
+		if(o instanceof TaxiAgent || o.className().equals(Taxi.CLASS_TAXI)){
+			touchTaxi();
+			taxi = (TaxiAgent) o;
+		}else if(o instanceof TaxiPassenger || o.className().equals(Taxi.CLASS_PASSENGER)){
+			touchPassengers().put(o.name(), (TaxiPassenger) o);			
+		}else if(o instanceof TaxiLocation || o.className().equals(Taxi.CLASS_LOCATION)){
+			touchLocations().put(o.name(), (TaxiLocation) o);
+		}else if(o instanceof TaxiWall || o.className().equals(Taxi.CLASS_WALL)){
+			touchWalls().put(o.name(), (TaxiWall) o);
+		}else{
+			throw new RuntimeException("Can only add certain objects to state.");
+		}
+		return this;
 	}
 
 	@Override
 	public MutableOOState removeObject(String oname) {
-		// TODO Auto-generated method stub
-		return null;
+		throw new RuntimeException("Remove not implemented");
 	}
 
 	@Override
 	public MutableOOState renameObject(String objectName, String newName) {
-		// TODO Auto-generated method stub
-		return null;
+		throw new RuntimeException("Rename not implemented");
 	}
 
+	//copy on write
+	public TaxiAgent touchTaxi(){
+		this.taxi = taxi.copy();
+		return taxi;
+	}
+	
+	public TaxiPassenger touchPassenger(String passName){
+		TaxiPassenger p = passengers.get(passName).copy();
+		touchPassengers().remove(passName);
+		passengers.put(passName, p);
+		return p;
+	}
+	
+	public TaxiLocation touchLocation(String locName){
+		TaxiLocation l = locations.get(locName).copy();
+		touchLocations().remove(locName);
+		locations.put(locName, l);
+		return l;
+	}
+	
+	public TaxiWall touchWall(String wallName){
+		TaxiWall w = walls.get(wallName).copy();
+		touchWalls().remove(wallName);
+		walls.put(wallName, w);
+		return w;
+	}
+	
+	public Map<String, TaxiPassenger> touchPassengers(){
+		this.passengers = new HashMap<String, TaxiPassenger>(passengers);
+		return passengers;
+	}
+	
+	public Map<String, TaxiLocation> touchLocations(){
+		this.locations = new HashMap<String, TaxiLocation>(locations);
+		return locations;
+	}
+	
+	public Map<String, TaxiWall> touchWalls(){
+		this.walls = new HashMap<String, TaxiWall>(walls);
+		return walls;
+	}
+	
+	//get values from objects
+	public String[] getPassengers(){
+		return (String[]) passengers.keySet().toArray();
+	}
+	
+	public String[] getLocations(){
+		return (String[]) locations.keySet().toArray();
+	}
+	
+	public Object getTaxiAtt(String attName){
+		return taxi.get(attName);
+	}
+	
+	public Object getPassengerAtt(String passname, String attName){
+		return passengers.get(passname).get(attName);
+	}
+	
+	public Object getLocationAtt(String locName, String attName){
+		return locations.get(locName).get(attName);
+	}
+	
+	public boolean wallNorth(){
+		int tx = (int) taxi.get(Taxi.ATT_X);
+		int ty = (int) taxi.get(Taxi.ATT_Y);
+		for(TaxiWall w : walls.values()){
+			boolean ish = (boolean) w.get(Taxi.ATT_IS_HORIZONTAL);
+			int wx = (int) w.get(Taxi.ATT_START_X);
+			int wy = (int) w.get(Taxi.ATT_START_Y);
+			int wlen = (int) w.get(Taxi.ATT_LENGTH);
+			if(ish){
+				//wall in above line
+				if(ty == wy + 1){
+					//x value in wall bounds 
+					if(tx >= wx && tx < wx + wlen){
+						return true;
+					}
+				}
+			}
+		}
+		
+		return false;
+	}
+	
+	public boolean wallEast(){
+		int tx = (int) taxi.get(Taxi.ATT_X);
+		int ty = (int) taxi.get(Taxi.ATT_Y);
+		for(TaxiWall w : walls.values()){
+			boolean ish = (boolean) w.get(Taxi.ATT_IS_HORIZONTAL);
+			int wx = (int) w.get(Taxi.ATT_START_X);
+			int wy = (int) w.get(Taxi.ATT_START_Y);
+			int wlen = (int) w.get(Taxi.ATT_LENGTH);
+			if(!ish){
+				if(tx == wx + 1){
+					if(ty >= wy && ty < wy + wlen){
+						return true;
+					}
+				}
+			}
+		}
+		
+		return false;
+	}
+	
+	public boolean wallSouth(){
+		int tx = (int) taxi.get(Taxi.ATT_X);
+		int ty = (int) taxi.get(Taxi.ATT_Y);
+		for(TaxiWall w : walls.values()){
+			boolean ish = (boolean) w.get(Taxi.ATT_IS_HORIZONTAL);
+			int wx = (int) w.get(Taxi.ATT_START_X);
+			int wy = (int) w.get(Taxi.ATT_START_Y);
+			int wlen = (int) w.get(Taxi.ATT_LENGTH);
+			if(ish){
+				if(ty == wy){
+					if(tx >= wx && tx < wx + wlen){
+						return true;
+					}
+				}
+			}
+		}
+		
+		return false;
+	}
+	
+	public boolean wallWest(){
+		int tx = (int) taxi.get(Taxi.ATT_X);
+		int ty = (int) taxi.get(Taxi.ATT_Y);
+		for(TaxiWall w : walls.values()){
+			boolean ish = (boolean) w.get(Taxi.ATT_IS_HORIZONTAL);
+			int wx = (int) w.get(Taxi.ATT_START_X);
+			int wy = (int) w.get(Taxi.ATT_START_Y);
+			int wlen = (int) w.get(Taxi.ATT_LENGTH);
+			if(!ish){
+				if(tx == wx){
+					if(ty >= wy && ty < wy + wlen){
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
 }
