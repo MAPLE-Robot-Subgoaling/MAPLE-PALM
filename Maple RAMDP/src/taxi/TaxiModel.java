@@ -74,19 +74,19 @@ public class TaxiModel implements FullStateModel{
 			int dx = 0, dy = 0;
 			TaxiState ns = s.copy();
 			
-			if(action == Taxi.IND_NORTH){
+			if(outcome == Taxi.IND_NORTH){
 				if(!ns.wallNorth()){
 					dy = +1;
 				}
-			}else if(action == Taxi.IND_EAST){
+			}else if(outcome == Taxi.IND_EAST){
 				if(!ns.wallEast()){
 					dx = +1;
 				}
-			}else if(action == Taxi.IND_SOUTH){
+			}else if(outcome == Taxi.IND_SOUTH){
 				if(!ns.wallSouth()){
 					dy = -1;
 				}
-			}else if(action == Taxi.IND_WEST){
+			}else if(outcome == Taxi.IND_WEST){
 				if(!ns.wallWest()){
 					dx = -1;
 				}
@@ -103,9 +103,6 @@ public class TaxiModel implements FullStateModel{
 				boolean inTaxi = (boolean) s.getPassengerAtt(passengerName, Taxi.ATT_IN_TAXI);
 				TaxiPassenger np = ns.touchPassenger(passengerName);
 				
-				//if the taxi is moving, the passenger is no longer just picked up
-				np.set(Taxi.ATT_JUST_PICKED_UP, false);
-				
 				if(inTaxi){
 					np.set(Taxi.ATT_X, nx);
 					np.set(Taxi.ATT_Y, ny);
@@ -117,17 +114,14 @@ public class TaxiModel implements FullStateModel{
 				//find a passenger in the taxi
 				for(String passengerName : s.getPassengers()){
 					boolean inTaxi = (boolean) s.getPassengerAtt(passengerName, Taxi.ATT_IN_TAXI);
-					boolean justPickedUp = (boolean) s.getPassengerAtt(passengerName,
-							Taxi.ATT_JUST_PICKED_UP);
-					
-					if(inTaxi && !justPickedUp){
+					String passGoal = (String) s.getPassengerAtt(passengerName, 
+							Taxi.ATT_GOAL_LOCATION);					
+					if(inTaxi){
 						// may change goal
 						for(String locName : s.getLocations()){
 							TaxiState nfickles = ns.copy();
 							
 							//check if goal is the same as loc
-							String passGoal = (String) s.getPassengerAtt(passengerName, 
-									Taxi.ATT_GOAL_LOCATION);
 							if(passGoal.equals(locName)){
 								double prob = p * (1 - fickleChangeGoalProbaility);
 								tps.add(new StateTransitionProb(nfickles, prob));
@@ -135,15 +129,15 @@ public class TaxiModel implements FullStateModel{
 								//set goal to loc
 								TaxiPassenger np = nfickles.touchPassenger(passengerName);
 								np.set(Taxi.ATT_GOAL_LOCATION, locName);
-								tps.add(new StateTransitionProb(nfickles, p * fickleChangeGoalProbaility));
+								tps.add(new StateTransitionProb(nfickles, p * (fickleChangeGoalProbaility
+										/ (s.getLocations().length - 1))));
 							}
 						}
-						break;
+						continue;
 					}
 				}
-			}else{
-				tps.add(new StateTransitionProb(ns, p));
 			}
+			tps.add(new StateTransitionProb(ns, p));
 		}
 	}
 	
@@ -164,7 +158,6 @@ public class TaxiModel implements FullStateModel{
 					TaxiState ns = s.copy();
 					TaxiPassenger np = ns.touchPassenger(passengerName);
 					np.set(Taxi.ATT_IN_TAXI, true);
-					np.set(Taxi.ATT_JUST_PICKED_UP, true);
 					np.set(Taxi.ATT_PICKED_UP_AT_LEAST_ONCE, true);
 					
 					TaxiAgent ntaxi = ns.touchTaxi();
@@ -196,7 +189,6 @@ public class TaxiModel implements FullStateModel{
 							TaxiState ns = s.copy();
 							TaxiPassenger np = ns.touchPassenger(passengerName);
 							np.set(Taxi.ATT_IN_TAXI, false);
-							np.set(Taxi.ATT_JUST_PICKED_UP, false);
 							
 							TaxiAgent ntaxi = ns.touchTaxi();
 							ntaxi.set(Taxi.ATT_TAXI_OCCUPIED, false);

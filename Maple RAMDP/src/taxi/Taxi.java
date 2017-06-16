@@ -44,7 +44,6 @@ public class Taxi implements DomainGenerator{
 	//passenger attributes
 	public static final String ATT_GOAL_LOCATION = 			"goalLocation";
 	public static final String ATT_IN_TAXI = 				"inTaxi";
-	public static final String ATT_JUST_PICKED_UP = 		"justPickedUp";
 	public static final String ATT_PICKED_UP_AT_LEAST_ONCE ="pickedUpAtLeastOnce";
 	
 	//location attributes 
@@ -114,11 +113,7 @@ public class Taxi implements DomainGenerator{
 	}
 	
 	public Taxi() {
-		this.rf = new TaxiRewardFunction();
-		this.tf = new TaxiTerminalFunction();
-		this.fickle = false;
-		this.fickleProbability = 0;
-		setMoveDynamics(1);
+		this(false, 0, 1);
 	}
 	
 	private void setMoveDynamics(double correctProb){
@@ -130,7 +125,7 @@ public class Taxi implements DomainGenerator{
 					moveDynamics[choose][outcome] = correctProb;
 				}
 				// the two directions which are one away get the rest of prob
-				else if(Math.abs(choose - outcome) == 1){
+				else if(Math.abs(choose - outcome) % 2 == 1){
 					moveDynamics[choose][outcome] = (1 - correctProb) / 2;
 				}else{
 					moveDynamics[choose][outcome] = 0;
@@ -164,7 +159,7 @@ public class Taxi implements DomainGenerator{
 	
 	public static void main(String[] args) {
 		
-		Taxi taxiBuild = new Taxi();
+		Taxi taxiBuild = new Taxi(false, 0.05, 0.8);
 		OOSADomain domain = taxiBuild.generateDomain();
 				
 		HashableStateFactory hs = new SimpleHashableStateFactory();

@@ -219,6 +219,10 @@ public class TaxiState implements MutableOOState{
 	public Object getTaxiAtt(String attName){
 		return taxi.get(attName);
 	}
+
+	public String getTaxiName(){
+		return taxi.name();
+	}
 	
 	public Object getPassengerAtt(String passname, String attName){
 		return passengers.get(passname).get(attName);
@@ -227,7 +231,7 @@ public class TaxiState implements MutableOOState{
 	public Object getLocationAtt(String locName, String attName){
 		return locations.get(locName).get(attName);
 	}
-	
+
 	public boolean wallNorth(){
 		int tx = (int) taxi.get(Taxi.ATT_X);
 		int ty = (int) taxi.get(Taxi.ATT_Y);
