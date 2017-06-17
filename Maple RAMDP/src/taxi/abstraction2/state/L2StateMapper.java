@@ -1,4 +1,4 @@
-package taxi.abstraction1.state;
+package taxi.abstraction2.state;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,26 +6,20 @@ import java.util.List;
 import burlap.mdp.auxiliary.StateMapping;
 import burlap.mdp.core.state.State;
 import taxi.Taxi;
-import taxi.abstraction1.TaxiL1;
-import taxi.state.TaxiAgent;
 import taxi.state.TaxiState;
 
-public class L1StateMapper implements StateMapping {
+public class L2StateMapper implements StateMapping {
 
 	@Override
 	public State mapState(State s) {
-		List<TaxiL1Passenger> passengers = new ArrayList<TaxiL1Passenger>();
-		List<TaxiL1Location> locations = new ArrayList<TaxiL1Location>();
+		List<TaxiL2Passenger> passengers = new ArrayList<TaxiL2Passenger>();
+		List<TaxiL2Location> locations = new ArrayList<TaxiL2Location>();
 		
 		TaxiState st = (TaxiState) s;
 
-		String taxiLocation = TaxiL1.ON_ROAD;
-		int tx = (int) st.getTaxiAtt(Taxi.ATT_X);
-		int ty = (int) st.getTaxiAtt(Taxi.ATT_Y);
-		
 		for(String locName : st.getLocations()){
 			String color = (String) st.getLocationAtt(locName, Taxi.ATT_COLOR);
-			locations.add(new TaxiL1Location(locName, color));
+			locations.add(new TaxiL2Location(locName, color));
 		}
 		
 		for(String passengerName : st.getPassengers()){
@@ -43,19 +37,11 @@ public class L1StateMapper implements StateMapping {
 				if(px == lx && py == ly){
 					currentLocation = locName;
 				}
-				if(tx == lx && ty == ly){
-					taxiLocation = locName;
-				}
 			}
-			passengers.add(new TaxiL1Passenger(passengerName, currentLocation, goalLocation, inTax, pickedUp));
+			passengers.add(new TaxiL2Passenger(passengerName, currentLocation, goalLocation, inTax, pickedUp));
 		}
-		
-		boolean taxiOccupied = (boolean) st.getTaxiAtt(Taxi.ATT_TAXI_OCCUPIED);
-		String Tname = st.getTaxiName();
-		
-		TaxiL1Agent taxi = new TaxiL1Agent(Tname, taxiLocation, taxiOccupied);
-		
-		return new TaxiL1State(taxi, passengers, locations);
+
+		return new TaxiL2State(passengers, locations);
 	}
 
 }

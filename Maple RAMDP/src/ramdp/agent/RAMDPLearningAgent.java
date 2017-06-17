@@ -11,12 +11,9 @@ import burlap.mdp.core.action.Action;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.environment.Environment;
 import burlap.mdp.singleagent.environment.EnvironmentOutcome;
-import burlap.mdp.singleagent.model.TransitionProb;
 import burlap.mdp.singleagent.oo.OOSADomain;
 import burlap.statehashing.HashableStateFactory;
 import hierarchy.framework.GroundedTask;
-import taxi.amdp.level1.state.TaxiL1State;
-import taxi.amdp.level2.state.TaxiL2State;
 import utilities.ValueIteration;
 
 public class RAMDPLearningAgent implements LearningAgent{

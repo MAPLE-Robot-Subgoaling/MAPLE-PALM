@@ -12,7 +12,6 @@ import taxi.abstraction1.NavigateActionType.NavigeteAction;
 import taxi.abstraction1.state.TaxiL1Agent;
 import taxi.abstraction1.state.TaxiL1Passenger;
 import taxi.abstraction1.state.TaxiL1State;
-import taxi.state.TaxiPassenger;
 
 public class TaxiL1Model implements FullStateModel {
 
@@ -45,7 +44,7 @@ public class TaxiL1Model implements FullStateModel {
 		TaxiL1State state = (TaxiL1State) s;
 		
 		if(action == TaxiL1.IND_NAVIGATE){
-			navigate(state, (NavigateActionType.NavigeteAction) a, tps);
+			navigate(state, (NavigeteAction) a, tps);
 		}else if(action == TaxiL1.IND_L1PICKUP){
 			pickup(state, a, tps);
 		}else if(action == TaxiL1.IND_L1DROPOFF){

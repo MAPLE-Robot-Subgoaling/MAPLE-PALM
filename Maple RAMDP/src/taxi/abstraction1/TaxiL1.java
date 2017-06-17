@@ -51,7 +51,6 @@ public class TaxiL1 implements DomainGenerator {
 	public static final String ON_ROAD =					"onRoad";
 	
 	//actions
-	public static final int NUM_MOVE_ACTIONS = 				4;
 	public static final String ACTION_NAVIGATE =			"navigate";
 	public static final String ACTION_L1PICKUP = 			"l1Pickup";
 	public static final String ACTION_L1DROPOFF = 			"l1Dropoff";
@@ -104,6 +103,26 @@ public class TaxiL1 implements DomainGenerator {
 		return domain;
 	}
 
+	public OOSADomain generateGetDomain(){
+		OOSADomain d = generateDomain();
+		d.clearActionTypes();
+		d.addActionTypes(
+				new NavigateActionType(),
+				new UniversalActionType(ACTION_L1PICKUP)
+				);
+		return d;
+	}
+	
+	public OOSADomain generatePutDomain(){
+		OOSADomain d = generateDomain();
+		d.clearActionTypes();
+		d.addActionTypes(
+				new NavigateActionType(),
+				new UniversalActionType(ACTION_L1DROPOFF)
+				);
+		return d;
+	}
+	
 	public static void main(String[] args) {
 		
 		TaxiL1 taxiBuild = new TaxiL1();  

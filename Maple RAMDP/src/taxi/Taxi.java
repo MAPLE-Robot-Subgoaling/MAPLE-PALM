@@ -116,6 +116,7 @@ public class Taxi implements DomainGenerator{
 		this(false, 0, 1);
 	}
 	
+	
 	private void setMoveDynamics(double correctProb){
 		moveDynamics = new double[NUM_MOVE_ACTIONS][NUM_MOVE_ACTIONS];
 		
@@ -157,6 +158,34 @@ public class Taxi implements DomainGenerator{
 		return domain;
 	}
 	
+	public OOSADomain generatePickupDomain(){
+		OOSADomain d = generateDomain();
+		d.clearActionTypes();
+		d.addActionType(new UniversalActionType(ACTION_PICKUP));
+		
+		return d;
+	}
+	
+	public OOSADomain generateNavigateDomain(){
+		OOSADomain d = generateDomain();
+		d.clearActionTypes();
+		d.addActionTypes(
+                new UniversalActionType(ACTION_NORTH),
+                new UniversalActionType(ACTION_SOUTH),
+                new UniversalActionType(ACTION_EAST),
+                new UniversalActionType(ACTION_WEST)
+                );
+		return d;
+	}
+	
+	public OOSADomain generateDropOffDomain(){
+		OOSADomain d = generateDomain();
+		d.clearActionTypes();
+		d.addActionType(new UniversalActionType(ACTION_DROPOFF));
+		
+		return d;
+	}
+				
 	public static void main(String[] args) {
 		
 		Taxi taxiBuild = new Taxi(false, 0.05, 0.8);

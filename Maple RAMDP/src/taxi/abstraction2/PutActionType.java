@@ -1,4 +1,4 @@
-package taxi.abstraction1;
+package taxi.abstraction2;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,37 +6,38 @@ import java.util.List;
 import burlap.mdp.core.action.Action;
 import burlap.mdp.core.action.ActionType;
 import burlap.mdp.core.state.State;
-import taxi.abstraction1.state.TaxiL1State;
+import taxi.abstraction2.state.TaxiL2State;
 
-public class NavigateActionType implements ActionType {
+public class PutActionType implements ActionType {
 
+	@Override
 	public String typeName() {
-		return TaxiL1.ACTION_NAVIGATE;
+		return TaxiL2.ACTION_PUT;
 	}
 
 	@Override
 	public Action associatedAction(String strRep) {
 		String goal = strRep.split("_")[1];
-		return new NavigeteAction(goal);
+		return new PutAction(goal);
 	}
 
 	@Override
 	public List<Action> allApplicableActions(State s) {
-		TaxiL1State state = (TaxiL1State) s;
-		List<Action> acts = new ArrayList<Action>();
+		TaxiL2State state = (TaxiL2State) s;
+		List<Action> acts = new ArrayList<>();
 		
 		for(String loc : state.getLocations()){
-			acts.add(new NavigeteAction(loc));
+			acts.add(new PutAction(loc));
 		}
 		
 		return acts;
 	}
 
-	public class NavigeteAction implements Action {
+	public class PutAction implements Action{
 
 		private String goalLocation;
 		
-		public NavigeteAction(String goal) {
+		public PutAction(String goal) {
 			this.goalLocation = goal;
 		}
 		
@@ -46,12 +47,12 @@ public class NavigateActionType implements ActionType {
 		
 		@Override
 		public String actionName() {
-			return TaxiL1.ACTION_NAVIGATE + "_" + goalLocation;
+			return TaxiL2.ACTION_PUT + "_" + goalLocation;
 		}
 
 		@Override
 		public Action copy() {
-			return new NavigeteAction(goalLocation);
+			return new PutAction(goalLocation);
 		}
 		
 		@Override
