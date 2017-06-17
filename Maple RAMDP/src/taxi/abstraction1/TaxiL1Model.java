@@ -10,6 +10,7 @@ import burlap.mdp.singleagent.model.statemodel.FullStateModel;
 import taxi.Taxi;
 import taxi.abstraction1.NavigateActionType.NavigeteAction;
 import taxi.abstraction1.state.TaxiL1Agent;
+import taxi.abstraction1.state.TaxiL1Location;
 import taxi.abstraction1.state.TaxiL1Passenger;
 import taxi.abstraction1.state.TaxiL1State;
 
@@ -126,19 +127,32 @@ public class TaxiL1Model implements FullStateModel {
 		
 		//if some one is in taxi and it is at depot
 		if(taxiOccupied && !taxiLocation.equals(TaxiL1.ON_ROAD)){
-			for(String passengerName : s.getPassengers()){
-				String passengerLocation = (String) s.getPassengerAtt(passengerName, TaxiL1.ATT_CURRENT_LOCATION);
-				
-				if(taxiLocation.equals(passengerLocation)){
-					TaxiL1State ns = s.copy();
-					TaxiL1Passenger np = ns.touchPassenger(passengerName);
-					np.set(Taxi.ATT_IN_TAXI, false);
+			for(String locName : s.getLocations()){
+				if(taxiLocation.equals(locName)){
+					int passengersAtL = 0;
+					for(String passegerName : s.getPassengers()){
+						String passLocation = (String) s.getPassengerAtt(passegerName, TaxiL1.ATT_CURRENT_LOCATION);
+						if(passLocation.equals(locName))
+							passengersAtL++;
+					}
 					
-					TaxiL1Agent nt = ns.touchTaxi();
-					nt.set(TaxiL1.ATT_TAXI_OCCUPIED, false);
-					
-					tps.add(new StateTransitionProb(ns, 1));
-					return;
+					if(passengersAtL == 1){
+						for(String passengerName : s.getPassengers()){
+							String passengerLocation = (String) s.getPassengerAtt(passengerName, TaxiL1.ATT_CURRENT_LOCATION);
+							
+							if(taxiLocation.equals(passengerLocation)){
+								TaxiL1State ns = s.copy();
+								TaxiL1Passenger np = ns.touchPassenger(passengerName);
+								np.set(Taxi.ATT_IN_TAXI, false);
+								
+								TaxiL1Agent nt = ns.touchTaxi();
+								nt.set(TaxiL1.ATT_TAXI_OCCUPIED, false);
+								
+								tps.add(new StateTransitionProb(ns, 1));
+								return;
+							}
+						}
+					}
 				}
 			}
 		}

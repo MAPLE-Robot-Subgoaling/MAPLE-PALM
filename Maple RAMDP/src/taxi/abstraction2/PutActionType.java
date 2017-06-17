@@ -16,7 +16,7 @@ public class PutActionType implements ActionType {
 	}
 
 	@Override
-	public Action associatedAction(String strRep) {
+	public PutAction associatedAction(String strRep) {
 		String goal = strRep.split("_")[1];
 		return new PutAction(goal);
 	}

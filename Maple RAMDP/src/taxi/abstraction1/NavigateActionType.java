@@ -15,7 +15,7 @@ public class NavigateActionType implements ActionType {
 	}
 
 	@Override
-	public Action associatedAction(String strRep) {
+	public NavigeteAction associatedAction(String strRep) {
 		String goal = strRep.split("_")[1];
 		return new NavigeteAction(goal);
 	}

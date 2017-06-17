@@ -7,6 +7,7 @@ import burlap.mdp.core.StateTransitionProb;
 import burlap.mdp.core.action.Action;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.model.statemodel.FullStateModel;
+import taxi.abstraction1.TaxiL1;
 import taxi.abstraction2.GetActionType.GetAction;
 import taxi.abstraction2.PutActionType.PutAction;
 import taxi.abstraction2.state.TaxiL2Passenger;
@@ -66,13 +67,24 @@ public class TaxiL2Model implements FullStateModel {
 		String goalLoaction = a.getGoalLocation();
 		TaxiL2State ns = s.copy();
 		
+		int passengersAtGoal = 0;
+		for(String passengerNamer : s.getPassengers()){
+			String pLocation = (String) s.getPassengerAtt(passengerNamer, TaxiL2.ATT_CURRENT_LOCATION);
+			boolean inTaxi = (boolean) s.getPassengerAtt(passengerNamer, TaxiL2.ATT_IN_TAXI);
+			if(goalLoaction.equals(pLocation) && ! inTaxi)
+				passengersAtGoal++;
+		}
+		
 		for(String passengerName : s.getPassengers()){
 			boolean inTaxi = (boolean) s.getPassengerAtt(passengerName, TaxiL2.ATT_IN_TAXI);
 			if(inTaxi){
 				//change location and remove from taxi
-				TaxiL2Passenger np = ns.touchPassenger(passengerName);
-				np.set(TaxiL2.ATT_CURRENT_LOCATION, goalLoaction);
-				np.set(TaxiL2.ATT_IN_TAXI, false);
+
+				if(passengersAtGoal == 0){
+					TaxiL2Passenger np = ns.touchPassenger(passengerName);
+					np.set(TaxiL2.ATT_CURRENT_LOCATION, goalLoaction);
+					np.set(TaxiL2.ATT_IN_TAXI, false);
+				}
 				
 				//fickle goal
 				if(fickle){

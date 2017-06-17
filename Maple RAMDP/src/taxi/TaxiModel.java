@@ -180,23 +180,33 @@ public class TaxiModel implements FullStateModel{
 			for(String loc : s.getLocations()){
 				int lx = (int) s.getLocationAtt(loc, Taxi.ATT_X);
 				int ly = (int) s.getLocationAtt(loc, Taxi.ATT_Y);
+				int passengersatL = 0;
 				
 				if( tx == lx && ty == ly){
 					for(String passengerName : s.getPassengers()){
-						boolean inTaxi = (boolean) s.getPassengerAtt(passengerName, Taxi.ATT_IN_TAXI);
-				
-						if(inTaxi){
-							TaxiState ns = s.copy();
-							TaxiPassenger np = ns.touchPassenger(passengerName);
-							np.set(Taxi.ATT_IN_TAXI, false);
-							
-							TaxiAgent ntaxi = ns.touchTaxi();
-							ntaxi.set(Taxi.ATT_TAXI_OCCUPIED, false);
-							
-							tps.add(new StateTransitionProb(ns, 1));
-							return;
+						int px = (int) s.getPassengerAtt(passengerName, Taxi.ATT_X);
+						int py = (int) s.getPassengerAtt(passengerName, Taxi.ATT_Y);
+						if(px == lx && py == ly)
+							passengersatL++;
+					}
+					if(passengersatL == 1){
+						for(String passengerName : s.getPassengers()){
+							boolean inTaxi = (boolean) s.getPassengerAtt(passengerName, Taxi.ATT_IN_TAXI);
+					
+							if(inTaxi){
+								TaxiState ns = s.copy();
+								TaxiPassenger np = ns.touchPassenger(passengerName);
+								np.set(Taxi.ATT_IN_TAXI, false);
+								
+								TaxiAgent ntaxi = ns.touchTaxi();
+								ntaxi.set(Taxi.ATT_TAXI_OCCUPIED, false);
+								
+								tps.add(new StateTransitionProb(ns, 1));
+								return;
+							}
 						}
 					}
+					break;
 				}
 			}
 		}

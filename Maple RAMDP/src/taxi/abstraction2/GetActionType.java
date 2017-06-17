@@ -16,7 +16,7 @@ public class GetActionType implements ActionType {
 	}
 
 	@Override
-	public Action associatedAction(String strRep) {
+	public GetAction associatedAction(String strRep) {
 		String passenger = strRep.split("_")[1];
 		return new GetAction(passenger);
 	}
