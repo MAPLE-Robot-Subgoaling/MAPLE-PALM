@@ -76,7 +76,7 @@ public class HierarchicalCharts {
 		double fickleProb = 0.0;
 		int numEpisodes = 100;
 		int maxSteps = 2000;
-		int rmaxThreshold = 3;
+		int rmaxThreshold = 1;
 		int numTrials = 5;
 		double gamma = 0.9;
 		double rmax = 20;
