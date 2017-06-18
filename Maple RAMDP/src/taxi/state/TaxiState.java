@@ -312,4 +312,19 @@ public class TaxiState implements MutableOOState{
 		}
 		return false;
 	}
+	
+	@Override
+	public String toString(){
+		String out = "{\n";
+		out += taxi.toString() + "\n";
+		
+		for(TaxiPassenger p : passengers.values()){
+			out += p.toString() + "\n";
+		}
+		
+		for(TaxiLocation l : locations.values()){
+			out += l.toString() + "\n";
+		}
+		return out;
+	}
 }

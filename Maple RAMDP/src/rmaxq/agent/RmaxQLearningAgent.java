@@ -102,12 +102,12 @@ public class RmaxQLearningAgent implements LearningAgent {
 		//look at equals in grounded task
 		time = System.currentTimeMillis();
 		HashableState hs = hashingFactory.hashState(env.currentObservation());
-		e = R_MaxQ(hs, rootSolve, e);
+		e = R_MaxQ(hs, rootSolve, e, maxSteps);
 		time = System.currentTimeMillis() - time;
 		return e;
 	}
 
-	protected Episode R_MaxQ(HashableState hs, GroundedTask task, Episode e){
+	protected Episode R_MaxQ(HashableState hs, GroundedTask task, Episode e, int maxSteps){
 		if(task.isPrimitive()){
 			Action a = task.getAction();
 			EnvironmentOutcome outcome = env.executeAction(a);
@@ -200,12 +200,12 @@ public class RmaxQLearningAgent implements LearningAgent {
 					childFromPolicy = groundedTaskMap.get(maxqAction.actionName());
 				}
 				//R pia(s') (s')
-				e = R_MaxQ(hs, childFromPolicy , e);
+				e = R_MaxQ(hs, childFromPolicy, e, maxSteps);
 				State s = e.stateSequence.get(e.stateSequence.size() - 1);
 				hs = hashingFactory.hashState(s);
 
 				terminal = task.isTerminal(s);
-			}while(!terminal);
+			}while(!terminal && (timestep < maxSteps || maxSteps == -1));
 
 			return e;
 		}

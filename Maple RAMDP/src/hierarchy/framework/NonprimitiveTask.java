@@ -18,12 +18,16 @@ public class NonprimitiveTask extends Task{
 			PropositionalFunction term, PropositionalFunction compl) {
 		super(children, aType, abstractDomain, map);
 		this.rf = new NonprimitiveRewardFunction(this);
+		this.terminal = term;
+		this.complted = compl; 
 	}
 
 	public NonprimitiveTask(Task[] children, ActionType aType, OOSADomain abstractDomain, StateMapping map,
 			 RewardFunction taskrf, PropositionalFunction term, PropositionalFunction compl) {
 		super(children, aType, abstractDomain, map);
 		this.rf = taskrf;
+		this.terminal = term;
+		this.complted = compl;
 	}
 	
 	@Override

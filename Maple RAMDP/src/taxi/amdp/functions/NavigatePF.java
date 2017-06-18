@@ -9,8 +9,6 @@ import taxi.state.TaxiState;
 
 public class NavigatePF extends PropositionalFunction {
 
-	private NavigateActionType nav;
-	
 	public NavigatePF() {
 		super("Nav to depot", new String[]{Taxi.CLASS_LOCATION});
 	}

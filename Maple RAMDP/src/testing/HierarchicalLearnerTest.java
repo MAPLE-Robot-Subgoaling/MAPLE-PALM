@@ -15,11 +15,10 @@ import hierarchy.framework.GroundedTask;
 import hierarchy.framework.Task;
 import ramdp.agent.RAMDPLearningAgent;
 import rmaxq.agent.RmaxQLearningAgent;
-import taxi.TaxiDomain;
 import taxi.TaxiVisualizer;
 import taxi.hierarchies.TaxiHierarchy;
-
 import taxi.state.TaxiState;
+import taxi.state.TaxiStateFactory;
 
 public class HierarchicalLearnerTest {
 
@@ -53,7 +52,7 @@ public class HierarchicalLearnerTest {
 		ev.initGUI();
 	}
 	
-	public static void runRMAXQEpsodes(int numEpisodes, Task root, State initState, double vmax,
+	public static void runRMAXQEpsodes(int numEpisodes, int maxSteps, Task root, State initState, double vmax,
 			int threshold, double maxDelta, OOSADomain domain){
 		HashableStateFactory hs = new SimpleHashableStateFactory(true);
 		
@@ -67,7 +66,7 @@ public class HierarchicalLearnerTest {
 		RmaxQLearningAgent rmaxq = new RmaxQLearningAgent(root, hs, initState, vmax, threshold, maxDelta);
 		
 		for(int i = 1; i <= numEpisodes; i++){
-			Episode e = rmaxq.runLearningEpisode(env);
+			Episode e = rmaxq.runLearningEpisode(env, maxSteps);
 			episodes.add(e);
 			System.out.println("Episode " + i + " time " + rmaxq.getTime() / 1000.0);
 			env.resetEnvironment();
@@ -80,13 +79,21 @@ public class HierarchicalLearnerTest {
 	}
 	
 	public static void main(String[] args) {
-		boolean fickle = false;
-		TaxiState s = TaxiDomain.getClassicState(false);
-		Task RAMDProot = TaxiHierarchy.createRAMDPHierarchy(s, fickle);
-		OOSADomain base = TaxiHierarchy.getGroundDomain();
-		Task RMAXQroot = TaxiHierarchy.createRMAXQHierarchy(s, fickle);
+		double correctMoveprob = 1;
+		double fickleProb = 0.0;
+		int numEpisodes = 100;
+		int maxSteps = 1000;
+		int rmaxThreshold = 3;
+		double gamma = 0.9;
+		double rmax = 20;
+		double maxDelta = 0.01;
 		
-		runRAMDPEpisodes(100, 10000, RAMDProot, s, base, 5, 0.9, 30, 0.01);
-//		runRMAXQEpsodes(100, RMAXQroot, s, 30, 5, 0.01, base);
+		TaxiState s = TaxiStateFactory.createClassicState();
+		Task RAMDProot = TaxiHierarchy.createAMDPHierarchy(correctMoveprob, fickleProb);
+		OOSADomain base = TaxiHierarchy.getBaseDomain();
+//		Task RMAXQroot = TaxiHierarchy.createRMAXQHierarchy(correctMoveprob, fickleProb);
+		
+		runRAMDPEpisodes(numEpisodes, maxSteps, RAMDProot, s, base, rmaxThreshold, gamma, rmax, maxDelta);
+//		runRMAXQEpsodes(numEpisodes, maxSteps, RMAXQroot, s, rmax, rmaxThreshold, maxDelta, base);
 	}
 }

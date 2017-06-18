@@ -88,11 +88,12 @@ public class RAMDPLearningAgent implements LearningAgent{
 	protected boolean solveTask(GroundedTask task, Environment baseEnv, int maxSteps){
 		State baseState = e.stateSequence.get(e.stateSequence.size() - 1);
 		State currentState = task.mapState(baseState);
-
+		State pastState = currentState;
 		
 		while(!task.isTerminal(currentState) && (steps < maxSteps || maxSteps == -1)){
 			boolean subtaskCompleted = false;
 			Action a = nextAction(task, currentState);
+			pastState = currentState;
 			EnvironmentOutcome result;
 
 			GroundedTask action = this.taskNames.get(a.actionName());
@@ -106,19 +107,18 @@ public class RAMDPLearningAgent implements LearningAgent{
 				e.transition(result);
 				baseState = result.op;
 				currentState = result.op;
+				result.r = task.getReward(currentState);
 				steps++;
 			}else{
-				result = task.executeAction(currentState, a);
 				subtaskCompleted = solveTask(action, baseEnv, maxSteps);
    
 				baseState = e.stateSequence.get(e.stateSequence.size() - 1);
 				currentState = task.mapState(baseState);
-				result.op = currentState;
+				result = new EnvironmentOutcome(pastState, a, currentState,
+						task.getReward(currentState), task.isTerminal(currentState));
 			}
 			
-			task.fixReward(result);
-
-			if(task.toString().startsWith("sol")){
+			if(!action.isPrimitive()){
 				System.out.print(result.a);
 				System.out.print(" \t" + result.r);
 				System.out.println("\t" + subtaskCompleted);
@@ -131,7 +131,6 @@ public class RAMDPLearningAgent implements LearningAgent{
 			}
 		}
 		
-//		if(task.toString().startsWith("get")){
 //			if(task.isComplete(currentState)){
 //				System.out.println(currentState);
 //				task.isTerminal(currentState);
@@ -150,7 +149,7 @@ public class RAMDPLearningAgent implements LearningAgent{
 	protected void addChildrenToMap(GroundedTask gt, State s){
 		List<GroundedTask> chilkdren = gt.getGroundedChildTasks(s);
 		for(GroundedTask child : chilkdren){
-			taskNames.put(child.getAction().actionName(), child);
+			taskNames.put(child.toString(), child);
 		}
 	}
 	

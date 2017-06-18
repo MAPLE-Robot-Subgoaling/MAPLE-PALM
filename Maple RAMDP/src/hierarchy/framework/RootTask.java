@@ -8,11 +8,16 @@ import burlap.mdp.singleagent.oo.OOSADomain;
 public class RootTask extends NonprimitiveTask {
 
 	public RootTask(Task[] children, OOSADomain abstractDomain, StateMapping map) {
-		super(children, new SolveActionType(), abstractDomain, map);
+		super(children, new SolveActionType(), abstractDomain, map, null, null);
 	}
 
 	@Override
 	public boolean isTerminal(State s, Action a) {
 		return this.domain.getModel().terminal(s);
+	}
+	
+	@Override
+	public boolean isComplete(State s, Action a){
+		return isTerminal(s, a);
 	}
 }

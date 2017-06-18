@@ -169,4 +169,18 @@ public class TaxiL2State implements MutableOOState {
 	public Object getLocationAtt(String locName, String attName){
 		return locations.get(locName).get(attName);
 	}
-}
+	
+	@Override
+	public String toString(){
+		String out = "{\n";
+		
+		for(TaxiL2Passenger p : passengers.values()){
+			out += p.toString() + "\n";
+		}
+		
+		for(TaxiL2Location l : locations.values()){
+			out += l.toString() + "\n";
+		}
+		return out;
+	}
+	}

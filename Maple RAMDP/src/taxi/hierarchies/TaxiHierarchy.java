@@ -2,19 +2,35 @@ package taxi.hierarchies;
 
 import com.sun.org.apache.bcel.internal.generic.L2D;
 
+import burlap.mdp.auxiliary.StateMapping;
 import burlap.mdp.core.action.ActionType;
+import burlap.mdp.core.oo.propositional.PropositionalFunction;
 import burlap.mdp.singleagent.oo.OOSADomain;
+import hierarchy.framework.IdentityMap;
+import hierarchy.framework.NonprimitiveTask;
 import hierarchy.framework.PrimitiveTask;
+import hierarchy.framework.RootTask;
 import hierarchy.framework.Task;
 import taxi.Taxi;
 import taxi.abstraction1.TaxiL1;
+import taxi.abstraction1.state.L1StateMapper;
 import taxi.abstraction2.TaxiL2;
+import taxi.abstraction2.state.L2StateMapper;
+import taxi.amdp.functions.DropoffCompletedPF;
+import taxi.amdp.functions.DropoffTerminalPF;
+import taxi.amdp.functions.GetCompletedPF;
+import taxi.amdp.functions.GetTerminalPF;
+import taxi.amdp.functions.NavigatePF;
+import taxi.amdp.functions.PickupCompletedPF;
+import taxi.amdp.functions.PickupTerminalPF;
+import taxi.amdp.functions.PutCompletedPF;
+import taxi.amdp.functions.PutTerminalPF;
 
 public class TaxiHierarchy {
 
 	private static OOSADomain l0Domian;
 	
-	public static Task createAMDP(double correctMoveprob, double fickleProbability){
+	public static Task createAMDPHierarchy(double correctMoveprob, double fickleProbability){
 		Taxi   l0Gen;
 		TaxiL1 l1Gen;
 		TaxiL2 l2Gen;
@@ -34,6 +50,11 @@ public class TaxiHierarchy {
 		OOSADomain l1Domain = l1Gen.generateDomain();
 		OOSADomain l2Domain = l2Gen.generateDomain();
 		
+		//state mapping function
+		StateMapping map0 = new IdentityMap();
+		StateMapping map1 = new L1StateMapper();
+		StateMapping map2 = new L2StateMapper();
+		
 		ActionType aNorth = l0Domian.getAction(Taxi.ACTION_NORTH);
 		ActionType aEast = l0Domian.getAction(Taxi.ACTION_EAST);
 		ActionType aSouth = l0Domian.getAction(Taxi.ACTION_SOUTH);
@@ -44,7 +65,7 @@ public class TaxiHierarchy {
 		ActionType aDropoffL1 = l1Domain.getAction(TaxiL1.ACTION_L1DROPOFF);
 		ActionType aNavigate = l1Domain.getAction(TaxiL1.ACTION_NAVIGATE);
 		ActionType aGet = l2Domain.getAction(TaxiL2.ACTION_GET);
-		ActionType aput = l2Domain.getAction(TaxiL2.ACTION_PUT);
+		ActionType aPut = l2Domain.getAction(TaxiL2.ACTION_PUT);
 		
 		//tasks
 		PrimitiveTask north = new PrimitiveTask(aNorth, l0Domian);
@@ -56,8 +77,83 @@ public class TaxiHierarchy {
 		
 		Task[] navTasks = new Task[]{north, east, south, wast};
 		Task[] pickupL1Tasks = new Task[]{pickup};
-		Task[] dropoffTasks = new Task[]{dropoff};
+		Task[] dropoffL1Tasks = new Task[]{dropoff};
 		
-		nav
+		PropositionalFunction navPF = new NavigatePF();
+		NonprimitiveTask navigate = new NonprimitiveTask(navTasks, aNavigate, l0Gen.generateNavigateDomain(),
+				map0, navPF, navPF);
+		
+		PropositionalFunction pickupTermPF = new PickupTerminalPF();
+		PropositionalFunction pickupCompPF = new PickupCompletedPF();
+		NonprimitiveTask pickupL1 = new NonprimitiveTask(pickupL1Tasks, aPickupL1, l0Gen.generatePickupDomain(),
+				map0, pickupTermPF, pickupCompPF);
+		
+		PropositionalFunction dropoffTermPF = new DropoffTerminalPF();
+		PropositionalFunction dropoffCompPF = new DropoffCompletedPF();
+		NonprimitiveTask dropoffL1 = new NonprimitiveTask(dropoffL1Tasks, aDropoffL1, l0Gen.generateDropOffDomain(),
+				map0, dropoffTermPF, dropoffCompPF);
+		
+		Task[] getTasks = new Task[]{pickupL1, navigate};
+		Task[] putTasks = new Task[]{navigate, dropoffL1};
+		
+		PropositionalFunction getTermPF = new GetTerminalPF();
+		PropositionalFunction getCompPF = new GetCompletedPF();
+		NonprimitiveTask get = new NonprimitiveTask(getTasks, aGet, l1Gen.generateGetDomain(),
+				map1, getTermPF, getCompPF);
+		
+		PropositionalFunction putTermPF = new PutTerminalPF();
+		PropositionalFunction putCompPF = new PutCompletedPF();
+		NonprimitiveTask put = new NonprimitiveTask(putTasks, aPut, l1Gen.generatePutDomain(),
+				map1, putTermPF, putCompPF);
+		
+		Task[] rootTasks = new Task[]{get, put};
+		
+		Task root = new RootTask(rootTasks, l2Domain, map2);
+		return root;
+	}
+
+	
+//	public static Task createRMAXQHierarchy(double correctMoveprob, double fickleProbability){
+//		Taxi   l0Gen;
+//		TaxiL1 l1Gen;
+//		TaxiL2 l2Gen;
+//		
+//		if(fickleProbability == 0){
+//			l0Gen = new Taxi(false, fickleProbability, correctMoveprob);
+//			l1Gen = new TaxiL1();
+//			l2Gen = new TaxiL2();
+//		}else{
+//			l0Gen = new Taxi(true, fickleProbability, correctMoveprob);
+//			l1Gen = new TaxiL1(true, fickleProbability);
+//			l2Gen = new TaxiL2(true, fickleProbability);
+//		}
+//
+//		//action type domain - not for tasks
+//		l0Domian = l0Gen.generateDomain();
+//		OOSADomain l1Domain = l1Gen.generateDomain();
+//		OOSADomain l2Domain = l2Gen.generateDomain();
+//		
+//		//state mapping function
+//		StateMapping map0 = new IdentityMap();
+//		StateMapping map1 = new L1StateMapper();
+//		StateMapping map2 = new L2StateMapper();
+//		
+//		ActionType aNorth = l0Domian.getAction(Taxi.ACTION_NORTH);
+//		ActionType aEast = l0Domian.getAction(Taxi.ACTION_EAST);
+//		ActionType aSouth = l0Domian.getAction(Taxi.ACTION_SOUTH);
+//		ActionType aWest = l0Domian.getAction(Taxi.ACTION_WEST);
+//		ActionType aPickup = l0Domian.getAction(Taxi.ACTION_PICKUP);
+//		ActionType aDropoff = l0Domian.getAction(Taxi.ACTION_DROPOFF);
+//		ActionType aPickupL1 = l1Domain.getAction(TaxiL1.ACTION_L1PICKUP);
+//		ActionType aDropoffL1 = l1Domain.getAction(TaxiL1.ACTION_L1DROPOFF);
+//		ActionType aNavigate = l1Domain.getAction(TaxiL1.ACTION_NAVIGATE);
+//		ActionType aGet = l2Domain.getAction(TaxiL2.ACTION_GET);
+//		ActionType aPut = l2Domain.getAction(TaxiL2.ACTION_PUT);
+//	
+//		
+//	}
+	
+	public static OOSADomain getBaseDomain(){
+		return l0Domian;
 	}
 }

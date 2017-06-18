@@ -118,11 +118,12 @@ public class GroundedTask {
 		return t.isPrimitive();
 	}
 	
-	public void fixReward(EnvironmentOutcome eo){
+	public double getReward(State s){
 		if(!t.isPrimitive()){
 			NonprimitiveTask npt = (NonprimitiveTask) t;
-			eo.r = npt.reward(eo.op, action);
+			return npt.reward(s, action);
 		}
+		throw new RuntimeException("Only applicable for nonprimitive tasks");
 	}
 	
 	public double reward(State s){

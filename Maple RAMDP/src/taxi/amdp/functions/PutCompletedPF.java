@@ -20,6 +20,14 @@ public class PutCompletedPF extends PropositionalFunction{
 		PutAction a = actyp.associatedAction(action);
 		TaxiL1State st = (TaxiL1State) s;
 		
-		for(String pass : )
+		//is the passenger that is at goal not in the taxi
+		for(String passengerName : st.getPassengers()){
+			String pLocation = (String) st.getPassengerAtt(passengerName, TaxiL1.ATT_CURRENT_LOCATION);
+			if(pLocation.equals(a.getGoalLocation())){
+				return !((boolean) st.getPassengerAtt(passengerName, TaxiL1.ATT_IN_TAXI));
+			}
+		}
+		
+		return false;
 	}
 }
