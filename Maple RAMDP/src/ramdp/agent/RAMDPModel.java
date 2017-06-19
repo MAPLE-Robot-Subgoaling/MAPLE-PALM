@@ -84,7 +84,7 @@ public class RAMDPModel implements FullModel{
 
 	@Override
 	public boolean terminal(State s) {
-		return node.isTerminal(s);
+		return node.isComplete(s);
 	}
 
 	@Override

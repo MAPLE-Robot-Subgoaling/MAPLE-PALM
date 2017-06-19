@@ -6,6 +6,7 @@ import java.util.List;
 import burlap.mdp.core.action.Action;
 import burlap.mdp.core.action.ActionType;
 import burlap.mdp.core.state.State;
+import taxi.abstraction1.NavigateActionType.NavigeteAction;
 import taxi.abstraction2.state.TaxiL2State;
 
 public class PutActionType implements ActionType {
@@ -58,6 +59,22 @@ public class PutActionType implements ActionType {
 		@Override
 		public String toString(){
 			return actionName();
+		}
+		
+
+		@Override
+		public boolean equals(Object other){
+			if(this == other) return true;
+			if(other == null || getClass() != other.getClass()) return false;
+			
+			PutAction a = (PutAction) other;
+			
+			return a.goalLocation.equals(goalLocation);
+		}
+		
+		@Override
+		public int hashCode(){
+			return actionName().hashCode();
 		}
 	}
 }

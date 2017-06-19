@@ -6,6 +6,7 @@ import java.util.List;
 import burlap.mdp.core.action.Action;
 import burlap.mdp.core.action.ActionType;
 import burlap.mdp.core.state.State;
+import taxi.abstraction1.NavigateActionType.NavigeteAction;
 
 public class SolveActionType implements ActionType{
 
@@ -36,6 +37,13 @@ public class SolveActionType implements ActionType{
 		@Override
 		public Action copy() {
 			return new SolveAction();
+		}
+		
+
+		@Override
+		public boolean equals(Object other){
+			if(this == other) return true;
+			return other == null || getClass() != other.getClass();
 		}
 	}
 }

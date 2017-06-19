@@ -16,6 +16,7 @@ public class TaxiModel implements FullStateModel{
 	private double[][] moveProbability;
 	private double fickleChangeGoalProbaility;
 	private boolean fickle;
+	private int numSwitch = 0;
 	
 	public TaxiModel(double[][] moveprob, boolean fickle, double fickleprob) {
 		this.moveProbability = moveprob;
@@ -32,10 +33,20 @@ public class TaxiModel implements FullStateModel{
 	public State sample(State s, Action a) {
 		 List<StateTransitionProb> stpList = this.stateTransitions(s,a);
          double roll = Math.random();
+//         System.out.println(roll);
          double curSum = 0.;
          for(int i = 0; i < stpList.size(); i++){
              curSum += stpList.get(i).p;
              if(roll < curSum){
+            	 TaxiState st = (TaxiState) s;
+            	 TaxiState stp = (TaxiState) stpList.get(i).s;
+            	 String g1 = (String) st.getPassengerAtt("Passenger0", Taxi.ATT_GOAL_LOCATION);
+            	 String g2 = (String) stp.getPassengerAtt("Passenger0", Taxi.ATT_GOAL_LOCATION);
+            	 if(!g1.equals(g2)){
+            		 numSwitch++;
+            		 
+            	 }
+//            	 System.out.println(numSwitch);
                  return stpList.get(i).s;
              }
          }
