@@ -7,6 +7,7 @@ import burlap.mdp.core.StateTransitionProb;
 import burlap.mdp.core.action.Action;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.model.statemodel.FullStateModel;
+import taxi.Taxi;
 import taxi.abstraction1.TaxiL1;
 import taxi.abstraction2.GetActionType.GetAction;
 import taxi.abstraction2.PutActionType.PutAction;
@@ -59,7 +60,7 @@ public class TaxiL2Model implements FullStateModel {
 		TaxiL2Passenger np = ns.touchPassenger(passegerName);
 		np.set(TaxiL2.ATT_IN_TAXI, true);
 		np.set(TaxiL2.ATT_PICKED_UP_AT_LEAST_ONCE, true);
-		
+		np.set(TaxiL2.ATT_JUST_PICKED_UP, true);
 		tps.add(new StateTransitionProb(ns, 1));
 	}
 	
@@ -89,20 +90,24 @@ public class TaxiL2Model implements FullStateModel {
 				//fickle goal
 				if(fickle){
 					String passengerLocation = (String) s.getPassengerAtt(passengerName, TaxiL2.ATT_CURRENT_LOCATION);
-					double p = fickleChangeGoalProbaility / (s.getLocations().length - 1);
-					
-					for(String locationName : s.getLocations()){
-						TaxiL2State nfickles = ns.copy();
-						
-						if(locationName.equals(passengerLocation)){
-							tps.add(new StateTransitionProb(nfickles, (1 - fickleChangeGoalProbaility)));
-						}else{
-							TaxiL2Passenger nfp = nfickles.touchPassenger(passengerName);
-							nfp.set(TaxiL2.ATT_GOAL_LOCATION, locationName);
-							tps.add(new StateTransitionProb(nfickles, p));
+					boolean justPickedUp = (boolean) s.getPassengerAtt(passengerName, TaxiL2.ATT_JUST_PICKED_UP);
+					if(justPickedUp){
+						double p = fickleChangeGoalProbaility / (s.getLocations().length - 1);
+						TaxiL2Passenger np = ns.touchPassenger(passengerName);
+						np.set(TaxiL2.ATT_JUST_PICKED_UP, false);
+						for(String locationName : s.getLocations()){
+							TaxiL2State nfickles = ns.copy();
+							
+							if(locationName.equals(passengerLocation)){
+								tps.add(new StateTransitionProb(nfickles, (1 - fickleChangeGoalProbaility)));
+							}else{
+								TaxiL2Passenger nfp = nfickles.touchPassenger(passengerName);
+								nfp.set(TaxiL2.ATT_GOAL_LOCATION, locationName);
+								tps.add(new StateTransitionProb(nfickles, p));
+							}
 						}
+						return;
 					}
-					return;
 				}
 			}
 		}

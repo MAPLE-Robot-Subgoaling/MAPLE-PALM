@@ -30,6 +30,7 @@ public class TaxiL2 implements DomainGenerator {
 	public static final String ATT_GOAL_LOCATION = 			"goalLocation";
 	public static final String ATT_IN_TAXI = 				"inTaxi";
 	public static final String ATT_PICKED_UP_AT_LEAST_ONCE ="pickedUpAtLeastOnce";
+	public static final String ATT_JUST_PICKED_UP =			"justPickedUp";
 	
 	//location attributes 
 	public static final String ATT_COLOR =					"color";
@@ -95,7 +96,7 @@ public class TaxiL2 implements DomainGenerator {
 
 	public static void main(String[] args) {
 
-		TaxiL2 taxiBuild = new TaxiL2();  
+		TaxiL2 taxiBuild = new TaxiL2(true, 0.5);  
 		OOSADomain domain = taxiBuild.generateDomain();
 		
 		HashableStateFactory hs = new SimpleHashableStateFactory();

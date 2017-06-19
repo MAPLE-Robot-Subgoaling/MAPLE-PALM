@@ -28,6 +28,7 @@ public class L2StateMapper implements StateMapping {
 			int py = (int) st.getPassengerAtt(passengerName, Taxi.ATT_Y);
 			boolean inTax = (boolean) st.getPassengerAtt(passengerName, Taxi.ATT_IN_TAXI);
 			boolean pickedUp = (boolean) st.getPassengerAtt(passengerName, Taxi.ATT_PICKED_UP_AT_LEAST_ONCE);
+			boolean justpickup = (boolean) st.getPassengerAtt(passengerName, Taxi.ATT_JUST_PICKED_UP);
 			String currentLocation = "";
 			
 			for(String locName : st.getLocations()){
@@ -38,7 +39,7 @@ public class L2StateMapper implements StateMapping {
 					currentLocation = locName;
 				}
 			}
-			passengers.add(new TaxiL2Passenger(passengerName, currentLocation, goalLocation, inTax, pickedUp));
+			passengers.add(new TaxiL2Passenger(passengerName, currentLocation, goalLocation, inTax, pickedUp, justpickup));
 		}
 
 		return new TaxiL2State(passengers, locations);

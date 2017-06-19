@@ -84,7 +84,7 @@ public class RAMDPModel implements FullModel{
 
 	@Override
 	public boolean terminal(State s) {
-		return node.isComplete(s);
+		return node.isTerminal(s);
 	}
 
 	@Override
@@ -132,7 +132,7 @@ public class RAMDPModel implements FullModel{
 	
 	protected Map<HashableState, Double> getResultingStates(HashableState hs, Action a){
 		Map<String, Map<HashableState, Double>> SResults = this.transitions.get(hs);
-		if(SResults == null){
+		if(SResults == null){                                         
 			SResults = new HashMap<String, Map<HashableState,Double>>();
 			this.transitions.put(hs, SResults);
 		}

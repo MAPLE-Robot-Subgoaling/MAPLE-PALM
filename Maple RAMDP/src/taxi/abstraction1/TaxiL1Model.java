@@ -73,17 +73,20 @@ public class TaxiL1Model implements FullStateModel {
 		if(fickle){
 			for(String passengerName: s.getPassengers()){
 				boolean inTaxi = (boolean) s.getPassengerAtt(passengerName, TaxiL1.ATT_IN_TAXI);
+				boolean justPickedUp = (boolean) s.getPassengerAtt(passengerName, TaxiL1.ATT_JUST_PICKED_UP);
 				String passGoal = (String) s.getPassengerAtt(passengerName, 
 						TaxiL1.ATT_GOAL_LOCATION);
-				if(inTaxi){
+				if(inTaxi && justPickedUp){
+					TaxiL1Passenger np = ns.touchPassenger(passengerName);
+					np.set(TaxiL1.ATT_JUST_PICKED_UP, false);
 					for(String locName: s.getLocations()){
 						TaxiL1State nfickles = ns.copy();
 						
 						if(passGoal.equals(locName)){
 							tps.add(new StateTransitionProb(nfickles, 1 - fickleChangeGoalProbaility));
 						}else{
-							TaxiL1Passenger np = nfickles.touchPassenger(passengerName);
-							np.set(TaxiL1.ATT_GOAL_LOCATION, locName);
+							TaxiL1Passenger npf = nfickles.touchPassenger(passengerName);
+							npf.set(TaxiL1.ATT_GOAL_LOCATION, locName);
 							tps.add(new StateTransitionProb(nfickles, fickleChangeGoalProbaility 
 									/ (s.getLocations().length - 1)));
 						}
@@ -109,6 +112,9 @@ public class TaxiL1Model implements FullStateModel {
 					TaxiL1Passenger np = ns.touchPassenger(passengerName);
 					np.set(Taxi.ATT_IN_TAXI, true);
 					np.set(TaxiL1.ATT_PICKED_UP_AT_LEAST_ONCE, true);
+					if(fickle){
+						np.set(TaxiL1.ATT_JUST_PICKED_UP, true);
+					}
 					
 					TaxiL1Agent nt = ns.touchTaxi();
 					nt.set(TaxiL1.ATT_TAXI_OCCUPIED, true);

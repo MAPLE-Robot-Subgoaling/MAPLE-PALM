@@ -11,6 +11,7 @@ import burlap.mdp.core.action.Action;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.environment.Environment;
 import burlap.mdp.singleagent.environment.EnvironmentOutcome;
+import burlap.mdp.singleagent.model.TransitionProb;
 import burlap.mdp.singleagent.oo.OOSADomain;
 import burlap.statehashing.HashableStateFactory;
 import hierarchy.framework.GroundedTask;
@@ -118,11 +119,11 @@ public class RAMDPLearningAgent implements LearningAgent{
 						task.getReward(currentState), task.isTerminal(currentState));
 			}
 			
-			if(!action.isPrimitive()){
-				System.out.print(result.a);
-				System.out.print(" \t" + result.r);
-				System.out.println("\t" + subtaskCompleted);
-			}
+//			if(!action.isPrimitive()){
+//				System.out.print(result.a);
+//				System.out.print(" \t" + result.r);
+//				System.out.println("\t" + subtaskCompleted);
+//			}
 			//update task model
 			RAMDPModel model = getModel(task, currentState);
 			if(subtaskCompleted){
@@ -176,7 +177,7 @@ public class RAMDPLearningAgent implements LearningAgent{
 			this.models.put(t, model);
 		}
 
-//		if(t.toString().startsWith("sol")){
+//		if(t.toString().startsWith("nav")){
 //			System.out.println();
 //			List<GroundedTask> children = t.getGroundedChildTasks(s);
 //			for(GroundedTask child : children){
@@ -185,9 +186,9 @@ public class RAMDPLearningAgent implements LearningAgent{
 //				for(TransitionProb tp: tps){
 //					EnvironmentOutcome eo = tp.eo;
 //					System.out.println("\tProbability: " + tp.p);
-//					System.out.println("\tReward " + eo.r);
-//					System.out.println("s: " + eo.o);
-//					System.out.println("\tSp:  " + eo.op);
+////					System.out.println("\tReward " + eo.r);
+////					System.out.println("s: " + eo.o);
+////					System.out.println("\tSp:  " + eo.op);
 //					System.out.println();
 //				}
 //			}
