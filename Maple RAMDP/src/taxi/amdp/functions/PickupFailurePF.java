@@ -5,9 +5,9 @@ import burlap.mdp.core.oo.state.OOState;
 import taxi.Taxi;
 import taxi.state.TaxiState;
 
-public class DropoffTerminalPF extends PropositionalFunction {
+public class PickupFailurePF extends PropositionalFunction {
 
-	public DropoffTerminalPF() {
+	public PickupFailurePF() {
 		super("pickup>L!", new String[]{});
 	}
 	
@@ -19,14 +19,15 @@ public class DropoffTerminalPF extends PropositionalFunction {
 		int tx = (int) st.getTaxiAtt(Taxi.ATT_X);
 		int ty = (int) st.getTaxiAtt(Taxi.ATT_Y);
 		
-		for(String locationName : st.getLocations()){
-			int lx = (int) st.getLocationAtt(locationName, Taxi.ATT_X);
-			int ly = (int) st.getLocationAtt(locationName, Taxi.ATT_Y);
-			if(tx == lx && ty == ly){
-				return !((boolean) st.getTaxiAtt(Taxi.ATT_TAXI_OCCUPIED));
+		for(String passengerName : st.getPassengers()){
+			int px = (int) st.getPassengerAtt(passengerName, Taxi.ATT_X);
+			int py = (int) st.getPassengerAtt(passengerName, Taxi.ATT_Y);
+			if(tx == px && ty == py){
+				return (boolean) st.getTaxiAtt(Taxi.ATT_TAXI_OCCUPIED);
 			}
 		}
 		
 		return true;
 	}
+
 }

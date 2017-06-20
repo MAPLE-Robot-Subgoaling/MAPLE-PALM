@@ -91,7 +91,7 @@ public class RAMDPLearningAgent implements LearningAgent{
 		State currentState = task.mapState(baseState);
 		State pastState = currentState;
 		
-		while(!task.isTerminal(currentState) && (steps < maxSteps || maxSteps == -1)){
+		while(!(task.isFailure(currentState) || task.isComplete(currentState)) && (steps < maxSteps || maxSteps == -1)){
 			boolean subtaskCompleted = false;
 			Action a = nextAction(task, currentState);
 			pastState = currentState;
@@ -116,7 +116,8 @@ public class RAMDPLearningAgent implements LearningAgent{
 				baseState = e.stateSequence.get(e.stateSequence.size() - 1);
 				currentState = task.mapState(baseState);
 				result = new EnvironmentOutcome(pastState, a, currentState,
-						task.getReward(currentState), task.isTerminal(currentState));
+						task.getReward(currentState), task.isFailure
+						(currentState));
 			}
 			
 			if(!action.isPrimitive()){

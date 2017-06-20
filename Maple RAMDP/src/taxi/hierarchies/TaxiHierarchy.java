@@ -15,21 +15,21 @@ import taxi.abstraction1.state.L1StateMapper;
 import taxi.abstraction2.TaxiL2;
 import taxi.abstraction2.state.L2StateMapper;
 import taxi.amdp.functions.DropoffCompletedPF;
-import taxi.amdp.functions.DropoffTerminalPF;
+import taxi.amdp.functions.DropoffFailurePF;
 import taxi.amdp.functions.GetCompletedPF;
-import taxi.amdp.functions.GetTerminalPF;
+import taxi.amdp.functions.GetFailurePF;
 import taxi.amdp.functions.NavigatePF;
 import taxi.amdp.functions.PickupCompletedPF;
-import taxi.amdp.functions.PickupTerminalPF;
+import taxi.amdp.functions.PickupFailurePF;
 import taxi.amdp.functions.PutCompletedPF;
-import taxi.amdp.functions.PutTerminalPF;
+import taxi.amdp.functions.PutFailurePF;
 import taxi.rmaxq.functions.BaseGetActionType;
 import taxi.rmaxq.functions.BaseGetCompletedPF;
-import taxi.rmaxq.functions.BaseGetTerminalPF;
+import taxi.rmaxq.functions.BaseGetFailurePF;
 import taxi.rmaxq.functions.BaseNavigateActionType;
 import taxi.rmaxq.functions.BasePutActionType;
 import taxi.rmaxq.functions.BasePutCompletedPF;
-import taxi.rmaxq.functions.BasePutTerminalPF;
+import taxi.rmaxq.functions.BasePutFailurePF;
 
 public class TaxiHierarchy {
 
@@ -88,28 +88,28 @@ public class TaxiHierarchy {
 		NonprimitiveTask navigate = new NonprimitiveTask(navTasks, aNavigate, l0Gen.generateNavigateDomain(),
 				map0, navPF, navPF);
 		
-		PropositionalFunction pickupTermPF = new PickupTerminalPF();
+		PropositionalFunction pickupFailPF = new PickupFailurePF();
 		PropositionalFunction pickupCompPF = new PickupCompletedPF();
 		NonprimitiveTask pickupL1 = new NonprimitiveTask(pickupL1Tasks, aPickupL1, l0Gen.generatePickupDomain(),
-				map0, pickupTermPF, pickupCompPF);
+				map0, pickupFailPF, pickupCompPF);
 		
-		PropositionalFunction dropoffTermPF = new DropoffTerminalPF();
+		PropositionalFunction dropoffFailPF = new DropoffFailurePF();
 		PropositionalFunction dropoffCompPF = new DropoffCompletedPF();
 		NonprimitiveTask dropoffL1 = new NonprimitiveTask(dropoffL1Tasks, aDropoffL1, l0Gen.generateDropOffDomain(),
-				map0, dropoffTermPF, dropoffCompPF);
+				map0, dropoffFailPF, dropoffCompPF);
 		
 		Task[] getTasks = {pickupL1, navigate};
 		Task[] putTasks = {navigate, dropoffL1};
 		
-		PropositionalFunction getTermPF = new GetTerminalPF();
+		PropositionalFunction getFailPF = new GetFailurePF();
 		PropositionalFunction getCompPF = new GetCompletedPF();
 		NonprimitiveTask get = new NonprimitiveTask(getTasks, aGet, l1Gen.generateGetDomain(),
-				map1, getTermPF, getCompPF);
+				map1, getFailPF, getCompPF);
 		
-		PropositionalFunction putTermPF = new PutTerminalPF();
+		PropositionalFunction putFailPF = new PutFailurePF();
 		PropositionalFunction putCompPF = new PutCompletedPF();
 		NonprimitiveTask put = new NonprimitiveTask(putTasks, aPut, l1Gen.generatePutDomain(),
-				map1, putTermPF, putCompPF);
+				map1, putFailPF, putCompPF);
 		
 		Task[] rootTasks = {get, put};
 		
@@ -158,24 +158,24 @@ public class TaxiHierarchy {
 		NonprimitiveTask navigate = new NonprimitiveTask(navTasks, aNavigate, l0Gen.generateNavigateDomain(),
 				map0, navPF, navPF);
 		
-		PropositionalFunction pickupTermPF = new PickupTerminalPF();
+		PropositionalFunction pickupFailPF = new PickupFailurePF();
 		PropositionalFunction pickupCompPF = new PickupCompletedPF();
-		NonprimitiveTask pickupL1 = new NonprimitiveTask(pickupL1Tasks, aPickup, pickupTermPF, pickupCompPF);
+		NonprimitiveTask pickupL1 = new NonprimitiveTask(pickupL1Tasks, aPickup, pickupFailPF, pickupCompPF);
 		
-		PropositionalFunction dropoffTermPF = new DropoffTerminalPF();
+		PropositionalFunction dropoffFailPF = new DropoffFailurePF();
 		PropositionalFunction dropoffCompPF = new DropoffCompletedPF();
-		NonprimitiveTask dropoffL1 = new NonprimitiveTask(dropoffL1Tasks, aDropoff, dropoffTermPF, dropoffCompPF);
+		NonprimitiveTask dropoffL1 = new NonprimitiveTask(dropoffL1Tasks, aDropoff, dropoffFailPF, dropoffCompPF);
 		
 		Task[] getTasks = new Task[]{pickupL1, navigate};
 		Task[] putTasks = new Task[]{navigate, dropoffL1};
 		
-		PropositionalFunction getTermPF = new BaseGetTerminalPF();
+		PropositionalFunction getFailPF = new BaseGetFailurePF();
 		PropositionalFunction getCompPF = new BaseGetCompletedPF();
-		NonprimitiveTask get = new NonprimitiveTask(getTasks, aGet, getTermPF, getCompPF);
+		NonprimitiveTask get = new NonprimitiveTask(getTasks, aGet, getFailPF, getCompPF);
 		
-		PropositionalFunction putTermPF = new BasePutTerminalPF();
+		PropositionalFunction putFailPF = new BasePutFailurePF();
 		PropositionalFunction putCompPF = new BasePutCompletedPF();
-		NonprimitiveTask put = new NonprimitiveTask(putTasks, aPut, putTermPF, putCompPF);
+		NonprimitiveTask put = new NonprimitiveTask(putTasks, aPut, putFailPF, putCompPF);
 		
 		Task[] rootTasks = {get, put};
 		Task root = new RootTask(rootTasks, l0Domian, map0); 

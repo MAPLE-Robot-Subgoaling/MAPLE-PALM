@@ -15,7 +15,7 @@ public class NonprimitiveRewardFunction implements RewardFunction{
 	public double reward(State s, Action a, State sprime) {
 		if(t.isComplete(s, a))
 			return 1;
-		else if (t.isTerminal(s, a))
+		else if (t.isFailure(s, a))
 			return -1;
 		return 0;
 	}

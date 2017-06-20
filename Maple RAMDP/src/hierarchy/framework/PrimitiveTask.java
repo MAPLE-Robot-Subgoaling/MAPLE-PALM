@@ -12,7 +12,7 @@ public class PrimitiveTask extends Task{
 	}
 
 	@Override
-	public boolean isTerminal(State s, Action a) {
+	public boolean isFailure(State s, Action a) {
 		return true;
 	}
 

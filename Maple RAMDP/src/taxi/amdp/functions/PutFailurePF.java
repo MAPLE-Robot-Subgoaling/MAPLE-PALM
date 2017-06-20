@@ -1,19 +1,19 @@
-package taxi.rmaxq.functions;
+package taxi.amdp.functions;
 
 import burlap.mdp.core.oo.propositional.PropositionalFunction;
 import burlap.mdp.core.oo.state.OOState;
 import taxi.abstraction1.TaxiL1;
-import taxi.state.TaxiState;
+import taxi.abstraction1.state.TaxiL1State;
 
-public class BasePutTerminalPF extends PropositionalFunction{
+public class PutFailurePF extends PropositionalFunction{
 
-	public BasePutTerminalPF() {
+	public PutFailurePF() {
 		super("put", new String[]{TaxiL1.CLASS_L1LOCATION});
 	}
 
 	@Override
 	public boolean isTrue(OOState s, String... params) {
-		TaxiState st = (TaxiState) s;
+		TaxiL1State st = (TaxiL1State) s;
 		
 		return !((boolean) st.getTaxiAtt(TaxiL1.ATT_TAXI_OCCUPIED));
 	}

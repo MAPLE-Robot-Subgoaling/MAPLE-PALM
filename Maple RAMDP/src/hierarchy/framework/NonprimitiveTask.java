@@ -54,7 +54,7 @@ public class NonprimitiveTask extends Task{
 	}
 
 	@Override
-	public boolean isTerminal(State s, Action a) {
+	public boolean isFailure(State s, Action a) {
 		return terminal.isTrue((OOState) s, a.actionName());
 	}
 	

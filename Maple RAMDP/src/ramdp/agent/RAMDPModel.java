@@ -84,7 +84,7 @@ public class RAMDPModel implements FullModel{
 
 	@Override
 	public boolean terminal(State s) {
-		return node.isTerminal(s);
+		return node.isComplete(s) || node.isComplete(s);
 	}
 
 	@Override
@@ -96,7 +96,7 @@ public class RAMDPModel implements FullModel{
 		
 		for(HashableState hsprime : resultingStates.keySet()){
 			EnvironmentOutcome eo = new EnvironmentOutcome(s, a, hsprime.s(),
-					reward, node.isTerminal(hsprime.s()));
+					reward, terminal(hsprime.s()));
 			double p = resultingStates.get(hsprime);
 			tps.add( new TransitionProb(p, eo));
 		}

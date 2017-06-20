@@ -1,118 +1,99 @@
 package amdp.planning;
 
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import burlap.behavior.policy.Policy;
-import burlap.behavior.singleagent.planning.Planner;
-import burlap.mdp.core.Domain;
-import burlap.mdp.core.action.ActionType;
+import burlap.behavior.singleagent.Episode;
+import burlap.behavior.singleagent.planning.stochastic.rtdp.BoundedRTDP;
+import burlap.behavior.valuefunction.ConstantValueFunction;
+import burlap.mdp.core.action.Action;
 import burlap.mdp.core.state.State;
-import burlap.mdp.singleagent.SADomain;
-import burlap.mdp.singleagent.model.SampleModel;
+import burlap.mdp.singleagent.environment.Environment;
+import burlap.mdp.singleagent.environment.EnvironmentOutcome;
+import burlap.mdp.singleagent.environment.SimulatedEnvironment;
+import burlap.mdp.singleagent.oo.OOSADomain;
 import burlap.statehashing.HashableStateFactory;
+import hierarchy.framework.GroundedTask;
+import hierarchy.framework.Task;
 
-public class AMDPPlanner implements Planner{
-
-	@Override
-	public void solverInit(SADomain domain, double gamma, HashableStateFactory hashingFactory) {
-		// TODO Auto-generated method stub
-		
+public class AMDPPlanner {
+	
+	private Task root;
+	
+	private Map<String, Policy> taskPolicies;
+	
+	private double gamma;
+	
+	private HashableStateFactory hs;
+	
+	private double maxDelta;
+	
+	private int maxRollouts;
+	
+	private Map<String, GroundedTask> actionMap;
+	
+	public AMDPPlanner(Task root, double gamma, HashableStateFactory hs, double maxDelta, int maxRollouts) {
+		this.root = root;
+		this.gamma = gamma;
+		this.hs = hs;
+		this.maxDelta = maxDelta;
+		this.maxRollouts = maxRollouts; 
+		this.actionMap = new HashMap<String, GroundedTask>();
+		this.taskPolicies = new HashMap<String, Policy>();
+	}
+	
+	
+	public Episode planFromState(State s){
+		GroundedTask solve = root.getAllGroundedTasks(s).get(0);
+		Episode e = new Episode(s);
+		return solveTask(solve, e );
 	}
 
-	@Override
-	public void resetSolver() {
-		// TODO Auto-generated method stub
-		
+	public Episode solveTask(GroundedTask task, Episode e, Environment env){
+		OOSADomain domain;
+		if(task.isPrimitive()){
+			Action a = task.getAction();
+			EnvironmentOutcome result = env.executeAction(a);
+			e.transition(result);
+		}else{
+			State baseState = e.stateSequence.get(e.stateSequence.size() - 1);
+			State currentState = task.mapState(baseState);
+			
+			Policy taskPolicy = getPolicy(task, currentState);
+			while(!(task.isFailure(currentState) || task.isComplete(currentState))){
+				Action a = taskPolicy.action(currentState);
+				GroundedTask child =
+			}
+		}	
 	}
-
-	@Override
-	public void setDomain(SADomain domain) {
-		// TODO Auto-generated method stub
+	
+	private Policy getPolicy(GroundedTask t, State s){
+		Policy p = taskPolicies.get(t.toString());
+		if(p == null){
+			BoundedRTDP brtdp = new BoundedRTDP(t.getDomain(), gamma, hs, new ConstantValueFunction(0), new ConstantValueFunction(1),
+					 maxDelta, maxRollouts);
+			p = brtdp.planFromState(s);
+			this.taskPolicies.put(t.toString(), p);
+		}
 		
+		return p;
 	}
-
-	@Override
-	public void setModel(SampleModel model) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public SampleModel getModel() {
-		// TODO Auto-generated method stub
+	
+	private Environment getBasenvirnment(Task t){
+		if(t.isPrimitive()){
+			return new SimulatedEnvironment(t.getDomain());
+		}else{
+			for(Task child : t.getChildren()){
+				return getBasenvirnment(child);
+			}
+		}
 		return null;
 	}
-
-	@Override
-	public Domain getDomain() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void addActionType(ActionType a) {
-		// TODO Auto-generated method stub
+	
+	private GroundedTask getTask(Action a){
+		String aMame = a.actionName();
+		GroundedTask gt = this.actionMap.get(aMame);
 		
 	}
-
-	@Override
-	public void setActionTypes(List<ActionType> actionTypes) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public List<ActionType> getActionTypes() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void setHashingFactory(HashableStateFactory hashingFactory) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public HashableStateFactory getHashingFactory() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public double getGamma() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public void setGamma(double gamma) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void setDebugCode(int code) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public int getDebugCode() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public void toggleDebugPrinting(boolean toggle) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public Policy planFromState(State initialState) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 }

@@ -104,7 +104,7 @@ public abstract class Task {
 	 * @param a the action from the specific grounding
 	 * @return boolean indicating if the action a is terminated in state s
 	 */
-	public abstract boolean isTerminal(State s, Action a);
+	public abstract boolean isFailure(State s, Action a);
 	
 	/**
 	 * tells whether this task is in the base MDP
@@ -114,6 +114,6 @@ public abstract class Task {
 	public abstract boolean isPrimitive();
 	
 	public boolean isComplete(State s, Action a){
-		return isTerminal(s, a);
+		return isFailure(s, a);
 	}
 }

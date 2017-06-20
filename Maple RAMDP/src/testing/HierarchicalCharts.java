@@ -61,22 +61,22 @@ public class HierarchicalCharts {
 			}
 		};
 		
-		LearningAlgorithmExperimenter exp = new LearningAlgorithmExperimenter(env, numTrial, numEpisode, maxSteps, rmaxq);
+		LearningAlgorithmExperimenter exp = new LearningAlgorithmExperimenter(env, numTrial, numEpisode, maxSteps, ramdp);
 		exp.setUpPlottingConfiguration(500, 300, 2, 1000,
 				TrialMode.MOST_RECENT_AND_AVERAGE,
 				PerformanceMetric.CUMULATIVE_REWARD_PER_EPISODE
 				);
 		
 		exp.startExperiment();
-		exp.writeEpisodeDataToCSV("C:\\Users\\mland\\Box Sync\\Maple\\hierarchical learning data\\rmaxq small state fickle.csv");
+		exp.writeEpisodeDataToCSV("C:\\Users\\mland\\Box Sync\\Maple\\hierarchical learning data\\ramdp small state stochastic.csv");
 	}
 	
 	public static void main(String[] args) {
 		double correctMoveprob = 0.8;
-		double fickleProb = 0.225;
+		double fickleProb = 0;
 		int numEpisodes = 100;
 		int maxSteps = 2000;
-		int rmaxThreshold = 5;
+		int rmaxThreshold = 10;
 		int numTrials = 10;
 		double gamma = 0.9;
 		double rmax = 20;

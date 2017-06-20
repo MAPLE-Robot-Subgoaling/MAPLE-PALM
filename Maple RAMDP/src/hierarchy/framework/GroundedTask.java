@@ -43,6 +43,10 @@ public class GroundedTask {
 		return action;
 	}
 	
+	public OOSADomain getDomain(){
+		return t.getDomain();
+	}
+	
 	public OOSADomain getDomain(FullModel model){
 		OOSADomain d = new OOSADomain();
 		d.setModel(model);
@@ -72,8 +76,8 @@ public class GroundedTask {
 	 * @param s the current state
 	 * @return if this task is terminal in s
 	 */
-	public boolean isTerminal(State s){
-		return t.isTerminal(s, action);
+	public boolean isFailure(State s){
+		return t.isFailure(s, action);
 	}
 	
     @Override

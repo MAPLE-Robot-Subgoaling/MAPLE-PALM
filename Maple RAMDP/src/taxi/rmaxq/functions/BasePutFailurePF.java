@@ -2,22 +2,20 @@ package taxi.rmaxq.functions;
 
 import burlap.mdp.core.oo.propositional.PropositionalFunction;
 import burlap.mdp.core.oo.state.OOState;
-import taxi.Taxi;
 import taxi.abstraction1.TaxiL1;
 import taxi.state.TaxiState;
 
-public class BaseGetTerminalPF extends PropositionalFunction {
+public class BasePutFailurePF extends PropositionalFunction{
 
-	public BaseGetTerminalPF() {
-		super("get", new String[]{TaxiL1.CLASS_L1PASSENGER});
+	public BasePutFailurePF() {
+		super("put", new String[]{TaxiL1.CLASS_L1LOCATION});
 	}
-	
+
 	@Override
 	public boolean isTrue(OOState s, String... params) {
 		TaxiState st = (TaxiState) s;
 		
-		boolean ret = (boolean) st.getTaxiAtt(Taxi.ATT_TAXI_OCCUPIED);
-		return ret;
+		return !((boolean) st.getTaxiAtt(TaxiL1.ATT_TAXI_OCCUPIED));
 	}
-
+	
 }

@@ -12,12 +12,12 @@ public class RootTask extends NonprimitiveTask {
 	}
 
 	@Override
-	public boolean isTerminal(State s, Action a) {
+	public boolean isFailure(State s, Action a) {
 		return this.domain.getModel().terminal(s);
 	}
 	
 	@Override
 	public boolean isComplete(State s, Action a){
-		return isTerminal(s, a);
+		return isFailure(s, a);
 	}
 }
