@@ -46,9 +46,10 @@ public class GroundedTask {
 	public OOSADomain getDomain(FullModel model){
 		OOSADomain d = new OOSADomain();
 		d.setModel(model);
-		List<ActionType> acts = t.domain.getActionTypes();
-		for(ActionType a : acts){
-			d.addActionType(a);
+		
+		Task[] children = t.getChildren();
+		for(Task child : children){
+			d.addActionType(child.getActionType());
 		}
 		return d;
 	}

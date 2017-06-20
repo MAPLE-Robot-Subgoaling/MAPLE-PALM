@@ -3,7 +3,6 @@ package utilities;
 import burlap.behavior.singleagent.Episode;
 import burlap.behavior.singleagent.auxiliary.performance.ExperimentalEnvironment;
 import burlap.behavior.singleagent.auxiliary.performance.PerformanceMetric;
-import burlap.behavior.singleagent.auxiliary.performance.PerformancePlotter;
 import burlap.behavior.singleagent.auxiliary.performance.TrialMode;
 import burlap.behavior.singleagent.learning.LearningAgent;
 import burlap.behavior.singleagent.learning.LearningAgentFactory;

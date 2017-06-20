@@ -53,6 +53,10 @@ public abstract class Task {
 	public OOSADomain getDomain(){
 		return domain;
 	}
+
+	public ActionType getActionType(){
+		return actionType;
+	}
 	
 	/**
 	 * Gets all parameterizations of the task availibe in s

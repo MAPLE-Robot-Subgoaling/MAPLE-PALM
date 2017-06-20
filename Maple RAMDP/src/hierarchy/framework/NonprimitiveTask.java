@@ -14,6 +14,7 @@ public class NonprimitiveTask extends Task{
 	private RewardFunction rf;
 	private PropositionalFunction terminal, complted;
 	
+	//used for hierarchies with abstractions
 	public NonprimitiveTask(Task[] children, ActionType aType, OOSADomain abstractDomain, StateMapping map,
 			PropositionalFunction term, PropositionalFunction compl) {
 		super(children, aType, abstractDomain, map);
@@ -22,6 +23,15 @@ public class NonprimitiveTask extends Task{
 		this.complted = compl; 
 	}
 
+	//used for hierarchies with no abstraction
+	public NonprimitiveTask(Task[] children, ActionType aType,
+			PropositionalFunction term, PropositionalFunction compl) {
+		super(children, aType,  null, null);
+		this.rf = new NonprimitiveRewardFunction(this);
+		this.terminal = term;
+		this.complted = compl;
+	}
+	
 	public NonprimitiveTask(Task[] children, ActionType aType, OOSADomain abstractDomain, StateMapping map,
 			 RewardFunction taskrf, PropositionalFunction term, PropositionalFunction compl) {
 		super(children, aType, abstractDomain, map);

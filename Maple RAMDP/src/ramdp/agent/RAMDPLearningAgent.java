@@ -107,7 +107,7 @@ public class RAMDPLearningAgent implements LearningAgent{
 				result = baseEnv.executeAction(a);
 				e.transition(result);
 				baseState = result.op;
-				currentState = result.op;
+				currentState = task.mapState(result.op);
 				result.r = task.getReward(currentState);
 				steps++;
 			}else{
@@ -119,11 +119,11 @@ public class RAMDPLearningAgent implements LearningAgent{
 						task.getReward(currentState), task.isTerminal(currentState));
 			}
 			
-//			if(!action.isPrimitive()){
-//				System.out.print(result.a);
-//				System.out.print(" \t" + result.r);
-//				System.out.println("\t" + subtaskCompleted);
-//			}
+			if(!action.isPrimitive()){
+				System.out.print(result.a);
+				System.out.print(" \t" + result.r);
+				System.out.println("\t" + subtaskCompleted);
+			}
 			//update task model
 			RAMDPModel model = getModel(task, currentState);
 			if(subtaskCompleted){
@@ -163,7 +163,7 @@ public class RAMDPLearningAgent implements LearningAgent{
 //        plan.toggleDebugPrinting(false);
         ValueIteration plan = new ValueIteration(domain, gamma, hashingFactory, maxDelta, 1000);
 		Policy p = plan.planFromState(s);
-		if(task.toString().startsWith("put")){
+		if(task.toString().startsWith("get")){
 			System.out.print("");
 		}
 		return p.action(s);

@@ -61,19 +61,19 @@ public class HierarchicalCharts {
 			}
 		};
 		
-		LearningAlgorithmExperimenter exp = new LearningAlgorithmExperimenter(env, numTrial, numEpisode, maxSteps, ramdp);
+		LearningAlgorithmExperimenter exp = new LearningAlgorithmExperimenter(env, numTrial, numEpisode, maxSteps, rmaxq);
 		exp.setUpPlottingConfiguration(500, 300, 2, 1000,
 				TrialMode.MOST_RECENT_AND_AVERAGE,
 				PerformanceMetric.CUMULATIVE_REWARD_PER_EPISODE
 				);
 		
 		exp.startExperiment();
-		exp.writeEpisodeDataToCSV("C:\\Users\\mland\\Box Sync\\Maple\\hierarchical learning data\\ramdp small state fickle.csv");
+		exp.writeEpisodeDataToCSV("C:\\Users\\mland\\Box Sync\\Maple\\hierarchical learning data\\rmaxq small state fickle.csv");
 	}
 	
 	public static void main(String[] args) {
-		double correctMoveprob = 1;
-		double fickleProb = 0.1;
+		double correctMoveprob = 0.8;
+		double fickleProb = 0.225;
 		int numEpisodes = 100;
 		int maxSteps = 2000;
 		int rmaxThreshold = 5;
@@ -85,8 +85,8 @@ public class HierarchicalCharts {
 		TaxiState s = TaxiStateFactory.createSmallState();
 		Task RAMDProot = TaxiHierarchy.createAMDPHierarchy(correctMoveprob, fickleProb);
 		OOSADomain base = TaxiHierarchy.getBaseDomain();
-		Task RMAXQroot;// = TaxiHierarchy.createRMAXQHierarchy(correctMoveprob, fickleProb);
-		createCrarts(s, base, RAMDProot, null, rmax, rmaxThreshold, maxDelta, gamma, 
+		Task RMAXQroot = TaxiHierarchy.createRMAXQHierarchy(correctMoveprob, fickleProb);
+		createCrarts(s, base, RAMDProot, RMAXQroot, rmax, rmaxThreshold, maxDelta, gamma, 
 				numEpisodes, maxSteps, numTrials); 
 	}
 }
