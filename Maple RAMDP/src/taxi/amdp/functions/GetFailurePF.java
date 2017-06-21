@@ -15,8 +15,7 @@ public class GetFailurePF extends PropositionalFunction {
 	public boolean isTrue(OOState s, String... params) {
 		TaxiL1State st = (TaxiL1State) s;
 		
-		boolean ret = (boolean) st.getTaxiAtt(TaxiL1.ATT_TAXI_OCCUPIED);
-		return ret;
+		return (boolean) st.getTaxiAtt(TaxiL1.ATT_TAXI_OCCUPIED);
 	}
 
 }

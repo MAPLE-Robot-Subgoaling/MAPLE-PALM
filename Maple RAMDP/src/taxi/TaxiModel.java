@@ -112,9 +112,9 @@ public class TaxiModel implements FullStateModel{
 			//move any passenger that are in the taxi
 			for(String passengerName : s.getPassengers()){
 				boolean inTaxi = (boolean) s.getPassengerAtt(passengerName, Taxi.ATT_IN_TAXI);
-				TaxiPassenger np = ns.touchPassenger(passengerName);
 				
 				if(inTaxi){
+					TaxiPassenger np = ns.touchPassenger(passengerName);
 					np.set(Taxi.ATT_X, nx);
 					np.set(Taxi.ATT_Y, ny);
 					break;
@@ -123,12 +123,14 @@ public class TaxiModel implements FullStateModel{
 			
 			if(fickle){
 				//find a passenger in the taxi
+				boolean passengerChanged = false;
 				for(String passengerName : s.getPassengers()){
 					boolean inTaxi = (boolean) s.getPassengerAtt(passengerName, Taxi.ATT_IN_TAXI);
 					boolean justPickedUp = (boolean) s.getPassengerAtt(passengerName, Taxi.ATT_JUST_PICKED_UP);
 					String passGoal = (String) s.getPassengerAtt(passengerName, 
 							Taxi.ATT_GOAL_LOCATION);					
 					if(inTaxi && justPickedUp){
+						passengerChanged = true;
 						TaxiPassenger np = ns.touchPassenger(passengerName);
 						np.set(Taxi.ATT_JUST_PICKED_UP, false);
 						// may change goal
@@ -147,11 +149,15 @@ public class TaxiModel implements FullStateModel{
 										/ (s.getLocations().length - 1))));
 							}
 						}
-						continue;
+						break;
 					}
 				}
+				if(!passengerChanged){
+					tps.add(new StateTransitionProb(ns, p));					
+				}
+			}else{
+				tps.add(new StateTransitionProb(ns, p));
 			}
-			tps.add(new StateTransitionProb(ns, p));
 		}
 	}
 	

@@ -63,20 +63,22 @@ public class TaxiL1Model implements FullStateModel {
 		
 		for(String passengerName : s.getPassengers()){
 			boolean inTaxi = (boolean) s.getPassengerAtt(passengerName, TaxiL1.ATT_IN_TAXI);
-			TaxiL1Passenger np = ns.touchPassenger(passengerName);
 			if(inTaxi){
+				TaxiL1Passenger np = ns.touchPassenger(passengerName);
 				np.set(TaxiL1.ATT_CURRENT_LOCATION, goal);
 				break;
 			}
 		}
 		
 		if(fickle){
+			boolean passengerChanged = false;
 			for(String passengerName: s.getPassengers()){
 				boolean inTaxi = (boolean) s.getPassengerAtt(passengerName, TaxiL1.ATT_IN_TAXI);
 				boolean justPickedUp = (boolean) s.getPassengerAtt(passengerName, TaxiL1.ATT_JUST_PICKED_UP);
 				String passGoal = (String) s.getPassengerAtt(passengerName, 
 						TaxiL1.ATT_GOAL_LOCATION);
 				if(inTaxi && justPickedUp){
+					passengerChanged = true;
 					TaxiL1Passenger np = ns.touchPassenger(passengerName);
 					np.set(TaxiL1.ATT_JUST_PICKED_UP, false);
 					for(String locName: s.getLocations()){
@@ -91,11 +93,15 @@ public class TaxiL1Model implements FullStateModel {
 									/ (s.getLocations().length - 1)));
 						}
 					}
-					continue;
+					break;
 				}
 			}
+			if(!passengerChanged){
+				tps.add(new StateTransitionProb(ns, 1));
+			}
+		}else{
+			tps.add(new StateTransitionProb(ns, 1.));
 		}
-		tps.add(new StateTransitionProb(ns, 1.));		
 	}
 	
 	public void pickup(TaxiL1State s, Action a, List<StateTransitionProb> tps){

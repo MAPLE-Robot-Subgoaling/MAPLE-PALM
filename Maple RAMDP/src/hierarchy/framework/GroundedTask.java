@@ -116,7 +116,7 @@ public class GroundedTask {
 	}
 	
 	public State mapState(State s){
-		return t.projectState(s);
+		return t.mapState(s);
 	}
 	
 	public boolean isPrimitive(){

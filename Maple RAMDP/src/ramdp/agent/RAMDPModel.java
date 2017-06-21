@@ -84,7 +84,7 @@ public class RAMDPModel implements FullModel{
 
 	@Override
 	public boolean terminal(State s) {
-		return node.isComplete(s) || node.isComplete(s);
+		return node.isFailure(s) || node.isComplete(s);
 	}
 
 	@Override
@@ -117,15 +117,20 @@ public class RAMDPModel implements FullModel{
 		this.totalReward.get(hs).put(a.actionName(), r_sa);
 		this.resultingStateCount.get(hs).get(a.actionName()).put(hsp, n_sasp);
 		
+		Map<HashableState, Integer> resultStates = this.resultingStateCount.get(hs).get(a.actionName());
 		if(n_sa >= mThreshold){
 			double newR = r_sa / n_sa;
 			setReward(hs, a, newR);
 			
-			Map<HashableState, Integer> resultStates = this.resultingStateCount.get(hs).get(a.actionName());
 			for(HashableState hsprime : resultStates.keySet()){
 				n_sasp = resultStates.get(hsprime);
 				double newP = (double) n_sasp / n_sa;
 				setTransition(hs, a, hsprime, newP);
+			}
+		}else{
+			setReward(hs, a, rmax);
+			for(HashableState hsprime : resultStates.keySet()){
+				setTransition(hs, a, hsprime, 0);
 			}
 		}
 	}
