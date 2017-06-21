@@ -86,7 +86,7 @@ public abstract class Task {
 	 * @param lowerState state at level just below current level
 	 * @return the same state but projected up one level
 	 */
-	public State projectState(State lowerState){
+	public State mapState(State lowerState){
 		return mapper.mapState(lowerState);
 	}
 	

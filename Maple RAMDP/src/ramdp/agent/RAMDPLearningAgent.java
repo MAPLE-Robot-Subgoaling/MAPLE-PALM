@@ -102,6 +102,7 @@ public class RAMDPLearningAgent implements LearningAgent{
 				addChildrenToMap(task, currentState);
 				action = this.taskNames.get(a.actionName());
 			}
+
 			if(action.isPrimitive()){
 				subtaskCompleted = true;
 				result = baseEnv.executeAction(a);
@@ -120,12 +121,13 @@ public class RAMDPLearningAgent implements LearningAgent{
 						(currentState));
 			}
 			
-			if(!action.isPrimitive()){
+			if(task.toString().startsWith("get")){
 				System.out.print(result.a);
 				System.out.print(" \t" + result.r);
 				System.out.println("\t" + subtaskCompleted);
 			}
 			//update task model
+			//MOVE NEXT LINE ABOVE WHILE AND REMOVE STATE
 			RAMDPModel model = getModel(task, currentState);
 			if(subtaskCompleted){
 				model.updateModel(result);
@@ -178,7 +180,7 @@ public class RAMDPLearningAgent implements LearningAgent{
 			this.models.put(t, model);
 		}
 
-//		if(t.toString().startsWith("nav")){
+//		if(t.toString().startsWith("get")){
 //			System.out.println();
 //			List<GroundedTask> children = t.getGroundedChildTasks(s);
 //			for(GroundedTask child : children){
@@ -187,7 +189,7 @@ public class RAMDPLearningAgent implements LearningAgent{
 //				for(TransitionProb tp: tps){
 //					EnvironmentOutcome eo = tp.eo;
 //					System.out.println("\tProbability: " + tp.p);
-////					System.out.println("\tReward " + eo.r);
+//					System.out.println("\tReward " + eo.r);
 ////					System.out.println("s: " + eo.o);
 ////					System.out.println("\tSp:  " + eo.op);
 //					System.out.println();
