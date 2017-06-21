@@ -204,7 +204,7 @@ public class RmaxQLearningAgent implements LearningAgent {
 				State s = e.stateSequence.get(e.stateSequence.size() - 1);
 				hs = hashingFactory.hashState(s);
 
-				terminal = task.isTerminal(s);
+				terminal = task.isComplete(s) || task.isFailure(s);
 			}while(!terminal && (timestep < maxSteps || maxSteps == -1));
 
 			return e;
@@ -513,7 +513,7 @@ public class RmaxQLearningAgent implements LearningAgent {
 		double weightedReward = 0;
 		for(HashableState hnext : childProbabilities.keySet()){
 			//get Ra(nextstate)
-			if(task.isTerminal(hnext.s()))
+			if(task.isComplete(hnext.s()) || task.isFailure(hnext.s()))
 				continue;
 
 			Double nextReward = rewtask.get(hnext);
@@ -539,7 +539,7 @@ public class RmaxQLearningAgent implements LearningAgent {
 		double weightedTransition = 0;
 		//sum over all p pia(s) (s',.)
 		for(HashableState hnext: childProbabilities.keySet()){
-			if(task.isTerminal(hnext.s()))
+			if(task.isComplete(hnext.s()) || task.isFailure(initialState))
 				continue;
 
 			double psprimeTospprime = childProbabilities.get(hnext);
@@ -577,7 +577,7 @@ public class RmaxQLearningAgent implements LearningAgent {
 			return terminal.get(t);
 		List<HashableState> terminals = new ArrayList<HashableState>();
 		for(HashableState s :reachableStates){
-			if(t.isTerminal(s.s()))
+			if(t.isComplete(s.s()) || t.isFailure(s.s()))
 				terminals.add(s);
 		}
 

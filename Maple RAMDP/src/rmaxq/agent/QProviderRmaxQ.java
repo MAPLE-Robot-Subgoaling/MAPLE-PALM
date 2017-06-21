@@ -45,7 +45,7 @@ public class QProviderRmaxQ implements QProvider, MDPSolverInterface{
 	}
 
 	public double value(State s) {
-		if(!task.isPrimitive() && task.isTerminal(s)){
+		if(!task.isPrimitive() && (task.isComplete(s) || task.isFailure(s))){
 			return task.reward(s);
 		}
 				
