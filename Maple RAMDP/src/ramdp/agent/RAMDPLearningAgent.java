@@ -90,8 +90,10 @@ public class RAMDPLearningAgent implements LearningAgent{
 		State baseState = e.stateSequence.get(e.stateSequence.size() - 1);
 		State currentState = task.mapState(baseState);
 		State pastState = currentState;
+		int actionCount = 0;
 		
 		while(!(task.isFailure(currentState) || task.isComplete(currentState)) && (steps < maxSteps || maxSteps == -1)){
+			actionCount++;
 			boolean subtaskCompleted = false;
 			Action a = nextAction(task, currentState);
 			pastState = currentState;
@@ -121,7 +123,7 @@ public class RAMDPLearningAgent implements LearningAgent{
 						(currentState));
 			}
 			
-			if(task.toString().startsWith("get")){
+			if(!action.isPrimitive()){
 				System.out.print(result.a);
 				System.out.print(" \t" + result.r);
 				System.out.println("\t" + subtaskCompleted);
@@ -147,7 +149,7 @@ public class RAMDPLearningAgent implements LearningAgent{
 ////				System.out.println(test);
 //			}
 //		}
-		return task.isComplete(currentState);
+		return task.isComplete(currentState) || actionCount == 0;
 	}
 	
 	protected void addChildrenToMap(GroundedTask gt, State s){
@@ -158,18 +160,20 @@ public class RAMDPLearningAgent implements LearningAgent{
 	}
 	
 	protected Action nextAction(GroundedTask task, State s){
-		OOSADomain domain = task.getDomain(getModel(task, s));
+		RAMDPModel model = getModel(task, s);
+		OOSADomain domain = task.getDomain(model);
 		
 //		BoundedRTDP plan = new BoundedRTDP(domain, gamma, hashingFactory, new ConstantValueFunction(),
 //				new ConstantValueFunction(50), 0.01, -1);
 //		plan.setMaxRolloutDepth(100);
 //        plan.toggleDebugPrinting(false);
         ValueIteration plan = new ValueIteration(domain, gamma, hashingFactory, maxDelta, 1000);
-		Policy p = plan.planFromState(s);
+		Policy viPolicy = plan.planFromState(s);
+		Policy rmaxPolicy = new RMAXPolicy(model, viPolicy, domain.getActionTypes(), hashingFactory);
 		if(task.toString().startsWith("get")){
 			System.out.print("");
 		}
-		return p.action(s);
+		return rmaxPolicy.action(s);
 	}
 	
 	protected RAMDPModel getModel(GroundedTask t, State s){

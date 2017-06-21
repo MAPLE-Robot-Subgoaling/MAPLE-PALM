@@ -127,15 +127,10 @@ public class RAMDPModel implements FullModel{
 				double newP = (double) n_sasp / n_sa;
 				setTransition(hs, a, hsprime, newP);
 			}
-		}else{
-			setReward(hs, a, rmax);
-			for(HashableState hsprime : resultStates.keySet()){
-				setTransition(hs, a, hsprime, 0);
-			}
 		}
 	}
 	
-	protected Map<HashableState, Double> getResultingStates(HashableState hs, Action a){
+	public Map<HashableState, Double> getResultingStates(HashableState hs, Action a){
 		Map<String, Map<HashableState, Double>> SResults = this.transitions.get(hs);
 		if(SResults == null){                                         
 			SResults = new HashMap<String, Map<HashableState,Double>>();
@@ -150,7 +145,7 @@ public class RAMDPModel implements FullModel{
 		return SAResults;
 	}
 	
-	protected double getReward(HashableState hs, Action a){
+	public double getReward(HashableState hs, Action a){
 		Map<String, Double> rewards = this.rewards.get(hs);
 		if(rewards == null){
 			rewards = new HashMap<String, Double>();
@@ -165,7 +160,7 @@ public class RAMDPModel implements FullModel{
 		return reward;
 	}
 	
-	protected int getStateActionCount(HashableState hs, Action a){
+	public int getStateActionCount(HashableState hs, Action a){
 		Map<String, Integer> stateCount = this.stateActionCount.get(hs);
 		if(stateCount == null){
 			stateCount = new HashMap<String, Integer>();
@@ -180,7 +175,7 @@ public class RAMDPModel implements FullModel{
 		return SAcount;
 	}
 	
-	protected int getResultingStateCount(HashableState hs, Action a, HashableState hsp){
+	public int getResultingStateCount(HashableState hs, Action a, HashableState hsp){
 		Map<String, Map<HashableState, Integer>> stateCount = this.resultingStateCount.get(hs);
 		if(stateCount == null){
 			stateCount = new HashMap<String, Map<HashableState, Integer>>();
@@ -202,7 +197,7 @@ public class RAMDPModel implements FullModel{
 		return SASPCount;
 	}
 	
-	protected double getTotalReward(HashableState hs, Action a){
+	public double getTotalReward(HashableState hs, Action a){
 		Map<String, Double> Sreward = this.totalReward.get(hs);
 		if(Sreward == null){
 			Sreward = new HashMap<String, Double>();
@@ -216,6 +211,10 @@ public class RAMDPModel implements FullModel{
 		}
 		
 		return rewards;
+	}
+	
+	public int getThreshold(){
+		return mThreshold;
 	}
 	
 	protected void setReward(HashableState hs, Action a, double reward){
