@@ -1,6 +1,6 @@
 package rmaxq.agent;
 
-import java.util.ArrayList; 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,7 +17,6 @@ import burlap.mdp.singleagent.model.SampleModel;
 import burlap.statehashing.HashableState;
 import burlap.statehashing.HashableStateFactory;
 import hierarchy.framework.GroundedTask;
-import hierarchy.framework.NonprimitiveTask;
 
 public class QProviderRmaxQ implements QProvider, MDPSolverInterface{
 

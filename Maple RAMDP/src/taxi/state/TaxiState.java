@@ -11,7 +11,6 @@ import burlap.mdp.core.oo.state.OOStateUtilities;
 import burlap.mdp.core.oo.state.OOVariableKey;
 import burlap.mdp.core.oo.state.ObjectInstance;
 import burlap.mdp.core.state.MutableState;
-import burlap.mdp.core.state.State;
 import taxi.Taxi;
 
 public class TaxiState implements MutableOOState{

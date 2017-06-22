@@ -10,7 +10,6 @@ import burlap.mdp.singleagent.model.statemodel.FullStateModel;
 import taxi.Taxi;
 import taxi.abstraction1.NavigateActionType.NavigeteAction;
 import taxi.abstraction1.state.TaxiL1Agent;
-import taxi.abstraction1.state.TaxiL1Location;
 import taxi.abstraction1.state.TaxiL1Passenger;
 import taxi.abstraction1.state.TaxiL1State;
 

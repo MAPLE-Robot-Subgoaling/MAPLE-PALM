@@ -3,12 +3,9 @@ package taxi;
 import java.util.ArrayList;
 import java.util.List;
 
-import burlap.behavior.policy.Policy;
-import burlap.behavior.policy.PolicyUtils;
 import burlap.behavior.singleagent.Episode;
 import burlap.behavior.singleagent.auxiliary.EpisodeSequenceVisualizer;
 import burlap.behavior.singleagent.learning.tdmethods.QLearning;
-import burlap.behavior.singleagent.planning.stochastic.valueiteration.ValueIteration;
 import burlap.mdp.auxiliary.DomainGenerator;
 import burlap.mdp.core.TerminalFunction;
 import burlap.mdp.core.action.UniversalActionType;

@@ -19,12 +19,14 @@ import taxi.state.TaxiStateFactory;
 public class AMDPPlanTest {
 	
 	public static void plan(Task root, State init, HashableStateFactory hs, OOSADomain baseDomain,
-			double gamma, double maxDelta, int maxRollouts){
+			double gamma, double maxDelta, int maxRollouts, int numEpisodes){
 		
 		AMDPPlanner amdp = new AMDPPlanner(root, gamma, hs, maxDelta, maxRollouts);
-		Episode e = amdp.planFromState(init);
 		List<Episode> eps = new ArrayList<Episode>();
-		eps.add(e);
+
+		for(int i = 0; i < numEpisodes; i++){
+			eps.add(amdp.planFromState(init));
+		}
 		
 		EpisodeSequenceVisualizer ev = new EpisodeSequenceVisualizer
 				(TaxiVisualizer.getVisualizer(5, 5), baseDomain, eps);;
@@ -38,10 +40,11 @@ public class AMDPPlanTest {
 		double gamma = 0.9;
 		double maxDelta = 0.01;
 		int maxRollouts = 1000;
+		int numEpisodes = 10;
 		
 		TaxiState s = TaxiStateFactory.createClassicState();
 		Task RAMDProot = TaxiHierarchy.createAMDPHierarchy(correctMoveprob, fickleProb);
 		OOSADomain base = TaxiHierarchy.getBaseDomain();
-		plan(RAMDProot, s, new SimpleHashableStateFactory(), base, gamma, maxDelta, maxRollouts);
+		plan(RAMDProot, s, new SimpleHashableStateFactory(), base, gamma, maxDelta, maxRollouts, numEpisodes);
 	}
 }

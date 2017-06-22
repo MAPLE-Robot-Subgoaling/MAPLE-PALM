@@ -1,12 +1,11 @@
 package hierarchy.framework;
 
-import java.util.ArrayList; 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import burlap.mdp.core.action.Action;
-import burlap.mdp.core.action.ActionType;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.environment.EnvironmentOutcome;
 import burlap.mdp.singleagent.environment.SimulatedEnvironment;

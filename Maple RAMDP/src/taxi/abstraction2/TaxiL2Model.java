@@ -7,13 +7,10 @@ import burlap.mdp.core.StateTransitionProb;
 import burlap.mdp.core.action.Action;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.model.statemodel.FullStateModel;
-import taxi.Taxi;
-import taxi.abstraction1.TaxiL1;
 import taxi.abstraction2.GetActionType.GetAction;
 import taxi.abstraction2.PutActionType.PutAction;
 import taxi.abstraction2.state.TaxiL2Passenger;
 import taxi.abstraction2.state.TaxiL2State;
-import taxi.state.TaxiPassenger;
 
 public class TaxiL2Model implements FullStateModel {
 

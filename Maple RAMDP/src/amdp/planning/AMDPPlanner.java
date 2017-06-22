@@ -4,9 +4,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.plaf.basic.BasicScrollPaneUI.HSBChangeListener;
+
 import burlap.behavior.policy.Policy;
-import burlap.behavior.policy.PolicyUtils;
 import burlap.behavior.singleagent.Episode;
+import burlap.behavior.singleagent.planning.stochastic.valueiteration.ValueIteration;
 import burlap.behavior.valuefunction.ConstantValueFunction;
 import burlap.mdp.core.action.Action;
 import burlap.mdp.core.action.ActionType;
@@ -16,6 +18,7 @@ import burlap.mdp.singleagent.environment.EnvironmentOutcome;
 import burlap.mdp.singleagent.environment.SimulatedEnvironment;
 import burlap.mdp.singleagent.model.FullModel;
 import burlap.mdp.singleagent.oo.OOSADomain;
+import burlap.statehashing.HashableState;
 import burlap.statehashing.HashableStateFactory;
 import hierarchy.framework.GroundedTask;
 import hierarchy.framework.Task;
@@ -25,7 +28,7 @@ public class AMDPPlanner {
 	
 	private Task root;
 	
-	private Map<String, Policy> taskPolicies;
+	private Map<String, Map<HashableState, Policy>> taskPolicies;
 	
 	private double gamma;
 	
@@ -44,7 +47,7 @@ public class AMDPPlanner {
 		this.maxDelta = maxDelta;
 		this.maxRollouts = maxRollouts; 
 		this.actionMap = new HashMap<String, GroundedTask>();
-		this.taskPolicies = new HashMap<String, Policy>();
+		this.taskPolicies = new HashMap<String, Map<HashableState,Policy>>();
 	}
 	
 	
@@ -65,26 +68,31 @@ public class AMDPPlanner {
 			State baseState = e.stateSequence.get(e.stateSequence.size() - 1);
 			State currentState = task.mapState(baseState);
 
-			System.out.println(task);
+			int actCout = 0;
 			Policy taskPolicy = getPolicy(task, currentState);
-//			if(task.toString().startsWith("nav")){
-//				Episode ep = PolicyUtils.rollout(taskPolicy,baseState, new AMDPModel(task, (FullModel)task.getDomain().getModel()));
-//				System.out.println(ep.actionSequence);
-//				System.out.println();
-//			}
 			while(!(task.isFailure(currentState) || task.isComplete(currentState))){
+				actCout++;
 				Action a = taskPolicy.action(currentState);
 				GroundedTask child = getChildGT(task, a, currentState);
 				solveTask(child, e, env);
 				baseState = e.stateSequence.get(e.stateSequence.size() - 1);
 				currentState = task.mapState(baseState);
 			}
+			System.out.println(task + " " + actCout);
 		}	
 		return e;
 	}
 	
 	private Policy getPolicy(GroundedTask t, State s){
-		Policy p = taskPolicies.get(t.toString());
+		HashableState hscurrwnt = hs.hashState(s);
+		
+		Map<HashableState, Policy> taskPolicies = this.taskPolicies.get(t.toString());
+		if(taskPolicies == null){
+			taskPolicies = new HashMap<HashableState, Policy>();
+			this.taskPolicies.put(t.toString(), taskPolicies);
+		}
+		
+		Policy p = taskPolicies.get(hscurrwnt);
 		if(p == null){
 			OOSADomain domain = t.getDomain();
 			OOSADomain copy = new OOSADomain();
@@ -99,9 +107,8 @@ public class AMDPPlanner {
 			BoundedRTDP brtdp = new BoundedRTDP(copy, gamma, hs, new ConstantValueFunction(0), new ConstantValueFunction(1),
 					 maxDelta, maxRollouts);
 			p = brtdp.planFromState(s);
-			this.taskPolicies.put(t.toString(), p);
+			taskPolicies.put(hscurrwnt, p);
 		}
-		
 		return p;
 	}
 	

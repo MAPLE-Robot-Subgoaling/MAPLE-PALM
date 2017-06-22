@@ -68,7 +68,7 @@ public class HierarchicalCharts {
 				);
 		
 		exp.startExperiment();
-		exp.writeEpisodeDataToCSV("C:\\Users\\mland\\Box Sync\\Maple\\hierarchical learning data\\ramdp small state stochastic.csv");
+		exp.writeEpisodeDataToCSV("C:\\Users\\mland\\Box Sync\\Maple\\hierarchical learning data\\ramdp full state fickle.csv");
 	}
 	
 	public static void main(String[] args) {

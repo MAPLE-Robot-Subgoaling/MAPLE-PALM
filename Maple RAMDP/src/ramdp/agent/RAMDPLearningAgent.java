@@ -11,7 +11,6 @@ import burlap.mdp.core.action.Action;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.environment.Environment;
 import burlap.mdp.singleagent.environment.EnvironmentOutcome;
-import burlap.mdp.singleagent.model.TransitionProb;
 import burlap.mdp.singleagent.oo.OOSADomain;
 import burlap.statehashing.HashableStateFactory;
 import hierarchy.framework.GroundedTask;
@@ -56,6 +55,7 @@ public class RAMDPLearningAgent implements LearningAgent{
 	private double maxDelta;
 	
 	private Episode e;
+	
 	/**
 	 * 
 	 * @param root
@@ -90,6 +90,7 @@ public class RAMDPLearningAgent implements LearningAgent{
 		State baseState = e.stateSequence.get(e.stateSequence.size() - 1);
 		State currentState = task.mapState(baseState);
 		State pastState = currentState;
+		RAMDPModel model = getModel(task);
 		int actionCount = 0;
 		
 		while(!(task.isFailure(currentState) || task.isComplete(currentState)) && (steps < maxSteps || maxSteps == -1)){
@@ -115,40 +116,19 @@ public class RAMDPLearningAgent implements LearningAgent{
 				steps++;
 			}else{
 				subtaskCompleted = solveTask(action, baseEnv, maxSteps);
-   
 				baseState = e.stateSequence.get(e.stateSequence.size() - 1);
 				currentState = task.mapState(baseState);
+
 				result = new EnvironmentOutcome(pastState, a, currentState,
 						task.getReward(currentState), task.isFailure
 						(currentState));
 			}
 			
-			if(!action.isPrimitive()){
-				System.out.print(result.a);
-				System.out.print(" \t" + result.r);
-				System.out.println("\t" + subtaskCompleted);
-			}
 			//update task model
-			//MOVE NEXT LINE ABOVE WHILE AND REMOVE STATE
-			RAMDPModel model = getModel(task, currentState);
 			if(subtaskCompleted){
 				model.updateModel(result);
-//				System.out.println(task + " " + action );
 			}
 		}
-		
-//			if(task.isComplete(currentState)){
-//				System.out.println(currentState);
-//				task.isTerminal(currentState);
-//				task.isComplete(currentState);
-//			}
-//		}
-//		if(task.toString().startsWith("get")){
-//			TaxiL1State test = (TaxiL1State) currentState;
-//			if(!test.passengers.get(0).inTaxi){
-////				System.out.println(test);
-//			}
-//		}
 		return task.isComplete(currentState) || actionCount == 0;
 	}
 	
@@ -160,23 +140,16 @@ public class RAMDPLearningAgent implements LearningAgent{
 	}
 	
 	protected Action nextAction(GroundedTask task, State s){
-		RAMDPModel model = getModel(task, s);
+		RAMDPModel model = getModel(task);
 		OOSADomain domain = task.getDomain(model);
-		
-//		BoundedRTDP plan = new BoundedRTDP(domain, gamma, hashingFactory, new ConstantValueFunction(),
-//				new ConstantValueFunction(50), 0.01, -1);
-//		plan.setMaxRolloutDepth(100);
-//        plan.toggleDebugPrinting(false);
-        ValueIteration plan = new ValueIteration(domain, gamma, hashingFactory, maxDelta, 1000);
+		ValueIteration plan = new ValueIteration(domain, gamma, hashingFactory, maxDelta, 1000);
 		Policy viPolicy = plan.planFromState(s);
 		Policy rmaxPolicy = new RMAXPolicy(model, viPolicy, domain.getActionTypes(), hashingFactory);
-		if(task.toString().startsWith("get")){
-			System.out.print("");
-		}
+		
 		return rmaxPolicy.action(s);
 	}
 	
-	protected RAMDPModel getModel(GroundedTask t, State s){
+	protected RAMDPModel getModel(GroundedTask t){
 		RAMDPModel model = models.get(t);
 				
 		if(model == null){
@@ -184,22 +157,6 @@ public class RAMDPLearningAgent implements LearningAgent{
 			this.models.put(t, model);
 		}
 
-//		if(t.toString().startsWith("get")){
-//			System.out.println();
-//			List<GroundedTask> children = t.getGroundedChildTasks(s);
-//			for(GroundedTask child : children){
-//				System.out.println(child);
-//				List<TransitionProb> tps = model.transitions(s, child.getAction());
-//				for(TransitionProb tp: tps){
-//					EnvironmentOutcome eo = tp.eo;
-//					System.out.println("\tProbability: " + tp.p);
-//					System.out.println("\tReward " + eo.r);
-////					System.out.println("s: " + eo.o);
-////					System.out.println("\tSp:  " + eo.op);
-//					System.out.println();
-//				}
-//			}
-//		}
 		return model;
 	}
 }

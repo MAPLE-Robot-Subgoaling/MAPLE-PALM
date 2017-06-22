@@ -19,7 +19,6 @@ import taxi.abstraction1.state.L1StateMapper;
 import taxi.abstraction1.state.TaxiL1Agent;
 import taxi.abstraction1.state.TaxiL1Location;
 import taxi.abstraction1.state.TaxiL1Passenger;
-import taxi.abstraction1.state.TaxiL1State;
 import taxi.state.TaxiStateFactory;
 
 public class TaxiL1 implements DomainGenerator {

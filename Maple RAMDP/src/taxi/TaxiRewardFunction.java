@@ -30,7 +30,6 @@ public class TaxiRewardFunction implements RewardFunction{
 	@Override
 	public double reward(State s, Action a, State sprime) {
 		TaxiState state = (TaxiState) s;
-		TaxiState stateprime = (TaxiState) sprime;
 		
 		if(tf.isTerminal(sprime))
 			return goalReward + stepReward;
