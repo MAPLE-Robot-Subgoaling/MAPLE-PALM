@@ -30,6 +30,7 @@ import taxi.rmaxq.functions.BaseNavigateActionType;
 import taxi.rmaxq.functions.BasePutActionType;
 import taxi.rmaxq.functions.BasePutCompletedPF;
 import taxi.rmaxq.functions.BasePutFailurePF;
+import taxi.state.NavStateMapper;
 
 public class TaxiHierarchy {
 
@@ -57,6 +58,7 @@ public class TaxiHierarchy {
 		
 		//state mapping function
 		StateMapping map0 = new IdentityMap();
+		StateMapping mapNav = new NavStateMapper();
 		StateMapping map1 = new L1StateMapper();
 		StateMapping map2 = new L2StateMapper();
 		
@@ -86,7 +88,7 @@ public class TaxiHierarchy {
 		
 		PropositionalFunction navPF = new NavigatePF();
 		NonprimitiveTask navigate = new NonprimitiveTask(navTasks, aNavigate, l0Gen.generateNavigateDomain(),
-				map0, navPF, navPF);
+				mapNav, navPF, navPF);
 		
 		PropositionalFunction pickupFailPF = new PickupFailurePF();
 		PropositionalFunction pickupCompPF = new PickupCompletedPF();
