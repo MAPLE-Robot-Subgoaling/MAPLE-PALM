@@ -72,8 +72,8 @@ public class HierarchicalCharts {
 	}
 	
 	public static void main(String[] args) {
-		double correctMoveprob = 0.8;
-		double fickleProb = 0;
+		double correctMoveprob = 1;
+		double fickleProb = 0.1;
 		int numEpisodes = 100;
 		int maxSteps = 2000;
 		int rmaxThreshold = 3;

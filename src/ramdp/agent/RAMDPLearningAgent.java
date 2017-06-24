@@ -112,6 +112,9 @@ public class RAMDPLearningAgent implements LearningAgent{
 				e.transition(result);
 				baseState = result.op;
 				currentState = task.mapState(result.op);
+				result.o = pastState;
+				result.op = currentState;
+				result.a = a;
 				result.r = task.getReward(currentState);
 				steps++;
 			}else{
@@ -129,6 +132,8 @@ public class RAMDPLearningAgent implements LearningAgent{
 				model.updateModel(result);
 			}
 		}
+		
+		System.out.println(task + " " + actionCount);
 		return task.isComplete(currentState) || actionCount == 0;
 	}
 	
