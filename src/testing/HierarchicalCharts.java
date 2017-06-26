@@ -17,7 +17,9 @@ import rmaxq.agent.RmaxQLearningAgent;
 import taxi.TaxiVisualizer;
 import taxi.hierarchies.TaxiHierarchy;
 import taxi.state.TaxiState;
-import taxi.state.TaxiStateFactory;
+import taxi.stateGenerator.FullRandomTaxiState;
+import taxi.stateGenerator.RandonPassengerTaxiState;
+import taxi.stateGenerator.TaxiStateFactory;
 //import utilities.SimpleHashableStateFactory;
 import utilities.LearningAlgorithmExperimenter;
 
@@ -71,9 +73,45 @@ public class HierarchicalCharts {
 		exp.writeEpisodeDataToCSV("C:\\Users\\mland\\Box Sync\\Maple\\hierarchical learning data\\ramdp full state fickle.csv");
 	}
 	
+	public static void createRandomCrarts(OOSADomain domain, final Task RAMDPRoot, 
+			final double rmax, final int threshold, final double maxDelta, final double discount,
+			int numEpisode, int maxSteps, int numTrial){
+		SimulatedEnvironment env = new SimulatedEnvironment(domain, new RandonPassengerTaxiState());
+		
+		final HashableStateFactory hs = new SimpleHashableStateFactory(true);
+		final GroundedTask RAMDPGroot = RAMDPRoot.getAllGroundedTasks(env.currentObservation()).get(0); 
+		
+		VisualActionObserver obs = new VisualActionObserver(domain, TaxiVisualizer.getVisualizer(5, 5));
+        obs.initGUI();
+        obs.setDefaultCloseOperation(obs.EXIT_ON_CLOSE);
+        env.addObservers(obs);
+		
+		
+		LearningAgentFactory ramdp = new LearningAgentFactory() {
+			
+			@Override
+			public String getAgentName() {
+				return "R-AMDP";
+			}
+			
+			@Override
+			public LearningAgent generateAgent() {
+				return new RAMDPLearningAgent(RAMDPGroot, threshold, discount, rmax, hs, maxDelta);
+			}
+		};
+		
+		LearningAlgorithmExperimenter exp = new LearningAlgorithmExperimenter(env, numTrial, numEpisode, maxSteps, ramdp);
+		exp.setUpPlottingConfiguration(500, 300, 2, 1000,
+				TrialMode.MOST_RECENT_AND_AVERAGE,
+				PerformanceMetric.CUMULATIVE_REWARD_PER_EPISODE
+				);
+		
+		exp.startExperiment();
+		exp.writeEpisodeDataToCSV("C:\\Users\\mland\\Box Sync\\Maple\\hierarchical learning data\\ramdp full state fickle.csv");
+	}
 	public static void main(String[] args) {
 		double correctMoveprob = 1;
-		double fickleProb = 0.1;
+		double fickleProb = 0;
 		int numEpisodes = 100;
 		int maxSteps = 2000;
 		int rmaxThreshold = 3;
@@ -82,11 +120,12 @@ public class HierarchicalCharts {
 		double rmax = 20;
 		double maxDelta = 0.01;
 		
-		TaxiState s = TaxiStateFactory.createClassicState();
+		TaxiState s = TaxiStateFactory.createTinyState();
 		Task RAMDProot = TaxiHierarchy.createAMDPHierarchy(correctMoveprob, fickleProb);
 		OOSADomain base = TaxiHierarchy.getBaseDomain();
 		Task RMAXQroot = TaxiHierarchy.createRMAXQHierarchy(correctMoveprob, fickleProb);
 		createCrarts(s, base, RAMDProot, RMAXQroot, rmax, rmaxThreshold, maxDelta, gamma, 
-				numEpisodes, maxSteps, numTrials); 
+				numEpisodes, maxSteps, numTrials);
+//		createRandomCrarts(base, RAMDProot, rmax, rmaxThreshold, maxDelta, gamma, numEpisodes, maxSteps, numTrials);
 	}
 }

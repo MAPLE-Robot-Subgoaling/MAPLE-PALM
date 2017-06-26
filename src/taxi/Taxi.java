@@ -19,8 +19,8 @@ import burlap.statehashing.simple.SimpleHashableStateFactory;
 import taxi.state.TaxiAgent;
 import taxi.state.TaxiLocation;
 import taxi.state.TaxiPassenger;
-import taxi.state.TaxiStateFactory;
 import taxi.state.TaxiWall;
+import taxi.stateGenerator.TaxiStateFactory;
 
 public class Taxi implements DomainGenerator{
 

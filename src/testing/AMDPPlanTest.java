@@ -14,7 +14,7 @@ import hierarchy.framework.Task;
 import taxi.TaxiVisualizer;
 import taxi.hierarchies.TaxiHierarchy;
 import taxi.state.TaxiState;
-import taxi.state.TaxiStateFactory;
+import taxi.stateGenerator.TaxiStateFactory;
 
 public class AMDPPlanTest {
 	
