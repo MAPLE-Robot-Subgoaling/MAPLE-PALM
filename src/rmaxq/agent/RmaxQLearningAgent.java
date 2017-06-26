@@ -107,6 +107,14 @@ public class RmaxQLearningAgent implements LearningAgent {
 		return e;
 	}
 
+	/**
+	 * main loop of the algorithm that recurses down to primitive actions then updates counts
+	 * @param hs the current state
+	 * @param task the task to solve
+	 * @param e current episode
+	 * @param maxSteps the max number of primitive actions allowed
+	 * @return the episode
+	 */
 	protected Episode R_MaxQ(HashableState hs, GroundedTask task, Episode e, int maxSteps){
 		if(task.isPrimitive()){
 			Action a = task.getAction();
@@ -212,6 +220,11 @@ public class RmaxQLearningAgent implements LearningAgent {
 
 	}
 
+	/**
+	 * computes and updates action values for the state in the task
+	 * @param hs current state
+	 * @param task the current task
+	 */
 	public void computePolicy(HashableState hs, GroundedTask task){
 		
 		Integer aTime = actionTimestaps.get(task);
@@ -259,8 +272,11 @@ public class RmaxQLearningAgent implements LearningAgent {
 		}
 	}
 
-	
-
+	/**
+	 * calculates and stores the possible states that can be reached from the current state 
+	 * @param hs the state
+	 * @param task the task
+	 */
 	public void prepareEnvolope(HashableState hs, GroundedTask task){
 		List<HashableState> envelope = envolope.get(task);
 		if(!envelope.contains(hs)){
@@ -289,6 +305,11 @@ public class RmaxQLearningAgent implements LearningAgent {
 		}
 	}
 
+	/**
+	 * computes and stores reward and transition values for the task 
+	 * @param hs the current state
+	 * @param task the current task
+	 */
 	private void compute_model(HashableState hs, GroundedTask task){
 		if(task.isPrimitive()){
 			//n(s, a)
@@ -455,6 +476,13 @@ public class RmaxQLearningAgent implements LearningAgent {
 		}
 	}
 
+	/**
+	 * runs eqn 1 from RMAXQ paper on inputs
+	 * @param qp action values
+	 * @param hsprime the starting state
+	 * @param a the action
+	 * @return the new q value
+	 */
 	private double epuation_1(QProviderRmaxQ qp, HashableState hsprime, GroundedTask a) {
 		//Ra'(s')
 		Map<HashableState, Double> actionAR = reward.get(a);
@@ -488,7 +516,15 @@ public class RmaxQLearningAgent implements LearningAgent {
 		return newQ;
 	}
 
-
+	/**
+	 * runs eqn 4 from RMAXQ paper on inputs
+	 * @param task current task
+	 * @param taskFromPolicy the policy based on q values
+	 * @param rewtask rewards for the task
+	 * @param hsprime the start state
+	 * @param childProbabilities transitions of the task
+	 * @return the result of eqn 4
+	 */
 	private double equation_4(GroundedTask task, SolverDerivedPolicy taskFromPolicy, Map<HashableState, Double> rewtask,
 			HashableState hsprime, Map<HashableState, Double> childProbabilities) {
 		Action maxqAction = taskFromPolicy.action(hsprime.s());
@@ -528,6 +564,14 @@ public class RmaxQLearningAgent implements LearningAgent {
 		return newReward;
 	}
 
+	/**
+	 * runs eqn 5 from RMAXQ paper on inputs
+	 * @param task the current task
+	 * @param probtask the transition function for the task
+	 * @param childProbabilities transitions for subtask
+	 * @param hx the terminal state to transition into
+	 * @return the result of eqn 5
+	 */
 	private double equation_5(GroundedTask task, Map<HashableState, Map<HashableState, Double>> probtask,
 			Map<HashableState, Double> childProbabilities, HashableState hx) {
 		Double childProbability = childProbabilities.get(hx);
@@ -561,6 +605,11 @@ public class RmaxQLearningAgent implements LearningAgent {
 		return newProb;
 	}
 		
+	/**
+	 * add child task to action lookup
+	 * @param task the current task
+	 * @param s the current state
+	 */
 	protected void addChildTasks(GroundedTask task, State s){
 		if(!task.isPrimitive()){
 			List<GroundedTask> childGroundedTasks =  task.getGroundedChildTasks(s);
@@ -572,6 +621,11 @@ public class RmaxQLearningAgent implements LearningAgent {
 		}
 	}
 
+	/**
+	 * use reachability analysis to get a list of terminal states
+	 * @param t the task
+	 * @return the terminal states
+	 */
 	protected List<HashableState> getTerminalStates(GroundedTask t){
 		if(terminal.containsKey(t))
 			return terminal.get(t);

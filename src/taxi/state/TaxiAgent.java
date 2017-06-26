@@ -9,17 +9,27 @@ import utilities.MutableObject;
 
 public class TaxiAgent extends MutableObject {
 
+	/**
+	 * x, y, taxi occupied 
+	 * if the state is normal
+	 */
 	private final static List<Object> keys = Arrays.<Object>asList(
 			Taxi.ATT_X,
 			Taxi.ATT_Y,
 			Taxi.ATT_TAXI_OCCUPIED
 			);
 	
+	/**
+	 * only x, y in nav states
+	 */
 	private final static List<Object> navKeys = Arrays.<Object>asList(
 			Taxi.ATT_X,
 			Taxi.ATT_Y
 			);
 
+	/**
+	 * flag for nav states
+	 */
 	private boolean nav = false;
 	
 	public TaxiAgent(String name, int x, int y) {

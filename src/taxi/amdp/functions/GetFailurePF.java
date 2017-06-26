@@ -6,7 +6,8 @@ import taxi.abstraction1.TaxiL1;
 import taxi.abstraction1.state.TaxiL1State;
 
 public class GetFailurePF extends PropositionalFunction {
-
+	//get fails if any passenger if in taxi unless it is the right one
+	
 	public GetFailurePF() {
 		super("get", new String[]{TaxiL1.CLASS_L1PASSENGER});
 	}

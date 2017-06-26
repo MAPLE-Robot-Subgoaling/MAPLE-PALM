@@ -10,7 +10,8 @@ import taxi.abstraction2.TaxiL2;
 import taxi.state.TaxiState;
 
 public class BasePutActionType implements ActionType {
-
+	//pt the passenger that is in taxi at the desired location - no abstraction
+	
 	@Override
 	public String typeName() {
 		return TaxiL2.ACTION_PUT;

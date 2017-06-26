@@ -6,7 +6,8 @@ import taxi.Taxi;
 import taxi.state.TaxiState;
 
 public class PickupCompletedPF extends PropositionalFunction {
-
+	//pickup is complete when passenger is in taxi 
+	
 	public PickupCompletedPF() {
 		super("pickupL1", new String[]{});
 	}

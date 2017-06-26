@@ -6,7 +6,8 @@ import taxi.Taxi;
 import taxi.state.TaxiState;
 
 public class DropoffCompletedPF extends PropositionalFunction {
-
+	//dropoff is complete when there is no passenger in the taxi
+	
 	public DropoffCompletedPF() {
 		super("dropoffL1", new String[]{});
 	}

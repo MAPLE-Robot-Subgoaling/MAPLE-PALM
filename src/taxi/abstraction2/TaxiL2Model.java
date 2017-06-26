@@ -50,6 +50,12 @@ public class TaxiL2Model implements FullStateModel {
 		return tps;
 	}
 
+	/**
+	 * put the requested passenger into the taxi
+	 * @param s the current state
+	 * @param a the get action type
+	 * @param tps the list of transition probabilities
+	 */
 	public void get(TaxiL2State s, GetAction a, List<StateTransitionProb> tps){
 		String passegerName = a.getPassenger();
 		TaxiL2State ns = s.copy();
@@ -61,6 +67,12 @@ public class TaxiL2Model implements FullStateModel {
 		tps.add(new StateTransitionProb(ns, 1));
 	}
 	
+	/**
+	 * puts current passenger at requested depot
+	 * @param s the current state
+	 * @param a the put action 
+	 * @param tps the list of state transition probabilities
+	 */
 	public void put(TaxiL2State s, PutAction a, List<StateTransitionProb> tps){
 		String goalLoaction = a.getGoalLocation();
 		TaxiL2State ns = s.copy();
@@ -108,10 +120,14 @@ public class TaxiL2Model implements FullStateModel {
 				}
 			}
 		}
-		
 		tps.add(new StateTransitionProb(ns, 1));
 	}
-	
+
+	/**
+	 * map a action to its number
+	 * @param a the action
+	 * @return the number that represents the action
+	 */
 	public int actionInd(Action a){
 		String aname = a.actionName();
 		if(aname.startsWith(TaxiL2.ACTION_GET))

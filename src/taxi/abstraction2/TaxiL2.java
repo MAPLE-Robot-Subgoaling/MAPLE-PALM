@@ -54,6 +54,13 @@ public class TaxiL2 implements DomainGenerator {
 	private boolean fickle;
 	private double fickleProbability;
 
+	/**
+	 * creates a abstraction 2 taxi domain
+	 * @param rf reward function
+	 * @param tf terminal function
+	 * @param fickle whether the domain is fickle
+	 * @param fickleprob the probability the passenger will change their goal
+	 */
 	public TaxiL2(RewardFunction rf, TerminalFunction tf, boolean fickle, double fickleprob) {
 		this.rf = rf;
 		this.tf = tf;
@@ -61,13 +68,21 @@ public class TaxiL2 implements DomainGenerator {
 		this.fickleProbability = fickleprob;
 	}
 	
+	/**
+	 * creates a abstraction 2 taxi domain
+	 * @param fickle whether the domain is fickle
+	 * @param fickleprob the probability the passenger will change their goal
+	 */
 	public TaxiL2(boolean fickle, double fickleprob) {
 		this.tf = new TaxiL2TerminalFunction(); 
 		this.rf = new GoalBasedRF(tf);
 		this.fickle = fickle;
 		this.fickleProbability = fickleprob;
 	}
-	
+
+	/**
+	 * create default taxi l2 non fickle domain
+	 */
 	public TaxiL2() {
 		this.tf = new TaxiL2TerminalFunction(); 
 		this.rf = new GoalBasedRF(tf);

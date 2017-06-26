@@ -70,7 +70,8 @@ public class Taxi implements DomainGenerator{
 	public static final String ACTION_WEST = 				"west";
 	public static final String ACTION_PICKUP = 				"pickup";
 	public static final String ACTION_DROPOFF = 			"dropoff";
-	
+
+	//action indexes
 	public static int IND_NORTH = 							0;
 	public static int IND_EAST = 							1;
 	public static int IND_SOUTH = 							2;
@@ -78,12 +79,21 @@ public class Taxi implements DomainGenerator{
 	public static int IND_PICKUP = 							4;
 	public static int IND_DROPOFF = 						5;
 	
+	//parameters dictating probabilities of the model
 	private RewardFunction rf;
 	private TerminalFunction tf;
 	private boolean fickle;
 	private double fickleProbability;
 	private double[][] moveDynamics;
 	
+	/**
+	 * create a taxi domain generator
+	 * @param r reward function
+	 * @param t terminal function
+	 * @param fickle whether the domain is fickle
+	 * @param fickleprob probability the passenger that is just picked up will change their goal
+	 * @param correctMoveprob probability the taxi will go in the correct direction they select
+	 */
 	public Taxi(RewardFunction r, TerminalFunction t, boolean fickle,
 			double fickleprob, double correctMoveprob) {
 		rf = r;
@@ -93,7 +103,12 @@ public class Taxi implements DomainGenerator{
 		setMoveDynamics(correctMoveprob);
 	}
 	
-	//fickle deterministic
+	/**
+	 * create a taxi domain generator
+	 * @param fickle whether the domain is fickle 
+	 * @param fickleprob probability the passenger that is just picked up will change their goal
+	 * @param correctMoveprob probability the taxi will go in the correct direction they select
+	 */
 	public Taxi(boolean fickle, double fickleprob, double correctMoveprob) {
 		this.fickle = fickle;
 		this.fickleProbability = fickleprob;
@@ -102,6 +117,13 @@ public class Taxi implements DomainGenerator{
 		this.tf = new TaxiTerminalFunction();
 	}
 	
+	/**
+	 * create a taxi domain generator
+	 * @param fickle whether the domain is fickle 
+	 * @param fickleprob probability the passenger that is just picked up will change their goal
+	 * @param movement a array saying the probability of execution each action (2nd index) given 
+	 * the selected action (1rt action)
+	 */
 	public Taxi(boolean fickle, double fickleprob, double[][] movement) {
 		this.fickle = fickle;
 		this.fickleProbability = fickleprob;
@@ -110,11 +132,18 @@ public class Taxi implements DomainGenerator{
 		this.tf = new TaxiTerminalFunction();
 	}
 	
+	/**
+	 * creates a non fickle deterministic taxi domain generator
+	 */
 	public Taxi() {
 		this(false, 0, 1);
 	}
 	
-	
+	/**
+	 * sets the movement array so the right direction will be taken with
+	 * the given probability and the perpendicular action the rest of the time
+	 * @param correctProb the probability that the correct action is taken
+	 */
 	private void setMoveDynamics(double correctProb){
 		moveDynamics = new double[NUM_MOVE_ACTIONS][NUM_MOVE_ACTIONS];
 		
@@ -156,6 +185,8 @@ public class Taxi implements DomainGenerator{
 		return domain;
 	}
 	
+	//for the taxi hierarchy, each node has a different set of actions, 
+	//these mothods remove all actions besides the subtask for each task  
 	public OOSADomain generatePickupDomain(){
 		OOSADomain d = generateDomain();
 		d.clearActionTypes();

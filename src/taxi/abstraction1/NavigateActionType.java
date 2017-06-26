@@ -9,7 +9,8 @@ import burlap.mdp.core.state.State;
 import taxi.abstraction1.state.TaxiL1State;
 
 public class NavigateActionType implements ActionType {
-
+	//the navigate actions are for moving the taxi to each of the depots
+	
 	public String typeName() {
 		return TaxiL1.ACTION_NAVIGATE;
 	}
@@ -20,6 +21,7 @@ public class NavigateActionType implements ActionType {
 		return new NavigeteAction(goal);
 	}
 
+	//there is a action for each depot in the current configuration
 	@Override
 	public List<Action> allApplicableActions(State s) {
 		TaxiL1State state = (TaxiL1State) s;
@@ -32,6 +34,7 @@ public class NavigateActionType implements ActionType {
 		return acts;
 	}
 
+	//each navigate action is given a goal
 	public class NavigeteAction implements Action {
 
 		private String goalLocation;

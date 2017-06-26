@@ -12,18 +12,38 @@ import taxi.state.TaxiPassenger;
 import taxi.state.TaxiState;
 
 public class TaxiModel implements FullStateModel{
-	
+
+	/**
+	 * the array saying how the probabilities are distributed
+	 */
 	private double[][] moveProbability;
-	private double fickleChangeGoalProbaility;
-	private boolean fickle;
-	private int numSwitch = 0;
 	
+	/**
+	 * probability the passenger just picked up changes their goal 
+	 */
+	private double fickleChangeGoalProbaility;
+	
+	/**
+	 * whether the passengers are fickle
+	 */
+	private boolean fickle;
+
+	/**
+	 * create a taxi model
+	 * @param moveprob array of movement probabilities
+	 * @param fickle whether passengers are fickle
+	 * @param fickleprob probability the passengers are fickle
+	 */
 	public TaxiModel(double[][] moveprob, boolean fickle, double fickleprob) {
 		this.moveProbability = moveprob;
 		this.fickleChangeGoalProbaility = fickleprob;
 		this.fickle = fickle;
 	}
 	
+	/**
+	 * creates a stochastic non fickle taxi model
+	 * @param moveprob the array of movement probabilities
+	 */
 	public TaxiModel(double[][] moveprob){
 		this.moveProbability = moveprob;
 		this.fickle = false;
@@ -38,15 +58,6 @@ public class TaxiModel implements FullStateModel{
          for(int i = 0; i < stpList.size(); i++){
              curSum += stpList.get(i).p;
              if(roll < curSum){
-            	 TaxiState st = (TaxiState) s;
-            	 TaxiState stp = (TaxiState) stpList.get(i).s;
-            	 String g1 = (String) st.getPassengerAtt("Passenger0", Taxi.ATT_GOAL_LOCATION);
-            	 String g2 = (String) stp.getPassengerAtt("Passenger0", Taxi.ATT_GOAL_LOCATION);
-            	 if(!g1.equals(g2)){
-            		 numSwitch++;
-            		 
-            	 }
-//            	 System.out.println(numSwitch);
                  return stpList.get(i).s;
              }
          }
@@ -59,7 +70,6 @@ public class TaxiModel implements FullStateModel{
 		int action = actionInd(a);
 		TaxiState taxiS = (TaxiState) s;
 		
-		//movement
 		if(action <= Taxi.IND_WEST){
 			movement(taxiS, action, tps);
 		}else if(action == Taxi.IND_DROPOFF){
@@ -71,6 +81,12 @@ public class TaxiModel implements FullStateModel{
 		return tps;
 	}
 
+	/**
+	 * add all resulting states given a movement action
+	 * @param s the current state
+	 * @param action the index of the selected movement action
+	 * @param tps a list of state transition probabilities to add to
+	 */
 	public void movement(TaxiState s, int action, List<StateTransitionProb> tps){
 		double[] moveProbabilities = this.moveProbability[action];
 		
@@ -85,6 +101,7 @@ public class TaxiModel implements FullStateModel{
 			int dx = 0, dy = 0;
 			TaxiState ns = s.copy();
 			
+			//move in the given direction unless there are walls in the way
 			if(outcome == Taxi.IND_NORTH){
 				if(!ns.wallNorth()){
 					dy = +1;
@@ -161,6 +178,11 @@ public class TaxiModel implements FullStateModel{
 		}
 	}
 	
+	/**
+	 * put passenger at the taxi inside if no one else is inside
+	 * @param s the current state
+	 * @param tps a list of state transition probabilities to add to
+	 */
 	public void pickup(TaxiState s, List<StateTransitionProb> tps){
 		int tx = (int) s.getTaxiAtt(Taxi.ATT_X);
 		int ty = (int) s.getTaxiAtt(Taxi.ATT_Y); 
@@ -193,6 +215,11 @@ public class TaxiModel implements FullStateModel{
 		tps.add(new StateTransitionProb(s.copy(), 1.));
 	}
 	
+	/**
+	 * put passenger down if the taxi is occupied and at a depot
+	 * @param s the current state
+	 * @param tps a list of state transition probabilities to add to
+	 */
 	public void dropoff(TaxiState s, List<StateTransitionProb> tps){
 		int tx = (int) s.getTaxiAtt(Taxi.ATT_X);
 		int ty = (int) s.getTaxiAtt(Taxi.ATT_Y); 
@@ -235,6 +262,11 @@ public class TaxiModel implements FullStateModel{
 		tps.add(new StateTransitionProb(s.copy(), 1.));
 	}
 	
+	/**
+	 * map a action to its number
+	 * @param a the action
+	 * @return the number that represents the action
+	 */
 	public int actionInd(Action a){
 		String aname = a.actionName();
 		if(aname.equals(Taxi.ACTION_NORTH))

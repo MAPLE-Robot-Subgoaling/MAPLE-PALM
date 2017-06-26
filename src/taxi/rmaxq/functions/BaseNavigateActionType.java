@@ -10,7 +10,8 @@ import taxi.abstraction1.TaxiL1;
 import taxi.state.TaxiState;
 
 public class BaseNavigateActionType implements ActionType {
-
+	//nav the taxi to the given goal  - no abstraction
+	
 	public String typeName() {
 		return TaxiL1.ACTION_NAVIGATE;
 	}

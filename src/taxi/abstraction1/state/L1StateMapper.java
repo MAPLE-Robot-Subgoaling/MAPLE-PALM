@@ -11,7 +11,8 @@ import taxi.state.TaxiAgent;
 import taxi.state.TaxiState;
 
 public class L1StateMapper implements StateMapping {
-
+	//projection function from the base taxi to abstraction 1
+	
 	@Override
 	public State mapState(State s) {
 		List<TaxiL1Passenger> passengers = new ArrayList<TaxiL1Passenger>();

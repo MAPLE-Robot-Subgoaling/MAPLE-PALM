@@ -9,7 +9,8 @@ import taxi.abstraction2.GetActionType.GetAction;
 import taxi.state.TaxiState;
 
 public class BaseGetCompletedPF extends PropositionalFunction{ 
-
+	//get is complete if desired passenger is in taxi  - no abstraction
+	
 	public BaseGetCompletedPF() {
 		super("get", new String[]{TaxiL1.CLASS_L1PASSENGER});
 	}

@@ -16,8 +16,14 @@ import hierarchy.framework.GroundedTask;
 
 public class RAMDPModel implements FullModel{
 
+	/**
+	 * the rmax sample parameter
+	 */
 	private int mThreshold;
 	
+	/**
+	 * the provided hashing factory
+	 */
 	private HashableStateFactory hashingFactory;
 	
 	/**
@@ -45,17 +51,24 @@ public class RAMDPModel implements FullModel{
 	 */
 	private Map<HashableState, Map<String, Double>> totalReward;
 	
-	private GroundedTask node;
+	/**
+	 * the grounded task that is being modeled
+	 */
+	private GroundedTask task;
 	
+	/**
+	 * the max reward for the domain
+	 */
 	private double rmax;
 	
 	/**
-	 * creats a RAMDP model 
-	 * @param tasks
-	 * @param threshold
-	 * @param hs
+	 * creates a rmax model
+	 * @param task the grounded task to model
+	 * @param threshold rmax sample threshold
+	 * @param rmax max reward in domain
+	 * @param hs provided hashing factory
 	 */
-	public RAMDPModel( GroundedTask node, int threshold, double rmax, HashableStateFactory hs) {
+	public RAMDPModel( GroundedTask task, int threshold, double rmax, HashableStateFactory hs) {
 		this.hashingFactory = hs;
 		this.mThreshold = threshold;
 		this.rewards = new HashMap<HashableState, Map<String, Double>>();
@@ -63,7 +76,7 @@ public class RAMDPModel implements FullModel{
 		this.stateActionCount = new HashMap<HashableState, Map<String,Integer>>();
 		this.resultingStateCount = new HashMap<HashableState, Map<String, Map<HashableState, Integer>>>();
 		this.totalReward = new HashMap<HashableState, Map<String,Double>>();
-		this.node = node;
+		this.task = task;
 		this.rmax = rmax;
 	}
 
@@ -82,11 +95,13 @@ public class RAMDPModel implements FullModel{
 		throw new RuntimeException("Probabilities don't sum to 1.0: " + sum);
 	}
 
+	//the model is terminal if the task is completed or if it fails
 	@Override
 	public boolean terminal(State s) {
-		return node.isFailure(s) || node.isComplete(s);
+		return task.isFailure(s) || task.isComplete(s);
 	}
 
+	// the transitions come from the recorded rewards and probabilities in the maps
 	@Override
 	public List<TransitionProb> transitions(State s, Action a) {
 		HashableState hs = this.hashingFactory.hashState(s);
@@ -103,12 +118,18 @@ public class RAMDPModel implements FullModel{
 		return tps; 
 	}
 	
+	/**
+	 * updates the model counts, rewards and probabilities given the
+	 * information in the outcome
+	 * @param result the outcome of the latest action specific to the task rewards and abstractions
+	 */
 	public void updateModel(EnvironmentOutcome result){
 		HashableState hs = this.hashingFactory.hashState(result.o);
 		double reward = result.r;
 		Action a = result.a;
 		HashableState hsp = this.hashingFactory.hashState(result.op);
 		
+		//add to the count the information in the outcome and restore
 		int n_sa = getStateActionCount(hs, a) + 1;
 		double r_sa = getTotalReward(hs, a) + reward;
 		int n_sasp = getResultingStateCount(hs, a, hsp) + 1;
@@ -117,6 +138,8 @@ public class RAMDPModel implements FullModel{
 		this.totalReward.get(hs).put(a.actionName(), r_sa);
 		this.resultingStateCount.get(hs).get(a.actionName()).put(hsp, n_sasp);
 		
+		//if the transition samples passes the threshold, record the true values 
+		//in the model
 		Map<HashableState, Integer> resultStates = this.resultingStateCount.get(hs).get(a.actionName());
 		if(n_sa >= mThreshold){
 			double newR = r_sa / n_sa;
@@ -130,7 +153,14 @@ public class RAMDPModel implements FullModel{
 		}
 	}
 	
-	public Map<HashableState, Double> getResultingStates(HashableState hs, Action a){
+	/**
+	 * get a map of state that could result from taking action a in state s
+	 * along with their probabilities
+	 * @param hs the current hashed state
+	 * @param a the action to take
+	 * @return a map of hashed resulting states with their probability
+	 */
+	protected Map<HashableState, Double> getResultingStates(HashableState hs, Action a){
 		Map<String, Map<HashableState, Double>> SResults = this.transitions.get(hs);
 		if(SResults == null){                                         
 			SResults = new HashMap<String, Map<HashableState,Double>>();
@@ -145,7 +175,13 @@ public class RAMDPModel implements FullModel{
 		return SAResults;
 	}
 	
-	public double getReward(HashableState hs, Action a){
+	/**
+	 * get the reward the model associates with the given state and action
+	 * @param hs the hashed state of interest
+	 * @param a the chosen action
+	 * @return R(s, a)
+	 */
+	protected double getReward(HashableState hs, Action a){
 		Map<String, Double> rewards = this.rewards.get(hs);
 		if(rewards == null){
 			rewards = new HashMap<String, Double>();
@@ -160,6 +196,12 @@ public class RAMDPModel implements FullModel{
 		return reward;
 	}
 	
+	/**
+	 * get the number of times a was executed in s
+	 * @param hs current state
+	 * @param a the action
+	 * @return n(s, a)
+	 */
 	public int getStateActionCount(HashableState hs, Action a){
 		Map<String, Integer> stateCount = this.stateActionCount.get(hs);
 		if(stateCount == null){
@@ -175,7 +217,14 @@ public class RAMDPModel implements FullModel{
 		return SAcount;
 	}
 	
-	public int getResultingStateCount(HashableState hs, Action a, HashableState hsp){
+	/**
+	 * get the number of times sprime was reached after executing a in s
+	 * @param hs the start state
+	 * @param a the action
+	 * @param hsp the resulting state
+	 * @return n(s, a, s')
+	 */
+	protected int getResultingStateCount(HashableState hs, Action a, HashableState hsp){
 		Map<String, Map<HashableState, Integer>> stateCount = this.resultingStateCount.get(hs);
 		if(stateCount == null){
 			stateCount = new HashMap<String, Map<HashableState, Integer>>();
@@ -197,7 +246,13 @@ public class RAMDPModel implements FullModel{
 		return SASPCount;
 	}
 	
-	public double getTotalReward(HashableState hs, Action a){
+	/**
+	 * gets the cumulative reward over all attempts of action a in state s
+	 * @param hs the current state
+	 * @param a the action
+	 * @return r(s, a)
+	 */
+	protected double getTotalReward(HashableState hs, Action a){
 		Map<String, Double> Sreward = this.totalReward.get(hs);
 		if(Sreward == null){
 			Sreward = new HashMap<String, Double>();
@@ -213,15 +268,32 @@ public class RAMDPModel implements FullModel{
 		return rewards;
 	}
 	
+	/**
+	 * get the number of action attempts needed for a transition to be known
+	 * @return the rmax m coefficient
+	 */
 	public int getThreshold(){
 		return mThreshold;
 	}
 	
+	/**
+	 * sets R(s,a) to the given value
+	 * @param hs the current state
+	 * @param a the action to take
+	 * @param reward the new reward
+	 */
 	protected void setReward(HashableState hs, Action a, double reward){
 		getReward(hs, a);
 		this.rewards.get(hs).put(a.actionName(), reward);
 	}
 	
+	/**
+	 * sets the probability of going to s' from s after executing a
+	 * @param hs the current state
+	 * @param a the action
+	 * @param hsp the resulting state
+	 * @param probability the new probability
+	 */
 	protected void setTransition(HashableState hs, Action a, HashableState hsp, double probability){
 		getResultingStates(hs, a);
 		this.transitions.get(hs).get(a.actionName()).put(hsp, probability);

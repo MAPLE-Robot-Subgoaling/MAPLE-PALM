@@ -10,7 +10,8 @@ import taxi.abstraction2.TaxiL2;
 import taxi.state.TaxiState;
 
 public class BaseGetActionType implements ActionType {
-
+	//get action puts the requested passenger into taxi - no abstraction
+	
 	@Override
 	public String typeName() {
 		return TaxiL2.ACTION_GET;

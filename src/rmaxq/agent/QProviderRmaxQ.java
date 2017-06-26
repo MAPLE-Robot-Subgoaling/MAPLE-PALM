@@ -20,16 +20,33 @@ import hierarchy.framework.GroundedTask;
 
 public class QProviderRmaxQ implements QProvider, MDPSolverInterface{
 
+	/**
+	 * a list of action values for each state
+	 */
 	private Map<HashableState, List<QValue>> qvals;
+	
+	/**
+	 * a provided state hashing factory
+	 */
 	private HashableStateFactory hashingFactory;
+	
+	/**
+	 * the task
+	 */
 	private GroundedTask task;
 	
+	/**
+	 * create a q provider for the task
+	 * @param hsf a state hashing factory
+	 * @param t the task
+	 */
 	public QProviderRmaxQ(HashableStateFactory hsf, GroundedTask t){
 		this.hashingFactory = hsf;
 		this.task = t;
 		this.qvals = new HashMap<HashableState, List<QValue>>();
 	}
 	
+	@Override
 	public double qValue(State s, Action a) {
 		HashableState hs = hashingFactory.hashState(s);
 		if(!qvals.containsKey(hs))
@@ -43,14 +60,21 @@ public class QProviderRmaxQ implements QProvider, MDPSolverInterface{
 		return 0;
 	}
 
+	@Override
 	public double value(State s) {
 		if(!task.isPrimitive() && (task.isComplete(s) || task.isFailure(s))){
-			return task.reward(s);
+			return task.getReward(s);
 		}
 				
 		return QProvider.Helper.maxQ(this, s);
 	}
 
+	/**
+	 * update Q(s, a) to the given value
+	 * @param s the state
+	 * @param a the action
+	 * @param val the new q value
+	 */
 	public void update(State s, Action a, double val){
 		List<QValue> qvalsins = qvals.get(hashingFactory.hashState(s));
 		for(QValue q : qvalsins){
@@ -62,6 +86,7 @@ public class QProviderRmaxQ implements QProvider, MDPSolverInterface{
 		qvalsins.add(new QValue(s, a, 0));
 	}
 	
+	@Override
 	public List<QValue> qValues(State s) {
 		HashableState hs = hashingFactory.hashState(s);
 		if(!qvals.containsKey(hs)){
@@ -75,66 +100,83 @@ public class QProviderRmaxQ implements QProvider, MDPSolverInterface{
 		return qvals.get(hs);
 	}
 	
+	//the rest of this class is only needed because of mdpsolver but they are unused
+	@Override
 	public void solverInit(SADomain domain, double gamma, HashableStateFactory hashingFactory) {
 		
 	}
 
+	@Override
 	public void resetSolver() {
 		
 	}
 
+	@Override
 	public void setDomain(SADomain domain) {
 		
 	}
 
+	@Override
 	public void setModel(SampleModel model) {
 		
 	}
 
+	@Override
 	public SampleModel getModel() {
 		return null;
 	}
 
+	@Override
 	public Domain getDomain() {
 		return null;
 	}
 
+	@Override
 	public void addActionType(ActionType a) {
 	
 	}
 
+	@Override
 	public void setActionTypes(List<ActionType> actionTypes) {
 		
 	}
 
+	@Override
 	public List<ActionType> getActionTypes() {
 		return null;
 	}
 
+	@Override
 	public void setHashingFactory(HashableStateFactory hashingFactory) {
 		
 	}
 
+	@Override
 	public HashableStateFactory getHashingFactory() {
 		return null;
 	}
 
+	@Override
 	public double getGamma() {
 		return 0;
 	}
 
+	@Override
 	public void setGamma(double gamma) {
 		
 	}
 
+	@Override
 	public void setDebugCode(int code) {
 		
 	}
 
+	@Override
 	public int getDebugCode() {
 		return 0;
 	}
 
+	@Override
 	public void toggleDebugPrinting(boolean toggle) {
 		
 	}

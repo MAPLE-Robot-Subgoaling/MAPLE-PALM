@@ -8,11 +8,29 @@ import taxi.state.TaxiState;
 
 public class TaxiRewardFunction implements RewardFunction{
 
+	/**
+	 * the reward for taking a action
+	 */
 	private double stepReward;
+	
+	/**
+	 * the reward for a impossible pickup or dropoff action
+	 */
 	private double illegalActionReward;
+	
+	/**
+	 * the reward for completing the goal
+	 */
 	private double goalReward;
+	
+	/**
+	 * the taxi terminal function
+	 */
 	private TerminalFunction tf;
 	
+	/**
+	 * use the default rewards
+	 */
 	public TaxiRewardFunction() {
 		stepReward = -1;
 		illegalActionReward = -10;
@@ -20,6 +38,12 @@ public class TaxiRewardFunction implements RewardFunction{
 		tf = new TaxiTerminalFunction();
 	}
 	
+	/**
+	 * use custom rewards
+	 * @param stepR the reward for a action
+	 * @param illegalR the reward for a impossible pickup or dropoff
+	 * @param goalR the reward for completing the goal
+	 */
 	public TaxiRewardFunction(double stepR, double illegalR, double goalR){
 		stepReward = stepR;
 		illegalActionReward = illegalR;

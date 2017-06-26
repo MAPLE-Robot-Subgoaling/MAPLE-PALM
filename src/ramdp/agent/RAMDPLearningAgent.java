@@ -47,19 +47,35 @@ public class RAMDPLearningAgent implements LearningAgent{
 	 * lookup grounded tasks by name task
 	 */
 	private Map<String, GroundedTask> taskNames;
-	
+
+	/**
+	 * the discount factor
+	 */
 	private double gamma;
 	
+	/**
+	 * provided state hashing factory
+	 */
 	private HashableStateFactory hashingFactory;
 	
+	/**
+	 * the max error allowed for the planner
+	 */
 	private double maxDelta;
 	
+	/**
+	 * the current episode
+	 */
 	private Episode e;
 	
 	/**
-	 * 
-	 * @param root
-	 * @param threshold
+	 * create a RAMDP agent on a given task
+	 * @param root the root of the hierarchy to learn
+	 * @param threshold the rmax sample threshold
+	 * @param discount the discount for the tasks' domains 
+	 * @param rmax the max reward
+	 * @param hs a state hashing factory
+	 * @param delta the max error for the planner
 	 */
 	public RAMDPLearningAgent(GroundedTask root, int threshold, double discount, double rmax,
 			HashableStateFactory hs, double delta) {
@@ -86,6 +102,13 @@ public class RAMDPLearningAgent implements LearningAgent{
 		return e;
 	}
 
+	/**
+	 * tries to solve a grounded task while creating a model of it
+	 * @param task the grounded task to solve
+	 * @param baseEnv a environment defined by the base domain and at the current base state
+	 * @param maxSteps the max number of primitive actions that can be taken
+	 * @return whether the task was completed 
+	 */
 	protected boolean solveTask(GroundedTask task, Environment baseEnv, int maxSteps){
 		State baseState = e.stateSequence.get(e.stateSequence.size() - 1);
 		State currentState = task.mapState(baseState);
@@ -96,10 +119,10 @@ public class RAMDPLearningAgent implements LearningAgent{
 		while(!(task.isFailure(currentState) || task.isComplete(currentState)) && (steps < maxSteps || maxSteps == -1)){
 			actionCount++;
 			boolean subtaskCompleted = false;
-			Action a = nextAction(task, currentState);
 			pastState = currentState;
 			EnvironmentOutcome result;
 
+			Action a = nextAction(task, currentState);
 			GroundedTask action = this.taskNames.get(a.actionName());
 			if(action == null){
 				addChildrenToMap(task, currentState);
@@ -127,7 +150,7 @@ public class RAMDPLearningAgent implements LearningAgent{
 						(currentState));
 			}
 			
-			//update task model
+			//update task model if the subtask completed correctly
 			if(subtaskCompleted){
 				model.updateModel(result);
 			}
@@ -137,6 +160,11 @@ public class RAMDPLearningAgent implements LearningAgent{
 		return task.isComplete(currentState) || actionCount == 0;
 	}
 	
+	/**
+	 * add the children of the given task to the action name lookup
+	 * @param gt the current grounded task
+	 * @param s the current state
+	 */
 	protected void addChildrenToMap(GroundedTask gt, State s){
 		List<GroundedTask> chilkdren = gt.getGroundedChildTasks(s);
 		for(GroundedTask child : chilkdren){
@@ -144,6 +172,12 @@ public class RAMDPLearningAgent implements LearningAgent{
 		}
 	}
 	
+	/**
+	 * plan over the given task's model and pick the best action to do next favoring unmodeled actions
+	 * @param task the current task
+	 * @param s the current state
+	 * @return the best action to take
+	 */
 	protected Action nextAction(GroundedTask task, State s){
 		RAMDPModel model = getModel(task);
 		OOSADomain domain = task.getDomain(model);
@@ -153,15 +187,18 @@ public class RAMDPLearningAgent implements LearningAgent{
 		
 		return rmaxPolicy.action(s);
 	}
-	
+
+	/**
+	 * get the rmax model of the given task
+	 * @param t the current task
+	 * @return the learned rmax model of the task
+	 */
 	protected RAMDPModel getModel(GroundedTask t){
 		RAMDPModel model = models.get(t);
-				
 		if(model == null){
 			model = new RAMDPModel(t, this.rmaxThreshold, this.rmax, this.hashingFactory);
 			this.models.put(t, model);
 		}
-
 		return model;
 	}
 }

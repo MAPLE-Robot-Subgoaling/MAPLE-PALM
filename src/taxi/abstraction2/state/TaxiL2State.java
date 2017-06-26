@@ -14,6 +14,7 @@ import taxi.abstraction2.TaxiL2;
 
 public class TaxiL2State implements MutableOOState {
 
+	//this state has passengers and depots
 	private Map<String, TaxiL2Passenger> passengers;
 	private Map<String, TaxiL2Location> locations;
 	
@@ -120,7 +121,7 @@ public class TaxiL2State implements MutableOOState {
 		throw new RuntimeException("Rename not implemented");
 	}
 
-	//copy on write
+	//touch methods allow a shallow copy of states and a copy of objects only when modified
 	public TaxiL2Passenger touchPassenger(String passName){
 		TaxiL2Passenger p = passengers.get(passName).copy();
 		touchPassengers().remove(passName);

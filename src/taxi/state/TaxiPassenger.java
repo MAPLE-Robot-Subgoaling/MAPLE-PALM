@@ -9,6 +9,9 @@ import utilities.MutableObject;
 
 public class TaxiPassenger extends MutableObject{
 
+	/**
+	 * x, y, whether in taxi, goal, whether they have been picked up, whether they wer just picked up
+	 */
 	private final static List<Object> keys = Arrays.<Object>asList(
 			Taxi.ATT_X,
 			Taxi.ATT_Y,

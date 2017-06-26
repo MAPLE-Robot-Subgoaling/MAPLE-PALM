@@ -7,19 +7,28 @@ import burlap.mdp.core.oo.state.ObjectInstance;
 import taxi.Taxi;
 import utilities.MutableObject;
 
-public class TaxiLocation extends MutableObject {
+public class TaxiLocation extends MutableObject{ 
 
+	/**
+	 * standard x, y, color
+	 */
 	private final static List<Object> keys = Arrays.<Object>asList(
 			Taxi.ATT_X,
 			Taxi.ATT_Y,
 			Taxi.ATT_COLOR
 			);
 	
+	/**
+	 * nav state only has x, y
+	 */
 	private final static List<Object> navKeys = Arrays.<Object>asList(
 			Taxi.ATT_X,
 			Taxi.ATT_Y
 			);
 	
+	/**
+	 * flag for nav state
+	 */
 	private boolean nav = false;
 	
 	public TaxiLocation(String name, int x, int y, String color) {

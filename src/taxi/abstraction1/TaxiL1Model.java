@@ -15,9 +15,21 @@ import taxi.abstraction1.state.TaxiL1State;
 
 public class TaxiL1Model implements FullStateModel {
 
+	/**
+	 * the probability the passengers change their goal
+	 */
 	private double fickleChangeGoalProbaility;
+	
+	/**
+	 * whether the passengers are fickle
+	 */
 	private boolean fickle;
 	
+	/**
+	 * create a taxi abstraction 1 model
+	 * @param fickle whether the passengers are fickle
+	 * @param fickleprob the probability te passengers change goal when just picked up
+	 */
 	public TaxiL1Model(boolean fickle, double fickleprob) {
 		this.fickle = fickle;
 		this.fickleChangeGoalProbaility = fickleprob;
@@ -46,13 +58,19 @@ public class TaxiL1Model implements FullStateModel {
 		if(action == TaxiL1.IND_NAVIGATE){
 			navigate(state, (NavigeteAction) a, tps);
 		}else if(action == TaxiL1.IND_L1PICKUP){
-			pickup(state, a, tps);
+			pickup(state, tps);
 		}else if(action == TaxiL1.IND_L1DROPOFF){
-			dropoff(state, a, tps);
+			dropoff(state, tps);
 		}
 		return tps;
 	}
 
+	/**
+	 * put the taxi at the goal location of the action
+	 * @param s the current state
+	 * @param a the nav action
+	 * @param tps the list of outcomes to add to
+	 */
 	public void navigate(TaxiL1State s, NavigeteAction a, List<StateTransitionProb> tps){
 		String goal = a.getGoalLocation();
 		
@@ -103,7 +121,12 @@ public class TaxiL1Model implements FullStateModel {
 		}
 	}
 	
-	public void pickup(TaxiL1State s, Action a, List<StateTransitionProb> tps){
+	/**
+	 * put passenger in taxi if it is at the taxi and taxi is open
+	 * @param s the current state
+	 * @param tps the list of outcomes to add to
+	 */
+	public void pickup(TaxiL1State s, List<StateTransitionProb> tps){
 		String taxiLocation = (String) s.getTaxiAtt(TaxiL1.ATT_CURRENT_LOCATION);
 		boolean taxiOccupied = (boolean) s.getTaxiAtt(TaxiL1.ATT_TAXI_OCCUPIED);
 		
@@ -132,7 +155,12 @@ public class TaxiL1Model implements FullStateModel {
 		tps.add(new StateTransitionProb(s.copy(), 1));
 	}
 
-	public void dropoff(TaxiL1State s, Action a, List<StateTransitionProb> tps){
+	/**
+	 * put the passenger that is in the taxi on a depot 
+	 * @param s
+	 * @param tps
+	 */
+	public void dropoff(TaxiL1State s, List<StateTransitionProb> tps){
 		String taxiLocation = (String) s.getTaxiAtt(TaxiL1.ATT_CURRENT_LOCATION);
 		boolean taxiOccupied = (boolean) s.getTaxiAtt(TaxiL1.ATT_TAXI_OCCUPIED);
 		
@@ -170,6 +198,11 @@ public class TaxiL1Model implements FullStateModel {
 		tps.add(new StateTransitionProb(s.copy(), 1));
 	}
 	
+	/**
+	 * map a action to its number
+	 * @param a the action
+	 * @return the number that represents the action
+	 */
 	public int actionInd(Action a){
 		String aname = a.actionName();
 		if(aname.startsWith(TaxiL1.ACTION_NAVIGATE))

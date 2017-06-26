@@ -9,6 +9,9 @@ import utilities.MutableObject;
 
 public class TaxiWall extends MutableObject {
 
+	/**
+	 * contains startx and y and length and if it is horizontal
+	 */
 	private final static List<Object> keys = Arrays.<Object>asList(
 			Taxi.ATT_START_X,
 			Taxi.ATT_START_Y,

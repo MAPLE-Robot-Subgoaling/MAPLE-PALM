@@ -9,6 +9,9 @@ import utilities.MutableObject;
 
 public class TaxiL1Location extends MutableObject{
 
+	/**
+	 * color of location
+	 */
 	private final static List<Object> keys = Arrays.<Object>asList(
 			TaxiL1.ATT_COLOR
 			);

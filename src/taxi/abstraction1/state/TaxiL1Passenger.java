@@ -9,6 +9,10 @@ import utilities.MutableObject;
 
 public class TaxiL1Passenger extends MutableObject {
 
+	/**
+	 * current location, if they are in taxi, goal location, if they have been picked up,
+	 * and if they have been just picked up 
+	 */
 	private final static List<Object> keys = Arrays.<Object>asList(
 			TaxiL1.ATT_CURRENT_LOCATION,
 			TaxiL1.ATT_IN_TAXI,

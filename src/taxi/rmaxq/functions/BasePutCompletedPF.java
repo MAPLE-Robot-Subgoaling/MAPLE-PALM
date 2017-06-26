@@ -9,7 +9,8 @@ import taxi.abstraction2.PutActionType.PutAction;
 import taxi.state.TaxiState;
 
 public class BasePutCompletedPF extends PropositionalFunction{
-
+	//put is complete when the passenenger is at goal and taxi is empty - no abstraction
+	
 	public BasePutCompletedPF() {
 		super("put", new String[]{TaxiL1.CLASS_L1LOCATION});
 	}

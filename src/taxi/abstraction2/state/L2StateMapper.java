@@ -9,7 +9,7 @@ import taxi.Taxi;
 import taxi.state.TaxiState;
 
 public class L2StateMapper implements StateMapping {
-
+	//maps a base taxi state to L2
 	@Override
 	public State mapState(State s) {
 		List<TaxiL2Passenger> passengers = new ArrayList<TaxiL2Passenger>();

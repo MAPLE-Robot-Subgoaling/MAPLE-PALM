@@ -20,7 +20,8 @@ import taxi.state.TaxiState;
 import taxi.state.TaxiWall;
 
 public class TaxiVisualizer {
-
+	//this code creates painter and a visualizer for the base taxi domain
+	
 	private static Map<String, Color> colors;
 	private static int cellsWide, cellsTall;
 	
@@ -58,6 +59,7 @@ public class TaxiVisualizer {
         return rl;
 	}
 	
+	//these classes add graphics for each of the state objectsS
 	public static class TaxiPainter implements ObjectPainter{
 
 		@Override

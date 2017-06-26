@@ -9,7 +9,8 @@ import burlap.mdp.core.state.State;
 import taxi.abstraction2.state.TaxiL2State;
 
 public class GetActionType implements ActionType {
-
+	//the get action type which puts the passenger with given name in taxi
+	
 	@Override
 	public String typeName() {
 		return TaxiL2.ACTION_GET;

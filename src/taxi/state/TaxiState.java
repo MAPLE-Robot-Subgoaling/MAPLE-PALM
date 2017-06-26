@@ -15,6 +15,7 @@ import taxi.Taxi;
 
 public class TaxiState implements MutableOOState{
 
+	//contains a taxi, passengers, locations and walls
 	private TaxiAgent taxi;
 	private Map<String, TaxiPassenger> passengers;
 	private Map<String, TaxiLocation> locations;
@@ -160,7 +161,7 @@ public class TaxiState implements MutableOOState{
 		throw new RuntimeException("Rename not implemented");
 	}
 
-	//copy on write
+	//touch methods allow a shallow copy of states and a copy of objects only when modified
 	public TaxiAgent touchTaxi(){
 		this.taxi = taxi.copy();
 		return taxi;
@@ -235,6 +236,7 @@ public class TaxiState implements MutableOOState{
 		return locations.get(locName).get(attName);
 	}
 
+	//test to see if there is a wall on either side of the taxi
 	public boolean wallNorth(){
 		int tx = (int) taxi.get(Taxi.ATT_X);
 		int ty = (int) taxi.get(Taxi.ATT_Y);

@@ -42,10 +42,19 @@ public class GroundedTask {
 		return action;
 	}
 	
+	/**
+	 * get the domain of the grounded task
+	 * @return the domain which this task defines
+	 */
 	public OOSADomain getDomain(){
 		return t.getDomain();
 	}
 	
+	/**
+	 * given a learned model, this builds a domain with the subtasks as actions 
+	 * @param model the model to included in the domain
+	 * @return a complete learned domain for the grounded task
+	 */
 	public OOSADomain getDomain(FullModel model){
 		OOSADomain d = new OOSADomain();
 		d.setModel(model);
@@ -56,10 +65,11 @@ public class GroundedTask {
 		}
 		return d;
 	}
+	
 	/**
-	 * gets a executable tasks that are children of the task 
+	 * gets all executable tasks that are children of the task 
 	 * @param s the current task
-	 * @return list of all groundings of child tasks
+	 * @return list of all groundings of child tasks valid in the state
 	 */
 	public List<GroundedTask> getGroundedChildTasks(State s){
 		Task[] children = t.getChildren();
@@ -71,15 +81,61 @@ public class GroundedTask {
 	}
 
 	/**
-	 * Determines if this task is terminated
+	 * Determines if this grounded task is terminated
 	 * @param s the current state
-	 * @return if this task is terminal in s
+	 * @return if this grounded task is terminal in s
 	 */
 	public boolean isFailure(State s){
 		return t.isFailure(s, action);
 	}
+    
+	/**
+	 * pass the given state through the task's abstraction function
+	 * @param s the base state 
+	 * @return the abstracted state
+	 */
+	public State mapState(State s){
+		return t.mapState(s);
+	}
 	
-    @Override
+	/**
+	 * test if the task is in the base domain
+	 * @return whether this grounded represents an action in the base domain
+	 */
+	public boolean isPrimitive(){
+		return t.isPrimitive();
+	}
+	
+	/**
+	 * each grounded task has a specific reward function
+	 * this returns the reward of a transition into the given state 
+	 * @param s the result of the transition
+	 * @return the grounded task's reward of a transition to s
+	 */
+	public double getReward(State s){
+		if(!t.isPrimitive()){
+			NonprimitiveTask npt = (NonprimitiveTask) t;
+			return npt.reward(s, action);
+		}
+		throw new RuntimeException("Only applicable for nonprimitive tasks");
+	}
+	
+	@Override
+	public String toString(){
+		return action.actionName();
+	}
+	
+	/**
+	 * return if the grounded task is complete in the given state
+	 * @param s the state to test
+	 * @return whether the grounded task is complete in s
+	 */
+	public boolean isComplete(State s){
+		return t.isComplete(s, action);
+	}
+
+    //default methods for lookup of grounded tasks
+	@Override
     public boolean equals(Object other) {
         if (this == other) {
             return true;
@@ -103,46 +159,4 @@ public class GroundedTask {
         hashCodeBuilder.append(action.actionName());
         return hashCodeBuilder.toHashCode();
     }
-	/**
-	 * observe the result of executing an action ing the task's domain
-	 * @param s the current state to perform the action in
-	 * @param a the action to execute
-	 * @return the envirnment opcome resulting from performing a in state s
-	 */
-	public EnvironmentOutcome executeAction(State s, Action a){
-		SimulatedEnvironment env = new SimulatedEnvironment(t.getDomain(), s);
-		return env.executeAction(a);
-	}
-	
-	public State mapState(State s){
-		return t.mapState(s);
-	}
-	
-	public boolean isPrimitive(){
-		return t.isPrimitive();
-	}
-	
-	public double getReward(State s){
-		if(!t.isPrimitive()){
-			NonprimitiveTask npt = (NonprimitiveTask) t;
-			return npt.reward(s, action);
-		}
-		throw new RuntimeException("Only applicable for nonprimitive tasks");
-	}
-	
-	public double reward(State s){
-		if(!t.isPrimitive()){
-			NonprimitiveTask npt = (NonprimitiveTask) t;
-			return npt.reward(s, action);
-		}
-		return 0;
-	}
-	
-	public String toString(){
-		return action.actionName();
-	}
-	
-	public boolean isComplete(State s){
-		return t.isComplete(s, action);
-	}
 }

@@ -7,7 +7,8 @@ import taxi.abstraction1.TaxiL1;
 import taxi.state.TaxiState;
 
 public class BaseGetFailurePF extends PropositionalFunction {
-
+	//get fails if any passenger is in the taxi other than desired one  - no abstraction
+	
 	public BaseGetFailurePF() {
 		super("get", new String[]{TaxiL1.CLASS_L1PASSENGER});
 	}

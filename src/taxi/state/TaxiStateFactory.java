@@ -5,9 +5,9 @@ import java.util.List;
 
 import taxi.Taxi;
 
-
 public class TaxiStateFactory {
-
+	//generates taxi states
+	
 	public static TaxiState createClassicState(){
 		TaxiAgent taxi = new TaxiAgent(Taxi.CLASS_TAXI + 0, 0, 3);
 		

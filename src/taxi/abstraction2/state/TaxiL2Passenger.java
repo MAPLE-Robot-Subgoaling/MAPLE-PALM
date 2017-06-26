@@ -8,6 +8,11 @@ import taxi.abstraction2.TaxiL2;
 import utilities.MutableObject;
 
 public class TaxiL2Passenger extends MutableObject {
+
+	/**
+	 * current location, whether they are in taxi, the goal, whether they haven been picked up
+	 * whether they have just been picked up and haven't changed goal
+	 */
 	private final static List<Object> keys = Arrays.<Object>asList(
 			TaxiL2.ATT_CURRENT_LOCATION,
 			TaxiL2.ATT_IN_TAXI,

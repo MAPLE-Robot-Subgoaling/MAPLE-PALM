@@ -8,7 +8,10 @@ import taxi.abstraction1.TaxiL1;
 import utilities.MutableObject;
 
 public class TaxiL1Agent extends MutableObject{
-
+	
+	/**
+	 * contains if taxi is occupied and where it is (onRoad or at depot
+	 */
 	private final static List<Object> keys = Arrays.<Object>asList(
 			TaxiL1.ATT_TAXI_OCCUPIED,
 			TaxiL1.ATT_CURRENT_LOCATION
@@ -47,5 +50,4 @@ public class TaxiL1Agent extends MutableObject{
 	public List<Object> variableKeys() {
 		return keys;
 	}
-
 }

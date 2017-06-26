@@ -5,7 +5,9 @@ import burlap.mdp.core.state.State;
 import taxi.abstraction2.state.TaxiL2State;
 
 public class TaxiL2TerminalFunction implements TerminalFunction {
-
+	//the taxi domain is terminal when all passengers are at their goal
+	//and have been picked up and not in the taxi anymore
+		
 	@Override
 	public boolean isTerminal(State s) {
 		TaxiL2State state = (TaxiL2State) s;

@@ -113,7 +113,5 @@ public abstract class Task {
 	 */
 	public abstract boolean isPrimitive();
 	
-	public boolean isComplete(State s, Action a){
-		return isFailure(s, a);
-	}
+	public abstract boolean isComplete(State s, Action a);
 }

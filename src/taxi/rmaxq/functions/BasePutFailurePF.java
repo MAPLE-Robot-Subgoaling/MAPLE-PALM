@@ -6,7 +6,8 @@ import taxi.abstraction1.TaxiL1;
 import taxi.state.TaxiState;
 
 public class BasePutFailurePF extends PropositionalFunction{
-
+	//put fail when taxi is empty - no abstraction
+	
 	public BasePutFailurePF() {
 		super("put", new String[]{TaxiL1.CLASS_L1LOCATION});
 	}

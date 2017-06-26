@@ -15,6 +15,9 @@ import taxi.abstraction1.TaxiL1;
 
 public class TaxiL1State implements MutableOOState{
 
+	/**
+	 * contain one taxi, and any number of depots and passengers  
+	 */
 	private TaxiL1Agent taxi;
 	private Map<String, TaxiL1Passenger> passengers;
 	private Map<String, TaxiL1Location> locations;
@@ -135,7 +138,7 @@ public class TaxiL1State implements MutableOOState{
 		throw new RuntimeException("Rename not implemented");
 	}
 
-	//copy on write
+	//touch methods allow a shallow copy of states and a copy of objects only when modified
 	public TaxiL1Agent touchTaxi(){
 		this.taxi = taxi.copy();
 		return taxi;
@@ -179,7 +182,7 @@ public class TaxiL1State implements MutableOOState{
 		int i = 0;
 		for(String name : locations.keySet())
 			ret[i++] = name;
-		return ret;
+		return ret; 
 	}
 	
 	public Object getTaxiAtt(String attName){

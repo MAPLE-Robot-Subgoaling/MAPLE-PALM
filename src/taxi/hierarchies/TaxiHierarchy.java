@@ -34,8 +34,17 @@ import taxi.state.NavStateMapper;
 
 public class TaxiHierarchy {
 
+	/**
+	 * the full base taxi domain
+	 */
 	private static OOSADomain l0Domian;
 	
+	/***
+	 * creates the standards taxi hierarchy and returns the root task 
+	 * @param correctMoveprob the probability that a movement action will work as expected 
+	 * @param fickleProbability the probability that a passenger in the taxi will change goals
+	 * @return the root task of the taxi hierarchy
+	 */
 	public static Task createAMDPHierarchy(double correctMoveprob, double fickleProbability){
 		Taxi   l0Gen;
 		TaxiL1 l1Gen;
@@ -119,9 +128,14 @@ public class TaxiHierarchy {
 		return root;
 	}
 
-	
+	/**
+	 * creates a taxi hierarchy with no abstractions 
+	 * @param correctMoveprob the probability that a movement action will work as expected 
+	 * @param fickleProbability the probability that a passenger in the taxi will change goals
+	 * @return the root task of the taxi hierarchy
+	 */
 	public static Task createRMAXQHierarchy(double correctMoveprob, double fickleProbability){
-		Taxi   l0Gen;
+		Taxi l0Gen;
 		
 		if(fickleProbability == 0){
 			l0Gen = new Taxi(false, fickleProbability, correctMoveprob);
@@ -186,6 +200,10 @@ public class TaxiHierarchy {
 		
 	}
 	
+	/**
+	 * get base taxi domain
+	 * @return full base taxi domain
+	 */
 	public static OOSADomain getBaseDomain(){
 		return l0Domian;
 	}

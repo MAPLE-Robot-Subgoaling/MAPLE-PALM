@@ -8,7 +8,8 @@ import taxi.abstraction1.NavigateActionType.NavigeteAction;
 import taxi.state.TaxiState;
 
 public class NavigatePF extends PropositionalFunction {
-
+	//nav is terminal when the taxi is at the desired location
+	
 	public NavigatePF() {
 		super("Nav to depot", new String[]{Taxi.CLASS_LOCATION});
 	}

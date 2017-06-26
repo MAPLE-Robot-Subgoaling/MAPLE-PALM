@@ -54,7 +54,8 @@ public class TaxiL1 implements DomainGenerator {
 	public static final String ACTION_NAVIGATE =			"navigate";
 	public static final String ACTION_L1PICKUP = 			"l1Pickup";
 	public static final String ACTION_L1DROPOFF = 			"l1Dropoff";
-	
+
+	//action indexes
 	public static int IND_NAVIGATE =						0;
 	public static int IND_L1PICKUP = 						1;
 	public static int IND_L1DROPOFF = 						2;
@@ -64,6 +65,13 @@ public class TaxiL1 implements DomainGenerator {
 	private boolean fickle;
 	private double fickleProbability;
 	
+	/**
+	 * creates a taxi abstraction 1 domain generator
+	 * @param r reward function
+	 * @param t terminal function
+	 * @param fickle whether the passengers are fickle
+	 * @param fickleprob the probability the passengers change destination
+	 */
 	public TaxiL1(RewardFunction r, TerminalFunction t, boolean fickle,
 			double fickleprob) {
 		rf = r;
@@ -72,7 +80,11 @@ public class TaxiL1 implements DomainGenerator {
 		this.fickleProbability = fickleprob;
 	}
 	
-	//fickle deterministic
+	/**
+	 * create a taxi abstraction 1 domain generator
+	 * @param fickle whether the passengers are fickle
+	 * @param fickleprob the probability the passengers change goal
+	 */
 	public TaxiL1(boolean fickle, double fickleprob) {
 		this.fickle = fickle;
 		this.fickleProbability = fickleprob;
@@ -80,6 +92,9 @@ public class TaxiL1 implements DomainGenerator {
 		this.rf = new GoalBasedRF(tf);
 	}
 	
+	/**
+	 * create a non fickle taxi abstraction 1 domain
+	 */
 	public TaxiL1() {
 		this(false, 1);
 	}
@@ -103,6 +118,7 @@ public class TaxiL1 implements DomainGenerator {
 		return domain;
 	}
 
+	//domains for get and put tasks
 	public OOSADomain generateGetDomain(){
 		OOSADomain d = generateDomain();
 		d.clearActionTypes();
