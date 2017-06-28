@@ -40,7 +40,7 @@ public class AMDPPlanTest {
 		double gamma = 0.9;
 		double maxDelta = 0.01;
 		int maxRollouts = 1000;
-		int numEpisodes = 1;
+		int numEpisodes = 100;
 		
 		TaxiState s = TaxiStateFactory.createClassicState();
 		Task RAMDProot = TaxiHierarchy.createAMDPHierarchy(correctMoveprob, fickleProb, true);
