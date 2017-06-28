@@ -5,12 +5,12 @@ import burlap.mdp.core.oo.state.OOState;
 import taxi.Taxi;
 import taxi.abstraction1.NavigateActionType;
 import taxi.abstraction1.NavigateActionType.NavigeteAction;
-import taxi.state.TaxiState;
+import taxi.abstractionNav.state.TaxiNavState;
 
-public class NavigatePF extends PropositionalFunction {
+public class NavigateAbstractPF extends PropositionalFunction {
 	//nav is terminal when the taxi is at the desired location
 	
-	public NavigatePF() {
+	public NavigateAbstractPF() {
 		super("Nav to depot", new String[]{Taxi.CLASS_LOCATION});
 	}
 	
@@ -19,7 +19,7 @@ public class NavigatePF extends PropositionalFunction {
 		String action = params[0];
 		NavigateActionType nav = new NavigateActionType();
 		NavigeteAction a = nav.associatedAction(action);
-		TaxiState st = (TaxiState) s;
+		TaxiNavState st = (TaxiNavState) s;
 		
 		int tx = (int) st.getTaxiAtt(Taxi.ATT_X);
 		int ty = (int) st.getTaxiAtt(Taxi.ATT_Y);
