@@ -109,23 +109,24 @@ public class HierarchicalCharts {
 		exp.startExperiment();
 		exp.writeEpisodeDataToCSV("C:\\Users\\mland\\Box Sync\\Maple\\hierarchical learning data\\ramdp full state fickle.csv");
 	}
+	
 	public static void main(String[] args) {
 		double correctMoveprob = 1;
 		double fickleProb = 0;
 		int numEpisodes = 100;
 		int maxSteps = 2000;
-		int rmaxThreshold = 3;
+		int rmaxThreshold = 1;
 		int numTrials = 10;
 		double gamma = 0.9;
 		double rmax = 20;
 		double maxDelta = 0.01;
 		
-		TaxiState s = TaxiStateFactory.createTinyState();
+		TaxiState s = TaxiStateFactory.createClassicState();
 		Task RAMDProot = TaxiHierarchy.createAMDPHierarchy(correctMoveprob, fickleProb);
 		OOSADomain base = TaxiHierarchy.getBaseDomain();
 		Task RMAXQroot = TaxiHierarchy.createRMAXQHierarchy(correctMoveprob, fickleProb);
-		createCrarts(s, base, RAMDProot, RMAXQroot, rmax, rmaxThreshold, maxDelta, gamma, 
-				numEpisodes, maxSteps, numTrials);
-//		createRandomCrarts(base, RAMDProot, rmax, rmaxThreshold, maxDelta, gamma, numEpisodes, maxSteps, numTrials);
+//		createCrarts(s, base, RAMDProot, RMAXQroot, rmax, rmaxThreshold, maxDelta, gamma, 
+//				numEpisodes, maxSteps, numTrials);
+		createRandomCrarts(base, RAMDProot, rmax, rmaxThreshold, maxDelta, gamma, numEpisodes, maxSteps, numTrials);
 	}
 }
