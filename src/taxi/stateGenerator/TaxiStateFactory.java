@@ -27,7 +27,7 @@ public class TaxiStateFactory {
 		
 		List<TaxiPassenger> passengers = new ArrayList<TaxiPassenger>();
 		passengers.add(new TaxiPassenger(Taxi.CLASS_PASSENGER + 0, 3, 0, Taxi.CLASS_LOCATION + 0));
-//		passengers.add(new TaxiPassenger(Taxi.CLASS_PASSENGER + 1, 0, 0, Taxi.CLASS_LOCATION + 3));
+		passengers.add(new TaxiPassenger(Taxi.CLASS_PASSENGER + 1, 0, 0, Taxi.CLASS_LOCATION + 3));
 		
 		List<TaxiWall> walls = new ArrayList<TaxiWall>();
 		walls.add(new TaxiWall(Taxi.CLASS_WALL + 0, 0, 0, 5, false));
