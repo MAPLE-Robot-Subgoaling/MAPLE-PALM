@@ -14,6 +14,7 @@ import taxi.abstraction1.TaxiL1;
 import taxi.abstraction1.state.L1StateMapper;
 import taxi.abstraction2.TaxiL2;
 import taxi.abstraction2.state.L2StateMapper;
+import taxi.abstractionNav.state.NavStateMapper;
 import taxi.amdp.functions.DropoffCompletedPF;
 import taxi.amdp.functions.DropoffFailurePF;
 import taxi.amdp.functions.GetCompletedPF;
@@ -30,7 +31,6 @@ import taxi.rmaxq.functions.BaseNavigateActionType;
 import taxi.rmaxq.functions.BasePutActionType;
 import taxi.rmaxq.functions.BasePutCompletedPF;
 import taxi.rmaxq.functions.BasePutFailurePF;
-import taxi.state.NavStateMapper;
 
 public class TaxiHierarchy {
 
@@ -67,7 +67,7 @@ public class TaxiHierarchy {
 		
 		//state mapping function
 		StateMapping map0 = new IdentityMap();
-		StateMapping mapNav = new NavStateMapper();
+		StateMapping mapNav = new NavStateMapper(); 
 		StateMapping map1 = new L1StateMapper();
 		StateMapping map2 = new L2StateMapper();
 		
