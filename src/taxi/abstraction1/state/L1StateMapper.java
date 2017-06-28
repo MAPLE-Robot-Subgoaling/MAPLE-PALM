@@ -25,7 +25,7 @@ public class L1StateMapper implements StateMapping {
 		int ty = (int) st.getTaxiAtt(Taxi.ATT_Y);
 		
 		for(String locName : st.getLocations()){
-			String color = (String) st.getLocationAtt(locName, Taxi.ATT_COLOR);
+			List<String> color = (List<String>) st.getLocationAtt(locName, Taxi.ATT_COLOR);
 			locations.add(new TaxiL1Location(locName, color));
 		}
 		

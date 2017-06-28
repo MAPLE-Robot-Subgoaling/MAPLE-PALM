@@ -32,7 +32,7 @@ public class HierarchicalLearnerTest {
 				new SimpleHashableStateFactory(true), maxDelta);
 		
 		SimulatedEnvironment env = new SimulatedEnvironment(groundDomain, initial);
-		VisualActionObserver obs = new VisualActionObserver(groundDomain, TaxiVisualizer.getVisualizer(5, 5));
+		VisualActionObserver obs = new VisualActionObserver(groundDomain, TaxiVisualizer.getVisualizer(7, 7));
         obs.initGUI();
         obs.setDefaultCloseOperation(obs.EXIT_ON_CLOSE);
         env.addObservers(obs);
@@ -47,7 +47,7 @@ public class HierarchicalLearnerTest {
 		}
 		
 		EpisodeSequenceVisualizer ev = new EpisodeSequenceVisualizer
-				(TaxiVisualizer.getVisualizer(5, 5), groundDomain, episodes);
+				(TaxiVisualizer.getVisualizer(7, 7), groundDomain, episodes);
 		ev.setDefaultCloseOperation(ev.EXIT_ON_CLOSE);
 		ev.initGUI();
 	}
@@ -73,22 +73,22 @@ public class HierarchicalLearnerTest {
 		}
 		
 		EpisodeSequenceVisualizer ev = new EpisodeSequenceVisualizer
-				(TaxiVisualizer.getVisualizer(5, 5), domain, episodes);
+				(TaxiVisualizer.getVisualizer(7, 7), domain, episodes);
 		ev.setDefaultCloseOperation(ev.EXIT_ON_CLOSE);
 		ev.initGUI();
 	}
 	
 	public static void main(String[] args) {
 		double correctMoveprob = 1;
-		double fickleProb = 0.0;
-		int numEpisodes = 100;
+		double fickleProb = 0.2;
+		int numEpisodes = 300;
 		int maxSteps = 1000;
 		int rmaxThreshold = 3;
 		double gamma = 0.9;
 		double rmax = 20;
 		double maxDelta = 0.01;
 		
-		TaxiState s = TaxiStateFactory.createClassicState();
+		TaxiState s = TaxiStateFactory.createVariantTallState("B", "green");
 		Task RAMDProot = TaxiHierarchy.createAMDPHierarchy(correctMoveprob, fickleProb);
 		OOSADomain base = TaxiHierarchy.getBaseDomain();
 //		Task RMAXQroot = TaxiHierarchy.createRMAXQHierarchy(correctMoveprob, fickleProb);

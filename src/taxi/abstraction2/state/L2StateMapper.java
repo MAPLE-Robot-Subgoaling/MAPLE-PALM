@@ -18,7 +18,7 @@ public class L2StateMapper implements StateMapping {
 		TaxiState st = (TaxiState) s;
 
 		for(String locName : st.getLocations()){
-			String color = (String) st.getLocationAtt(locName, Taxi.ATT_COLOR);
+			List<String> color = (List<String>) st.getLocationAtt(locName, Taxi.ATT_COLOR);
 			locations.add(new TaxiL2Location(locName, color));
 		}
 		

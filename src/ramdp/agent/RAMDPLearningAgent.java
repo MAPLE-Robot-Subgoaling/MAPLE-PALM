@@ -67,7 +67,8 @@ public class RAMDPLearningAgent implements LearningAgent{
 	 * the current episode
 	 */
 	private Episode e;
-	
+
+	private String lastTask;
 	/**
 	 * create a RAMDP agent on a given task
 	 * @param root the root of the hierarchy to learn
@@ -97,6 +98,7 @@ public class RAMDPLearningAgent implements LearningAgent{
 	@Override
 	public Episode runLearningEpisode(Environment env, int maxSteps) {
 		steps = 0;
+		lastTask = "";
 		e = new Episode(env.currentObservation());
 		solveTask(root, env, maxSteps);
 		return e;
@@ -155,8 +157,12 @@ public class RAMDPLearningAgent implements LearningAgent{
 				model.updateModel(result);
 			}
 		}
-		
-		System.out.println(task + " " + actionCount);
+		if(task.toString().equals(lastTask))
+			System.out.println("Double action: "+task);
+		else if(task.toString().startsWith("navigate")&&lastTask.startsWith("navigate"))
+			System.out.println("Double nav: "+lastTask+", "+task);
+		lastTask = task.toString();
+		//System.out.println(task + " " + actionCount);
 		return task.isComplete(currentState) || actionCount == 0;
 	}
 	

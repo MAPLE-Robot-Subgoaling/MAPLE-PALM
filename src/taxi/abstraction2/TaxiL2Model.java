@@ -97,7 +97,7 @@ public class TaxiL2Model implements FullStateModel {
 				}
 				
 				//fickle goal
-				if(fickle){
+				/*if(fickle){
 					String passengerLocation = (String) s.getPassengerAtt(passengerName, TaxiL2.ATT_CURRENT_LOCATION);
 					boolean justPickedUp = (boolean) s.getPassengerAtt(passengerName, TaxiL2.ATT_JUST_PICKED_UP);
 					if(justPickedUp){
@@ -106,7 +106,7 @@ public class TaxiL2Model implements FullStateModel {
 						np.set(TaxiL2.ATT_JUST_PICKED_UP, false);
 						for(String locationName : s.getLocations()){
 							TaxiL2State nfickles = ns.copy();
-							
+
 							if(locationName.equals(passengerLocation)){
 								tps.add(new StateTransitionProb(nfickles, (1 - fickleChangeGoalProbaility)));
 							}else{
@@ -117,7 +117,7 @@ public class TaxiL2Model implements FullStateModel {
 						}
 						return;
 					}
-				}
+				}*/
 			}
 		}
 		tps.add(new StateTransitionProb(ns, 1));

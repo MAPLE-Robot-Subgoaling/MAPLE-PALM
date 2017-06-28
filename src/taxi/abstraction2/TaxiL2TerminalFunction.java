@@ -2,7 +2,10 @@ package taxi.abstraction2;
 
 import burlap.mdp.core.TerminalFunction;
 import burlap.mdp.core.state.State;
+import taxi.Taxi;
 import taxi.abstraction2.state.TaxiL2State;
+
+import java.util.List;
 
 public class TaxiL2TerminalFunction implements TerminalFunction {
 	//the taxi domain is terminal when all passengers are at their goal
@@ -13,15 +16,20 @@ public class TaxiL2TerminalFunction implements TerminalFunction {
 		TaxiL2State state = (TaxiL2State) s;
 		
 		for(String passengerName : state.getPassengers()){
-			String location = (String) state.getPassengerAtt(passengerName, TaxiL2.ATT_CURRENT_LOCATION);
-			String goalLocation = (String) state.getPassengerAtt(passengerName, TaxiL2.ATT_GOAL_LOCATION);
-			if(!location.equals(goalLocation))
-				return false;
-			
 			boolean inTaxi = (boolean) state.getPassengerAtt(passengerName, TaxiL2.ATT_IN_TAXI);
 			boolean pickedUp = (boolean) state.getPassengerAtt(passengerName, TaxiL2.ATT_PICKED_UP_AT_LEAST_ONCE);
 			if(inTaxi || !pickedUp)
 				return false;
+			String location = (String) state.getPassengerAtt(passengerName, TaxiL2.ATT_CURRENT_LOCATION);
+			String goalLocationColor = (String) state.getPassengerAtt(passengerName, TaxiL2.ATT_GOAL_LOCATION);
+			//terminal by color
+			boolean rightLocation=false;
+			for(String color : (List<String>)state.getLocationAtt(location, Taxi.ATT_COLOR))
+				if (color.equals(goalLocationColor))
+					rightLocation=true;
+			if(!rightLocation)
+				return false;
+			//end terminal by color
 		}
 		return true;
 	}

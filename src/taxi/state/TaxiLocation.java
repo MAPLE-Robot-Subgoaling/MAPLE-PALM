@@ -1,6 +1,7 @@
 package taxi.state;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import burlap.mdp.core.oo.state.ObjectInstance;
@@ -30,15 +31,18 @@ public class TaxiLocation extends MutableObject{
 	 * flag for nav state
 	 */
 	private boolean nav = false;
-	
+
+	public TaxiLocation(String name, int x, int y, List<String> colors){
+		this(name, x, y, (Object)colors);
+	}
 	public TaxiLocation(String name, int x, int y, String color) {
-		this(name, (Object) x, (Object) y, (Object) color);
+		this(name, x,y, Collections.singletonList(color));
 	}
 	
-	private TaxiLocation(String name, Object x, Object y, Object color) {
+	private TaxiLocation(String name, Object x, Object y, Object colors) {
 		this.set(Taxi.ATT_X, x);
 		this.set(Taxi.ATT_Y, y);
-		this.set(Taxi.ATT_COLOR, color);
+		this.set(Taxi.ATT_COLOR, colors);
 		this.setName(name);
 	}
 	@Override
