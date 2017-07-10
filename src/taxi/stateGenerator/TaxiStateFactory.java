@@ -66,7 +66,7 @@ public class TaxiStateFactory {
 		locations.add(new TaxiLocation(Taxi.CLASS_LOCATION + 3, 4, 4, Taxi.COLOR_GREEN));
 		
 		List<TaxiPassenger> passengers = new ArrayList<TaxiPassenger>();
-		passengers.add(new TaxiPassenger(Taxi.CLASS_PASSENGER + 0, 3, 0, Taxi.CLASS_LOCATION + 0));
+		passengers.add(new TaxiPassenger(Taxi.CLASS_PASSENGER + 0, 3, 0, Taxi.COLOR_RED));
 		
 		List<TaxiWall> walls = new ArrayList<TaxiWall>();
 		walls.add(new TaxiWall(Taxi.CLASS_WALL + 0, 0, 0, 5, false));
@@ -90,7 +90,7 @@ public class TaxiStateFactory {
 		locations.add(new TaxiLocation(Taxi.CLASS_LOCATION + 3, 0, 3, Taxi.COLOR_GREEN));
 	
 		List<TaxiPassenger> passengers = new ArrayList<TaxiPassenger>();
-		passengers.add(new TaxiPassenger(Taxi.CLASS_PASSENGER + 0, 0, 1, Taxi.CLASS_LOCATION + 0));
+		passengers.add(new TaxiPassenger(Taxi.CLASS_PASSENGER + 0, 0, 1, Taxi.COLOR_RED));
 		
 		List<TaxiWall> walls = new ArrayList<TaxiWall>();
 		walls.add(new TaxiWall(Taxi.CLASS_WALL + 0, 0, 0, 5, false));
@@ -107,9 +107,10 @@ public class TaxiStateFactory {
 		List<TaxiLocation> locations = new ArrayList<TaxiLocation>();
 		locations.add(new TaxiLocation(Taxi.CLASS_LOCATION + 0, 0, 0, Taxi.COLOR_RED));
 		locations.add(new TaxiLocation(Taxi.CLASS_LOCATION + 1, 0, 1, Taxi.COLOR_BLUE));
+
 		
 		List<TaxiPassenger> passenger = new ArrayList<TaxiPassenger>();
-		passenger.add(new TaxiPassenger(Taxi.CLASS_PASSENGER + 0, 0, 0, Taxi.CLASS_LOCATION + 1));
+		passenger.add(new TaxiPassenger(Taxi.CLASS_PASSENGER + 0, 0, 0, Taxi.COLOR_BLUE));
 		
 		List<TaxiWall> walls = new ArrayList<TaxiWall>();
 		walls.add(new TaxiWall(Taxi.CLASS_WALL + 0, 0, 0, 1, true));
