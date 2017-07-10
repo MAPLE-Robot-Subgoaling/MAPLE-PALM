@@ -149,7 +149,7 @@ public class TaxiModel implements FullStateModel{
 					if(inTaxi/* && justPickedUp*/){
 						passengerChanged = true;
 						TaxiPassenger np = ns.touchPassenger(passengerName);
-						np.set(Taxi.ATT_JUST_PICKED_UP, false);
+						//np.set(Taxi.ATT_JUST_PICKED_UP, false);
 						// may change goal
 						for(String location : s.getLocations()){
 							for(String color : (List<String>)s.getLocationAtt(location, Taxi.ATT_COLOR)) {
@@ -206,9 +206,9 @@ public class TaxiModel implements FullStateModel{
 					TaxiPassenger np = ns.touchPassenger(passengerName);
 					np.set(Taxi.ATT_IN_TAXI, true);
 					np.set(Taxi.ATT_PICKED_UP_AT_LEAST_ONCE, true);
-					if(fickle){
-						np.set(Taxi.ATT_JUST_PICKED_UP, true);
-					}
+//					if(fickle){
+//						np.set(Taxi.ATT_JUST_PICKED_UP, true);
+//					}
 					TaxiAgent ntaxi = ns.touchTaxi();
 					ntaxi.set(Taxi.ATT_TAXI_OCCUPIED, true);
 					
