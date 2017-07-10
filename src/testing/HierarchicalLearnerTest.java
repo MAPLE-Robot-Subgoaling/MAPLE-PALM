@@ -25,25 +25,23 @@ public class HierarchicalLearnerTest {
 
 	public static void runRAMDPEpisodes(int numEpisode, int maxSteps, Task root,
 			State initial, OOSADomain groundDomain,
-			int threshold, double discount, double rmax, double maxDelta, boolean randomStart){
+			int threshold, double discount, double rmax, double maxDelta, int episodeRelearn, boolean relearn){
 		List<Episode> episodes = new ArrayList<Episode>();
 		GroundedTask rootgt = root.getAllGroundedTasks(initial).get(0);
 		
 		RAMDPLearningAgent ramdp = new RAMDPLearningAgent(rootgt, threshold, discount, rmax, 
 				new SimpleHashableStateFactory(true), maxDelta);
-		SimulatedEnvironment env;
-		if(randomStart)
-			env = new SimulatedEnvironment(groundDomain, new RandonPassengerTaxiState());
-		else
-			env= new SimulatedEnvironment(groundDomain, initial);
 
+		SimulatedEnvironment env = new SimulatedEnvironment(groundDomain, initial);
 		VisualActionObserver obs = new VisualActionObserver(groundDomain, TaxiVisualizer.getVisualizer(5, 5));
         obs.initGUI();
         obs.setDefaultCloseOperation(obs.EXIT_ON_CLOSE);
         env.addObservers(obs);
 		
 		for(int i = 1; i <= numEpisode; i++){
-			long time = System.currentTimeMillis();
+		    if(i==episodeRelearn)
+                ramdp.relearnFromRoot = relearn;
+            long time = System.currentTimeMillis();
 			Episode e = ramdp.runLearningEpisode(env, maxSteps);
 			time = System.currentTimeMillis() - time;
 			episodes.add(e);
@@ -88,17 +86,16 @@ public class HierarchicalLearnerTest {
 		double fickleProb = 0.5;
 		int numEpisodes = 200;
 		int maxSteps = 1000;
-		int rmaxThreshold = 3;
+		int rmaxThreshold = 1;
 		double gamma = 0.9;
 		double rmax = 20;
 		double maxDelta = 0.01;
-		boolean randomStart = true;
 		TaxiState s = TaxiStateFactory.createClassicState();
 		Task RAMDProot = TaxiHierarchy.createAMDPHierarchy(correctMoveprob, fickleProb, false);
 		OOSADomain base = TaxiHierarchy.getBaseDomain();
 //		Task RMAXQroot = TaxiHierarchy.createRMAXQHierarchy(correctMoveprob, fickleProb);
-		
-		runRAMDPEpisodes(numEpisodes, maxSteps, RAMDProot, s, base, rmaxThreshold, gamma, rmax, maxDelta, randomStart);
+
+		runRAMDPEpisodes(numEpisodes, maxSteps, RAMDProot, s, base, rmaxThreshold, gamma, rmax, maxDelta,15, true);
 //		runRMAXQEpsodes(numEpisodes, maxSteps, RMAXQroot, s, rmax, rmaxThreshold, maxDelta, base);
 	}
 }
