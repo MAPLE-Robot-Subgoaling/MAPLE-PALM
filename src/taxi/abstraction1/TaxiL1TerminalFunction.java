@@ -32,7 +32,7 @@ public class TaxiL1TerminalFunction implements TerminalFunction {
 			//end terminal by color
 
 		}
-		System.out.println("L1 is terminating!");
+		//System.out.println("L1 is terminating!");
 		return true;
 	}
 

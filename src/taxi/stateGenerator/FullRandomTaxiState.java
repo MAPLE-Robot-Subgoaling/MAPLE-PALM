@@ -38,8 +38,8 @@ public class FullRandomTaxiState implements StateGenerator {
 		int passengerLoc = (int) (Math.random() * 4);
 		Point loc = points.get(passengerLoc);
 		int goal = (int) (Math.random() * 4);
-		String goalName = locations.get(goal).name();
-		TaxiPassenger p = new TaxiPassenger(Taxi.CLASS_PASSENGER, loc.x, loc.y, goalName);
+		String goalName = colors[goal];
+		TaxiPassenger p = new TaxiPassenger(Taxi.CLASS_PASSENGER+"0", loc.x, loc.y, goalName);
 		List<TaxiPassenger> passengers = new ArrayList<TaxiPassenger>();
 		passengers.add(p);
 		

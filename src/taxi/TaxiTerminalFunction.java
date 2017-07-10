@@ -35,7 +35,7 @@ public class TaxiTerminalFunction implements TerminalFunction{
 					}
 
 		}
-		System.out.println("Taxi is terminal!");
+		//System.out.println("Taxi is terminal!");
 		return true;
 	}
 }
