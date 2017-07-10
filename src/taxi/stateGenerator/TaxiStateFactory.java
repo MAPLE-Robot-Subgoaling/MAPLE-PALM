@@ -108,7 +108,7 @@ public class TaxiStateFactory {
 		locations.add(new TaxiLocation(Taxi.CLASS_LOCATION + 0, 0, 0, Taxi.COLOR_RED));
 		locations.add(new TaxiLocation(Taxi.CLASS_LOCATION + 1, 0, 1, Taxi.COLOR_BLUE));
 
-		
+
 		List<TaxiPassenger> passenger = new ArrayList<TaxiPassenger>();
 		passenger.add(new TaxiPassenger(Taxi.CLASS_PASSENGER + 0, 0, 0, Taxi.COLOR_BLUE));
 		

@@ -69,6 +69,8 @@ public class RAMDPLearningAgent implements LearningAgent{
 	private Episode e;
 
 	private String lastTask;
+
+	public boolean relearnFromRoot = false;
 	/**
 	 * create a RAMDP agent on a given task
 	 * @param root the root of the hierarchy to learn
@@ -117,8 +119,8 @@ public class RAMDPLearningAgent implements LearningAgent{
 		State pastState = currentState;
 		RAMDPModel model = getModel(task);
 		int actionCount = 0;
-		
-		while(!(task.isFailure(currentState) || task.isComplete(currentState)) && (steps < maxSteps || maxSteps == -1)){
+		boolean earlyterminal = false;
+		while( (task.toString().equals("solve")||task.toString().startsWith("get")||!earlyterminal ) &&(!(task.isFailure(currentState) || task.isComplete(currentState)) && (steps < maxSteps || maxSteps == -1))){
 			actionCount++;
 			boolean subtaskCompleted = false;
 			pastState = currentState;
@@ -156,14 +158,16 @@ public class RAMDPLearningAgent implements LearningAgent{
 			if(subtaskCompleted){
 				model.updateModel(result);
 			}
+			earlyterminal = relearnFromRoot;
 		}
+		System.out.println("task: "+task.toString());
 		if(task.toString().equals(lastTask))
 			System.out.println("Double action: "+task);
 		else if(task.toString().startsWith("navigate")&&lastTask.startsWith("navigate"))
 			System.out.println("Double nav: "+lastTask+", "+task);
 		lastTask = task.toString();
 		//System.out.println(task + " " + actionCount);
-		return task.isComplete(currentState) || actionCount == 0;
+		return (task.isComplete(currentState)||relearnFromRoot) || actionCount == 0;
 	}
 	
 	/**
