@@ -26,26 +26,30 @@ public class HierarchicalCharts {
 
 	public static void createCrarts(final State s, OOSADomain domain, final Task RAMDPRoot, final Task RMEXQRoot, 
 			final double rmax, final int threshold, final double maxDelta, final double discount,
-			int numEpisode, int maxSteps, int numTrial){
+			int numEpisode, int maxSteps, int numTrial, boolean relearn, int relearnThreshold){
 		final HashableStateFactory hs = new SimpleHashableStateFactory(true);
 		final GroundedTask RAMDPGroot = RAMDPRoot.getAllGroundedTasks(s).get(0); 
 		
-		SimulatedEnvironment env = new SimulatedEnvironment(domain, s);
-//		VisualActionObserver obs = new VisualActionObserver(domain, TaxiVisualizer.getVisualizer(5, 5));
-//        obs.initGUI();
-//        obs.setDefaultCloseOperation(obs.EXIT_ON_CLOSE);
-//        env.addObservers(obs);
-		
-		LearningAgentFactory rmaxq = new LearningAgentFactory() {
-			
+
+//		SimulatedEnvironment env = new SimulatedEnvironment(domain, s);
+		SimulatedEnvironment env = new SimulatedEnvironment(domain, new RandonPassengerTaxiState());
+
+		VisualActionObserver obs = new VisualActionObserver(domain, TaxiVisualizer.getVisualizer(5, 5));
+        obs.initGUI();
+        obs.setDefaultCloseOperation(obs.EXIT_ON_CLOSE);
+        env.addObservers(obs);
+
+		LearningAgentFactory reamdp = new LearningAgentFactory() {
+
 			@Override
 			public String getAgentName() {
-				return "R-MAXQ";
+				return "RE-AMDP";
 			}
 			
 			@Override
 			public LearningAgent generateAgent() {
-				return new RmaxQLearningAgent(RMEXQRoot, hs, s, rmax, threshold, maxDelta);
+				return new RAMDPLearningAgent(RAMDPGroot, threshold, discount, rmax,
+						new SimpleHashableStateFactory(true), maxDelta, relearn, relearnThreshold);
 			}
 		};
 		
@@ -58,11 +62,12 @@ public class HierarchicalCharts {
 			
 			@Override
 			public LearningAgent generateAgent() {
-				return new RAMDPLearningAgent(RAMDPGroot, threshold, discount, rmax, hs, maxDelta);
+				return  new RAMDPLearningAgent(RAMDPGroot, threshold, discount, rmax,
+						new SimpleHashableStateFactory(true), maxDelta, false, 0);
 			}
 		};
-		
-		LearningAlgorithmExperimenter exp = new LearningAlgorithmExperimenter(env, numTrial, numEpisode, maxSteps, ramdp, rmaxq);
+
+		LearningAlgorithmExperimenter exp = new LearningAlgorithmExperimenter(env, numTrial, numEpisode, maxSteps, reamdp);
 		exp.setUpPlottingConfiguration(500, 300, 2, 1000,
 				TrialMode.MOST_RECENT_AND_AVERAGE,
 				PerformanceMetric.CUMULATIVE_REWARD_PER_EPISODE
@@ -111,22 +116,26 @@ public class HierarchicalCharts {
 	}
 	
 	public static void main(String[] args) {
-		double correctMoveprob = 0.8;
-		double fickleProb = 0.225;
-		int numEpisodes = 30;
-		int maxSteps = 2000;
-		int rmaxThreshold = 5;
-		int numTrials = 20;
+
+
+		double correctMoveprob = 1;
+		double fickleProb = .03;
+		int numEpisodes = 400;
+		int maxSteps = 1000;
+		int rmaxThreshold = 2;
 		double gamma = 0.9;
 		double rmax = 20;
 		double maxDelta = 0.01;
+		int episodeRelearn = 200;
+		int numTrials = 1;
+
 		
 		TaxiState s = TaxiStateFactory.createTinyState();
 		Task RAMDProot = TaxiHierarchy.createAMDPHierarchy(correctMoveprob, fickleProb, false);
 		OOSADomain base = TaxiHierarchy.getBaseDomain();
-		Task RMAXQroot = TaxiHierarchy.createRMAXQHierarchy(correctMoveprob, fickleProb);
-		createCrarts(s, base, RAMDProot, RMAXQroot, rmax, rmaxThreshold, maxDelta, gamma, 
-				numEpisodes, maxSteps, numTrials);
+//		Task RMAXQroot = TaxiHierarchy.createRMAXQHierarchy(correctMoveprob, fickleProb);
+		createCrarts(s, base, RAMDProot, RAMDProot, rmax, rmaxThreshold, maxDelta, gamma,
+				numEpisodes, maxSteps, numTrials, true, episodeRelearn);
 //		createRandomCrarts(base, RAMDProot, rmax, rmaxThreshold, maxDelta, gamma, numEpisodes, maxSteps, numTrials);
 	}
 }
