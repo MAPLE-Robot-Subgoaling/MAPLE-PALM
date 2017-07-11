@@ -27,10 +27,10 @@ public class RumtimeTest {
 		final GroundedTask RAMDPGroot = RAMDPRoot.getAllGroundedTasks(s).get(0); 
 		
 		SimulatedEnvironment env = new SimulatedEnvironment(domain, s);
-		VisualActionObserver obs = new VisualActionObserver(domain, TaxiVisualizer.getVisualizer(5, 5));
-        obs.initGUI();
-        obs.setDefaultCloseOperation(obs.EXIT_ON_CLOSE);
-        env.addObservers(obs);
+//		VisualActionObserver obs = new VisualActionObserver(domain, TaxiVisualizer.getVisualizer(5, 5));
+//        obs.initGUI();
+//        obs.setDefaultCloseOperation(obs.EXIT_ON_CLOSE);
+//        env.addObservers(obs);
 		
 		LearningAgentFactory rmaxq = new LearningAgentFactory() {
 			
@@ -58,9 +58,9 @@ public class RumtimeTest {
 			}
 		};
 		
-		LearningAgentRuntimeAnalizer timer = new LearningAgentRuntimeAnalizer(500, 300, ramdp, rmaxq);
+		LearningAgentRuntimeAnalizer timer = new LearningAgentRuntimeAnalizer(500, 300, ramdp);
 		timer.runRuntimeAnalysis(numTrial, numEpisode, maxSteps, env);
-		
+		timer.writeDataToCSV("C:\\Users\\mland\\Box Sync\\Maple\\hierarchical learning data\\determintistic runtime ramdp");
 	}
 	
 
@@ -75,7 +75,7 @@ public class RumtimeTest {
 		double rmax = 20;
 		double maxDelta = 0.01;
 		
-		TaxiState s = TaxiStateFactory.createSmallState();
+		TaxiState s = TaxiStateFactory.createClassicState();
 		Task RAMDProot = TaxiHierarchy.createAMDPHierarchy(correctMoveprob, fickleProb, false);
 		OOSADomain base = TaxiHierarchy.getBaseDomain();
 		Task RMAXQroot = TaxiHierarchy.createRMAXQHierarchy(correctMoveprob, fickleProb);
