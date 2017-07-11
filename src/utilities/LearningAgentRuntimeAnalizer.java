@@ -1,5 +1,6 @@
 package utilities;
 
+import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -19,6 +20,9 @@ import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.ValueAxis;
+import org.jfree.chart.plot.DefaultDrawingSupplier;
+import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.xy.DeviationRenderer;
 import org.jfree.data.Range;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
@@ -78,6 +82,9 @@ public class LearningAgentRuntimeAnalizer {
 			
 		for(LearningAgentFactory agentMaker : agentFactoties){
 			for(currentTrial = 0; currentTrial < trials; currentTrial++){
+				System.out.println("Beginning " + agentMaker.getAgentName() + " trial " + (currentTrial + 1)
+						+ "/" + trials);
+				
 				XYSeriesCollection trialSet = this.trials.get(currentTrial);
 				trialChart.getXYPlot().setDataset(trialSet);
 				
@@ -131,6 +138,7 @@ public class LearningAgentRuntimeAnalizer {
 		if(trials > 1){
 			averages = new YIntervalSeriesCollection();
 			JFreeChart avgChart = ChartFactory.createXYLineChart("Avergage Runtime", "Episodes", "Seconds", averages);
+			((XYPlot)avgChart.getPlot()).setRenderer(this.createDeviationRenderer());
 			averagePanel = new ChartPanel(avgChart);
 			averagePanel.setPreferredSize(new Dimension(chartWidth, chartHieght));
 			pane.add(averagePanel);
@@ -249,5 +257,17 @@ public class LearningAgentRuntimeAnalizer {
 				}
 			}
 		});
+	}
+	
+	protected DeviationRenderer createDeviationRenderer(){
+		DeviationRenderer renderer = new DeviationRenderer(true, false);
+		
+		for(int i = 0; i < DefaultDrawingSupplier.DEFAULT_PAINT_SEQUENCE.length; i++){
+			Color c = (Color)DefaultDrawingSupplier.DEFAULT_PAINT_SEQUENCE[i];
+			Color nc = new Color(c.getRed(), c.getGreen(), c.getBlue(), 100);
+			renderer.setSeriesFillPaint(i, nc);
+		}
+		
+		return renderer;
 	}
 }

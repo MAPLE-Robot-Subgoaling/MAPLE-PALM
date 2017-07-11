@@ -58,7 +58,7 @@ public class RumtimeTest {
 			}
 		};
 		
-		LearningAgentRuntimeAnalizer timer = new LearningAgentRuntimeAnalizer(500, 300, ramdp);
+		LearningAgentRuntimeAnalizer timer = new LearningAgentRuntimeAnalizer(500, 300, ramdp, rmaxq);
 		timer.runRuntimeAnalysis(numTrial, numEpisode, maxSteps, env);
 		timer.writeDataToCSV("C:\\Users\\mland\\Box Sync\\Maple\\hierarchical learning data\\determintistic runtime ramdp");
 	}
@@ -69,13 +69,13 @@ public class RumtimeTest {
 		double fickleProb = 0;
 		int numEpisodes = 30;
 		int maxSteps = 2000;
-		int rmaxThreshold = 5;
-		int numTrials = 2;
+		int rmaxThreshold = 1;
+		int numTrials = 5;
 		double gamma = 0.9;
 		double rmax = 20;
 		double maxDelta = 0.01;
 		
-		TaxiState s = TaxiStateFactory.createClassicState();
+		TaxiState s = TaxiStateFactory.createSmallState();
 		Task RAMDProot = TaxiHierarchy.createAMDPHierarchy(correctMoveprob, fickleProb, false);
 		OOSADomain base = TaxiHierarchy.getBaseDomain();
 		Task RMAXQroot = TaxiHierarchy.createRMAXQHierarchy(correctMoveprob, fickleProb);
