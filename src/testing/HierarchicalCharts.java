@@ -32,10 +32,10 @@ public class HierarchicalCharts {
 		final GroundedTask RAMDPGroot = RAMDPRoot.getAllGroundedTasks(s).get(0); 
 		
 		SimulatedEnvironment env = new SimulatedEnvironment(domain, s);
-		VisualActionObserver obs = new VisualActionObserver(domain, TaxiVisualizer.getVisualizer(5, 5));
-        obs.initGUI();
-        obs.setDefaultCloseOperation(obs.EXIT_ON_CLOSE);
-        env.addObservers(obs);
+//		VisualActionObserver obs = new VisualActionObserver(domain, TaxiVisualizer.getVisualizer(5, 5));
+//        obs.initGUI();
+//        obs.setDefaultCloseOperation(obs.EXIT_ON_CLOSE);
+//        env.addObservers(obs);
 		
 		LearningAgentFactory rmaxq = new LearningAgentFactory() {
 			
@@ -76,6 +76,7 @@ public class HierarchicalCharts {
 	public static void createRandomCrarts(OOSADomain domain, final Task RAMDPRoot, 
 			final double rmax, final int threshold, final double maxDelta, final double discount,
 			int numEpisode, int maxSteps, int numTrial){
+		
 		SimulatedEnvironment env = new SimulatedEnvironment(domain, new RandonPassengerTaxiState());
 		
 		final HashableStateFactory hs = new SimpleHashableStateFactory(true);
@@ -107,21 +108,21 @@ public class HierarchicalCharts {
 				);
 		
 		exp.startExperiment();
-		exp.writeEpisodeDataToCSV("C:\\Users\\mland\\Box Sync\\Maple\\hierarchical learning data\\ramdp full state fickle.csv");
+		exp.writeEpisodeDataToCSV("C:\\Users\\mland\\Box Sync\\Maple\\hierarchical learning data\\ramdp classic state fickle.csv");
 	}
 	
 	public static void main(String[] args) {
-		double correctMoveprob = 1;
-		double fickleProb = 0;
-		int numEpisodes = 100;
+		double correctMoveprob = 0.8;
+		double fickleProb = 0.225;
+		int numEpisodes = 30;
 		int maxSteps = 2000;
-		int rmaxThreshold = 1;
-		int numTrials = 10;
+		int rmaxThreshold = 5;
+		int numTrials = 2;
 		double gamma = 0.9;
 		double rmax = 20;
 		double maxDelta = 0.01;
 		
-		TaxiState s = TaxiStateFactory.createClassicState();
+		TaxiState s = TaxiStateFactory.createTinyState();
 		Task RAMDProot = TaxiHierarchy.createAMDPHierarchy(correctMoveprob, fickleProb, false);
 		OOSADomain base = TaxiHierarchy.getBaseDomain();
 		Task RMAXQroot = TaxiHierarchy.createRMAXQHierarchy(correctMoveprob, fickleProb);
