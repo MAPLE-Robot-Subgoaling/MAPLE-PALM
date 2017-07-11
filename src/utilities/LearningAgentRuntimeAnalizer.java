@@ -3,12 +3,15 @@ package utilities;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
 
 import org.apache.commons.math3.distribution.TDistribution;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
@@ -31,12 +34,18 @@ public class LearningAgentRuntimeAnalizer {
 	private int chartWidth;
 	private int chartHieght;
 	
+	private int delay = 1000;
+	private int timestep = 0;
+	private int lastUpdated = 0;
+	
+	private int currentTrial;
 	private List<LearningAgentFactory> agentFactoties;
 	private Map<String, List<XYSeries>> trialData;
 	private ChartPanel trialPanel, averagePanel;
 	private YIntervalSeriesCollection averages;
 	private List<XYSeriesCollection> trials;
 	private JFreeChart trialChart;
+	private String currentAgent = "";
 	
 	private double significanceLevel;
 	private static final Map<Integer, Double> cachedCriticalValues = new HashMap<Integer, Double>();
@@ -68,20 +77,24 @@ public class LearningAgentRuntimeAnalizer {
 			newTrial();
 			
 		for(LearningAgentFactory agentMaker : agentFactoties){
-			for(int trial = 0; trial < trials; trial++){
-				XYSeriesCollection trialSet = this.trials.get(trial);
+			for(currentTrial = 0; currentTrial < trials; currentTrial++){
+				XYSeriesCollection trialSet = this.trials.get(currentTrial);
 				trialChart.getXYPlot().setDataset(trialSet);
 				
-				XYSeries agentTimes = this.trialData.get(agentMaker.getAgentName()).get(trial);
+				XYSeries agentTimes = this.trialData.get(agentMaker.getAgentName()).get(currentTrial);
 				LearningAgent agent = agentMaker.generateAgent();
+				currentAgent = agentMaker.getAgentName();
+				timestep = 0;
 				for(int episode = 0; episode < episodesPerTrial; episode++){
 					long time = System.currentTimeMillis();
 					agent.runLearningEpisode(env, maxStepsPerEpisode);
+
 					time = System.currentTimeMillis() - time;
 					double secs = time / 1000.0;
 					agentTimes.add(episode + 1, secs);
+					timestep++;
+					env.resetEnvironment();
 				}
-				env.resetEnvironment();
 			}
 			if(trials > 1){
 				addAverage(agentMaker.getAgentName());
@@ -157,5 +170,84 @@ public class LearningAgentRuntimeAnalizer {
 		double width = crit * stats.getStandardDeviation() / Math.sqrt(stats.getN());
 		double m = stats.getMean();
 		return new double[]{m, m-width, m+width};
+	}
+	
+	public void writeDataToCSV(String filePath){
+		if(!filePath.endsWith(".csv")){
+			filePath = filePath + ".csv";
+		}
+		
+		try {
+			BufferedWriter outFile = new BufferedWriter(new FileWriter(filePath));
+			
+			for(String agentName : trialData.keySet()){
+				outFile.write("\n,," + agentName + "'s Runtimes by trial\n");
+				outFile.write("Episode,");
+				
+				List<XYSeries> trials = trialData.get(agentName);
+				for(int i = 1; i <= trials.size(); i++)
+					outFile.write(i + ",");
+				outFile.write("\n");
+				
+				for(int episode = 0; episode < trials.get(0).getItemCount(); episode++){
+					outFile.write((episode + 1) + ",");
+					for(int trial = 0; trial < trials.size(); trial++){
+						XYSeries data = trials.get(trial);
+						double time = data.getDataItem(episode).getYValue();
+						outFile.write(time + ","); 
+					}
+					
+//					outFile.write("AVERGA);
+					outFile.write("\n");
+				}
+				outFile.write("\n\n");
+			}
+			outFile.close();
+			
+		} catch (Exception e) {
+			System.err.println("Could not write csv file to: " + filePath);
+			e.printStackTrace();
+		}
+	}
+	
+	protected void launchThread(){
+		 Thread refreshThread = new Thread(new Runnable() {
+				
+				@Override
+				public void run() {
+					while(true){
+						LearningAgentRuntimeAnalizer.this.updateTimeSeries();
+						try {
+							Thread.sleep(LearningAgentRuntimeAnalizer.this.delay);
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
+					}
+					
+				}
+			});
+	        
+	       refreshThread.start();
+		 	
+	}
+	
+	synchronized protected void updateTimeSeries(){
+		
+		SwingUtilities.invokeLater(new Runnable() {
+			
+			@Override
+			public void run() {
+				
+				synchronized (LearningAgentRuntimeAnalizer.this) {
+					if(LearningAgentRuntimeAnalizer.this.timestep > LearningAgentRuntimeAnalizer.this.lastUpdated){
+						LearningAgentRuntimeAnalizer.this.lastUpdated = LearningAgentRuntimeAnalizer.this.timestep;
+						List<XYSeries> trials = LearningAgentRuntimeAnalizer.this.trialData.get
+								(LearningAgentRuntimeAnalizer.this.currentAgent);
+						XYSeries trial = trials.get(LearningAgentRuntimeAnalizer.this.currentTrial);
+						trial.fireSeriesChanged();
+					}
+				}
+			}
+		});
 	}
 }
