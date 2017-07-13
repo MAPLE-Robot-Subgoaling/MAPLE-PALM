@@ -30,9 +30,9 @@ public class HierarchicalLearnerTest {
 			int threshold, double discount, double rmax, double maxDelta,boolean relearn, int relearnThreshold){
 		List<Episode> episodes = new ArrayList<Episode>();
 		GroundedTask rootgt = root.getAllGroundedTasks(initial).get(0);
-		
-		RAMDPLearningAgent ramdp = new RAMDPLearningAgent(rootgt, threshold, discount, rmax,
-				new SimpleHashableStateFactory(true), maxDelta, relearn, relearnThreshold);
+
+		RAMDPLearningAgent ramdp = new RAMDPLearningAgent(rootgt, threshold, discount, rmax, 
+				new SimpleHashableStateFactory(true), maxDelta, relearn, relearnThreshold, 0);
         SimulatedEnvironment env = new SimulatedEnvironment(groundDomain, new RandonPassengerTaxiState());
 		VisualActionObserver obs = new VisualActionObserver(groundDomain, TaxiVisualizer.getVisualizer(5, 5));
         obs.initGUI();
@@ -83,7 +83,7 @@ public class HierarchicalLearnerTest {
 		double correctMoveprob = 1;
 
 		double fickleProb = .03;
-		int numEpisodes = 500;
+		int numEpisodes = 400;
 		int maxSteps = 1000;
 		int rmaxThreshold = 2;
 		double gamma = 0.9;
@@ -93,6 +93,7 @@ public class HierarchicalLearnerTest {
 		int episodeRelearn = 300;
 		TaxiState s = TaxiStateFactory.createClassicState();
 		Task RAMDProot = TaxiHierarchy.createAMDPHierarchy(correctMoveprob, fickleProb, false);
+
 		OOSADomain base = TaxiHierarchy.getBaseDomain();
 //		Task RMAXQroot = TaxiHierarchy.createRMAXQHierarchy(correctMoveprob, fickleProb);
 		

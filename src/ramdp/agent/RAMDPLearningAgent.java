@@ -76,6 +76,7 @@ public class RAMDPLearningAgent implements LearningAgent{
 	private boolean relearn;
 	private double relearnFromRoot;
 	private int relearnThreshold;
+	private int lowerThreshold;
 	private int episodeCount = 0;
 	/**
 	 * create a RAMDP agent on a given task
@@ -87,7 +88,7 @@ public class RAMDPLearningAgent implements LearningAgent{
 	 * @param delta the max error for the planner
 	 */
 	public RAMDPLearningAgent(GroundedTask root, int threshold, double discount, double rmax,
-							  HashableStateFactory hs, double delta, boolean relearn, int relearnThreshold){
+							  HashableStateFactory hs, double delta, boolean relearn, int relearnThreshold, int lowerThreshold){
 		this.relearn = relearn;
 		this.rmaxThreshold = threshold;
 		this.root = root;
@@ -98,10 +99,11 @@ public class RAMDPLearningAgent implements LearningAgent{
 		this.taskNames = new HashMap<String, GroundedTask>();
 		this.maxDelta = delta;
 		this.relearnThreshold=relearnThreshold;
+		this.lowerThreshold = lowerThreshold;
 	}
 	public RAMDPLearningAgent(GroundedTask root, int threshold, double discount, double rmax,
 			HashableStateFactory hs, double delta) {
-		this(root, threshold, discount, rmax, hs, delta, false, 0);
+		this(root, threshold, discount, rmax, hs, delta, false, 0, 0);
 	}
 	
 	@Override
@@ -113,14 +115,21 @@ public class RAMDPLearningAgent implements LearningAgent{
 	public Episode runLearningEpisode(Environment env, int maxSteps) {
 		steps = 0;
 		e = new Episode(env.currentObservation());
-		episodeCount++;
 		if(relearn)
-            relearnFromRoot = min(relearnThreshold, episodeCount-1)/(double)relearnThreshold;
+            relearnFromRoot = alpha(episodeCount, lowerThreshold, relearnThreshold);
 		else
 		    relearnFromRoot = 0;
+        episodeCount++;
         solveTask(root, env, maxSteps);
 		return e;
 	}
+	private static double alpha(int episodeCount, int lowerThreshold, int relearnThreshold){
+	    if(episodeCount<=lowerThreshold)
+	        return 0;
+	    if(episodeCount<relearnThreshold)
+	        return ((double)(episodeCount-lowerThreshold)/(double)(relearnThreshold-lowerThreshold));
+	    return 1;
+    }
     private static double min(int x, int y){return x<y ? x : y;}
 
     /**
@@ -177,14 +186,21 @@ public class RAMDPLearningAgent implements LearningAgent{
 			if(subtaskCompleted){
 				model.updateModel(result);
 			}
-			String goalColor = (String) ((TaxiState)pastBaseState).getPassengerAtt(Taxi.CLASS_PASSENGER+"0", Taxi.ATT_GOAL_LOCATION);
+//			String goalColor = (String) ((TaxiState)pastBaseState).getPassengerAtt(Taxi.CLASS_PASSENGER+"0", Taxi.ATT_GOAL_LOCATION);
 			//if(!goalColor.equals(Taxi.COLOR_RED)) {
 //				System.out.println("Task: "+task.toString());
 //				System.out.println("Goal color: "+goalColor);
 //				System.out.println("state-action count: " + model.getStateActionCount(hashingFactory.hashState(pastState), a));
 //				System.out.println("subtask complete: "+subtaskCompleted);
 			//}
-			earlyterminal = randomRelearn();
+            if(relearn)
+                if(model.getStateActionCount(this.hashingFactory.hashState(pastState),a)
+                        > rmaxThreshold){
+                    earlyterminal = randomRelearn();
+                }else
+                    earlyterminal = false;
+
+			//earlyterminal = randomRelearn();
 		}
 
 //		System.out.println("task: "+task.toString());
