@@ -8,21 +8,25 @@ import hierarchy.framework.IdentityMap;
 import hierarchy.framework.NonprimitiveTask;
 import hierarchy.framework.PrimitiveTask;
 import hierarchy.framework.RootTask;
+import hierarchy.framework.SolveActionType;
 import hierarchy.framework.Task;
 import taxi.Taxi;
 import taxi.abstraction1.TaxiL1;
 import taxi.abstraction1.state.L1StateMapper;
 import taxi.abstraction2.TaxiL2;
 import taxi.abstraction2.state.L2StateMapper;
+import taxi.abstractionNav.state.NavStateMapper;
 import taxi.amdp.functions.DropoffCompletedPF;
 import taxi.amdp.functions.DropoffFailurePF;
 import taxi.amdp.functions.GetCompletedPF;
 import taxi.amdp.functions.GetFailurePF;
+import taxi.amdp.functions.NavigateAbstractPF;
 import taxi.amdp.functions.NavigatePF;
 import taxi.amdp.functions.PickupCompletedPF;
 import taxi.amdp.functions.PickupFailurePF;
 import taxi.amdp.functions.PutCompletedPF;
 import taxi.amdp.functions.PutFailurePF;
+import taxi.amdp.functions.RootPF;
 import taxi.rmaxq.functions.BaseGetActionType;
 import taxi.rmaxq.functions.BaseGetCompletedPF;
 import taxi.rmaxq.functions.BaseGetFailurePF;
@@ -30,7 +34,6 @@ import taxi.rmaxq.functions.BaseNavigateActionType;
 import taxi.rmaxq.functions.BasePutActionType;
 import taxi.rmaxq.functions.BasePutCompletedPF;
 import taxi.rmaxq.functions.BasePutFailurePF;
-import taxi.state.NavStateMapper;
 
 public class TaxiHierarchy {
 
@@ -45,7 +48,7 @@ public class TaxiHierarchy {
 	 * @param fickleProbability the probability that a passenger in the taxi will change goals
 	 * @return the root task of the taxi hierarchy
 	 */
-	public static Task createAMDPHierarchy(double correctMoveprob, double fickleProbability){
+	public static Task createAMDPHierarchy(double correctMoveprob, double fickleProbability, boolean plan){
 		Taxi   l0Gen;
 		TaxiL1 l1Gen;
 		TaxiL2 l2Gen;
@@ -67,7 +70,11 @@ public class TaxiHierarchy {
 		
 		//state mapping function
 		StateMapping map0 = new IdentityMap();
-		StateMapping mapNav = new NavStateMapper();
+		StateMapping mapNav;
+		if(plan)
+			mapNav = new IdentityMap();
+		else
+			mapNav = new NavStateMapper(); 
 		StateMapping map1 = new L1StateMapper();
 		StateMapping map2 = new L2StateMapper();
 		
@@ -82,6 +89,7 @@ public class TaxiHierarchy {
 		ActionType aNavigate = l1Domain.getAction(TaxiL1.ACTION_NAVIGATE);
 		ActionType aGet = l2Domain.getAction(TaxiL2.ACTION_GET);
 		ActionType aPut = l2Domain.getAction(TaxiL2.ACTION_PUT);
+		ActionType aSolve = new SolveActionType();
 		
 		//tasks
 		PrimitiveTask north = new PrimitiveTask(aNorth, l0Domian);
@@ -95,7 +103,11 @@ public class TaxiHierarchy {
 		Task[] pickupL1Tasks = {pickup};
 		Task[] dropoffL1Tasks = {dropoff};
 		
-		PropositionalFunction navPF = new NavigatePF();
+		PropositionalFunction navPF;
+		if(plan)
+			navPF = new NavigatePF();
+		else
+			navPF = new NavigateAbstractPF();
 		NonprimitiveTask navigate = new NonprimitiveTask(navTasks, aNavigate, l0Gen.generateNavigateDomain(),
 				mapNav, navPF, navPF);
 		
@@ -124,7 +136,9 @@ public class TaxiHierarchy {
 		
 		Task[] rootTasks = {get, put};
 		
-		Task root = new RootTask(rootTasks, l2Domain, map2);
+		PropositionalFunction rootPF = new RootPF();
+		NonprimitiveTask root = new NonprimitiveTask(rootTasks, aSolve, l2Domain, map2, rootPF, rootPF);
+		
 		return root;
 	}
 

@@ -152,9 +152,11 @@ public class TaxiL1Model implements FullStateModel {
 					TaxiL1Passenger np = ns.touchPassenger(passengerName);
 					np.set(Taxi.ATT_IN_TAXI, true);
 					np.set(TaxiL1.ATT_PICKED_UP_AT_LEAST_ONCE, true);
+
 					//if(fickle){
 					//	np.set(TaxiL1.ATT_JUST_PICKED_UP, true);
 					//}
+
 					
 					TaxiL1Agent nt = ns.touchTaxi();
 					nt.set(TaxiL1.ATT_TAXI_OCCUPIED, true);

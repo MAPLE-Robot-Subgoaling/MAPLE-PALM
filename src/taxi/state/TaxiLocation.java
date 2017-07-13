@@ -35,6 +35,7 @@ public class TaxiLocation extends MutableObject{
 	public TaxiLocation(String name, int x, int y, List<String> colors){
 		this(name, x, y, (Object)colors);
 	}
+
 	public TaxiLocation(String name, int x, int y, String color) {
 		this(name, x,y, Collections.singletonList(color));
 	}
@@ -67,12 +68,6 @@ public class TaxiLocation extends MutableObject{
 
 	@Override
 	public List<Object> variableKeys() {
-		if(nav)
-			return navKeys;
 		return keys;
-	}
-	
-	public void abstractNavigate(){
-		nav = true;
 	}
 }

@@ -68,6 +68,7 @@ public class HierarchicalCharts {
 		};
 		
 		LearningAlgorithmExperimenter exp = new LearningAlgorithmExperimenter(env, numTrial, numEpisode, maxSteps, reamdp, ramdp);
+
 		exp.setUpPlottingConfiguration(500, 300, 2, 1000,
 				TrialMode.MOST_RECENT_AND_AVERAGE,
 				PerformanceMetric.CUMULATIVE_REWARD_PER_EPISODE
@@ -80,6 +81,7 @@ public class HierarchicalCharts {
 	public static void createRandomCrarts(OOSADomain domain, final Task RAMDPRoot, 
 			final double rmax, final int threshold, final double maxDelta, final double discount,
 			int numEpisode, int maxSteps, int numTrial){
+		
 		SimulatedEnvironment env = new SimulatedEnvironment(domain, new RandonPassengerTaxiState());
 		
 		final HashableStateFactory hs = new SimpleHashableStateFactory(true);
@@ -111,11 +113,22 @@ public class HierarchicalCharts {
 				);
 		
 		exp.startExperiment();
-		exp.writeEpisodeDataToCSV("C:\\Users\\mland\\Box Sync\\Maple\\hierarchical learning data\\ramdp full state fickle.csv");
+		exp.writeEpisodeDataToCSV("C:\\Users\\mland\\Box Sync\\Maple\\hierarchical learning data\\ramdp classic state fickle.csv");
 	}
 
 	public static void main(String[] args) {
-		double correctMoveprob = 1;
+
+	
+	public static void main(String[] args) {
+// Mathew's RMAX vs RAMDP setup
+// 		double correctMoveprob = 0.8;
+// 		double fickleProb = 0.225;
+// 		int numEpisodes = 30;
+// 		int maxSteps = 2000;
+// 		int rmaxThreshold = 5;
+// 		int numTrials = 2;
+// Shane's RAMDP vs DREAMDP setup
+    double correctMoveprob = 1;
 		double fickleProb = .05;
 		int numEpisodes = 600;
 		int maxSteps = 1000;
@@ -129,7 +142,7 @@ public class HierarchicalCharts {
 
 		
 		TaxiState s = TaxiStateFactory.createTinyState();
-		Task RAMDProot = TaxiHierarchy.createAMDPHierarchy(correctMoveprob, fickleProb);
+		Task RAMDProot = TaxiHierarchy.createAMDPHierarchy(correctMoveprob, fickleProb, false);
 		OOSADomain base = TaxiHierarchy.getBaseDomain();
 //		Task RMAXQroot = TaxiHierarchy.createRMAXQHierarchy(correctMoveprob, fickleProb);
 		createCrarts(s, base, RAMDProot, RAMDProot, rmax, rmaxThreshold, maxDelta, gamma,

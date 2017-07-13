@@ -82,15 +82,16 @@ public class HierarchicalLearnerTest {
 	public static void main(String[] args) {
 		double correctMoveprob = 1;
 		double fickleProb = .03;
-		int numEpisodes = 200;
+		int numEpisodes = 400;
 		int maxSteps = 1000;
 		int rmaxThreshold = 2;
 		double gamma = 0.9;
 		double rmax = 20;
 		double maxDelta = 0.01;
-		int episodeRelearn = 200;
+		int episodeRelearn = 300;
 		TaxiState s = TaxiStateFactory.createTallState();
 		Task RAMDProot = TaxiHierarchy.createAMDPHierarchy(correctMoveprob, fickleProb);
+
 		OOSADomain base = TaxiHierarchy.getBaseDomain();
 //		Task RMAXQroot = TaxiHierarchy.createRMAXQHierarchy(correctMoveprob, fickleProb);
 		

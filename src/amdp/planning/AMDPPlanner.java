@@ -119,7 +119,7 @@ public class AMDPPlanner {
 			while(!(task.isFailure(currentState) || task.isComplete(currentState))){
 				Action a = taskPolicy.action(currentState);
 				GroundedTask child = getChildGT(task, a, currentState);
-				
+				System.out.println(child);
 				//recurse to solve the chosen subtask
 				solveTask(child, e, env);
 				

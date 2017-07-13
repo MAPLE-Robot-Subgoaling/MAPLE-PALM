@@ -45,6 +45,7 @@ public class AMDPPlanTest {
 		
 		TaxiState s = TaxiStateFactory.createVariantTallState("B", "green");
 		Task RAMDProot = TaxiHierarchy.createAMDPHierarchy(correctMoveprob, fickleProb);
+
 		OOSADomain base = TaxiHierarchy.getBaseDomain();
 		plan(RAMDProot, s, new SimpleHashableStateFactory(), base, gamma, maxDelta, maxRollouts, numEpisodes);
 	}

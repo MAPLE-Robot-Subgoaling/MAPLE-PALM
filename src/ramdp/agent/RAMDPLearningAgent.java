@@ -216,6 +216,7 @@ public class RAMDPLearningAgent implements LearningAgent{
 	private boolean randomRelearn(){
 		Random rand = new Random();
 		return rand.nextDouble()<this.relearnFromRoot;
+
 	}
 	/**
 	 * add the children of the given task to the action name lookup

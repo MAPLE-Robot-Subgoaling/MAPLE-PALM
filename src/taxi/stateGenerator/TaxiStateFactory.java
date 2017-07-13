@@ -66,7 +66,9 @@ public class TaxiStateFactory {
 		locations.add(new TaxiLocation(Taxi.CLASS_LOCATION + 3, 4, 4, Taxi.COLOR_GREEN));
 		
 		List<TaxiPassenger> passengers = new ArrayList<TaxiPassenger>();
-		passengers.add(new TaxiPassenger(Taxi.CLASS_PASSENGER + 0, 3, 0, Taxi.COLOR_RED));
+
+    passengers.add(new TaxiPassenger(Taxi.CLASS_PASSENGER + 0, 3, 0, Taxi.COLOR_RED));
+
 		
 		List<TaxiWall> walls = new ArrayList<TaxiWall>();
 		walls.add(new TaxiWall(Taxi.CLASS_WALL + 0, 0, 0, 5, false));
