@@ -72,8 +72,6 @@ public class TaxiL2Model implements FullStateModel {
 			TaxiL2Passenger np = ns.touchPassenger(passegerName);
 			np.set(TaxiL2.ATT_IN_TAXI, true);
 			np.set(TaxiL2.ATT_PICKED_UP_AT_LEAST_ONCE, true);
-			if(fickle)
-				np.set(TaxiL2.ATT_JUST_PICKED_UP, true);
 			tps.add(new StateTransitionProb(ns, 1));
 		}else{
 			tps.add(new StateTransitionProb(ns, 1));

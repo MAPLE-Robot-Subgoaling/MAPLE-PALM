@@ -43,7 +43,7 @@ public class HierarchicalCharts {
 
 			@Override
 			public String getAgentName() {
-				return "RE-AMDP";
+				return "DRE-AMDP";
 			}
 			
 			@Override
@@ -119,7 +119,6 @@ public class HierarchicalCharts {
 	public static void main(String[] args) {
 
 	
-	public static void main(String[] args) {
 // Mathew's RMAX vs RAMDP setup
 // 		double correctMoveprob = 0.8;
 // 		double fickleProb = 0.225;
