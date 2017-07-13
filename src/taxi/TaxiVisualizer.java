@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Ellipse2D;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import burlap.mdp.core.oo.state.OOState;
@@ -91,8 +92,8 @@ public class TaxiVisualizer {
 		public void paintObject(Graphics2D g2, OOState s, ObjectInstance ob, float cWidth, float cHeight) {
 			TaxiState state = (TaxiState) s;
 			TaxiPassenger p = (TaxiPassenger) ob;
-			String goalLoc = (String) state.getPassengerAtt(p.name(), Taxi.ATT_GOAL_LOCATION);
-			String color = (String) state.getLocationAtt(goalLoc, Taxi.ATT_COLOR);
+			String color = (String) state.getPassengerAtt(p.name(), Taxi.ATT_GOAL_LOCATION);
+			//String color = ((List<String>) state.getLocationAtt(goalLoc, Taxi.ATT_COLOR)).get(0);
 			Color col = colors.get(color);
 			
 			g2.setColor(col);
@@ -127,7 +128,8 @@ public class TaxiVisualizer {
 		@Override
 		public void paintObject(Graphics2D g2, OOState s, ObjectInstance ob, float cWidth, float cHeight) {
 			TaxiLocation l = (TaxiLocation) ob;
-			String color = (String) l.get(Taxi.ATT_COLOR);
+			//here goes nothing
+			String color = ((List<String>)l.get(Taxi.ATT_COLOR)).get(0);
 			Color col = colors.get(color).darker();
 			
 			g2.setColor(col);

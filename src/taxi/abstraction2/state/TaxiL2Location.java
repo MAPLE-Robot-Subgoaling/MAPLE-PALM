@@ -16,7 +16,7 @@ public class TaxiL2Location extends MutableObject {
 			TaxiL2.ATT_COLOR
 			);
 	
-	public TaxiL2Location(String name, String color) {
+	public TaxiL2Location(String name, List<String> color) {
 		this(name, (Object) color);
 	}
 	
