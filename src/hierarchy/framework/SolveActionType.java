@@ -6,7 +6,6 @@ import java.util.List;
 import burlap.mdp.core.action.Action;
 import burlap.mdp.core.action.ActionType;
 import burlap.mdp.core.state.State;
-import taxi.abstraction1.NavigateActionType.NavigeteAction;
 
 public class SolveActionType implements ActionType{
 

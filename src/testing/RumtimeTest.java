@@ -4,7 +4,6 @@ package testing;
 import burlap.behavior.singleagent.learning.LearningAgent;
 import burlap.behavior.singleagent.learning.LearningAgentFactory;
 import burlap.mdp.core.state.State;
-import burlap.mdp.singleagent.common.VisualActionObserver;
 import burlap.mdp.singleagent.environment.SimulatedEnvironment;
 import burlap.mdp.singleagent.oo.OOSADomain;
 import burlap.statehashing.HashableStateFactory;
@@ -13,7 +12,6 @@ import hierarchy.framework.GroundedTask;
 import hierarchy.framework.Task;
 import ramdp.agent.RAMDPLearningAgent;
 import rmaxq.agent.RmaxQLearningAgent;
-import taxi.TaxiVisualizer;
 import taxi.hierarchies.TaxiHierarchy;
 import taxi.state.TaxiState;
 import taxi.stateGenerator.TaxiStateFactory;
@@ -31,7 +29,7 @@ public class RumtimeTest {
 //        obs.initGUI();
 //        obs.setDefaultCloseOperation(obs.EXIT_ON_CLOSE);
 //        env.addObservers(obs);
-		
+//		
 		LearningAgentFactory rmaxq = new LearningAgentFactory() {
 			
 			@Override
@@ -58,19 +56,19 @@ public class RumtimeTest {
 			}
 		};
 		
-		LearningAgentRuntimeAnalizer timer = new LearningAgentRuntimeAnalizer(500, 300, ramdp, rmaxq);
+		LearningAgentRuntimeAnalizer timer = new LearningAgentRuntimeAnalizer(500, 300, ramdp);
 		timer.runRuntimeAnalysis(numTrial, numEpisode, maxSteps, env);
 		timer.writeDataToCSV("C:\\Users\\mland\\Box Sync\\Maple\\hierarchical learning data\\determintistic runtime ramdp");
 	}
 	
 
 	public static void main(String[] args) {
-		double correctMoveprob = 1;
-		double fickleProb = 0;
+		double correctMoveprob = 0.8;
+		double fickleProb = 0.22;
 		int numEpisodes = 30;
 		int maxSteps = 2000;
-		int rmaxThreshold = 1;
-		int numTrials = 5;
+		int rmaxThreshold = 3;
+		int numTrials = 40;
 		double gamma = 0.9;
 		double rmax = 20;
 		double maxDelta = 0.01;
