@@ -101,6 +101,7 @@ public class AMDPPlanner {
 	 * @return the episode completed to the current task
 	 */
 	public Episode solveTask(GroundedTask task, Episode e, Environment env){
+		System.out.println(task);
 		if(task.isPrimitive()){
 			Action a = task.getAction();
 			EnvironmentOutcome result = env.executeAction(a);

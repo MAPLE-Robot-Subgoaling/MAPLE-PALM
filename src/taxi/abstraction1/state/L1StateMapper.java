@@ -24,7 +24,7 @@ public class L1StateMapper implements StateMapping {
 		int ty = (int) st.getTaxiAtt(Taxi.ATT_Y);
 		
 		for(String locName : st.getLocations()){
-			String color = (String) st.getLocationAtt(locName, Taxi.ATT_COLOR);
+			List<String> color = (List<String>) st.getLocationAtt(locName, Taxi.ATT_COLOR);
 			locations.add(new TaxiL1Location(locName, color));
 		}
 		
@@ -34,7 +34,7 @@ public class L1StateMapper implements StateMapping {
 			int py = (int) st.getPassengerAtt(passengerName, Taxi.ATT_Y);
 			boolean inTax = (boolean) st.getPassengerAtt(passengerName, Taxi.ATT_IN_TAXI);
 			boolean pickedUp = (boolean) st.getPassengerAtt(passengerName, Taxi.ATT_PICKED_UP_AT_LEAST_ONCE);
-			boolean justpickup = (boolean) st.getPassengerAtt(passengerName, Taxi.ATT_JUST_PICKED_UP);
+			//boolean justpickup = (boolean) st.getPassengerAtt(passengerName, Taxi.ATT_JUST_PICKED_UP);
 			String currentLocation = "";
 			
 			for(String locName : st.getLocations()){
@@ -48,7 +48,7 @@ public class L1StateMapper implements StateMapping {
 					taxiLocation = locName;
 				}
 			}
-			passengers.add(new TaxiL1Passenger(passengerName, currentLocation, goalLocation, inTax, pickedUp, justpickup));
+			passengers.add(new TaxiL1Passenger(passengerName, currentLocation, goalLocation, inTax, pickedUp/*, justpickup*/));
 		}
 		
 		boolean taxiOccupied = (boolean) st.getTaxiAtt(Taxi.ATT_TAXI_OCCUPIED);

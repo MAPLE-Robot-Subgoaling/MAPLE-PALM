@@ -17,29 +17,29 @@ public class TaxiL1Passenger extends MutableObject {
 			TaxiL1.ATT_CURRENT_LOCATION,
 			TaxiL1.ATT_IN_TAXI,
 			TaxiL1.ATT_GOAL_LOCATION,
-			TaxiL1.ATT_PICKED_UP_AT_LEAST_ONCE,
-			TaxiL1.ATT_JUST_PICKED_UP
+			TaxiL1.ATT_PICKED_UP_AT_LEAST_ONCE
+			//, TaxiL1.ATT_JUST_PICKED_UP
 			);
 	
 	public TaxiL1Passenger(String name, String currentLocation, String goalLocation) {
-		this(name, (Object) currentLocation, (Object) goalLocation, false, false, false);
+		this(name, (Object) currentLocation, (Object) goalLocation, false, false/*, false*/);
 	}
 	
 	public TaxiL1Passenger(String name, String currentLocation, String goalLocation, boolean inTaxi){
-		this(name, (Object) currentLocation, (Object) goalLocation, (Object) inTaxi, false, false);
+		this(name, (Object) currentLocation, (Object) goalLocation, (Object) inTaxi, false/*, false*/);
 	}
 	
-	public TaxiL1Passenger(String name, String currentLocation, String goalLocation, boolean inTaxi, boolean pickep, boolean judstPickedUp){
-		this(name, (Object) currentLocation, (Object) goalLocation, (Object) inTaxi, (Object) pickep, (Object) judstPickedUp);
+	public TaxiL1Passenger(String name, String currentLocation, String goalLocation, boolean inTaxi, boolean pickep/*, boolean judstPickedUp*/){
+		this(name, (Object) currentLocation, (Object) goalLocation, (Object) inTaxi, (Object) pickep/*, (Object) judstPickedUp*/);
 	}
 	
 	private TaxiL1Passenger(String name, Object currentLocation, Object goalLocation, Object inTaxi,
-			Object pickedUpOnce, Object justPickedUp){
+			Object pickedUpOnce/*, Object justPickedUp*/){
 		this.set(TaxiL1.ATT_CURRENT_LOCATION, currentLocation);
 		this.set(TaxiL1.ATT_IN_TAXI, inTaxi);
 		this.set(TaxiL1.ATT_GOAL_LOCATION, goalLocation);
 		this.set(TaxiL1.ATT_PICKED_UP_AT_LEAST_ONCE, pickedUpOnce);
-		this.set(TaxiL1.ATT_JUST_PICKED_UP, justPickedUp);
+		//this.set(TaxiL1.ATT_JUST_PICKED_UP, justPickedUp);
 		this.setName(name);
 	}
 	@Override
@@ -59,8 +59,8 @@ public class TaxiL1Passenger extends MutableObject {
 				get(TaxiL1.ATT_CURRENT_LOCATION),
 				get(TaxiL1.ATT_GOAL_LOCATION),
 				get(TaxiL1.ATT_IN_TAXI),
-				get(TaxiL1.ATT_PICKED_UP_AT_LEAST_ONCE),
-				get(TaxiL1.ATT_JUST_PICKED_UP)
+				get(TaxiL1.ATT_PICKED_UP_AT_LEAST_ONCE)
+				//, get(TaxiL1.ATT_JUST_PICKED_UP)
 				);
 	}
 

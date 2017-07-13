@@ -12,6 +12,8 @@ import taxi.abstraction1.NavigateActionType.NavigeteAction;
 import taxi.abstraction1.state.TaxiL1Agent;
 import taxi.abstraction1.state.TaxiL1Passenger;
 import taxi.abstraction1.state.TaxiL1State;
+import taxi.state.TaxiPassenger;
+import taxi.state.TaxiState;
 
 public class TaxiL1Model implements FullStateModel {
 
@@ -88,28 +90,38 @@ public class TaxiL1Model implements FullStateModel {
 		}
 		
 		if(fickle){
+            int colorCount=0;
+            for(String loc : s.getLocations())
+                colorCount+=((List<String>)s.getLocationAtt(loc, Taxi.ATT_COLOR)).size();
+
 			boolean passengerChanged = false;
 			for(String passengerName: s.getPassengers()){
 				boolean inTaxi = (boolean) s.getPassengerAtt(passengerName, TaxiL1.ATT_IN_TAXI);
-				boolean justPickedUp = (boolean) s.getPassengerAtt(passengerName, TaxiL1.ATT_JUST_PICKED_UP);
-				String passGoal = (String) s.getPassengerAtt(passengerName, 
+				//boolean justPickedUp = (boolean) s.getPassengerAtt(passengerName, TaxiL1.ATT_JUST_PICKED_UP);
+				String passGoalColor = (String) s.getPassengerAtt(passengerName,
 						TaxiL1.ATT_GOAL_LOCATION);
-				if(inTaxi && justPickedUp){
+				if(inTaxi/* && justPickedUp*/){
+
 					passengerChanged = true;
-					TaxiL1Passenger np = ns.touchPassenger(passengerName);
-					np.set(TaxiL1.ATT_JUST_PICKED_UP, false);
-					for(String locName: s.getLocations()){
-						TaxiL1State nfickles = ns.copy();
-						
-						if(passGoal.equals(locName)){
-							tps.add(new StateTransitionProb(nfickles, 1 - fickleChangeGoalProbaility));
-						}else{
-							TaxiL1Passenger npf = nfickles.touchPassenger(passengerName);
-							npf.set(TaxiL1.ATT_GOAL_LOCATION, locName);
-							tps.add(new StateTransitionProb(nfickles, fickleChangeGoalProbaility 
-									/ (s.getLocations().length - 1)));
-						}
-					}
+					//TaxiL1Passenger np = ns.touchPassenger(passengerName);
+					//np.set(TaxiL1.ATT_JUST_PICKED_UP, false);
+                    for(String location : s.getLocations()){
+                        for(String color : (List<String>)s.getLocationAtt(location, Taxi.ATT_COLOR)) {
+                            TaxiL1State nfickles = ns.copy();
+
+                            //check if goal color is the same as loc color
+                            if (passGoalColor.equals(color)) {
+                                double prob = 1 - fickleChangeGoalProbaility;
+                                tps.add(new StateTransitionProb(nfickles, prob));
+                            } else {
+                                //set goal to loc
+                                TaxiL1Passenger npf = nfickles.touchPassenger(passengerName);
+                                npf.set(Taxi.ATT_GOAL_LOCATION, color);
+                                tps.add(new StateTransitionProb(nfickles, fickleChangeGoalProbaility
+                                        / (colorCount - 1)));
+                            }
+                        }
+                    }
 					break;
 				}
 			}
@@ -140,8 +152,11 @@ public class TaxiL1Model implements FullStateModel {
 					TaxiL1Passenger np = ns.touchPassenger(passengerName);
 					np.set(Taxi.ATT_IN_TAXI, true);
 					np.set(TaxiL1.ATT_PICKED_UP_AT_LEAST_ONCE, true);
-					if(fickle)
-						np.set(TaxiL1.ATT_JUST_PICKED_UP, true);
+
+					//if(fickle){
+					//	np.set(TaxiL1.ATT_JUST_PICKED_UP, true);
+					//}
+
 					
 					TaxiL1Agent nt = ns.touchTaxi();
 					nt.set(TaxiL1.ATT_TAXI_OCCUPIED, true);

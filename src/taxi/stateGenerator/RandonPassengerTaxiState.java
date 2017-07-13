@@ -18,7 +18,7 @@ public class RandonPassengerTaxiState implements StateGenerator{
 	public State generateState() {
 		int width = 5;
 		int height = 5;
-		
+		String[] colors = {Taxi.COLOR_RED, Taxi.COLOR_YELLOW, Taxi.COLOR_BLUE, Taxi.COLOR_GREEN};
 		int tx = (int) (Math.random() * width);
 		int ty = (int) (Math.random() * height);
 		TaxiAgent taxi = new TaxiAgent(Taxi.CLASS_TAXI + 0, tx, ty);
@@ -35,7 +35,7 @@ public class RandonPassengerTaxiState implements StateGenerator{
 		int px = (int)(locations.get(start).get(Taxi.ATT_X));
 		int py = (int)(locations.get(start).get(Taxi.ATT_Y));
 		int goal = (int)(Math.random() * 4);
-		String goalName =  locations.get(goal).name();
+		String goalName =  colors[goal];
 		
 		passengers.add(new TaxiPassenger(Taxi.CLASS_PASSENGER + 0, px, py, goalName));
 		

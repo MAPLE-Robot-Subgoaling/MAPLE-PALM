@@ -7,6 +7,7 @@ import burlap.mdp.core.StateTransitionProb;
 import burlap.mdp.core.action.Action;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.model.statemodel.FullStateModel;
+import taxi.Taxi;
 import taxi.abstraction2.GetActionType.GetAction;
 import taxi.abstraction2.PutActionType.PutAction;
 import taxi.abstraction2.state.TaxiL2Passenger;
@@ -60,6 +61,7 @@ public class TaxiL2Model implements FullStateModel {
 		String passegerName = a.getPassenger();
 		TaxiL2State ns = s.copy();
 		
+
 		boolean taxiOcc = false;
 		for(String pName : s.getPassengers()){
 			boolean inTaxi = (boolean) s.getPassengerAtt(pName, TaxiL2.ATT_IN_TAXI);
@@ -70,13 +72,10 @@ public class TaxiL2Model implements FullStateModel {
 			TaxiL2Passenger np = ns.touchPassenger(passegerName);
 			np.set(TaxiL2.ATT_IN_TAXI, true);
 			np.set(TaxiL2.ATT_PICKED_UP_AT_LEAST_ONCE, true);
-			if(fickle)
-				np.set(TaxiL2.ATT_JUST_PICKED_UP, true);
 			tps.add(new StateTransitionProb(ns, 1));
 		}else{
 			tps.add(new StateTransitionProb(ns, 1));
 		}
-		
 	}
 	
 	/**
@@ -109,31 +108,67 @@ public class TaxiL2Model implements FullStateModel {
 				}
 				
 				//fickle goal
-				if(fickle){
-					String passengerLocation = (String) s.getPassengerAtt(passengerName, TaxiL2.ATT_CURRENT_LOCATION);
-					boolean justPickedUp = (boolean) s.getPassengerAtt(passengerName, TaxiL2.ATT_JUST_PICKED_UP);
-					if(justPickedUp){
-						double p = fickleChangeGoalProbaility / (s.getLocations().length - 1);
-						TaxiL2Passenger np = ns.touchPassenger(passengerName);
-						np.set(TaxiL2.ATT_JUST_PICKED_UP, false);
-						for(String locationName : s.getLocations()){
+				if(fickle) {
+					String passengerLocationColor = (String) s.getPassengerAtt(passengerName, TaxiL2.ATT_CURRENT_LOCATION);
+					//boolean justPickedUp = (boolean) s.getPassengerAtt(passengerName, TaxiL2.ATT_JUST_PICKED_UP);
+					//if(justPickedUp){
+					int colorCount = 0;
+					for (String l : s.getLocations())
+						colorCount += ((List<String>) s.getLocationAtt(l, Taxi.ATT_COLOR)).size();
+					double p = fickleChangeGoalProbaility / (colorCount - 1);
+					//TaxiL2Passenger np = ns.touchPassenger(passengerName);
+					//np.set(TaxiL2.ATT_JUST_PICKED_UP, false);
+					for (String loc : s.getLocations())
+						for (String locationColor : (List<String>) s.getLocationAtt(loc, Taxi.ATT_COLOR)) {
 							TaxiL2State nfickles = ns.copy();
-							
-							if(locationName.equals(passengerLocation)){
-								tps.add(new StateTransitionProb(nfickles, (1 - fickleChangeGoalProbaility)));
-							}else{
+
+							if (locationColor.equals(passengerLocationColor))
+								tps.add(new StateTransitionProb(nfickles, 1 - fickleChangeGoalProbaility));
+							else {
 								TaxiL2Passenger nfp = nfickles.touchPassenger(passengerName);
-								nfp.set(TaxiL2.ATT_GOAL_LOCATION, locationName);
+								nfp.set(TaxiL2.ATT_GOAL_LOCATION, locationColor);
 								tps.add(new StateTransitionProb(nfickles, p));
 							}
 						}
-						return;
-					}
+					return;
 				}
 			}
 		}
 		tps.add(new StateTransitionProb(ns, 1));
 	}
+	/*
+			for(String passengerName : s.getPassengers()){
+ 				boolean inTaxi = (boolean) s.getPassengerAtt(passengerName, TaxiL2.ATT_IN_TAXI);
+ 				if(inTaxi){
+ 					//change location and remove from taxi
+ 					TaxiL2Passenger np = ns.touchPassenger(passengerName);
+ 					np.set(TaxiL2.ATT_CURRENT_LOCATION, goalLoaction);
+ 					np.set(TaxiL2.ATT_IN_TAXI, false);
+
+ 					//fickle goal
+ 					if(fickle){
+ 						String passengerLocation = (String) s.getPassengerAtt(passengerName, TaxiL2.ATT_CURRENT_LOCATION);
+ 						double p = fickleChangeGoalProbaility / (s.getLocations().length - 1);
+
+ 						for(String locationName : s.getLocations()){
+ 							TaxiL2State nfickles = ns.copy();
+
+ 							if(locationName.equals(passengerLocation)){
+ 								tps.add(new StateTransitionProb(nfickles, (1 - fickleChangeGoalProbaility)));
+ 							}else{
+ 								TaxiL2Passenger nfp = nfickles.touchPassenger(passengerName);
+ 								nfp.set(TaxiL2.ATT_GOAL_LOCATION, locationName);
+ 								tps.add(new StateTransitionProb(nfickles, p));
+ 							}
+ 						}
+ 					return;
+ 					}
+ 				}
+ 			}
+
+ 		tps.add(new StateTransitionProb(ns, 1));
+ 	}
+	 */
 
 	/**
 	 * map a action to its number
