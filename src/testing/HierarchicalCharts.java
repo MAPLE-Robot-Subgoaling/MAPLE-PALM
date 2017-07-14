@@ -114,31 +114,24 @@ public class HierarchicalCharts {
 
 	
 	public static void main(String[] args) {
-// Mathew's RMAX vs RAMDP setup
-// 		double correctMoveprob = 0.8;
-// 		double fickleProb = 0.225;
-// 		int numEpisodes = 30;
-// 		int maxSteps = 2000;
-// 		int rmaxThreshold = 5;
-// 		int numTrials = 2;
-// Shane's RAMDP vs DREAMDP setup
-    double correctMoveprob = 1;
+		double correctMoveprob = 1;
 		double fickleProb = .05;
-		int numEpisodes = 600;
+		int numEpisodes = 400;
 		int maxSteps = 1000;
 		int rmaxThreshold = 3;
 		double gamma = 0.9;
 		double rmax = 20;
 		double maxDelta = 0.01;
-		int episodeRelearn = 300;
+		int episodeRelearn = 200;
 		int lowerthreshold = 0;
-		int numTrials =20;
+		int numTrials = 1;
 
 		
 		TaxiState s = TaxiStateFactory.createTinyState();
 		Task RAMDProot = TaxiHierarchy.createAMDPHierarchy(correctMoveprob, fickleProb, false);
 		OOSADomain base = TaxiHierarchy.getBaseDomain();
 //		Task RMAXQroot = TaxiHierarchy.createRMAXQHierarchy(correctMoveprob, fickleProb);
+		
 		createCrarts(s, base, RAMDProot, RAMDProot, rmax, rmaxThreshold, maxDelta, gamma,
 				numEpisodes, maxSteps, numTrials, true, episodeRelearn, lowerthreshold);
 //		createRandomCrarts(base, RAMDProot, rmax, rmaxThreshold, maxDelta, gamma, numEpisodes, maxSteps, numTrials);

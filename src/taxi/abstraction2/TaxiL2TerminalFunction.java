@@ -18,20 +18,20 @@ public class TaxiL2TerminalFunction implements TerminalFunction {
 		for(String passengerName : state.getPassengers()){
 			boolean inTaxi = (boolean) state.getPassengerAtt(passengerName, TaxiL2.ATT_IN_TAXI);
 			boolean pickedUp = (boolean) state.getPassengerAtt(passengerName, TaxiL2.ATT_PICKED_UP_AT_LEAST_ONCE);
+			String locationName = (String) state.getPassengerAtt(passengerName, TaxiL2.ATT_CURRENT_LOCATION);
+			String goalLocationColor = (String) state.getPassengerAtt(passengerName, TaxiL2.ATT_GOAL_LOCATION);
+		
 			if(inTaxi || !pickedUp)
 				return false;
-			String location = (String) state.getPassengerAtt(passengerName, TaxiL2.ATT_CURRENT_LOCATION);
-			String goalLocationColor = (String) state.getPassengerAtt(passengerName, TaxiL2.ATT_GOAL_LOCATION);
-			//terminal by color
+			
 			boolean rightLocation=false;
-			for(String color : (List<String>)state.getLocationAtt(location, Taxi.ATT_COLOR))
+			for(String color : (List<String>)state.getLocationAtt(locationName, Taxi.ATT_COLOR))
 				if (color.equals(goalLocationColor))
 					rightLocation=true;
 			if(!rightLocation)
 				return false;
-			//end terminal by color
 		}
-		//System.out.println("L2 is terminating!");
+//		System.out.println("L2 is terminating!");
 		return true;
 	}
 

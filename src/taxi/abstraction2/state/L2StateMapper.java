@@ -41,8 +41,6 @@ public class L2StateMapper implements StateMapping {
 			}
 			passengers.add(new TaxiL2Passenger(passengerName, currentLocation, goalLocation, inTax, pickedUp/*, justpickup*/));
 		}
-
 		return new TaxiL2State(passengers, locations);
 	}
-
 }

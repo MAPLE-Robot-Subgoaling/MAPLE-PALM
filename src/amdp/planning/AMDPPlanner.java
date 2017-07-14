@@ -5,8 +5,8 @@ import java.util.List;
 import java.util.Map;
 
 import burlap.behavior.policy.Policy;
+import burlap.behavior.policy.PolicyUtils;
 import burlap.behavior.singleagent.Episode;
-import burlap.behavior.singleagent.planning.stochastic.valueiteration.ValueIteration;
 import burlap.behavior.valuefunction.ConstantValueFunction;
 import burlap.mdp.core.action.Action;
 import burlap.mdp.core.action.ActionType;
@@ -23,6 +23,7 @@ import hierarchy.framework.GroundedTask;
 import hierarchy.framework.Task;
 import taxi.TaxiVisualizer;
 import utilities.BoundedRTDP;
+import utilities.ValueIteration;
 
 public class AMDPPlanner {
 
@@ -91,8 +92,9 @@ public class AMDPPlanner {
 		State rootState = root.mapState(baseState);
 		GroundedTask solve = root.getAllGroundedTasks(rootState).get(0);
 		Episode e = new Episode(baseState);
-		SimulatedEnvironment env = getBaseEnvirnment(root, baseState);
-		VisualActionObserver obs = new VisualActionObserver(getBaseDomain(root), TaxiVisualizer.getVisualizer(5, 5));
+		OOSADomain baseDomain = getBaseDomain(root);
+		SimulatedEnvironment env = new SimulatedEnvironment(baseDomain, baseState);
+		VisualActionObserver obs = new VisualActionObserver(baseDomain, TaxiVisualizer.getVisualizer(5, 5));
 		obs.initGUI();
 		obs.setDefaultCloseOperation(obs.EXIT_ON_CLOSE);
 		env.addObservers(obs);
@@ -109,7 +111,7 @@ public class AMDPPlanner {
 	 * @return the episode completed to the current task
 	 */
 	public Episode solveTask(GroundedTask task, Episode e, Environment env){
-		System.out.println(task);
+//		System.out.println(task);
 		if(task.isPrimitive()){
 			Action a = task.getAction();
 			EnvironmentOutcome result = env.executeAction(a);
@@ -124,7 +126,7 @@ public class AMDPPlanner {
 			while(!(task.isFailure(currentState) || task.isComplete(currentState))){
 				Action a = taskPolicy.action(currentState);
 				GroundedTask child = getChildGT(task, a, currentState);
-				System.out.println(child);
+
 				//recurse to solve the chosen subtask
 				solveTask(child, e, env);
 				
@@ -154,7 +156,7 @@ public class AMDPPlanner {
 		
 		Policy p = taskPolicies.get(hscurrwnt);
 		if(p == null){
-			//generate a new policy using BRTDP planning to solve the task
+			//generate a new policy using planning to solve the task
 			//create a copy of the task's domain with the same action the terminates and defines reward specific
 			//to the task
 			OOSADomain domain = t.getDomain();
@@ -173,28 +175,12 @@ public class AMDPPlanner {
 //					 maxDelta, maxRollouts);
 //			p = brtdp.planFromState(s);
 			
-			ValueIteration vi = new ValueIteration(copy, gamma, hs, maxDelta, maxRollouts);
+			ValueIteration vi = new ValueIteration(copy, gamma, hs, maxDelta, 100);
 			p = vi.planFromState(s);
+
 			taskPolicies.put(hscurrwnt, p);
 		}
 		return p;
-	}
-	
-	/**
-	 * setup a environment to execute base actions with 
-	 * @param t some task in the hierarchy
-	 * @param s the current state 
-	 * @return a base environment
-	 */
-	private SimulatedEnvironment getBaseEnvirnment(Task t, State s){
-		if(t.isPrimitive()){
-			return new SimulatedEnvironment(t.getDomain(), s);
-		}else{
-			for(Task child : t.getChildren()){
-				return getBaseEnvirnment(child, s);
-			}
-		}
-		return null;
 	}
 	
 	/**

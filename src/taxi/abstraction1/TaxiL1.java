@@ -141,7 +141,7 @@ public class TaxiL1 implements DomainGenerator {
 	
 	public static void main(String[] args) {
 		
-		TaxiL1 taxiBuild = new TaxiL1();
+		TaxiL1 taxiBuild = new TaxiL1(true, 0.8);
 		OOSADomain domain = taxiBuild.generateDomain();
 		
 		HashableStateFactory hs = new SimpleHashableStateFactory();

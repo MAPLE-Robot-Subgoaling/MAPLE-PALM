@@ -37,7 +37,7 @@ public class AMDPPlanTest {
 	public static void main(String[] args) {
 		double correctMoveprob = 1;
 		//amdp planner currently does not work with nonzero fickle
-		double fickleProb = 0;
+		double fickleProb = 0.5;
 		double gamma = 0.9;
 		double maxDelta = 0.01;
 		int maxRollouts = 1000;

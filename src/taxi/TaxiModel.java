@@ -151,6 +151,9 @@ public class TaxiModel implements FullStateModel{
 						TaxiPassenger np = ns.touchPassenger(passengerName);
 						//np.set(Taxi.ATT_JUST_PICKED_UP, false);
 						// may change goal
+						int colorCount=0;
+						for(String loc : s.getLocations())
+							colorCount+=((List<String>)s.getLocationAtt(loc, Taxi.ATT_COLOR)).size();
 						for(String location : s.getLocations()){
 							for(String color : (List<String>)s.getLocationAtt(location, Taxi.ATT_COLOR)) {
 								TaxiState nfickles = ns.copy();
@@ -163,9 +166,7 @@ public class TaxiModel implements FullStateModel{
 									//set goal to loc
 									TaxiPassenger npf = nfickles.touchPassenger(passengerName);
 									npf.set(Taxi.ATT_GOAL_LOCATION, color);
-									int colorCount=0;
-									for(String loc : s.getLocations())
-										colorCount+=((List<String>)s.getLocationAtt(loc, Taxi.ATT_COLOR)).size();
+									
 									tps.add(new StateTransitionProb(nfickles, p * (fickleChangeGoalProbaility
 											/ (colorCount - 1))));
 								}

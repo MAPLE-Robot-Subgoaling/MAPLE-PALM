@@ -66,5 +66,4 @@ public class AMDPModel implements FullModel {
 		}
 		return tps;
 	}
-
 }
