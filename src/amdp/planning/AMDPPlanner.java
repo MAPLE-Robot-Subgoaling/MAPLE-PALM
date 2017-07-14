@@ -6,10 +6,12 @@ import java.util.Map;
 
 import burlap.behavior.policy.Policy;
 import burlap.behavior.singleagent.Episode;
+import burlap.behavior.singleagent.planning.stochastic.valueiteration.ValueIteration;
 import burlap.behavior.valuefunction.ConstantValueFunction;
 import burlap.mdp.core.action.Action;
 import burlap.mdp.core.action.ActionType;
 import burlap.mdp.core.state.State;
+import burlap.mdp.singleagent.common.VisualActionObserver;
 import burlap.mdp.singleagent.environment.Environment;
 import burlap.mdp.singleagent.environment.EnvironmentOutcome;
 import burlap.mdp.singleagent.environment.SimulatedEnvironment;
@@ -19,6 +21,7 @@ import burlap.statehashing.HashableState;
 import burlap.statehashing.HashableStateFactory;
 import hierarchy.framework.GroundedTask;
 import hierarchy.framework.Task;
+import taxi.TaxiVisualizer;
 import utilities.BoundedRTDP;
 
 public class AMDPPlanner {
@@ -89,6 +92,11 @@ public class AMDPPlanner {
 		GroundedTask solve = root.getAllGroundedTasks(rootState).get(0);
 		Episode e = new Episode(baseState);
 		SimulatedEnvironment env = getBaseEnvirnment(root, baseState);
+		VisualActionObserver obs = new VisualActionObserver(getBaseDomain(root), TaxiVisualizer.getVisualizer(5, 5));
+		obs.initGUI();
+		obs.setDefaultCloseOperation(obs.EXIT_ON_CLOSE);
+		env.addObservers(obs);
+
 		return solveTask(solve, e, env);
 	}
 
@@ -161,9 +169,12 @@ public class AMDPPlanner {
 			copy.setModel(newModel);
 			
 			//plan over the modified domain to solve the task
-			BoundedRTDP brtdp = new BoundedRTDP(copy, gamma, hs, new ConstantValueFunction(0), new ConstantValueFunction(1),
-					 maxDelta, maxRollouts);
-			p = brtdp.planFromState(s);
+//			BoundedRTDP brtdp = new BoundedRTDP(copy, gamma, hs, new ConstantValueFunction(0), new ConstantValueFunction(1),
+//					 maxDelta, maxRollouts);
+//			p = brtdp.planFromState(s);
+			
+			ValueIteration vi = new ValueIteration(copy, gamma, hs, maxDelta, maxRollouts);
+			p = vi.planFromState(s);
 			taskPolicies.put(hscurrwnt, p);
 		}
 		return p;
@@ -204,5 +215,16 @@ public class AMDPPlanner {
 			gt = this.actionMap.get(a.actionName());
 		}
 		return gt;
+	}
+	
+	private OOSADomain getBaseDomain(Task t){
+		for(Task child : t.getChildren()){
+			if(child.isPrimitive()){
+				return child.getDomain();
+			}else{
+				return getBaseDomain(child);
+			}
+		}
+		return null;
 	}
 }

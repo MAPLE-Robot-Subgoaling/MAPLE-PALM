@@ -1,5 +1,6 @@
 package taxi.amdp.functions;
 
+import java.util.List;
 import burlap.mdp.core.oo.propositional.PropositionalFunction;
 import burlap.mdp.core.oo.state.OOState;
 import taxi.abstraction1.TaxiL1;
@@ -19,7 +20,10 @@ public class RootPF extends PropositionalFunction {
 		for(String pass : st.getPassengers()){
 			String currentLocation = (String) st.getPassengerAtt(pass, TaxiL2.ATT_CURRENT_LOCATION);
 			String goalLocation = (String) st.getPassengerAtt(pass, TaxiL2.ATT_GOAL_LOCATION);
-			if(!currentLocation.equals(goalLocation))
+			
+			List<String> colors = (List<String>) st.getLocationAtt(currentLocation, TaxiL2.ATT_COLOR); 
+			
+			if(!colors.contains(goalLocation))
 				return false;
 		}
 		return true;

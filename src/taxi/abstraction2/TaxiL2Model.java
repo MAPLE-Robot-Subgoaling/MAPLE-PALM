@@ -118,7 +118,7 @@ public class TaxiL2Model implements FullStateModel {
 					double p = fickleChangeGoalProbaility / (colorCount - 1);
 					//TaxiL2Passenger np = ns.touchPassenger(passengerName);
 					//np.set(TaxiL2.ATT_JUST_PICKED_UP, false);
-					for (String loc : s.getLocations())
+					for (String loc : s.getLocations()){
 						for (String locationColor : (List<String>) s.getLocationAtt(loc, Taxi.ATT_COLOR)) {
 							TaxiL2State nfickles = ns.copy();
 
@@ -130,6 +130,7 @@ public class TaxiL2Model implements FullStateModel {
 								tps.add(new StateTransitionProb(nfickles, p));
 							}
 						}
+					}
 					return;
 				}
 			}
