@@ -48,19 +48,20 @@ public class TaxiHierarchy {
 	 * @param fickleProbability the probability that a passenger in the taxi will change goals
 	 * @return the root task of the taxi hierarchy
 	 */
-	public static Task createAMDPHierarchy(double correctMoveprob, double fickleProbability, boolean plan){
+	public static Task createAMDPHierarchy(double correctMoveprob, double fickleProbability, 
+			boolean plan, boolean fickleChangeOnce){
 		Taxi   l0Gen;
 		TaxiL1 l1Gen;
 		TaxiL2 l2Gen;
 		
 		if(fickleProbability == 0){
-			l0Gen = new Taxi(false, fickleProbability, correctMoveprob);
+			l0Gen = new Taxi(false, fickleProbability, fickleChangeOnce, correctMoveprob);
 			l1Gen = new TaxiL1();
 			l2Gen = new TaxiL2();
 		}else{
-			l0Gen = new Taxi(true, fickleProbability, correctMoveprob);
-			l1Gen = new TaxiL1(true, fickleProbability);
-			l2Gen = new TaxiL2(true, fickleProbability);
+			l0Gen = new Taxi(true, fickleProbability, fickleChangeOnce, correctMoveprob);
+			l1Gen = new TaxiL1(true, fickleProbability, fickleChangeOnce);
+			l2Gen = new TaxiL2(true, fickleProbability, fickleChangeOnce);
 		}
 
 		//action type domain - not for tasks
@@ -148,13 +149,13 @@ public class TaxiHierarchy {
 	 * @param fickleProbability the probability that a passenger in the taxi will change goals
 	 * @return the root task of the taxi hierarchy
 	 */
-	public static Task createRMAXQHierarchy(double correctMoveprob, double fickleProbability){
+	public static Task createRMAXQHierarchy(double correctMoveprob, double fickleProbability,  boolean fickleChangeOnce){
 		Taxi l0Gen;
 		
 		if(fickleProbability == 0){
-			l0Gen = new Taxi(false, fickleProbability, correctMoveprob);
+			l0Gen = new Taxi(false, fickleProbability, fickleChangeOnce, correctMoveprob);
 		}else{
-			l0Gen = new Taxi(true, fickleProbability, correctMoveprob);
+			l0Gen = new Taxi(true, fickleProbability, fickleChangeOnce, correctMoveprob);
 		}
 
 		//action type domain - not for tasks

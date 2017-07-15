@@ -30,7 +30,7 @@ public class TaxiL2 implements DomainGenerator {
 	public static final String ATT_GOAL_LOCATION = 			"goalLocation";
 	public static final String ATT_IN_TAXI = 				"inTaxi";
 	public static final String ATT_PICKED_UP_AT_LEAST_ONCE ="pickedUpAtLeastOnce";
-	//public static final String ATT_JUST_PICKED_UP =			"justPickedUp";
+	public static final String ATT_JUST_PICKED_UP =			"justPickedUp";
 	
 	//location attributes 
 	public static final String ATT_COLOR =					"color";
@@ -52,6 +52,7 @@ public class TaxiL2 implements DomainGenerator {
 	private RewardFunction rf;
 	private TerminalFunction tf;
 	private boolean fickle;
+	private boolean oneTimeFickle;
 	private double fickleProbability;
 
 	/**
@@ -61,11 +62,12 @@ public class TaxiL2 implements DomainGenerator {
 	 * @param fickle whether the domain is fickle
 	 * @param fickleprob the probability the passenger will change their goal
 	 */
-	public TaxiL2(RewardFunction rf, TerminalFunction tf, boolean fickle, double fickleprob) {
+	public TaxiL2(RewardFunction rf, TerminalFunction tf, boolean fickle, double fickleprob, boolean fickleChangeOnce) {
 		this.rf = rf;
 		this.tf = tf;
 		this.fickle = fickle;
 		this.fickleProbability = fickleprob;
+		this.oneTimeFickle = fickleChangeOnce;
 	}
 	
 	/**
@@ -73,11 +75,12 @@ public class TaxiL2 implements DomainGenerator {
 	 * @param fickle whether the domain is fickle
 	 * @param fickleprob the probability the passenger will change their goal
 	 */
-	public TaxiL2(boolean fickle, double fickleprob) {
+	public TaxiL2(boolean fickle, double fickleprob, boolean fickleChangeOnce) {
 		this.tf = new TaxiL2TerminalFunction(); 
 		this.rf = new GoalBasedRF(tf);
 		this.fickle = fickle;
 		this.fickleProbability = fickleprob;
+		this.oneTimeFickle = fickleChangeOnce;
 	}
 
 	/**
@@ -97,7 +100,7 @@ public class TaxiL2 implements DomainGenerator {
 		domain.addStateClass(CLASS_L2PASSENGER, TaxiL2Passenger.class)
 			.addStateClass(CLASS_L2LOCATION, TaxiL2Location.class);
 		
-		TaxiL2Model tmodel = new TaxiL2Model(fickle, fickleProbability);
+		TaxiL2Model tmodel = new TaxiL2Model(fickle, fickleProbability, oneTimeFickle);
 		FactoredModel model = new FactoredModel(tmodel, rf, tf);
 		domain.setModel(model);
 		
@@ -111,7 +114,7 @@ public class TaxiL2 implements DomainGenerator {
 
 	public static void main(String[] args) {
 
-		TaxiL2 taxiBuild = new TaxiL2(true, 0.5);  
+		TaxiL2 taxiBuild = new TaxiL2(true, 1, false);  
 		OOSADomain domain = taxiBuild.generateDomain();
 		
 		HashableStateFactory hs = new SimpleHashableStateFactory();

@@ -72,11 +72,12 @@ public class RumtimeTest {
 		double gamma = 0.9;
 		double rmax = 20;
 		double maxDelta = 0.01;
+		boolean fickleChangeOnce = false;
 		
 		TaxiState s = TaxiStateFactory.createSmallState();
-		Task RAMDProot = TaxiHierarchy.createAMDPHierarchy(correctMoveprob, fickleProb, false);
+		Task RAMDProot = TaxiHierarchy.createAMDPHierarchy(correctMoveprob, fickleProb, false, fickleChangeOnce);
 		OOSADomain base = TaxiHierarchy.getBaseDomain();
-		Task RMAXQroot = TaxiHierarchy.createRMAXQHierarchy(correctMoveprob, fickleProb);
+		Task RMAXQroot = TaxiHierarchy.createRMAXQHierarchy(correctMoveprob, fickleProb, fickleChangeOnce);
 		createCrarts(s, base, RAMDProot, RMAXQroot, rmax, rmaxThreshold, maxDelta, gamma, 
 				numEpisodes, maxSteps, numTrials);
 	}

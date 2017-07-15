@@ -27,14 +27,17 @@ public class TaxiL1Model implements FullStateModel {
 	 */
 	private boolean fickle;
 	
+	private boolean oneTimeFickle;
+	
 	/**
 	 * create a taxi abstraction 1 model
 	 * @param fickle whether the passengers are fickle
 	 * @param fickleprob the probability te passengers change goal when just picked up
 	 */
-	public TaxiL1Model(boolean fickle, double fickleprob) {
+	public TaxiL1Model(boolean fickle, double fickleprob, boolean fickleChangeOnce) {
 		this.fickle = fickle;
 		this.fickleChangeGoalProbaility = fickleprob;
+		this.oneTimeFickle = fickleChangeOnce;
 	}
 	
 	@Override
@@ -97,14 +100,14 @@ public class TaxiL1Model implements FullStateModel {
 			boolean passengerChanged = false;
 			for(String passengerName: s.getPassengers()){
 				boolean inTaxi = (boolean) s.getPassengerAtt(passengerName, TaxiL1.ATT_IN_TAXI);
-				//boolean justPickedUp = (boolean) s.getPassengerAtt(passengerName, TaxiL1.ATT_JUST_PICKED_UP);
+				boolean justPickedUp = (boolean) s.getPassengerAtt(passengerName, TaxiL1.ATT_JUST_PICKED_UP);
 				String passGoalColor = (String) s.getPassengerAtt(passengerName,
 						TaxiL1.ATT_GOAL_LOCATION);
-				if(inTaxi/* && justPickedUp*/){
+				if(inTaxi && (justPickedUp || !oneTimeFickle)){
 
 					passengerChanged = true;
-					//TaxiL1Passenger np = ns.touchPassenger(passengerName);
-					//np.set(TaxiL1.ATT_JUST_PICKED_UP, false);
+					TaxiL1Passenger np = ns.touchPassenger(passengerName);
+					np.set(TaxiL1.ATT_JUST_PICKED_UP, false);
                     for(String location : s.getLocations()){
                         for(String color : (List<String>)s.getLocationAtt(location, Taxi.ATT_COLOR)) {
                             TaxiL1State nfickles = ns.copy();
@@ -153,9 +156,9 @@ public class TaxiL1Model implements FullStateModel {
 					np.set(Taxi.ATT_IN_TAXI, true);
 					np.set(TaxiL1.ATT_PICKED_UP_AT_LEAST_ONCE, true);
 
-					//if(fickle){
-					//	np.set(TaxiL1.ATT_JUST_PICKED_UP, true);
-					//}
+					if(fickle){
+						np.set(TaxiL1.ATT_JUST_PICKED_UP, true);
+					}
 
 					
 					TaxiL1Agent nt = ns.touchTaxi();
@@ -197,6 +200,7 @@ public class TaxiL1Model implements FullStateModel {
 								TaxiL1State ns = s.copy();
 								TaxiL1Passenger np = ns.touchPassenger(passengerName);
 								np.set(Taxi.ATT_IN_TAXI, false);
+								np.set(TaxiL1.ATT_JUST_PICKED_UP, false);
 								
 								TaxiL1Agent nt = ns.touchTaxi();
 								nt.set(TaxiL1.ATT_TAXI_OCCUPIED, false);

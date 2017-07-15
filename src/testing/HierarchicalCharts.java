@@ -125,10 +125,10 @@ public class HierarchicalCharts {
 		int episodeRelearn = 200;
 		int lowerthreshold = 0;
 		int numTrials = 1;
-
+		boolean fickleChangeOnce = false;
 		
 		TaxiState s = TaxiStateFactory.createTinyState();
-		Task RAMDProot = TaxiHierarchy.createAMDPHierarchy(correctMoveprob, fickleProb, false);
+		Task RAMDProot = TaxiHierarchy.createAMDPHierarchy(correctMoveprob, fickleProb, false, fickleChangeOnce);
 		OOSADomain base = TaxiHierarchy.getBaseDomain();
 //		Task RMAXQroot = TaxiHierarchy.createRMAXQHierarchy(correctMoveprob, fickleProb);
 		

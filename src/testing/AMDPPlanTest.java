@@ -37,14 +37,15 @@ public class AMDPPlanTest {
 	public static void main(String[] args) {
 		double correctMoveprob = 1;
 		//amdp planner currently does not work with nonzero fickle
-		double fickleProb = 0.5;
+		double fickleProb = 0.9;
 		double gamma = 0.9;
 		double maxDelta = 0.01;
 		int maxRollouts = 1000;
 		int numEpisodes = 1;
+		boolean fickleChangeOnce = true;
 		
 		TaxiState s = TaxiStateFactory.createSmallState();
-		Task RAMDProot = TaxiHierarchy.createAMDPHierarchy(correctMoveprob, fickleProb, true);
+		Task RAMDProot = TaxiHierarchy.createAMDPHierarchy(correctMoveprob, fickleProb, true, fickleChangeOnce);
 
 		OOSADomain base = TaxiHierarchy.getBaseDomain();
 		plan(RAMDProot, s, new SimpleHashableStateFactory(), base, gamma, maxDelta, maxRollouts, numEpisodes);

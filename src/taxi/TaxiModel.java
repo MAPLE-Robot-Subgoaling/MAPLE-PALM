@@ -28,16 +28,19 @@ public class TaxiModel implements FullStateModel{
 	 */
 	private boolean fickle;
 
+	private boolean oneTimeFickle;
+	
 	/**
 	 * create a taxi model
 	 * @param moveprob array of movement probabilities
 	 * @param fickle whether passengers are fickle
 	 * @param fickleprob probability the passengers are fickle
 	 */
-	public TaxiModel(double[][] moveprob, boolean fickle, double fickleprob) {
+	public TaxiModel(double[][] moveprob, boolean fickle, double fickleprob, boolean fickleChangeOnce) {
 		this.moveProbability = moveprob;
 		this.fickleChangeGoalProbaility = fickleprob;
 		this.fickle = fickle;
+		this.oneTimeFickle = fickleChangeOnce;
 	}
 	
 	/**
@@ -143,13 +146,14 @@ public class TaxiModel implements FullStateModel{
 				boolean passengerChanged = false;
 				for(String passengerName : s.getPassengers()){
 					boolean inTaxi = (boolean) s.getPassengerAtt(passengerName, Taxi.ATT_IN_TAXI);
-					//boolean justPickedUp = (boolean) s.getPassengerAtt(passengerName, Taxi.ATT_JUST_PICKED_UP);
+					boolean justPickedUp = (boolean) s.getPassengerAtt(passengerName, Taxi.ATT_JUST_PICKED_UP);
 					String passGoalColor = (String) s.getPassengerAtt(passengerName,
 							Taxi.ATT_GOAL_LOCATION);					
-					if(inTaxi/* && justPickedUp*/){
+					if(inTaxi && (justPickedUp || !oneTimeFickle)){
 						passengerChanged = true;
 						TaxiPassenger np = ns.touchPassenger(passengerName);
-						//np.set(Taxi.ATT_JUST_PICKED_UP, false);
+						np.set(Taxi.ATT_JUST_PICKED_UP, false);
+						
 						// may change goal
 						int colorCount=0;
 						for(String loc : s.getLocations())
@@ -208,9 +212,9 @@ public class TaxiModel implements FullStateModel{
 					np.set(Taxi.ATT_IN_TAXI, true);
 					np.set(Taxi.ATT_PICKED_UP_AT_LEAST_ONCE, true);
 
-//					if(fickle){
-//						np.set(Taxi.ATT_JUST_PICKED_UP, true);
-//					}
+					if(fickle){
+						np.set(Taxi.ATT_JUST_PICKED_UP, true);
+					}
 
 					TaxiAgent ntaxi = ns.touchTaxi();
 					ntaxi.set(Taxi.ATT_TAXI_OCCUPIED, true);
@@ -254,6 +258,7 @@ public class TaxiModel implements FullStateModel{
 								TaxiState ns = s.copy();
 								TaxiPassenger np = ns.touchPassenger(passengerName);
 								np.set(Taxi.ATT_IN_TAXI, false);
+								np.set(Taxi.ATT_JUST_PICKED_UP, false);
 								
 								TaxiAgent ntaxi = ns.touchTaxi();
 								ntaxi.set(Taxi.ATT_TAXI_OCCUPIED, false);
