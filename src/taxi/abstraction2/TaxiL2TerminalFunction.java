@@ -27,7 +27,7 @@ public class TaxiL2TerminalFunction implements TerminalFunction {
 			boolean rightLocation=false;
 			for(String color : (List<String>)state.getLocationAtt(locationName, Taxi.ATT_COLOR))
 				if (color.equals(goalLocationColor))
-					rightLocation=true;
+					rightLocation = true;
 			if(!rightLocation)
 				return false;
 		}

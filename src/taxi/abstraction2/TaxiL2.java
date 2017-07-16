@@ -120,7 +120,7 @@ public class TaxiL2 implements DomainGenerator {
 		HashableStateFactory hs = new SimpleHashableStateFactory();
 		ValueIteration vi = new ValueIteration(domain, 0.9, hs, 0.01, 10);
 		
-		State base = TaxiStateFactory.createClassicState();
+		State base = TaxiStateFactory.createSmallState();
 		L2StateMapper map = new L2StateMapper();
 		State L2s = map.mapState(base);
 

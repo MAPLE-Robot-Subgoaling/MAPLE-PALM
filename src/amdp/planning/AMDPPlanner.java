@@ -175,9 +175,14 @@ public class AMDPPlanner {
 //					 maxDelta, maxRollouts);
 //			p = brtdp.planFromState(s);
 			
-			ValueIteration vi = new ValueIteration(copy, gamma, hs, maxDelta, 100);
+			ValueIteration vi = new ValueIteration(copy, gamma, hs, maxDelta, 1000);
 			p = vi.planFromState(s);
-
+			
+			if(t.toString().startsWith("sol")){
+				Episode e = PolicyUtils.rollout(p, s, copy.getModel());
+				System.out.println(e.actionSequence);
+				System.out.println();
+			}
 			taskPolicies.put(hscurrwnt, p);
 		}
 		return p;
