@@ -23,6 +23,7 @@ public class TaxiL2TerminalFunction implements TerminalFunction {
 			if(inTaxi || !pickedUp)
 				return false;
 		}
+
 		return true;
 	}
 

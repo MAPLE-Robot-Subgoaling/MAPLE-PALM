@@ -34,7 +34,6 @@ public class TaxiTerminalFunction implements TerminalFunction{
 				}
 			}
 		}
-		
 		return true;
 	}
 }
