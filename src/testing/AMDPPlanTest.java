@@ -35,8 +35,8 @@ public class AMDPPlanTest {
 	}
 	
 	public static void main(String[] args) {
-		double correctMoveprob = 0.8;
-		double fickleProb = 0.5;
+		double correctMoveprob = 1;
+		double fickleProb = 0.9;
 		double gamma = 0.9;
 		double maxDelta = 0.01;
 		int maxRollouts = 1000;
