@@ -163,9 +163,13 @@ public class AMDPPlanner {
 			copy.setModel(newModel);
 			
 			//plan over the modified domain to solve the task
-			BoundedRTDP brtdp = new BoundedRTDP(copy, gamma, hs, new ConstantValueFunction(0), new ConstantValueFunction(1),
-					 maxDelta, maxRollouts);
-			p = brtdp.planFromState(s);
+//			BoundedRTDP brtdp = new BoundedRTDP(copy, gamma, hs, new ConstantValueFunction(0), new ConstantValueFunction(1),
+//					 maxDelta, maxRollouts);
+//			p = brtdp.planFromState(s);
+			
+			ValueIteration vi = new ValueIteration(copy, gamma, hs, maxDelta, 1000);
+			p = vi.planFromState(s);
+			
 			taskPolicies.put(hscurrwnt, p);
 		}
 		return p;
