@@ -7,6 +7,7 @@ import burlap.mdp.auxiliary.StateMapping;
 import burlap.mdp.core.state.State;
 import taxi.Taxi;
 import taxi.abstraction1.TaxiL1;
+import taxi.state.TaxiAgent;
 import taxi.state.TaxiState;
 
 public class L1StateMapper implements StateMapping {
@@ -24,7 +25,7 @@ public class L1StateMapper implements StateMapping {
 		int ty = (int) st.getTaxiAtt(Taxi.ATT_Y);
 		
 		for(String locName : st.getLocations()){
-			List<String> color = (List<String>) st.getLocationAtt(locName, Taxi.ATT_COLOR);
+			String color = (String) st.getLocationAtt(locName, Taxi.ATT_COLOR);
 			locations.add(new TaxiL1Location(locName, color));
 		}
 		

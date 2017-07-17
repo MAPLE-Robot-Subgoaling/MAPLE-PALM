@@ -29,24 +29,21 @@ public class AMDPPlanTest {
 		}
 		
 		EpisodeSequenceVisualizer ev = new EpisodeSequenceVisualizer
-				(TaxiVisualizer.getVisualizer(7, 7), baseDomain, eps);;
+				(TaxiVisualizer.getVisualizer(5, 5), baseDomain, eps);;
 		ev.setDefaultCloseOperation(ev.EXIT_ON_CLOSE);
 		ev.initGUI();
 	}
 	
 	public static void main(String[] args) {
-		double correctMoveprob = 1;
-		//amdp planner currently does not work with nonzero fickle
-		double fickleProb = 0.8	;
+		double correctMoveprob = 0.8;
+		double fickleProb = 0.5;
 		double gamma = 0.9;
 		double maxDelta = 0.01;
 		int maxRollouts = 1000;
 		int numEpisodes = 10;
-		boolean fickleChangeOnce = true;
 		
 		TaxiState s = TaxiStateFactory.createClassicState();
-		Task RAMDProot = TaxiHierarchy.createAMDPHierarchy(correctMoveprob, fickleProb, true, fickleChangeOnce);
-
+		Task RAMDProot = TaxiHierarchy.createAMDPHierarchy(correctMoveprob, fickleProb);
 		OOSADomain base = TaxiHierarchy.getBaseDomain();
 		plan(RAMDProot, s, new SimpleHashableStateFactory(), base, gamma, maxDelta, maxRollouts, numEpisodes);
 	}

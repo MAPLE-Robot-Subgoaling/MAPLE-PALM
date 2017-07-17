@@ -7,6 +7,8 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import burlap.mdp.core.action.Action;
 import burlap.mdp.core.state.State;
+import burlap.mdp.singleagent.environment.EnvironmentOutcome;
+import burlap.mdp.singleagent.environment.SimulatedEnvironment;
 import burlap.mdp.singleagent.model.FullModel;
 import burlap.mdp.singleagent.oo.OOSADomain;
 

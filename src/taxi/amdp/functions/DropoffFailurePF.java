@@ -24,14 +24,7 @@ public class DropoffFailurePF extends PropositionalFunction {
 			int lx = (int) st.getLocationAtt(locationName, Taxi.ATT_X);
 			int ly = (int) st.getLocationAtt(locationName, Taxi.ATT_Y);
 			if(tx == lx && ty == ly){
-				int passCount = 0;
-				for(String passengerName : st.getPassengers()){
-					int px = (int) st.getPassengerAtt(passengerName, Taxi.ATT_X);
-					int py = (int) st.getPassengerAtt(passengerName, Taxi.ATT_Y);
-					if(px == lx && py == ly)
-						passCount++;
-				}
-				return !((boolean) st.getTaxiAtt(Taxi.ATT_TAXI_OCCUPIED)) || passCount > 1;
+				return !((boolean) st.getTaxiAtt(Taxi.ATT_TAXI_OCCUPIED));
 			}
 		}
 		

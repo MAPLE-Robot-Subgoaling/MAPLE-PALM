@@ -64,7 +64,6 @@ public class TaxiL1 implements DomainGenerator {
 	private TerminalFunction tf;
 	private boolean fickle;
 	private double fickleProbability;
-	private boolean oneTimeFickle;
 	
 	/**
 	 * creates a taxi abstraction 1 domain generator
@@ -74,12 +73,11 @@ public class TaxiL1 implements DomainGenerator {
 	 * @param fickleprob the probability the passengers change destination
 	 */
 	public TaxiL1(RewardFunction r, TerminalFunction t, boolean fickle,
-			double fickleprob, boolean fickleChangeOnce) {
+			double fickleprob) {
 		rf = r;
 		tf = t;
 		this.fickle = fickle;
 		this.fickleProbability = fickleprob;
-		this.oneTimeFickle = fickleChangeOnce;
 	}
 	
 	/**
@@ -87,19 +85,18 @@ public class TaxiL1 implements DomainGenerator {
 	 * @param fickle whether the passengers are fickle
 	 * @param fickleprob the probability the passengers change goal
 	 */
-	public TaxiL1(boolean fickle, double fickleprob, boolean fickleChangeOnce) {
+	public TaxiL1(boolean fickle, double fickleprob) {
 		this.fickle = fickle;
 		this.fickleProbability = fickleprob;
 		this.tf = new TaxiL1TerminalFunction();
 		this.rf = new GoalBasedRF(tf);
-		this.oneTimeFickle = fickleChangeOnce;
 	}
 	
 	/**
 	 * create a non fickle taxi abstraction 1 domain
 	 */
 	public TaxiL1() {
-		this(false, 1, false);
+		this(false, 1);
 	}
 	
 	public OOSADomain generateDomain() {
@@ -108,7 +105,7 @@ public class TaxiL1 implements DomainGenerator {
 		domain.addStateClass(CLASS_L1TAXI, TaxiL1Agent.class).addStateClass(CLASS_L1PASSENGER, TaxiL1Passenger.class)
 				.addStateClass(CLASS_L1LOCATION, TaxiL1Location.class);
 		
-		TaxiL1Model taxiModel = new TaxiL1Model(fickle, fickleProbability, oneTimeFickle);
+		TaxiL1Model taxiModel = new TaxiL1Model(fickle, fickleProbability);
 		FactoredModel model = new FactoredModel(taxiModel, rf, tf);
 		domain.setModel(model);
 		
@@ -144,7 +141,7 @@ public class TaxiL1 implements DomainGenerator {
 	
 	public static void main(String[] args) {
 		
-		TaxiL1 taxiBuild = new TaxiL1(false, 0.8, true);
+		TaxiL1 taxiBuild = new TaxiL1(true, 0.22);
 		OOSADomain domain = taxiBuild.generateDomain();
 		
 		HashableStateFactory hs = new SimpleHashableStateFactory();

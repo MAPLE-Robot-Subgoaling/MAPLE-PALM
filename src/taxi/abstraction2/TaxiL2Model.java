@@ -7,7 +7,6 @@ import burlap.mdp.core.StateTransitionProb;
 import burlap.mdp.core.action.Action;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.model.statemodel.FullStateModel;
-import taxi.Taxi;
 import taxi.abstraction2.GetActionType.GetAction;
 import taxi.abstraction2.PutActionType.PutAction;
 import taxi.abstraction2.state.TaxiL2Passenger;
@@ -17,12 +16,10 @@ public class TaxiL2Model implements FullStateModel {
 
 	private double fickleChangeGoalProbaility;
 	private boolean fickle;
-	private boolean oneTimeFickle;
 	
-	public TaxiL2Model(boolean fickle, double fickleprob, boolean fickleChangeOnce) {
+	public TaxiL2Model(boolean fickle, double fickleprob) {
 		this.fickle = fickle;
 		this.fickleChangeGoalProbaility = fickleprob;
-		this.oneTimeFickle = fickleChangeOnce;
 	}
 	
 	@Override
@@ -63,22 +60,11 @@ public class TaxiL2Model implements FullStateModel {
 		String passegerName = a.getPassenger();
 		TaxiL2State ns = s.copy();
 		
-
-		boolean taxiOcc = false;
-		for(String pName : s.getPassengers()){
-			boolean inTaxi = (boolean) s.getPassengerAtt(pName, TaxiL2.ATT_IN_TAXI);
-			taxiOcc = taxiOcc || inTaxi;
-		}
-		
-		if(!taxiOcc){
-			TaxiL2Passenger np = ns.touchPassenger(passegerName);
-			np.set(TaxiL2.ATT_IN_TAXI, true);
-			np.set(TaxiL2.ATT_PICKED_UP_AT_LEAST_ONCE, true);
-			np.set(TaxiL2.ATT_JUST_PICKED_UP, true);
-			tps.add(new StateTransitionProb(ns, 1));
-		}else{
-			tps.add(new StateTransitionProb(ns, 1));
-		}
+		TaxiL2Passenger np = ns.touchPassenger(passegerName);
+		np.set(TaxiL2.ATT_IN_TAXI, true);
+		np.set(TaxiL2.ATT_PICKED_UP_AT_LEAST_ONCE, true);
+		np.set(TaxiL2.ATT_JUST_PICKED_UP, true);
+		tps.add(new StateTransitionProb(ns, 1));
 	}
 	
 	/**
@@ -95,7 +81,7 @@ public class TaxiL2Model implements FullStateModel {
 		for(String passengerNamer : s.getPassengers()){
 			String pLocation = (String) s.getPassengerAtt(passengerNamer, TaxiL2.ATT_CURRENT_LOCATION);
 			boolean inTaxi = (boolean) s.getPassengerAtt(passengerNamer, TaxiL2.ATT_IN_TAXI);
-			if(goalLoaction.equals(pLocation) && !inTaxi)
+			if(goalLoaction.equals(pLocation) && ! inTaxi)
 				passengersAtGoal++;
 		}
 		
@@ -111,30 +97,22 @@ public class TaxiL2Model implements FullStateModel {
 				}
 				
 				//fickle goal
-				if(fickle) {
-					String passengerGoalColor = (String) s.getPassengerAtt(passengerName, TaxiL2.ATT_GOAL_LOCATION);
+				if(fickle){
+					String passengerLocation = (String) s.getPassengerAtt(passengerName, TaxiL2.ATT_CURRENT_LOCATION);
 					boolean justPickedUp = (boolean) s.getPassengerAtt(passengerName, TaxiL2.ATT_JUST_PICKED_UP);
-					
-					if(justPickedUp || !oneTimeFickle){
-						int colorCount = 0;
-						for (String l : s.getLocations())
-							colorCount += ((List<String>) s.getLocationAtt(l, Taxi.ATT_COLOR)).size();
-						double p = fickleChangeGoalProbaility / (colorCount - 1);
-			
+					if(justPickedUp){
+						double p = fickleChangeGoalProbaility / (s.getLocations().length - 1);
 						TaxiL2Passenger np = ns.touchPassenger(passengerName);
 						np.set(TaxiL2.ATT_JUST_PICKED_UP, false);
-						
-						for (String loc : s.getLocations()){
-							for (String locationColor : (List<String>) s.getLocationAtt(loc, Taxi.ATT_COLOR)) {
-								TaxiL2State nfickles = ns.copy();
-	
-								if (locationColor.equals(passengerGoalColor))
-									tps.add(new StateTransitionProb(nfickles, 1 - fickleChangeGoalProbaility));
-								else {
-									TaxiL2Passenger nfp = nfickles.touchPassenger(passengerName);
-									nfp.set(TaxiL2.ATT_GOAL_LOCATION, locationColor);
-									tps.add(new StateTransitionProb(nfickles, p));
-								}
+						for(String locationName : s.getLocations()){
+							TaxiL2State nfickles = ns.copy();
+							
+							if(locationName.equals(passengerLocation)){
+								tps.add(new StateTransitionProb(nfickles, (1 - fickleChangeGoalProbaility)));
+							}else{
+								TaxiL2Passenger nfp = nfickles.touchPassenger(passengerName);
+								nfp.set(TaxiL2.ATT_GOAL_LOCATION, locationName);
+								tps.add(new StateTransitionProb(nfickles, p));
 							}
 						}
 						return;

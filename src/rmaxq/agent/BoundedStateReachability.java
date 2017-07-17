@@ -1,24 +1,20 @@
 package rmaxq.agent;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-
 import burlap.behavior.policy.EnumerablePolicy;
 import burlap.behavior.policy.support.ActionProb;
 import burlap.debugtools.DPrint;
 import burlap.debugtools.MyTimer;
 import burlap.mdp.core.action.Action;
-import burlap.mdp.core.action.ActionType;
-import burlap.mdp.core.action.ActionUtils;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.SADomain;
+import burlap.mdp.core.action.ActionType;
+import burlap.mdp.core.action.ActionUtils;
 import burlap.mdp.singleagent.model.FullModel;
 import burlap.mdp.singleagent.model.TransitionProb;
 import burlap.statehashing.HashableState;
 import burlap.statehashing.HashableStateFactory;
+
+import java.util.*;
 
 
 /**

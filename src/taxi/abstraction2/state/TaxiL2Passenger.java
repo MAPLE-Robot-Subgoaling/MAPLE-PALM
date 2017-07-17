@@ -1,6 +1,6 @@
 package taxi.abstraction2.state;
 
-import java.util.Arrays;
+import java.util.Arrays; 
 import java.util.List;
 
 import burlap.mdp.core.oo.state.ObjectInstance;

@@ -1,18 +1,12 @@
 package utilities;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
 import burlap.behavior.policy.GreedyQPolicy;
 import burlap.behavior.singleagent.planning.Planner;
 import burlap.behavior.singleagent.planning.stochastic.DynamicProgramming;
 import burlap.behavior.singleagent.planning.stochastic.dpoperator.DPOperator;
-import burlap.behavior.singleagent.planning.stochastic.rtdp.RTDP;
 import burlap.behavior.valuefunction.QValue;
 import burlap.behavior.valuefunction.ValueFunction;
+import burlap.debugtools.DPrint;
 import burlap.debugtools.RandomFactory;
 import burlap.mdp.core.action.Action;
 import burlap.mdp.core.state.State;
@@ -21,6 +15,8 @@ import burlap.mdp.singleagent.model.FullModel;
 import burlap.mdp.singleagent.model.TransitionProb;
 import burlap.statehashing.HashableState;
 import burlap.statehashing.HashableStateFactory;
+
+import java.util.*;
 
 
 /**

@@ -583,7 +583,7 @@ public class RmaxQLearningAgent implements LearningAgent {
 		double weightedTransition = 0;
 		//sum over all p pia(s) (s',.)
 		for(HashableState hnext: childProbabilities.keySet()){
-			if(task.isComplete(hnext.s()) || task.isFailure(hnext.s()))
+			if(task.isComplete(hnext.s()) || task.isFailure(initialState))
 				continue;
 
 			double psprimeTospprime = childProbabilities.get(hnext);

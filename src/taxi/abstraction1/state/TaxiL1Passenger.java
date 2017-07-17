@@ -29,8 +29,7 @@ public class TaxiL1Passenger extends MutableObject {
 		this(name, (Object) currentLocation, (Object) goalLocation, (Object) inTaxi, false, false);
 	}
 	
-	public TaxiL1Passenger(String name, String currentLocation, String goalLocation, boolean inTaxi, 
-			boolean pickep, boolean judstPickedUp){
+	public TaxiL1Passenger(String name, String currentLocation, String goalLocation, boolean inTaxi, boolean pickep, boolean judstPickedUp){
 		this(name, (Object) currentLocation, (Object) goalLocation, (Object) inTaxi, (Object) pickep, (Object) judstPickedUp);
 	}
 	
