@@ -78,6 +78,7 @@ public class RAMDPLearningAgent implements LearningAgent{
 	private int relearnThreshold;
 	private int lowerThreshold;
 	private int episodeCount = 0;
+
 	/**
 	 * create a RAMDP agent on a given task
 	 * @param root the root of the hierarchy to learn
@@ -114,6 +115,7 @@ public class RAMDPLearningAgent implements LearningAgent{
 	@Override
 	public Episode runLearningEpisode(Environment env, int maxSteps) {
 		steps = 0;
+		lastTask = "";
 		e = new Episode(env.currentObservation());
 		if(relearn)
             relearnFromRoot = alpha(episodeCount, lowerThreshold, relearnThreshold);

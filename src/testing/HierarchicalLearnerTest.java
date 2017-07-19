@@ -48,7 +48,7 @@ public class HierarchicalLearnerTest {
 		}
 		
 		EpisodeSequenceVisualizer ev = new EpisodeSequenceVisualizer
-				(TaxiVisualizer.getVisualizer(5, 5), groundDomain, episodes);
+				(TaxiVisualizer.getVisualizer(7, 7), groundDomain, episodes);
 		ev.setDefaultCloseOperation(ev.EXIT_ON_CLOSE);
 		ev.initGUI();
 	}
@@ -74,7 +74,7 @@ public class HierarchicalLearnerTest {
 		}
 		
 		EpisodeSequenceVisualizer ev = new EpisodeSequenceVisualizer
-				(TaxiVisualizer.getVisualizer(5, 5), domain, episodes);
+				(TaxiVisualizer.getVisualizer(7, 7), domain, episodes);
 		ev.setDefaultCloseOperation(ev.EXIT_ON_CLOSE);
 		ev.initGUI();
 	}
