@@ -21,16 +21,12 @@ public class RootPF extends PropositionalFunction {
 			boolean inTaxi = (boolean) st.getPassengerAtt(passengerName, TaxiL2.ATT_IN_TAXI);
 			boolean pickedUp = (boolean) st.getPassengerAtt(passengerName, TaxiL2.ATT_PICKED_UP_AT_LEAST_ONCE);
 			String locationName = (String) st.getPassengerAtt(passengerName, TaxiL2.ATT_CURRENT_LOCATION);
-			String goalLocationColor = (String) st.getPassengerAtt(passengerName, TaxiL2.ATT_GOAL_LOCATION);
+			String goalLocation = (String) st.getPassengerAtt(passengerName, TaxiL2.ATT_GOAL_LOCATION);
 		
 			if(inTaxi || !pickedUp)
 				return false;
 			
-			boolean rightLocation=false;
-			for(String color : (List<String>)st.getLocationAtt(locationName, Taxi.ATT_COLOR))
-				if (color.equals(goalLocationColor))
-					rightLocation=true;
-			if(!rightLocation)
+			if(!locationName.equals(goalLocation))
 				return false;
 		}
  		return true;

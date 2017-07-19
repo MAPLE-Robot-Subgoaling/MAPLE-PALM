@@ -8,6 +8,7 @@ import hierarchy.framework.IdentityMap;
 import hierarchy.framework.NonprimitiveTask;
 import hierarchy.framework.PrimitiveTask;
 import hierarchy.framework.RootTask;
+import hierarchy.framework.SolveActionType;
 import hierarchy.framework.Task;
 import taxi.Taxi;
 import taxi.abstraction1.TaxiL1;
@@ -23,6 +24,7 @@ import taxi.amdp.functions.PickupCompletedPF;
 import taxi.amdp.functions.PickupFailurePF;
 import taxi.amdp.functions.PutCompletedPF;
 import taxi.amdp.functions.PutFailurePF;
+import taxi.amdp.functions.RootPF;
 import taxi.rmaxq.functions.BaseGetActionType;
 import taxi.rmaxq.functions.BaseGetCompletedPF;
 import taxi.rmaxq.functions.BaseGetFailurePF;
@@ -82,6 +84,7 @@ public class TaxiHierarchy {
 		ActionType aNavigate = l1Domain.getAction(TaxiL1.ACTION_NAVIGATE);
 		ActionType aGet = l2Domain.getAction(TaxiL2.ACTION_GET);
 		ActionType aPut = l2Domain.getAction(TaxiL2.ACTION_PUT);
+		ActionType aSolve = new SolveActionType();
 		
 		//tasks
 		PrimitiveTask north = new PrimitiveTask(aNorth, l0Domian);
@@ -124,7 +127,8 @@ public class TaxiHierarchy {
 		
 		Task[] rootTasks = {get, put};
 		
-		Task root = new RootTask(rootTasks, l2Domain, map2);
+		PropositionalFunction rootPF = new RootPF();
+		Task root = new NonprimitiveTask(rootTasks, aSolve, l2Domain, map2, rootPF, rootPF);
 		return root;
 	}
 
