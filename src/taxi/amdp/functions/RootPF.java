@@ -1,6 +1,8 @@
 package taxi.amdp.functions;
 
+
 import burlap.mdp.core.oo.propositional.PropositionalFunction;
+
 
 import taxi.abstraction2.TaxiL2;
 import burlap.mdp.core.oo.state.OOState;
@@ -22,11 +24,15 @@ public class RootPF extends PropositionalFunction {
 			boolean pickedUp = (boolean) st.getPassengerAtt(passengerName, TaxiL2.ATT_PICKED_UP_AT_LEAST_ONCE);
 			String locationName = (String) st.getPassengerAtt(passengerName, TaxiL2.ATT_CURRENT_LOCATION);
 			String goalLocation = (String) st.getPassengerAtt(passengerName, TaxiL2.ATT_GOAL_LOCATION);
-		
+
+
 			if(inTaxi || !pickedUp)
 				return false;
-			
-			if(!locationName.equals(goalLocation))
+
+			boolean rightLocation=false;
+			if (locationName.equals(goalLocation))
+				rightLocation=true;
+			if(!rightLocation)
 				return false;
 		}
  		return true;
