@@ -67,7 +67,7 @@ public class RAMDPLearningAgent implements LearningAgent{
 	 * the current episode
 	 */
 	private Episode e;
-	
+
 	/**
 	 * create a RAMDP agent on a given task
 	 * @param root the root of the hierarchy to learn

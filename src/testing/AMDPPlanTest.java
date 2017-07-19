@@ -30,7 +30,7 @@ public class AMDPPlanTest {
 		}
 		
 		EpisodeSequenceVisualizer ev = new EpisodeSequenceVisualizer
-				(TaxiVisualizer.getVisualizer(5, 5), baseDomain, eps);;
+				(TaxiVisualizer.getVisualizer(7, 7), baseDomain, eps);;
 		ev.setDefaultCloseOperation(ev.EXIT_ON_CLOSE);
 		ev.initGUI();
 	}
@@ -38,7 +38,8 @@ public class AMDPPlanTest {
 	public static void main(String[] args) {
 		double correctMoveprob = 1;
 
-		double fickleProb = 0.9;
+
+		double fickleProb = 0;
 		double gamma = 0.9;
 		double maxDelta = 0.01;
 		int maxRollouts = 1000;
