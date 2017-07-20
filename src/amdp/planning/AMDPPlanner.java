@@ -58,6 +58,8 @@ public class AMDPPlanner {
 	 * a lookup table from action name to the grounded task that matches
 	 */
 	private Map<String, GroundedTask> actionMap;
+
+	private boolean replan;
 	
 	/**
 	 * setup the planner with a specific hierarchy
@@ -67,7 +69,7 @@ public class AMDPPlanner {
 	 * @param maxDelta max error for the planner
 	 * @param maxRollouts max number of rollouts for BRTDP
 	 */
-	public AMDPPlanner(Task root, double gamma, HashableStateFactory hs, double maxDelta, int maxRollouts) {
+	public AMDPPlanner(Task root, double gamma, HashableStateFactory hs, double maxDelta, int maxRollouts, boolean replan) {
 		this.root = root;
 		this.gamma = gamma;
 		this.hs = hs;
@@ -75,6 +77,17 @@ public class AMDPPlanner {
 		this.maxRollouts = maxRollouts; 
 		this.actionMap = new HashMap<String, GroundedTask>();
 		this.taskPolicies = new HashMap<String, Map<HashableState,Policy>>();
+		this.replan = replan;
+	}
+	public AMDPPlanner(Task root, double gamma, HashableStateFactory hs, double maxDelta, int maxRollouts) {
+		this.root = root;
+		this.gamma = gamma;
+		this.hs = hs;
+		this.maxDelta = maxDelta;
+		this.maxRollouts = maxRollouts;
+		this.actionMap = new HashMap<String, GroundedTask>();
+		this.taskPolicies = new HashMap<String, Map<HashableState,Policy>>();
+		this.replan = false;
 	}
 	
 	/**
@@ -112,7 +125,8 @@ public class AMDPPlanner {
 			//get the policy for the current task and start state and execute
 			//it till task is completed or it fails
 			Policy taskPolicy = getPolicy(task, currentState);
-			while(!(task.isFailure(currentState) || task.isComplete(currentState))){
+			boolean earlyTerminal = false;
+			while((task.toString().equals("solve")||!earlyTerminal) &&!(task.isFailure(currentState) || task.isComplete(currentState))){
 				Action a = taskPolicy.action(currentState);
 				GroundedTask child = getChildGT(task, a, currentState);
 				System.out.println(child);
@@ -122,6 +136,7 @@ public class AMDPPlanner {
 				//project the current base state into the current task's state space
 				baseState = e.stateSequence.get(e.stateSequence.size() - 1);
 				currentState = task.mapState(baseState);
+				earlyTerminal = this.replan;
 			}
 		}	
 		return e;

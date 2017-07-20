@@ -15,6 +15,7 @@ import hierarchy.framework.Task;
 import taxi.TaxiVisualizer;
 import taxi.hierarchies.TaxiHierarchy;
 import taxi.state.TaxiState;
+import taxi.stateGenerator.RandonPassengerTaxiState;
 import taxi.stateGenerator.TaxiStateFactory;
 
 public class AMDPPlanTest {
@@ -22,15 +23,15 @@ public class AMDPPlanTest {
 	public static void plan(Task root, State init, HashableStateFactory hs, OOSADomain baseDomain,
 			double gamma, double maxDelta, int maxRollouts, int numEpisodes){
 		
-		AMDPPlanner amdp = new AMDPPlanner(root, gamma, hs, maxDelta, maxRollouts);
+		AMDPPlanner amdp = new AMDPPlanner(root, gamma, hs, maxDelta, maxRollouts, true);
 		List<Episode> eps = new ArrayList<Episode>();
-
+		RandonPassengerTaxiState r = new RandonPassengerTaxiState();
 		for(int i = 0; i < numEpisodes; i++){
-			eps.add(amdp.planFromState(init));
+			eps.add(amdp.planFromState(r.generateState()));
 		}
 		
 		EpisodeSequenceVisualizer ev = new EpisodeSequenceVisualizer
-				(TaxiVisualizer.getVisualizer(7, 7), baseDomain, eps);;
+				(TaxiVisualizer.getVisualizer(5, 5), baseDomain, eps);;
 		ev.setDefaultCloseOperation(ev.EXIT_ON_CLOSE);
 		ev.initGUI();
 	}
@@ -39,7 +40,7 @@ public class AMDPPlanTest {
 		double correctMoveprob = 1;
 
 
-		double fickleProb = 0;
+		double fickleProb = .05;
 		double gamma = 0.9;
 		double maxDelta = 0.01;
 		int maxRollouts = 1000;
