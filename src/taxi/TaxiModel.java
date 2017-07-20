@@ -3,6 +3,7 @@ package taxi;
 import java.util.ArrayList;
 import java.util.List;
 
+import burlap.debugtools.RandomFactory;
 import burlap.mdp.core.StateTransitionProb;
 import burlap.mdp.core.action.Action;
 import burlap.mdp.core.state.State;
@@ -52,7 +53,7 @@ public class TaxiModel implements FullStateModel{
 	@Override
 	public State sample(State s, Action a) {
 		 List<StateTransitionProb> stpList = this.stateTransitions(s,a);
-         double roll = Math.random();
+         double roll = RandomFactory.getMapped(0).nextDouble();
 //         System.out.println(roll);
          double curSum = 0.;
          for(int i = 0; i < stpList.size(); i++){

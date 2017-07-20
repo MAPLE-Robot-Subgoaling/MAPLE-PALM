@@ -1,9 +1,7 @@
 package taxi.amdp.functions;
 
-import java.util.List;
 import burlap.mdp.core.oo.propositional.PropositionalFunction;
 import burlap.mdp.core.oo.state.OOState;
-import taxi.Taxi;
 import taxi.abstraction2.TaxiL2;
 import taxi.abstraction2.state.TaxiL2State;
 
