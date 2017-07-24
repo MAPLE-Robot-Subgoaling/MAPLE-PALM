@@ -15,6 +15,10 @@ import taxi.state.TaxiWall;
 
 public class TaxiStateFactory {
 	//generates taxi states
+
+	public static TaxiState createMultiState() {
+		
+	}
 	
 	public static TaxiState createClassicState(){
 		TaxiAgent taxi = new TaxiAgent(Taxi.CLASS_TAXI + 0, 0, 3);
