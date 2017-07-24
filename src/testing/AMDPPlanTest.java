@@ -29,7 +29,7 @@ public class AMDPPlanTest {
 		for(int i = 0; i < numEpisodes; i++){
 			eps.add(amdp.planFromState(r.generateState()));
 		}
-		
+
 		EpisodeSequenceVisualizer ev = new EpisodeSequenceVisualizer
 				(TaxiVisualizer.getVisualizer(5, 5), baseDomain, eps);;
 		ev.setDefaultCloseOperation(ev.EXIT_ON_CLOSE);
@@ -40,11 +40,11 @@ public class AMDPPlanTest {
 		double correctMoveprob = 1;
 
 
-		double fickleProb = .05;
+		double fickleProb = .3;
 		double gamma = 0.9;
 		double maxDelta = 0.01;
 		int maxRollouts = 1000;
-		int numEpisodes = 100;
+		int numEpisodes = 10;
 		
 		RandomFactory.seedMapped(0, 2320942930L);
 				
