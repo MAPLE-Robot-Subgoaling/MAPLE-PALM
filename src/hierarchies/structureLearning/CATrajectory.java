@@ -90,13 +90,22 @@ public class CATrajectory {
 		}
 	}
 	
+	public int findEdge(int start, String variable){
+		for(RelevantEdge edge : edges){
+			if(edge.getStart() == start && edge.getRelavantVariable().equals(variable)){
+				return edge.getEnd();
+			}
+		}
+		return -1;
+	}
+	
 	@Override
 	public String toString(){
 		String out = "";
 		if(actions.size() == 0){
 			out = "No actiond";
 		}else{
-			out = "Actions";
+			out = "Actions: ";
 			for(String a : actions){
 				out += a + " ";
 			}

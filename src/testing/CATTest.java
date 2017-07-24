@@ -21,7 +21,7 @@ public class CATTest {
 		HashableStateFactory hs = new SimpleHashableStateFactory();
 		double maxDelta = 0.01;
 		int maxIterations = 1000;
-		State init = TaxiStateFactory.createSmallState();
+		State init = TaxiStateFactory.createClassicState();
 		Taxi tGen = new Taxi();
 		OOSADomain taxiDomain = tGen.generateDomain(); 
 		FullModel model = (FullModel) taxiDomain.getModel();
