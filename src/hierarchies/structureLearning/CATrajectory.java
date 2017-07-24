@@ -21,7 +21,7 @@ public class CATrajectory {
 	private List<String> actions;
 	private List<RelevantEdge> edges;
 	private Set<String>[] relevantVariables;
-//	private Episode baseTrajectory;
+	private Episode baseTrajectory;
 	
 	public CATrajectory() {
 		this.actions = new ArrayList<String>();
@@ -30,6 +30,7 @@ public class CATrajectory {
 	
 	//parent structure  action -> variable/ R(reward) -> relevant var
 	public void annotateTrajectory(Episode e, Map<String, Map<String, List<String>>> parents, FullModel model){
+		baseTrajectory = e;
 		actions.add("START");
 		for(Action a : e.actionSequence){
 			actions.add(a.actionName());
@@ -99,6 +100,13 @@ public class CATrajectory {
 		return -1;
 	}
 	
+	public int actionCount(){
+		if(baseTrajectory == null){
+			return 0;
+		}else{
+			return baseTrajectory.actionSequence.size();
+		}
+	}
 	@Override
 	public String toString(){
 		String out = "";
@@ -118,4 +126,7 @@ public class CATrajectory {
 		return out;
 	}
 	
+	public State getState(int index){
+		return baseTrajectory.stateSequence.get(index);
+	}
 }
