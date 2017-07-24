@@ -29,7 +29,7 @@ public class CATrajectory {
 	}
 	
 	//parent structure  action -> variable/ R(reward) -> relevant var
-	public void annotateTrajectoru(Episode e, Map<String, Map<String, List<String>>> parents, FullModel model){
+	public void annotateTrajectory(Episode e, Map<String, Map<String, List<String>>> parents, FullModel model){
 		actions.add("START");
 		for(Action a : e.actionSequence){
 			actions.add(a.actionName());
@@ -78,7 +78,7 @@ public class CATrajectory {
 			}
 		}
 		
-		for(int i = 0; i < actions.size(); i++){
+		for(int i = 0; i < actions.size() - 1; i++){
 			for(String var : relevantVariables[i]){
 				int next = i + 1;
 				while(! relevantVariables[next].contains(var)){

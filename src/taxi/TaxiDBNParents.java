@@ -232,14 +232,6 @@ public class TaxiDBNParents {
 				}
 			}
 		}
-		
-		for(String a : parents.keySet()){
-			System.out.println(a);
-			for(String v : parents.get(a).keySet()){
-				System.out.println(v + " " + parents.get(a).get(v).toString());
-			}
-			System.out.println();
-		}
 		return parents;
 	}
 }
