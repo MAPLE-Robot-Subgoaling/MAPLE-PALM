@@ -25,7 +25,6 @@ public class NavStateMapper implements StateMapping {
 			int ly = (int) st.getLocationAtt(locName, Taxi.ATT_Y);
 			locations.add(new TaxiNavLocation(locName, lx, ly));
 		}
-		
 		List<TaxiNavWall> walls = new ArrayList<TaxiNavWall>();
 		for(String wallName : st.getWalls()){
 			int startX = (int) st.getWallAtt(wallName, Taxi.ATT_START_X);
@@ -37,5 +36,5 @@ public class NavStateMapper implements StateMapping {
 		
 		return new TaxiNavState(taxi, locations, walls);
 	}
-
 }
+

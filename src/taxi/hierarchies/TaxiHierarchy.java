@@ -183,10 +183,10 @@ public class TaxiHierarchy {
 		Task[] navTasks = new Task[]{north, east, south, wast};
 		Task[] pickupL1Tasks = new Task[]{pickup};
 		Task[] dropoffL1Tasks = new Task[]{dropoff};
-		
-		PropositionalFunction navPF = new NavigatePF();
+
+		PropositionalFunction navPF =/* new NavigateAbstractPF()*/ new NavigatePF();
 		NonprimitiveTask navigate = new NonprimitiveTask(navTasks, aNavigate, l0Gen.generateNavigateDomain(),
-				map0, navPF, navPF);
+				map0 /*new NavStateMapper()*/, navPF, navPF);
 		
 		PropositionalFunction pickupFailPF = new PickupFailurePF();
 		PropositionalFunction pickupCompPF = new PickupCompletedPF();

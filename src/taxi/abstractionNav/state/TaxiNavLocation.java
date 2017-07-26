@@ -4,7 +4,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import burlap.mdp.core.oo.state.ObjectInstance;
-import burlap.mdp.core.state.State;
 import taxi.Taxi;
 import utilities.MutableObject;
 

@@ -18,20 +18,25 @@ import rmaxq.agent.RmaxQLearningAgent;
 import taxi.TaxiVisualizer;
 import taxi.hierarchies.TaxiHierarchy;
 import taxi.state.TaxiState;
+import taxi.stateGenerator.RandonPassengerTaxiState;
 import taxi.stateGenerator.TaxiStateFactory;
 
 public class HierarchicalLearnerTest {
 
 	public static void runRAMDPEpisodes(int numEpisode, int maxSteps, Task root,
 			State initial, OOSADomain groundDomain,
-			int threshold, double discount, double rmax, double maxDelta){
+			int threshold, double discount, double rmax, double maxDelta, boolean randomStart){
 		List<Episode> episodes = new ArrayList<Episode>();
 		GroundedTask rootgt = root.getAllGroundedTasks(initial).get(0);
 		
 		RAMDPLearningAgent ramdp = new RAMDPLearningAgent(rootgt, threshold, discount, rmax, 
 				new SimpleHashableStateFactory(true), maxDelta);
-		
-		SimulatedEnvironment env = new SimulatedEnvironment(groundDomain, initial);
+		SimulatedEnvironment env;
+		if(randomStart)
+			env = new SimulatedEnvironment(groundDomain, new RandonPassengerTaxiState());
+		else
+			env= new SimulatedEnvironment(groundDomain, initial);
+
 		VisualActionObserver obs = new VisualActionObserver(groundDomain, TaxiVisualizer.getVisualizer(5, 5));
         obs.initGUI();
         obs.setDefaultCloseOperation(obs.EXIT_ON_CLOSE);
@@ -80,20 +85,20 @@ public class HierarchicalLearnerTest {
 	
 	public static void main(String[] args) {
 		double correctMoveprob = 1;
-		double fickleProb = 0.0;
-		int numEpisodes = 100;
+		double fickleProb = 0.5;
+		int numEpisodes = 200;
 		int maxSteps = 1000;
 		int rmaxThreshold = 3;
 		double gamma = 0.9;
 		double rmax = 20;
 		double maxDelta = 0.01;
-		
+		boolean randomStart = true;
 		TaxiState s = TaxiStateFactory.createClassicState();
 		Task RAMDProot = TaxiHierarchy.createAMDPHierarchy(correctMoveprob, fickleProb, false);
 		OOSADomain base = TaxiHierarchy.getBaseDomain();
 //		Task RMAXQroot = TaxiHierarchy.createRMAXQHierarchy(correctMoveprob, fickleProb);
 		
-		runRAMDPEpisodes(numEpisodes, maxSteps, RAMDProot, s, base, rmaxThreshold, gamma, rmax, maxDelta);
+		runRAMDPEpisodes(numEpisodes, maxSteps, RAMDProot, s, base, rmaxThreshold, gamma, rmax, maxDelta, randomStart);
 //		runRMAXQEpsodes(numEpisodes, maxSteps, RMAXQroot, s, rmax, rmaxThreshold, maxDelta, base);
 	}
 }

@@ -63,7 +63,7 @@ public class HierarchicalCharts {
 			}
 		};
 		
-		LearningAlgorithmExperimenter exp = new LearningAlgorithmExperimenter(env, numTrial, numEpisode, maxSteps, rmaxq, ramdp);
+		LearningAlgorithmExperimenter exp = new LearningAlgorithmExperimenter(env, numTrial, numEpisode, maxSteps, ramdp, rmaxq);
 		exp.setUpPlottingConfiguration(500, 300, 2, 1000,
 				TrialMode.MOST_RECENT_AND_AVERAGE,
 				PerformanceMetric.CUMULATIVE_REWARD_PER_EPISODE
@@ -117,7 +117,7 @@ public class HierarchicalCharts {
 		int numEpisodes = 30;
 		int maxSteps = 2000;
 		int rmaxThreshold = 5;
-		int numTrials = 2;
+		int numTrials = 20;
 		double gamma = 0.9;
 		double rmax = 20;
 		double maxDelta = 0.01;
