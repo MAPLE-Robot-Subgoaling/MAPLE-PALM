@@ -18,19 +18,6 @@ public class TaxiLocation extends MutableObject{
 			Taxi.ATT_COLOR
 			);
 	
-	/**
-	 * nav state only has x, y
-	 */
-	private final static List<Object> navKeys = Arrays.<Object>asList(
-			Taxi.ATT_X,
-			Taxi.ATT_Y
-			);
-	
-	/**
-	 * flag for nav state
-	 */
-	private boolean nav = false;
-	
 	public TaxiLocation(String name, int x, int y, String color) {
 		this(name, (Object) x, (Object) y, (Object) color);
 	}
@@ -63,12 +50,6 @@ public class TaxiLocation extends MutableObject{
 
 	@Override
 	public List<Object> variableKeys() {
-		if(nav)
-			return navKeys;
 		return keys;
-	}
-	
-	public void abstractNavigate(){
-		nav = true;
 	}
 }

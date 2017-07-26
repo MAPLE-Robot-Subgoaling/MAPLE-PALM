@@ -60,11 +60,23 @@ public class TaxiL2Model implements FullStateModel {
 		String passegerName = a.getPassenger();
 		TaxiL2State ns = s.copy();
 		
-		TaxiL2Passenger np = ns.touchPassenger(passegerName);
-		np.set(TaxiL2.ATT_IN_TAXI, true);
-		np.set(TaxiL2.ATT_PICKED_UP_AT_LEAST_ONCE, true);
-		np.set(TaxiL2.ATT_JUST_PICKED_UP, true);
-		tps.add(new StateTransitionProb(ns, 1));
+		boolean taxiOcc = false;
+		for(String pName : s.getPassengers()){
+			boolean inTaxi = (boolean) s.getPassengerAtt(pName, TaxiL2.ATT_IN_TAXI);
+			taxiOcc = taxiOcc || inTaxi;
+		}
+		
+		if(!taxiOcc){
+			TaxiL2Passenger np = ns.touchPassenger(passegerName);
+			np.set(TaxiL2.ATT_IN_TAXI, true);
+			np.set(TaxiL2.ATT_PICKED_UP_AT_LEAST_ONCE, true);
+			if(fickle)
+				np.set(TaxiL2.ATT_JUST_PICKED_UP, true);
+			tps.add(new StateTransitionProb(ns, 1));
+		}else{
+			tps.add(new StateTransitionProb(ns, 1));
+		}
+		
 	}
 	
 	/**
@@ -81,7 +93,7 @@ public class TaxiL2Model implements FullStateModel {
 		for(String passengerNamer : s.getPassengers()){
 			String pLocation = (String) s.getPassengerAtt(passengerNamer, TaxiL2.ATT_CURRENT_LOCATION);
 			boolean inTaxi = (boolean) s.getPassengerAtt(passengerNamer, TaxiL2.ATT_IN_TAXI);
-			if(goalLoaction.equals(pLocation) && ! inTaxi)
+			if(goalLoaction.equals(pLocation) && !inTaxi)
 				passengersAtGoal++;
 		}
 		
