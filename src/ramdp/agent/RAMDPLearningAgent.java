@@ -80,7 +80,10 @@ public class RAMDPLearningAgent implements LearningAgent{
 	private int lowerThreshold;
 	private int episodeCount = 0;
 	private int actionCount = 0;
-	/**
+	private int relearnCount = 0;
+    private Map<GroundedTask, Integer> taskRelearnCount;
+
+    /**
 	 * create a RAMDP agent on a given task
 	 * @param root the root of the hierarchy to learn
 	 * @param threshold the rmax sample threshold
@@ -119,14 +122,14 @@ public class RAMDPLearningAgent implements LearningAgent{
 		lastTask = "";
 		e = new Episode(env.currentObservation());
 
-        if( episodeCount%5 == 0 ||
+        if( this.actionCount<this.lowerThreshold||(episodeCount%5 == 0 ||
             this.actionCount < this.relearnThreshold &&
-            this.actionCount >(this.relearnThreshold /2))
+            this.actionCount >(this.relearnThreshold /2)))
 
-            System.out.println(this.actionCount);
+            System.out.println("Action count: "+this.actionCount);
 
         episodeCount++;
-
+        System.out.println("Relearn count: "+this.relearnCount);
         solveTask(root, env, maxSteps);
 		return e;
 	}
@@ -210,13 +213,19 @@ public class RAMDPLearningAgent implements LearningAgent{
 //                int localCount = (model.getStateActionCount(this.hashingFactory.hashState(pastState),a));
 //                System.out.println("Superlocally coverged: "+(localCount>=rmaxThreshold)+" "+localCount+" "+rmaxThreshold);
 //                System.out.println("Locally converged: "+(convergeSum>=localConverge)+" "+convergeSum+" "+localConverge);
-                earlyterminal = convergeSum>=localConverge && randomRelearn();
 
 //                if (model.getStateActionCount(this.hashingFactory.hashState(pastState), a)
-//                        >= rmaxThreshold) {
-//                    earlyterminal = randomRelearn();
-//                } else
-//                    earlyterminal = false;
+//                        >= rmaxThreshold)
+
+                if(convergeSum>=localConverge)
+                    earlyterminal = randomRelearn();
+                else
+                    earlyterminal = false;
+
+                if(earlyterminal){
+                    relearnCount++;
+                }
+//
             }
 			//earlyterminal = randomRelearn();
 		}
@@ -243,11 +252,12 @@ public class RAMDPLearningAgent implements LearningAgent{
 	    int halfThreshold = relearnThreshold/2;
         if(count<=lowerThreshold)
             return 0;
-        if(count<=halfThreshold)
-            return ((double)(count-lowerThreshold)/(double)(relearnThreshold-lowerThreshold));
+//        if(count<=halfThreshold)
+//            return ((double)(count-lowerThreshold)/(double)(relearnThreshold-lowerThreshold));
+//        if(count<relearnThreshold)
+//            return ((double)(1/2)+(double)((2*count)-relearnThreshold)/relearnThreshold);
         if(count<relearnThreshold)
-            return ((double)(1/2)+(double)((2*count)-relearnThreshold)/relearnThreshold);
-
+            return ((double)(count-lowerThreshold)/(double)(relearnThreshold-lowerThreshold));
         return 1;
     }
 	/**

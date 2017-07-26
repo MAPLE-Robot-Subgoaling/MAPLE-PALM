@@ -96,8 +96,8 @@ public class HierarchicalLearnerTest {
 		double maxDelta = 0.01;
 
         int episodeRelearn = 300;
-
-        int actionRelearn = 30000;
+        int loweractionThreshold = 5000;
+        int actionRelearn = 25000;
         int relearnThreshold = 3;
 		int numTrials = 1;
 		TaxiState s = TaxiStateFactory.createClassicState();
@@ -107,7 +107,7 @@ public class HierarchicalLearnerTest {
 //		Task RMAXQroot = TaxiHierarchy.createRMAXQHierarchy(correctMoveprob, fickleProb);
 		for(int i = 1; i <= numTrials; i++)
 		    runRAMDPEpisodes(numEpisodes, maxSteps, RAMDProot, s, base, rmaxThreshold, gamma, rmax, maxDelta,
-                    true, actionRelearn, 0);
+                    true, actionRelearn, loweractionThreshold);
 //		runRMAXQEpsodes(numEpisodes, maxSteps, RMAXQroot, s, rmax, rmaxThreshold, maxDelta, base);
 	}
 }
