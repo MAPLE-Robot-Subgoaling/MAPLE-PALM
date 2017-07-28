@@ -112,15 +112,15 @@ public class HierarchicalCharts {
 	public static void main(String[] args) {
 		double correctMoveprob = 1;
 		double fickleProb = 0;
-		int numEpisodes = 100;
-		int maxSteps = 2000;
+		int numEpisodes = 50;
+		int maxSteps = 200;
 		int rmaxThreshold = 3;
-		int numTrials = 10;
+		int numTrials = 2;
 		double gamma = 0.9;
 		double rmax = 20;
 		double maxDelta = 0.01;
 		
-		TaxiState s = TaxiStateFactory.createTinyState();
+		TaxiState s = TaxiStateFactory.createMultiState();
 		Task RAMDProot = TaxiHierarchy.createAMDPHierarchy(correctMoveprob, fickleProb, false);
 		OOSADomain base = TaxiHierarchy.getBaseDomain();
 		Task RMAXQroot = TaxiHierarchy.createRMAXQHierarchy(correctMoveprob, fickleProb);

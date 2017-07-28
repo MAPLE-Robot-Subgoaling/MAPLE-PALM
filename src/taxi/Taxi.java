@@ -217,18 +217,18 @@ public class Taxi implements DomainGenerator{
 				
 	public static void main(String[] args) {
 		
-		Taxi taxiBuild = new Taxi(true, 0.225, 0.8);
+		Taxi taxiBuild = new Taxi(false, 0, 1);
 		OOSADomain domain = taxiBuild.generateDomain();
 				
 		HashableStateFactory hs = new SimpleHashableStateFactory();
 
-		State s = TaxiStateFactory.createSmallState();
+		State s = TaxiStateFactory.createMultiState();
 		SimulatedEnvironment env = new SimulatedEnvironment(domain, s);
 
 		List<Episode> eps = new ArrayList<Episode>();
 		QLearning qagent = new QLearning(domain, 0.95, hs, 0, 0.1);
 		
-		for(int i = 0; i < 1; i++){
+		for(int i = 0; i < 300; i++){
 			Episode e = qagent.runLearningEpisode(env, 5000);
 			System.out.println(e.actionSequence.size());
 			eps.add(e);
