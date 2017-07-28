@@ -40,24 +40,24 @@ public class HIMAYTLearningAgent implements LearningAgent {
 		return null;
 	}
 	
-	private Task HI_MAT(CATrajectory cat, List<StateConditionTest> goalSet){
-		int n = cat.actionCount();
-		if(n == 1){
-			
-		} else if(/*CheckRelVars*/){
-			
-		}
-		
-		List<TrajectorySegment> segments = new ArrayList<TrajectorySegment>();
-		List<StateConditionTest> openGoalSet = goalSet;
-		while(!openGoalSet.isEmpty()){
-			StateConditionTest literal = openGoalSet.remove(0);
-			TrajectorySegment subtaskSegment = CAT_Scan(cat, literal);
-			if(subtaskSegment.getStart() == 0 && subtaskSegment.getEnd() == cat.actionCount() - 1){
-				
-			}
-		}
-	}
+//	private Task HI_MAT(CATrajectory cat, List<StateConditionTest> goalSet){
+//		int n = cat.actionCount();
+//		if(n == 1){
+//			
+//		} else if(/*CheckRelVars*/){
+//			
+//		}
+//		
+//		List<TrajectorySegment> segments = new ArrayList<TrajectorySegment>();
+//		List<StateConditionTest> openGoalSet = goalSet;
+//		while(!openGoalSet.isEmpty()){
+//			StateConditionTest literal = openGoalSet.remove(0);
+//			TrajectorySegment subtaskSegment = CAT_Scan(cat, literal);
+//			if(subtaskSegment.getStart() == 0 && subtaskSegment.getEnd() == cat.actionCount() - 1){
+//				
+//			}
+//		}
+//	}
 	
 	private TrajectorySegment CAT_Scan(CATrajectory cat, StateConditionTest goal){
 		int j = 0;

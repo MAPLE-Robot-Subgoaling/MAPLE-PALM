@@ -18,7 +18,7 @@ import rmaxq.agent.RmaxQLearningAgent;
 import taxi.TaxiVisualizer;
 import taxi.hierarchies.TaxiHierarchy;
 import taxi.state.TaxiState;
-import taxi.stateGenerator.RandonPassengerTaxiState;
+import taxi.stateGenerator.RandomPassengerTaxiState;
 import taxi.stateGenerator.TaxiStateFactory;
 
 public class HierarchicalLearnerTest {
@@ -33,7 +33,7 @@ public class HierarchicalLearnerTest {
 				new SimpleHashableStateFactory(true), maxDelta);
 		SimulatedEnvironment env;
 		if(randomStart)
-			env = new SimulatedEnvironment(groundDomain, new RandonPassengerTaxiState());
+			env = new SimulatedEnvironment(groundDomain, new RandomPassengerTaxiState());
 		else
 			env= new SimulatedEnvironment(groundDomain, initial);
 
