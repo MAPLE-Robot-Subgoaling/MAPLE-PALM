@@ -158,16 +158,7 @@ public class CreateActionModels {
 		String fname = "trees/" + action + "_" + variable.replace(":","_") + ".txt";
 		try {
 			System.out.println("Tree created for " + action + " and " + variable);
-			String out = tree.toString();
-			for (int i = 0; i < 2; i++) {
-				out = out.substring(out.indexOf("\n") + 1);
-			}
-			out = out.trim();
-			out = out.replaceAll("\\(.*\\)", "");
-
-			int end = out.indexOf("Number of Leaves");
-			if(end >= 0)
-				out = out.substring(0, end );
+			String out = getCleanTreeString(tree);
 
 			BufferedWriter write = new BufferedWriter(new FileWriter(fname));
 			write.write(out);
@@ -179,8 +170,24 @@ public class CreateActionModels {
 		}
 	}
 
+	private static String getCleanTreeString(J48 tree) {
+		String out = tree.toString();
+		for (int i = 0; i < 2; i++) {
+            out = out.substring(out.indexOf("\n") + 1);
+        }
+		out = out.trim();
+		out = out.replaceAll(" \\(.*\\)", "");
+
+		int end = out.indexOf("Number of Leaves");
+		if(end >= 0)
+            out = out.substring(0, end );
+		return out;
+	}
+
 	private static void addTree(String action, String var, J48 tree){
-		VariableTree parsedTree = new VariableTree(tree.toString());
+		String treeStr = getCleanTreeString(tree);
+		VariableTree parsedTree = new VariableTree(treeStr);
+		System.out.println(parsedTree);
 
 		Map<String, VariableTree> actionTrees = trees.get(action);
 		if(actionTrees == null){

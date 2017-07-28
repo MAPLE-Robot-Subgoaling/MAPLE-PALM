@@ -29,4 +29,28 @@ public class TreeNode {
     public String getValue() {
         return value;
     }
+
+    public int getNumChildren(){
+        return children.size();
+    }
+
+    @Override
+    public String toString() {
+        String out = "";
+        if(value != null)
+            return  ": " +value;
+        else {
+            for (String val : children.keySet()) {
+                out += "\n" + variable + " = " + val;
+                TreeNode child = children.get(val);
+                if(child.getValue() != null)
+                    out += child.toString();
+                else {
+                    String childStr = child.toString();
+                    out += childStr.replaceAll("\n", "\n|    ");
+                }
+            }
+            return out;
+        }
+    }
 }
