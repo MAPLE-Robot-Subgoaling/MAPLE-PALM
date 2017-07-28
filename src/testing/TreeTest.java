@@ -1,7 +1,5 @@
 package testing;
 
-import java.util.List;
-
 import action.models.CreateActionModels;
 import action.models.TrajectoryGengerator;
 import burlap.behavior.singleagent.Episode;
@@ -11,6 +9,8 @@ import burlap.statehashing.HashableStateFactory;
 import burlap.statehashing.simple.SimpleHashableStateFactory;
 import taxi.Taxi;
 import taxi.stateGenerator.RandomPassengerTaxiState;
+
+import java.util.List;
 
 public class TreeTest {
 
@@ -23,9 +23,14 @@ public class TreeTest {
 		HashableStateFactory hashingFactory = new SimpleHashableStateFactory();
 		double maxDelta = 0.01;
 		int maxIterations = 100;
+		int numTrajectories = 50;
 
-		List<Episode> trajectories = TrajectoryGengerator.generateTrajectories(randomPasseger, 10, domain,
+		List<Episode> trajectories = TrajectoryGengerator.generateTrajectories(randomPasseger, numTrajectories, domain,
 				gamma, hashingFactory, maxDelta, maxIterations);
+//        EpisodeSequenceVisualizer ev = new EpisodeSequenceVisualizer
+//                (TaxiVisualizer.getVisualizer(5, 5), domain, trajectories);
+//        ev.setDefaultCloseOperation(ev.EXIT_ON_CLOSE);
+//        ev.initGUI();
 			
 		CreateActionModels.createModels(trajectories);
 	}

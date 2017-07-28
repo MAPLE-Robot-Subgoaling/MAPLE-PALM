@@ -1,33 +1,30 @@
 package action.models;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.util.ArrayList;
-import java.util.List;
-
 import burlap.behavior.singleagent.Episode;
 import burlap.mdp.core.action.Action;
 import burlap.mdp.core.state.State;
-import weka.classifiers.Evaluation;
 import weka.classifiers.trees.J48;
-import weka.classifiers.trees.REPTree;
 import weka.core.Attribute;
 import weka.core.DenseInstance;
 import weka.core.Instance;
 import weka.core.Instances;
-import weka.core.SerializationHelper;
 import weka.core.converters.ArffSaver;
 import weka.filters.Filter;
 import weka.filters.unsupervised.attribute.AddValues;
 import weka.filters.unsupervised.attribute.NumericToNominal;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.util.*;
+
 public class CreateActionModels {
 
+	private static Map<String, Map<String, VariableTree>> trees;
 	
-	public static void createModels(List<Episode> trajectories){
+	public static Map<String, Map<String, VariableTree>> createModels(List<Episode> trajectories){
+		trees = new HashMap<String, Map<String, VariableTree>>();
+
 		List<String> actions = new ArrayList<String>();
 		for(Episode e : trajectories){
 			for(Action a : e.actionSequence){
@@ -82,6 +79,7 @@ public class CreateActionModels {
 				
 				J48 tree = buildTree(dataset);
 				writeTreeToFile(action, var.toString(), tree);
+				addTree(action, var.toString(), tree);
 			}
 			
 			//create tree for reward with claas as reward
@@ -106,7 +104,9 @@ public class CreateActionModels {
 			}
 			J48 tree = buildTree(dataset);
 			writeTreeToFile(action, "R", tree);
+			addTree(action,"R", tree);
 		}
+		return trees;
 	}
 
 	private static void addSStateVars(List<Object> variables, Instance dataPoint, State prior) {
@@ -125,10 +125,6 @@ public class CreateActionModels {
 		//apply filters
 		try{
 			NumericToNominal filterStrings = new NumericToNominal();
-			String[] args = new String[2];
-			args[0] = "-R";
-			args[1] = "first";
-			filterStrings.setOptions(args);
 			filterStrings.setInputFormat(dataset);
 			dataset = Filter.useFilter(dataset, filterStrings);
 			
@@ -140,9 +136,17 @@ public class CreateActionModels {
 		}catch(Exception ex){
 			ex.printStackTrace();
 		}
+
 		//train tree
 		J48 tree = new J48();
 		try{
+			ArffSaver save = new ArffSaver();
+			save.setFile(new File("data.arff"));
+			save.setInstances(dataset);
+			save.writeBatch();
+
+			String[] options = { "-M", "1", "-U"};
+			tree.setOptions(options);
 			tree.buildClassifier(dataset);
 		}catch(Exception ex){
 			ex.printStackTrace();
@@ -150,20 +154,40 @@ public class CreateActionModels {
 		return tree;
 	}
 	
-	public static void writeTreeToFile(String action, String variable, J48 tree){
-		String file = "trees/" + action + "_" + variable.replace(":", "_") + ".model";
-		
-		System.out.println(file);
+	private static void writeTreeToFile(String action, String variable, J48 tree){
+		String fname = "trees/" + action + "_" + variable.replace(":","_") + ".txt";
 		try {
-			File folder = new File("trees");
-			if(!folder.isDirectory())
-				folder.mkdir();
-			File f = new File(file);
-			f.createNewFile();
-			SerializationHelper.write(file, tree);
+			System.out.println("Tree created for " + action + " and " + variable);
+			String out = tree.toString();
+			for (int i = 0; i < 2; i++) {
+				out = out.substring(out.indexOf("\n") + 1);
+			}
+			out = out.trim();
+			out = out.replaceAll("\\(.*\\)", "");
+
+			int end = out.indexOf("Number of Leaves");
+			if(end >= 0)
+				out = out.substring(0, end );
+
+			BufferedWriter write = new BufferedWriter(new FileWriter(fname));
+			write.write(out);
+			write.flush();
+			write.close();
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-	
+
+	private static void addTree(String action, String var, J48 tree){
+		VariableTree parsedTree = new VariableTree(tree.toString());
+
+		Map<String, VariableTree> actionTrees = trees.get(action);
+		if(actionTrees == null){
+			actionTrees = new HashMap<String, VariableTree>();
+			trees.put(action, actionTrees);
+		}
+
+		actionTrees.put(var, parsedTree);
+	}
 }
