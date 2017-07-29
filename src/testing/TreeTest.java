@@ -57,12 +57,32 @@ public class TreeTest {
 				if(reward.equals(rewLab))
 					correct++;
 				else
-					System.out.println("incorrect \n" + " R " );
+					System.out.println("incorrect " + " R " + reward + " " + rewLab );
 			}
 		}
 		System.out.println("total poins: " + attempted);
 		System.out.println("Correct " + correct);
 		System.out.println("percent: " + (correct / (double)attempted) * 100);
+	}
+
+	public static void checkVars(List<Episode> trajectories, Map<String, Map<String, VariableTree>> trees) {
+		int correct = 0, attempted = 0;
+
+		for (Episode e : trajectories) {
+			for (int i = 0; i < e.actionSequence.size(); i++) {
+				String action = e.actionSequence.get(i).actionName();
+				State s = e.stateSequence.get(i);
+
+				for(Object var : s.variableKeys()){
+					VariableTree tree = trees.get(action).get(var.toString());
+					List<String> checks = tree.getCheckedVariables(s);
+					if(checks.size() > 0) {
+						System.out.println(action + " " + var.toString() + "\n" + s.toString() + checks);
+						System.out.println();
+					}
+				}
+			}
+		}
 	}
 
 	public static void main(String[] args) {
@@ -75,6 +95,8 @@ public class TreeTest {
 		double maxDelta = 0.01;
 		int maxIterations = 100;
 		int numTrajectories = 50;
+		boolean loadFiles = true;
+		String directory = "trees";
 
 		List<Episode> trajectories = TrajectoryGengerator.generateTrajectories(randomPasseger, numTrajectories, domain,
 				gamma, hashingFactory, maxDelta, maxIterations);
@@ -83,8 +105,13 @@ public class TreeTest {
 //        ev.setDefaultCloseOperation(ev.EXIT_ON_CLOSE);
 //        ev.initGUI();
 
-		Map<String, Map<String, VariableTree>> trees = CreateActionModels.createModels(trajectories);
+		Map<String, Map<String, VariableTree>> trees;
+		if(loadFiles)
+			trees = CreateActionModels.readTreeFiles(directory);
+		else
+			trees = CreateActionModels.createModels(trajectories);
 		evaluate(trajectories, trees);
+		checkVars(trajectories, trees);
 	}
 
 }

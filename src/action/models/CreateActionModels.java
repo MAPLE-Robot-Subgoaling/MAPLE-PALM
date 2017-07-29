@@ -110,6 +110,31 @@ public class CreateActionModels {
 		return trees;
 	}
 
+	public static Map<String, Map<String, VariableTree>> readTreeFiles(String folderPath){
+		Map<String, Map<String, VariableTree>> parsedTrees = new HashMap<String, Map<String, VariableTree>>();
+		File folder = new File(folderPath);
+		File[] treeFiles = folder.listFiles();
+
+		for(File tree : treeFiles){
+			if(tree.isFile()){
+				String name = tree.getName();
+				String action = name.substring(0, name.indexOf("_"));
+				String variable = name.substring(name.indexOf("_") + 1, name.indexOf("."));
+				variable = variable.replace("_", ":");
+				VariableTree parsedTree = new VariableTree(tree);
+
+				Map<String, VariableTree> actionTrees = parsedTrees.get(action);
+				if(actionTrees == null){
+					actionTrees = new HashMap<String, VariableTree>();
+					parsedTrees.put(action, actionTrees);
+				}
+
+				actionTrees.put(variable, parsedTree);
+			}
+		}
+		return parsedTrees;
+	}
+
 	private static void addSStateVars(List<Object> variables, Instance dataPoint, State prior) {
 		int counter = 1;
 		for(Object varKey : variables){

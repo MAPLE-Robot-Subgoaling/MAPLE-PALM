@@ -1,35 +1,28 @@
 package hierarchies.structureLearning;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.omg.CORBA.TRANSACTION_MODE;
-
+import action.models.VariableTree;
 import burlap.behavior.singleagent.Episode;
-import burlap.behavior.singleagent.options.EnvironmentOptionOutcome;
 import burlap.mdp.core.action.Action;
 import burlap.mdp.core.state.State;
-import burlap.mdp.singleagent.environment.extensions.EnvironmentObserver;
 import burlap.mdp.singleagent.model.FullModel;
 import burlap.mdp.singleagent.model.TransitionProb;
+
+import java.util.*;
 
 public class CATrajectory {
 
 	private List<String> actions;
-	private List<RelevantEdge> edges;
-	private Set<String>[] relevantVariables;
+	private List<CausalEdge> edges;
+	private Set<String>[] checkedVariables, changedVariables;
 	private Episode baseTrajectory;
 	
 	public CATrajectory() {
 		this.actions = new ArrayList<String>();
-		this.edges = new ArrayList<RelevantEdge>();
+		this.edges = new ArrayList<CausalEdge>();
 	}
 	
 	//parent structure  action -> variable/ R(reward) -> relevant var
-	public void annotateTrajectory(Episode e, Map<String, Map<String, List<String>>> parents, FullModel model){
+	public void annotateTrajectory(Episode e, Map<String, Map<String, VariableTree>> decisions, FullModel model){
 		baseTrajectory = e;
 		actions.add("START");
 		for(Action a : e.actionSequence){
@@ -37,62 +30,73 @@ public class CATrajectory {
 		}
 		actions.add("END");
 		
-		relevantVariables = new Set[actions.size()];
-		
+		checkedVariables = new Set[actions.size()];
+		changedVariables = new Set[actions.size()];
+
 		for(int i = 0; i < actions.size(); i++){
 			String action = actions.get(i);
-			relevantVariables[i] = new HashSet<String>();
-			
+			checkedVariables[i] = new HashSet<String>();
+			changedVariables[i] = new HashSet<String>();
+
 			if(action.equals("START") || action.equals("END")){
 				State s = e.stateSequence.get(0);
 				for(Object var : s.variableKeys()){
-					relevantVariables[i].add(var.toString());
+					checkedVariables[i].add(var.toString());
+					changedVariables[i].add(var.toString());
 				}
 				continue;
+
 			}
-			
+
 			State s = e.stateSequence.get(i - 1);
 			Action a = e.actionSequence.get(i - 1);
+
+			//add the vars which were used to get reward
+			VariableTree rewardTree = decisions.get(action).get("R");
+			List<String> rewardChecked = rewardTree.getCheckedVariables(s);
+			checkedVariables[i].addAll(rewardChecked);
+
 			for(Object var : s.variableKeys()){
-				boolean contextChanged = false;
-				Object value = s.get(var);
-				
-				List<TransitionProb> tps = model.transitions(s, a);
-				for(TransitionProb tp : tps){
-					State sPrime = tp.eo.op;
-					Object valuePrime = sPrime.get(var);
-					if(!value.equals(valuePrime)){
-						contextChanged = true;
+				Object sVal = s.get(var);
+				boolean changed = false;
+				List<TransitionProb> transitions = model.transitions(s, a);
+				for(TransitionProb tp : transitions){
+					if(tp.p > 0) {
+						Object spVal = tp.eo.op.get(var);
+						if(!sVal.equals(spVal))
+							changed = true;
 					}
 				}
-				
-				List<String> rewardVars = parents.get(action).get("R");
-				if(rewardVars.contains(var.toString())){
-					relevantVariables[i].add(var.toString());
-				}
-				
-				if(contextChanged){
-					List<String> parentsV = parents.get(action).get(var.toString());
-					relevantVariables[i].add(var.toString());
-					relevantVariables[i].addAll(parentsV);
+
+				if(changed){
+					changedVariables[i].add(var.toString());
+					VariableTree varTree = decisions.get(action).get(var.toString());
+					List<String> chexked = varTree.getCheckedVariables(s);
+					checkedVariables[i].addAll(chexked);
 				}
 			}
 		}
-		
+
+		//created edges - a changes x, b checks x, and x is not changed by action in between
 		for(int i = 0; i < actions.size() - 1; i++){
-			for(String var : relevantVariables[i]){
-				int next = i + 1;
-				while(! relevantVariables[next].contains(var)){
-					next++;
+			for (String var : changedVariables[i]){
+				int end = i + 1;
+				boolean createEdge = true;
+				while (!checkedVariables[end].contains(var)){
+					if(changedVariables[end].contains(var)){
+						createEdge = false;
+					}
+					end++;
 				}
-				RelevantEdge edge = new RelevantEdge(i, next, var);
-				edges.add(edge);
+				if(createEdge){
+					edges.add(new CausalEdge(i, end, var));
+				}
 			}
 		}
 	}
 	
 	public int findEdge(int start, String variable){
-		for(RelevantEdge edge : edges){
+		for(CausalEdge edge : edges){
 			if(edge.getStart() == start && edge.getRelavantVariable().equals(variable)){
 				return edge.getEnd();
 			}
@@ -119,8 +123,10 @@ public class CATrajectory {
 			}
 			out += "\n";
 			
-			for(RelevantEdge edge : edges){
-				out += edge.getStart() + " " + edge.getEnd() + " " + edge.getRelavantVariable() + "\n";
+			for(CausalEdge edge : edges){
+				out += actions.get(edge.getStart()) + " " +
+						actions.get(edge.getEnd()) + " " +
+						edge.getRelavantVariable() + "\n";
 			}
 		}
 		return out;

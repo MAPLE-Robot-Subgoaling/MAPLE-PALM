@@ -2,6 +2,8 @@ package action.models;
 
 import burlap.mdp.core.state.State;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class TreeNode {
@@ -24,7 +26,6 @@ public class TreeNode {
 	public String classify(State s) {
 		if (value != null)
 			return value;
-
 		Object val = s.get(variable);
 		String value;
 		if (val instanceof Number) {
@@ -39,6 +40,30 @@ public class TreeNode {
 		return child.classify(s);
 	}
 
+	public List<String> getCheckedVariables(State s){
+		List<String> checks = new ArrayList<String>();
+		getCheckedVariables(s, checks);
+		return checks;
+	}
+
+	public void getCheckedVariables(State s, List<String> vars){
+		if (value != null)
+			return;
+
+		vars.add(variable);
+		Object val = s.get(variable);
+		String value;
+		if (val instanceof Number) {
+			if(((Number) val).doubleValue() == ((Number) val).intValue())
+				value = ((Number) val).intValue() + "";
+			else
+				value = ((Number) val).doubleValue() + "";
+		} else {
+			value = val.hashCode() + "";
+		}
+		TreeNode child = children.get(value);
+		child.getCheckedVariables(s, vars);
+	}
 
 	public TreeNode getChild(String value) {
 		return children.get(value);

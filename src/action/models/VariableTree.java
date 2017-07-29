@@ -5,6 +5,7 @@ import burlap.mdp.core.state.State;
 import java.io.File;
 import java.nio.file.Files;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -81,6 +82,10 @@ public class VariableTree {
     public String classify(State s){
     	return root.classify(s);
 	}
+
+	public List<String> getCheckedVariables(State s){
+        return root.getCheckedVariables(s);
+    }
 
     @Override
     public String toString() {
