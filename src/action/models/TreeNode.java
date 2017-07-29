@@ -28,7 +28,10 @@ public class TreeNode {
 		Object val = s.get(variable);
 		String value;
 		if (val instanceof Number) {
-			value = ((Number) val).intValue() + "";
+			if(((Number) val).doubleValue() == ((Number) val).intValue())
+				value = ((Number) val).intValue() + "";
+			else
+				value = ((Number) val).doubleValue() + "";
 		} else {
 			value = val.hashCode() + "";
 		}

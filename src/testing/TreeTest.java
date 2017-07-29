@@ -25,15 +25,23 @@ public class TreeTest {
 				String action = e.actionSequence.get(i).actionName();
 				State s = e.stateSequence.get(i);
 				State sp = e.stateSequence.get(i + 1);
-				String reward = e.rewardSequence.get(i).intValue() + "";
+				String reward;
+
+				if(e.rewardSequence.get(i).doubleValue() == e.rewardSequence.get(i).intValue())
+					reward = e.rewardSequence.get(i).intValue() + "";
+				else
+					reward = e.rewardSequence.get(i).doubleValue() + "";
 				for(Object var : sp.variableKeys()){
 					VariableTree tree = trees.get(action).get(var.toString());
 					String classLab = tree.classify(s);
 					Object spVal = sp.get(var);
 					String goal;
-					if(spVal instanceof Number)
-						goal = ((Number) spVal).intValue() + "";
-					else
+					if(spVal instanceof Number) {
+						if (((Number) spVal).intValue() == ((Number) spVal).doubleValue())
+							goal = ((Number) spVal).intValue() + "";
+						else
+						goal = ((Number) spVal).doubleValue() + "";
+					}else
 						goal = spVal.hashCode() + "";
 
 					attempted++;
