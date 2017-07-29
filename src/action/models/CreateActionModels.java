@@ -12,6 +12,7 @@ import weka.core.converters.ArffSaver;
 import weka.filters.Filter;
 import weka.filters.unsupervised.attribute.AddValues;
 import weka.filters.unsupervised.attribute.NumericToNominal;
+import weka.filters.unsupervised.attribute.StringToNominal;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -119,20 +120,27 @@ public class CreateActionModels {
 				dataPoint.setValue(counter++, value.hashCode());
 			}
 		}
+//		System.out.println(dataPoint);
+//		System.out.println();
 	}
+
 
 	private static J48 buildTree(Instances dataset) {
 		//apply filters
 		try{
-			NumericToNominal filterStrings = new NumericToNominal();
-			filterStrings.setInputFormat(dataset);
-			dataset = Filter.useFilter(dataset, filterStrings);
+			NumericToNominal numericToNominal = new NumericToNominal();
+			numericToNominal.setInputFormat(dataset);
+			dataset = Filter.useFilter(dataset, numericToNominal);
 			
 			AddValues addval = new AddValues();
 			String[] argVals = {"-C", "first", "-L", "_"};
 			addval.setOptions(argVals);
 			addval.setInputFormat(dataset);
 			dataset = Filter.useFilter(dataset, addval);
+
+			StringToNominal stringToNominal = new StringToNominal();
+			stringToNominal.setInputFormat(dataset);
+			dataset = Filter.useFilter(dataset, stringToNominal);
 		}catch(Exception ex){
 			ex.printStackTrace();
 		}
@@ -187,7 +195,6 @@ public class CreateActionModels {
 	private static void addTree(String action, String var, J48 tree){
 		String treeStr = getCleanTreeString(tree);
 		VariableTree parsedTree = new VariableTree(treeStr);
-		System.out.println(parsedTree);
 
 		Map<String, VariableTree> actionTrees = trees.get(action);
 		if(actionTrees == null){

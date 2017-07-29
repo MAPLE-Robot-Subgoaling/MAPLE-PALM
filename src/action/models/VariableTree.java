@@ -1,5 +1,7 @@
 package action.models;
 
+import burlap.mdp.core.state.State;
+
 import java.io.File;
 import java.nio.file.Files;
 import java.util.HashMap;
@@ -75,6 +77,10 @@ public class VariableTree {
         else
             return -1;
     }
+
+    public String classify(State s){
+    	return root.classify(s);
+	}
 
     @Override
     public String toString() {
