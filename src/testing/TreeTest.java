@@ -11,6 +11,7 @@ import burlap.statehashing.HashableStateFactory;
 import burlap.statehashing.simple.SimpleHashableStateFactory;
 import taxi.Taxi;
 import taxi.stateGenerator.RandomPassengerTaxiState;
+import utilities.MurmurHash;
 
 import java.util.List;
 import java.util.Map;
@@ -42,7 +43,7 @@ public class TreeTest {
 						else
 						goal = ((Number) spVal).doubleValue() + "";
 					}else
-						goal = spVal.hashCode() + "";
+						goal = MurmurHash.hash32(spVal.toString()) + "";
 
 					attempted++;
 					if(goal.equals(classLab))
@@ -111,7 +112,7 @@ public class TreeTest {
 		else
 			trees = CreateActionModels.createModels(trajectories);
 		evaluate(trajectories, trees);
-		checkVars(trajectories, trees);
+//		checkVars(trajectories, trees);
 	}
 
 }

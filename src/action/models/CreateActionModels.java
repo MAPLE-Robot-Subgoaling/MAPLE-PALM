@@ -3,6 +3,7 @@ package action.models;
 import burlap.behavior.singleagent.Episode;
 import burlap.mdp.core.action.Action;
 import burlap.mdp.core.state.State;
+import utilities.MurmurHash;
 import weka.classifiers.trees.J48;
 import weka.core.Attribute;
 import weka.core.DenseInstance;
@@ -70,7 +71,7 @@ public class CreateActionModels {
 					if(label instanceof Number){
 						dataPoint.setValue(0, ((Number) label).doubleValue());
 					}else{
-						dataPoint.setValue(0, label.hashCode());
+						dataPoint.setValue(0, MurmurHash.hash32(label.toString()));
 					}
 					
 					State prior = priorStates.get(i);
@@ -142,7 +143,7 @@ public class CreateActionModels {
 			if(value instanceof Number){
 				dataPoint.setValue(counter++, ((Number) value).doubleValue());
 			}else{
-				dataPoint.setValue(counter++, value.hashCode());
+				dataPoint.setValue(counter++, MurmurHash.hash32(value.toString()));
 			}
 		}
 //		System.out.println(dataPoint);

@@ -1,6 +1,7 @@
 package action.models;
 
 import burlap.mdp.core.state.State;
+import utilities.MurmurHash;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +35,7 @@ public class TreeNode {
 			else
 				value = ((Number) val).doubleValue() + "";
 		} else {
-			value = val.hashCode() + "";
+			value = MurmurHash.hash32(val.toString()) + "";
 		}
 		TreeNode child = children.get(value);
 		return child.classify(s);
@@ -59,7 +60,7 @@ public class TreeNode {
 			else
 				value = ((Number) val).doubleValue() + "";
 		} else {
-			value = val.hashCode() + "";
+			value = MurmurHash.hash32(val.toString()) + "";
 		}
 		TreeNode child = children.get(value);
 		child.getCheckedVariables(s, vars);
