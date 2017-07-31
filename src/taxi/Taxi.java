@@ -9,17 +9,16 @@ import burlap.behavior.singleagent.learning.tdmethods.QLearning;
 import burlap.mdp.auxiliary.DomainGenerator;
 import burlap.mdp.core.TerminalFunction;
 import burlap.mdp.core.action.UniversalActionType;
+import burlap.mdp.core.oo.ObjectParameterizedAction;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.environment.SimulatedEnvironment;
 import burlap.mdp.singleagent.model.FactoredModel;
 import burlap.mdp.singleagent.model.RewardFunction;
 import burlap.mdp.singleagent.oo.OOSADomain;
+import burlap.mdp.singleagent.oo.ObjectParameterizedActionType;
 import burlap.statehashing.HashableStateFactory;
 import burlap.statehashing.simple.SimpleHashableStateFactory;
-import taxi.state.TaxiAgent;
-import taxi.state.TaxiLocation;
-import taxi.state.TaxiPassenger;
-import taxi.state.TaxiWall;
+import taxi.state.*;
 import taxi.stateGenerator.TaxiStateFactory;
 
 public class Taxi implements DomainGenerator{
@@ -180,7 +179,7 @@ public class Taxi implements DomainGenerator{
                 new UniversalActionType(ACTION_EAST),
                 new UniversalActionType(ACTION_WEST),
                 new UniversalActionType(ACTION_DROPOFF),
-                new UniversalActionType(ACTION_PICKUP));
+                new PickupActionType(ACTION_PICKUP));
 		
 		return domain;
 	}
@@ -190,7 +189,7 @@ public class Taxi implements DomainGenerator{
 	public OOSADomain generatePickupDomain(){
 		OOSADomain d = generateDomain();
 		d.clearActionTypes();
-		d.addActionType(new UniversalActionType(ACTION_PICKUP));
+		d.addActionType(new PickupActionType(ACTION_PICKUP));
 		
 		return d;
 	}
@@ -214,7 +213,25 @@ public class Taxi implements DomainGenerator{
 		
 		return d;
 	}
-				
+
+	public class PickupActionType extends ObjectParameterizedActionType {
+		public PickupActionType(String name) {
+			super(name, new String[]{Taxi.CLASS_PASSENGER});
+		}
+
+		public boolean applicableInState(State st, ObjectParameterizedAction groundedAction) {
+			String[] params = groundedAction.getObjectParameters();
+			TaxiState s = (TaxiState) st;
+			boolean taxiOccupied = (boolean)s.getTaxiAtt(Taxi.ATT_TAXI_OCCUPIED);
+			boolean passInTaxi = (boolean)s.getPassengerAtt(params[0], Taxi.ATT_IN_TAXI);
+			int px = (int)s.getPassengerAtt(params[0], Taxi.ATT_X);
+			int py = (int)s.getPassengerAtt(params[0], Taxi.ATT_Y);
+			int tx = (int)s.getTaxiAtt(Taxi.ATT_X);
+			int ty = (int)s.getTaxiAtt(Taxi.ATT_Y);
+			return px == tx && py == ty && !taxiOccupied && !passInTaxi;
+		}
+	}
+
 	public static void main(String[] args) {
 		
 		Taxi taxiBuild = new Taxi(true, 0.225, 0.8);

@@ -76,37 +76,25 @@ public class TaxiL2Model implements FullStateModel {
 	public void put(TaxiL2State s, PutAction a, List<StateTransitionProb> tps){
 		String goalLoaction = a.getGoalLocation();
 		TaxiL2State ns = s.copy();
-		
-		int passengersAtGoal = 0;
-		for(String passengerNamer : s.getPassengers()){
-			String pLocation = (String) s.getPassengerAtt(passengerNamer, TaxiL2.ATT_CURRENT_LOCATION);
-			boolean inTaxi = (boolean) s.getPassengerAtt(passengerNamer, TaxiL2.ATT_IN_TAXI);
-			if(goalLoaction.equals(pLocation) && ! inTaxi)
-				passengersAtGoal++;
-		}
-		
+
 		for(String passengerName : s.getPassengers()){
 			boolean inTaxi = (boolean) s.getPassengerAtt(passengerName, TaxiL2.ATT_IN_TAXI);
 			if(inTaxi){
 				//change location and remove from taxi
+				TaxiL2Passenger np = ns.touchPassenger(passengerName);
+				np.set(TaxiL2.ATT_CURRENT_LOCATION, goalLoaction);
+				np.set(TaxiL2.ATT_IN_TAXI, false);
 
-				if(passengersAtGoal == 0){
-					TaxiL2Passenger np = ns.touchPassenger(passengerName);
-					np.set(TaxiL2.ATT_CURRENT_LOCATION, goalLoaction);
-					np.set(TaxiL2.ATT_IN_TAXI, false);
-				}
-				
 				//fickle goal
 				if(fickle){
 					String passengerLocation = (String) s.getPassengerAtt(passengerName, TaxiL2.ATT_CURRENT_LOCATION);
 					boolean justPickedUp = (boolean) s.getPassengerAtt(passengerName, TaxiL2.ATT_JUST_PICKED_UP);
 					if(justPickedUp){
 						double p = fickleChangeGoalProbaility / (s.getLocations().length - 1);
-						TaxiL2Passenger np = ns.touchPassenger(passengerName);
 						np.set(TaxiL2.ATT_JUST_PICKED_UP, false);
 						for(String locationName : s.getLocations()){
 							TaxiL2State nfickles = ns.copy();
-							
+
 							if(locationName.equals(passengerLocation)){
 								tps.add(new StateTransitionProb(nfickles, (1 - fickleChangeGoalProbaility)));
 							}else{

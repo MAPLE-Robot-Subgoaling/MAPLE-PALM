@@ -7,18 +7,17 @@ import burlap.behavior.singleagent.planning.stochastic.valueiteration.ValueItera
 import burlap.mdp.auxiliary.DomainGenerator;
 import burlap.mdp.core.TerminalFunction;
 import burlap.mdp.core.action.UniversalActionType;
+import burlap.mdp.core.oo.ObjectParameterizedAction;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.common.GoalBasedRF;
 import burlap.mdp.singleagent.environment.SimulatedEnvironment;
 import burlap.mdp.singleagent.model.FactoredModel;
 import burlap.mdp.singleagent.model.RewardFunction;
 import burlap.mdp.singleagent.oo.OOSADomain;
+import burlap.mdp.singleagent.oo.ObjectParameterizedActionType;
 import burlap.statehashing.HashableStateFactory;
 import burlap.statehashing.simple.SimpleHashableStateFactory;
-import taxi.abstraction1.state.L1StateMapper;
-import taxi.abstraction1.state.TaxiL1Agent;
-import taxi.abstraction1.state.TaxiL1Location;
-import taxi.abstraction1.state.TaxiL1Passenger;
+import taxi.abstraction1.state.*;
 import taxi.stateGenerator.TaxiStateFactory;
 
 public class TaxiL1 implements DomainGenerator {
@@ -111,7 +110,7 @@ public class TaxiL1 implements DomainGenerator {
 		
 		domain.addActionTypes(
 				new NavigateActionType(),
-				new UniversalActionType(ACTION_L1PICKUP),
+				new PickupActionType(),
 				new UniversalActionType(ACTION_L1DROPOFF)
 				);
 		
@@ -124,7 +123,7 @@ public class TaxiL1 implements DomainGenerator {
 		d.clearActionTypes();
 		d.addActionTypes(
 				new NavigateActionType(),
-				new UniversalActionType(ACTION_L1PICKUP)
+				new PickupActionType()
 				);
 		return d;
 	}
@@ -138,10 +137,10 @@ public class TaxiL1 implements DomainGenerator {
 				);
 		return d;
 	}
-	
+
 	public static void main(String[] args) {
 		
-		TaxiL1 taxiBuild = new TaxiL1(true, 0.22);
+		TaxiL1 taxiBuild = new TaxiL1(false, 0.22);
 		OOSADomain domain = taxiBuild.generateDomain();
 		
 		HashableStateFactory hs = new SimpleHashableStateFactory();

@@ -9,6 +9,7 @@ import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.model.statemodel.FullStateModel;
 import taxi.Taxi;
 import taxi.abstraction1.NavigateActionType.NavigeteAction;
+import taxi.abstraction1.PickupActionType.PickupAction;
 import taxi.abstraction1.state.TaxiL1Agent;
 import taxi.abstraction1.state.TaxiL1Passenger;
 import taxi.abstraction1.state.TaxiL1State;
@@ -58,7 +59,7 @@ public class TaxiL1Model implements FullStateModel {
 		if(action == TaxiL1.IND_NAVIGATE){
 			navigate(state, (NavigeteAction) a, tps);
 		}else if(action == TaxiL1.IND_L1PICKUP){
-			pickup(state, tps);
+			pickup(state, (PickupAction) a, tps);
 		}else if(action == TaxiL1.IND_L1DROPOFF){
 			dropoff(state, tps);
 		}
@@ -126,33 +127,26 @@ public class TaxiL1Model implements FullStateModel {
 	 * @param s the current state
 	 * @param tps the list of outcomes to add to
 	 */
-	public void pickup(TaxiL1State s, List<StateTransitionProb> tps){
+	public void pickup(TaxiL1State s, PickupAction a, List<StateTransitionProb> tps){
+		String passengerName = a.getPassenger();
+		String passengerLocation = (String) s.getPassengerAtt(passengerName, TaxiL1.ATT_CURRENT_LOCATION);
 		String taxiLocation = (String) s.getTaxiAtt(TaxiL1.ATT_CURRENT_LOCATION);
 		boolean taxiOccupied = (boolean) s.getTaxiAtt(TaxiL1.ATT_TAXI_OCCUPIED);
-		
+		TaxiL1State ns = s.copy();
+
 		//if no one is in taxi and it is at depot
-		if(!taxiOccupied && !taxiLocation.equals(TaxiL1.ON_ROAD)){
-			for(String passengerName : s.getPassengers()){
-				String passengerLocation = (String) s.getPassengerAtt(passengerName, TaxiL1.ATT_CURRENT_LOCATION);
-				
-				if(taxiLocation.equals(passengerLocation)){
-					TaxiL1State ns = s.copy();
-					TaxiL1Passenger np = ns.touchPassenger(passengerName);
-					np.set(Taxi.ATT_IN_TAXI, true);
-					np.set(TaxiL1.ATT_PICKED_UP_AT_LEAST_ONCE, true);
-					if(fickle){
-						np.set(TaxiL1.ATT_JUST_PICKED_UP, true);
-					}
-					
-					TaxiL1Agent nt = ns.touchTaxi();
-					nt.set(TaxiL1.ATT_TAXI_OCCUPIED, true);
-					
-					tps.add(new StateTransitionProb(ns, 1.));
-					return;
-				}
-			}
+		if(!taxiOccupied && !taxiLocation.equals(TaxiL1.ON_ROAD) && taxiLocation.equals(passengerLocation)){
+            TaxiL1Passenger np = ns.touchPassenger(passengerName);
+            np.set(Taxi.ATT_IN_TAXI, true);
+            np.set(TaxiL1.ATT_PICKED_UP_AT_LEAST_ONCE, true);
+            if(fickle){
+                np.set(TaxiL1.ATT_JUST_PICKED_UP, true);
+            }
+
+            TaxiL1Agent nt = ns.touchTaxi();
+            nt.set(TaxiL1.ATT_TAXI_OCCUPIED, true);
 		}
-		tps.add(new StateTransitionProb(s.copy(), 1));
+		tps.add(new StateTransitionProb(ns, 1));
 	}
 
 	/**
@@ -163,7 +157,8 @@ public class TaxiL1Model implements FullStateModel {
 	public void dropoff(TaxiL1State s, List<StateTransitionProb> tps){
 		String taxiLocation = (String) s.getTaxiAtt(TaxiL1.ATT_CURRENT_LOCATION);
 		boolean taxiOccupied = (boolean) s.getTaxiAtt(TaxiL1.ATT_TAXI_OCCUPIED);
-		
+		TaxiL1State ns = s.copy();
+
 		//if some one is in taxi and it is at depot
 		if(taxiOccupied && !taxiLocation.equals(TaxiL1.ON_ROAD)){
 			for(String locName : s.getLocations()){
@@ -174,30 +169,27 @@ public class TaxiL1Model implements FullStateModel {
 						if(passLocation.equals(locName))
 							passengersAtL++;
 					}
-					
-					if(passengersAtL == 1){
-						for(String passengerName : s.getPassengers()){
-							String passengerLocation = (String) s.getPassengerAtt(passengerName, TaxiL1.ATT_CURRENT_LOCATION);
-							
-							if(taxiLocation.equals(passengerLocation)){
-								TaxiL1State ns = s.copy();
-								TaxiL1Passenger np = ns.touchPassenger(passengerName);
-								np.set(Taxi.ATT_IN_TAXI, false);
-								
-								TaxiL1Agent nt = ns.touchTaxi();
-								nt.set(TaxiL1.ATT_TAXI_OCCUPIED, false);
-								
-								tps.add(new StateTransitionProb(ns, 1));
-								return;
-							}
+
+					for(String passengerName : s.getPassengers()){
+						String passengerLocation = (String) s.getPassengerAtt(passengerName, TaxiL1.ATT_CURRENT_LOCATION);
+
+						if(taxiLocation.equals(passengerLocation)){
+							TaxiL1Passenger np = ns.touchPassenger(passengerName);
+							np.set(Taxi.ATT_IN_TAXI, false);
+
+							TaxiL1Agent nt = ns.touchTaxi();
+							nt.set(TaxiL1.ATT_TAXI_OCCUPIED, false);
+
+							tps.add(new StateTransitionProb(ns, 1));
+							return;
 						}
 					}
 				}
 			}
 		}
-		tps.add(new StateTransitionProb(s.copy(), 1));
+		tps.add(new StateTransitionProb(ns, 1));
 	}
-	
+
 	/**
 	 * map a action to its number
 	 * @param a the action
