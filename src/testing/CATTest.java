@@ -32,21 +32,25 @@ public class CATTest {
 		boolean loadFiles = true;
 		String directory = "trees";
 
-		List<Episode> trajectories = TrajectoryGengerator.generateTrajectories(randomPasseger, numTrajectories, domain,
-				gamma, hashingFactory, maxDelta, maxIterations);
 //        EpisodeSequenceVisualizer ev = new EpisodeSequenceVisualizer
 //                (TaxiVisualizer.getVisualizer(5, 5), domain, trajectories);
 //        ev.setDefaultCloseOperation(ev.EXIT_ON_CLOSE);
 //        ev.initGUI();
 
 		Map<String, Map<String, VariableTree>> trees;
-		if(loadFiles)
+		if(loadFiles) {
 			trees = CreateActionModels.readTreeFiles(directory);
-		else
-			trees = CreateActionModels.createModels(trajectories);
+		}else {
+			List<Episode> learnedTrajectories = TrajectoryGengerator.generateQLearnedTrajectories(randomPasseger, numTrajectories, domain,
+					gamma, hashingFactory);
+			trees = CreateActionModels.createModels(learnedTrajectories);
+		}
+
+		List<Episode> plannedTrajectories = TrajectoryGengerator.generateVIPlannedTrajectories(randomPasseger, numTrajectories,
+				domain, gamma, hashingFactory, maxDelta, maxIterations);
 
 		List<CATrajectory> cats = new ArrayList<CATrajectory>();
-		for (Episode trajectory : trajectories){
+		for (Episode trajectory : plannedTrajectories){
 			CATrajectory cat = new CATrajectory();
 			cat.annotateTrajectory(trajectory, trees, model);
 			cats.add(cat);

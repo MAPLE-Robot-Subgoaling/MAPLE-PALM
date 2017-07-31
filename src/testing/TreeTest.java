@@ -99,8 +99,8 @@ public class TreeTest {
 		boolean loadFiles = true;
 		String directory = "trees";
 
-		List<Episode> trajectories = TrajectoryGengerator.generateTrajectories(randomPasseger, numTrajectories, domain,
-				gamma, hashingFactory, maxDelta, maxIterations);
+		List<Episode> trajectories = TrajectoryGengerator.generateQLearnedTrajectories(randomPasseger, numTrajectories, domain,
+				gamma, hashingFactory);
 //        EpisodeSequenceVisualizer ev = new EpisodeSequenceVisualizer
 //                (TaxiVisualizer.getVisualizer(5, 5), domain, trajectories);
 //        ev.setDefaultCloseOperation(ev.EXIT_ON_CLOSE);
