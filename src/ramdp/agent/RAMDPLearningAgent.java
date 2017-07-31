@@ -1,23 +1,17 @@
 package ramdp.agent;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 import burlap.behavior.policy.Policy;
 import burlap.behavior.singleagent.Episode;
 import burlap.behavior.singleagent.learning.LearningAgent;
 import burlap.mdp.core.action.Action;
-import burlap.mdp.core.action.ActionType;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.environment.Environment;
 import burlap.mdp.singleagent.environment.EnvironmentOutcome;
 import burlap.mdp.singleagent.oo.OOSADomain;
 import burlap.statehashing.HashableStateFactory;
 import hierarchy.framework.GroundedTask;
-import taxi.Taxi;
-import taxi.state.TaxiState;
 import utilities.ValueIteration;
 
 public class RAMDPLearningAgent implements LearningAgent{
@@ -80,8 +74,17 @@ public class RAMDPLearningAgent implements LearningAgent{
 	private int lowerThreshold;
 	private int episodeCount = 0;
 	private int actionCount = 0;
-	private int relearnCount = 0;
-    private Map<GroundedTask, Integer> taskRelearnCount;
+	private int randomReplanCount = 0;
+	private int randomNoReplanCount = 0;
+	private int autoterminalCount = 0;
+	public String goal;
+	public String start;
+    //private Map<GroundedTask, Integer> taskRelearnCount;
+    private Map<String,Map<String, Integer>> firstFewAC = new HashMap<>();
+    private Map<String,Map<String, Integer>> firstFewRRC =  new HashMap<>();
+    private Map<String,Map<String, Integer>> firstFewRNRC = new HashMap<>();
+    private Map<String,Map<String, Integer>> firstFewATC = new HashMap<>();
+
 
     /**
 	 * create a RAMDP agent on a given task
@@ -122,19 +125,69 @@ public class RAMDPLearningAgent implements LearningAgent{
 		lastTask = "";
 		e = new Episode(env.currentObservation());
 
-        if( this.actionCount<this.lowerThreshold||(episodeCount%5 == 0 ||
-            this.actionCount < this.relearnThreshold &&
-            this.actionCount >(this.relearnThreshold /2)))
+//        if( this.actionCount<this.lowerThreshold||(episodeCount%5 == 0 ||
+//            this.actionCount < this.relearnThreshold &&
+//            this.actionCount >(this.relearnThreshold /2)))
 
-            System.out.println("Action count: "+this.actionCount);
 
-        episodeCount++;
-        System.out.println("Relearn count: "+this.relearnCount);
+
         solveTask(root, env, maxSteps);
+        episodeCount++;
+        System.out.println("Action count: "+this.actionCount);
+        System.out.println("Random replan count: "+this.randomReplanCount);
+        System.out.println("Random noreplan count: "+this.randomNoReplanCount);
+        System.out.println("Autoterminal count: "+this.autoterminalCount);
+        if(episodeCount<=32){
+            prepMap(this.firstFewRRC);
+            prepMap(this.firstFewAC);
+            prepMap(this.firstFewRNRC);
+            prepMap(this.firstFewATC);
+
+            writeMap(this.firstFewRRC, this.randomReplanCount);
+            writeMap(this.firstFewRNRC,this.randomNoReplanCount);
+            writeMap(this.firstFewATC,this.autoterminalCount);
+            writeMap(this.firstFewAC,this.actionCount);
+            if(episodeCount==32){
+                    first32();
+            }
+        }
+
+
+        this.randomReplanCount =0;
+        this.randomNoReplanCount=0;
+        this.autoterminalCount=0;
+        this.actionCount=0;
 		return e;
 	}
+    private void prepMap(Map<String, Map<String, Integer>> mp){
+        mp.putIfAbsent(goal, new HashMap<>());
+        mp.get(goal).putIfAbsent(start, 0);
+    }
+    private void writeMap(Map<String, Map<String, Integer>> mp, int value){
+        int val = mp.get(goal).get(start);
+        mp.get(goal).put(start,val+value);
+    }
+    public void first32(){
+        System.out.println("@@@@@@@ FIRST 32 EPISODE COUNTS @@@@@@@");
+        System.out.println("ACTION COUNTS");
+        printMap(this.firstFewAC);
+        System.out.println("RANDOM REPLAN COUNTS");
+        printMap(this.firstFewRRC);
+        System.out.println("RANDOM NOREPLAN COUNTS");
+        printMap(this.firstFewRNRC);
+        System.out.println("AUTOTERMINAL COUNTS");
+        printMap(this.firstFewATC);
 
-    private static double min(int x, int y){return x<y ? x : y;}
+
+    }
+    private void printMap(Map<String,Map<String, Integer>> mp){
+        for(Map.Entry<String, Map<String, Integer>> e : mp.entrySet()){
+            System.out.println("Pass goal is "+e.getKey());
+            for(Map.Entry<String, Integer> ie : e.getValue().entrySet())
+                System.out.println("Pass start is "+ie.getKey()+", count is "+ie.getValue());
+        }
+    }
+
 
     /**
 	 * tries to solve a grounded task while creating a model of it
@@ -151,6 +204,7 @@ public class RAMDPLearningAgent implements LearningAgent{
 		RAMDPModel model = getModel(task);
 		int actionCount = 0;
 		boolean earlyterminal = false;
+		boolean relearnterminal = false;
 		while( (task.toString().equals("solve")||!earlyterminal ) &&(!(task.isFailure(currentState) || task.isComplete(currentState)) && (steps < maxSteps || maxSteps == -1))){
 			actionCount++;
 			boolean subtaskCompleted = false;
@@ -201,30 +255,34 @@ public class RAMDPLearningAgent implements LearningAgent{
 
             if(relearn) {
 
-			    List<ActionType> actionTypes= task.getDomain().getActionTypes();
-			    int localConverge = 0;
-			    int convergeSum = 0;
-                for(ActionType type : actionTypes)
-                    for (Action act : type.allApplicableActions(pastState)) {
-                        localConverge += rmaxThreshold;
-                        convergeSum += min(model.getStateActionCount(this.hashingFactory.hashState(pastState), act), rmaxThreshold);
-                    }
+//			    List<ActionType> actionTypes= task.getDomain().getActionTypes();
+//			    int localConverge = 0;
+//			    int convergeSum = 0;
+//                for(ActionType type : actionTypes)
+//                    for (Action act : type.allApplicableActions(pastState)) {
+//                        localConverge += rmaxThreshold;
+//                        convergeSum += min(model.getStateActionCount(this.hashingFactory.hashState(pastState), act), rmaxThreshold);
+//                    }
 //                System.out.println("######################");
 //                int localCount = (model.getStateActionCount(this.hashingFactory.hashState(pastState),a));
 //                System.out.println("Superlocally coverged: "+(localCount>=rmaxThreshold)+" "+localCount+" "+rmaxThreshold);
 //                System.out.println("Locally converged: "+(convergeSum>=localConverge)+" "+convergeSum+" "+localConverge);
 
-//                if (model.getStateActionCount(this.hashingFactory.hashState(pastState), a)
-//                        >= rmaxThreshold)
-
-                if(convergeSum>=localConverge)
+                if(relearnterminal)
+                    autoterminalCount++;
+                if ((!relearnterminal) && model.getStateActionCount(this.hashingFactory.hashState(pastState), a)
+                        >= rmaxThreshold) {
+//                if(convergeSum>=localConverge){
                     earlyterminal = randomRelearn();
-                else
+                    if (earlyterminal)
+                        randomReplanCount++;
+                    else
+                        randomNoReplanCount++;
+                }else {
                     earlyterminal = false;
-
-                if(earlyterminal){
-                    relearnCount++;
+                    relearnterminal = true;
                 }
+
 //
             }
 			//earlyterminal = randomRelearn();
@@ -243,7 +301,7 @@ public class RAMDPLearningAgent implements LearningAgent{
 	private boolean randomRelearn(){
 		Random rand = new Random();
         if(relearn)
-            relearnFromRoot = alpha(actionCount, lowerThreshold, relearnThreshold);
+            relearnFromRoot = alpha(episodeCount, lowerThreshold, relearnThreshold);
         else
             relearnFromRoot = 0;
 		return rand.nextDouble()<this.relearnFromRoot;
@@ -260,6 +318,7 @@ public class RAMDPLearningAgent implements LearningAgent{
             return ((double)(count-lowerThreshold)/(double)(relearnThreshold-lowerThreshold));
         return 1;
     }
+
 	/**
 	 * add the children of the given task to the action name lookup
 	 * @param gt the current grounded task

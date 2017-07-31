@@ -13,7 +13,7 @@ import taxi.state.TaxiPassenger;
 import taxi.state.TaxiState;
 import taxi.state.TaxiWall;
 
-public class RandonPassengerTaxiState implements StateGenerator{
+public class RandomPassengerClassicTaxiState implements StateGenerator{
 
 	@Override
 	public State generateState() {

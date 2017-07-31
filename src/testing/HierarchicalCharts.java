@@ -5,7 +5,6 @@ import burlap.behavior.singleagent.auxiliary.performance.TrialMode;
 import burlap.behavior.singleagent.learning.LearningAgent;
 import burlap.behavior.singleagent.learning.LearningAgentFactory;
 import burlap.mdp.core.state.State;
-import burlap.mdp.singleagent.common.VisualActionObserver;
 import burlap.mdp.singleagent.environment.SimulatedEnvironment;
 import burlap.mdp.singleagent.oo.OOSADomain;
 import burlap.statehashing.HashableStateFactory;
@@ -13,11 +12,10 @@ import burlap.statehashing.simple.SimpleHashableStateFactory;
 import hierarchy.framework.GroundedTask;
 import hierarchy.framework.Task;
 import ramdp.agent.RAMDPLearningAgent;
-import rmaxq.agent.RmaxQLearningAgent;
-import taxi.TaxiVisualizer;
 import taxi.hierarchies.TaxiHierarchy;
 import taxi.state.TaxiState;
-import taxi.stateGenerator.RandonPassengerTaxiState;
+
+import taxi.stateGenerator.RandomPassengerClassicTaxiState;
 import taxi.stateGenerator.TaxiStateFactory;
 //import utilities.SimpleHashableStateFactory;
 import utilities.LearningAlgorithmExperimenter;
@@ -32,7 +30,7 @@ public class HierarchicalCharts {
 		
 
 //		SimulatedEnvironment env = new SimulatedEnvironment(domain, s);
-		SimulatedEnvironment env = new SimulatedEnvironment(domain, new RandonPassengerTaxiState());
+		SimulatedEnvironment env = new SimulatedEnvironment(domain, new RandomPassengerClassicTaxiState());
 
 //		VisualActionObserver obs = new VisualActionObserver(domain, TaxiVisualizer.getVisualizer(5, 5));
 //        obs.initGUI();
@@ -81,7 +79,7 @@ public class HierarchicalCharts {
 			final double rmax, final int threshold, final double maxDelta, final double discount,
 			int numEpisode, int maxSteps, int numTrial){
 		
-		SimulatedEnvironment env = new SimulatedEnvironment(domain, new RandonPassengerTaxiState());
+		SimulatedEnvironment env = new SimulatedEnvironment(domain, new RandomPassengerClassicTaxiState());
 		
 		final HashableStateFactory hs = new SimpleHashableStateFactory(true);
 		final GroundedTask RAMDPGroot = RAMDPRoot.getAllGroundedTasks(env.currentObservation()).get(0); 

@@ -15,7 +15,7 @@ import hierarchy.framework.Task;
 import taxi.TaxiVisualizer;
 import taxi.hierarchies.TaxiHierarchy;
 import taxi.state.TaxiState;
-import taxi.stateGenerator.RandonPassengerTaxiState;
+import taxi.stateGenerator.RandomPassengerClassicTaxiState;
 import taxi.stateGenerator.TaxiStateFactory;
 
 public class AMDPPlanTest {
@@ -25,7 +25,7 @@ public class AMDPPlanTest {
 		
 		AMDPPlanner amdp = new AMDPPlanner(root, gamma, hs, maxDelta, maxRollouts, true);
 		List<Episode> eps = new ArrayList<Episode>();
-		RandonPassengerTaxiState r = new RandonPassengerTaxiState();
+		RandomPassengerClassicTaxiState r = new RandomPassengerClassicTaxiState();
 		for(int i = 0; i < numEpisodes; i++){
 			eps.add(amdp.planFromState(r.generateState()));
 		}
