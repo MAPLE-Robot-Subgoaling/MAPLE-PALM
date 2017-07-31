@@ -20,7 +20,6 @@ public class TaxiState implements MutableOOState{
 	private Map<String, TaxiPassenger> passengers;
 	private Map<String, TaxiLocation> locations;
 	private Map<String, TaxiWall> walls;
-	private boolean isNavState = false;
 	
 	public TaxiState(TaxiAgent taxi, List<TaxiPassenger> passengers, List<TaxiLocation> locations,
 			List<TaxiWall> walls) {
@@ -52,8 +51,6 @@ public class TaxiState implements MutableOOState{
 	
 	@Override
 	public int numObjects() {
-		if(isNavState)
-			return 1 + locations.size() + walls.size();
 		return 1 + passengers.size() + locations.size() + walls.size();
 	}
 
@@ -81,8 +78,7 @@ public class TaxiState implements MutableOOState{
 	public List<ObjectInstance> objects() {
 		List<ObjectInstance> objs = new ArrayList<ObjectInstance>();
 		objs.add(taxi);
-		if(!isNavState)
-			objs.addAll(passengers.values());
+		objs.addAll(passengers.values());
 		objs.addAll(locations.values());
 		objs.addAll(walls.values());
 		return objs;
@@ -219,6 +215,14 @@ public class TaxiState implements MutableOOState{
 			ret[i++] = name;
 		return ret;
 	}
+
+	public String[] getWalls(){
+		String[] ret = new String[walls.size()];
+		int i = 0;
+		for(String name: walls.keySet())
+			ret[i++] = name;
+		return ret;
+	}
 	
 	public Object getTaxiAtt(String attName){
 		return taxi.get(attName);
@@ -236,6 +240,10 @@ public class TaxiState implements MutableOOState{
 		return locations.get(locName).get(attName);
 	}
 
+	public Object getWallAtt(String wallName, String attName){
+		return walls.get(wallName).get(attName);
+	}
+	
 	//test to see if there is a wall on either side of the taxi
 	public boolean wallNorth(){
 		int tx = (int) taxi.get(Taxi.ATT_X);
@@ -332,12 +340,5 @@ public class TaxiState implements MutableOOState{
 		}
 		return out;
 	}
-	
-	public void makeNaveState(){
-		isNavState = true;
-	}
-	
-	public boolean isNavState(){
-		return isNavState;
-	}
 }
+
