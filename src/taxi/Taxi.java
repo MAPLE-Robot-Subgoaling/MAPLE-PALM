@@ -245,7 +245,7 @@ public class Taxi implements DomainGenerator{
 		List<Episode> eps = new ArrayList<Episode>();
 		QLearning qagent = new QLearning(domain, 0.95, hs, 0, 0.1);
 		
-		for(int i = 0; i < 300; i++){
+		for(int i = 0; i < 600; i++){
 			Episode e = qagent.runLearningEpisode(env, 5000);
 			System.out.println(e.actionSequence.size());
 			eps.add(e);
