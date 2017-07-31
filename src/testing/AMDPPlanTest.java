@@ -6,6 +6,7 @@ import java.util.List;
 import amdp.planning.AMDPPlanner;
 import burlap.behavior.singleagent.Episode;
 import burlap.behavior.singleagent.auxiliary.EpisodeSequenceVisualizer;
+import burlap.debugtools.RandomFactory;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.oo.OOSADomain;
 import burlap.statehashing.HashableStateFactory;
@@ -43,6 +44,8 @@ public class AMDPPlanTest {
 		int maxRollouts = 1000;
 		int numEpisodes = 100;
 		
+		RandomFactory.seedMapped(0, 2320942930L);
+				
 		TaxiState s = TaxiStateFactory.createClassicState();
 		Task RAMDProot = TaxiHierarchy.createAMDPHierarchy(correctMoveprob, fickleProb, true);
 		OOSADomain base = TaxiHierarchy.getBaseDomain();

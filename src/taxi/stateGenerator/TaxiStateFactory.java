@@ -1,11 +1,9 @@
 
 package taxi.stateGenerator;
 
-import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
 
-import sun.util.logging.resources.logging;
 import taxi.Taxi;
 import taxi.state.TaxiAgent;
 import taxi.state.TaxiLocation;

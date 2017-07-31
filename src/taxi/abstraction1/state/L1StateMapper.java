@@ -7,7 +7,6 @@ import burlap.mdp.auxiliary.StateMapping;
 import burlap.mdp.core.state.State;
 import taxi.Taxi;
 import taxi.abstraction1.TaxiL1;
-import taxi.state.TaxiAgent;
 import taxi.state.TaxiState;
 
 public class L1StateMapper implements StateMapping {

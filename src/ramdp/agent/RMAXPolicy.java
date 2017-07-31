@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import burlap.behavior.policy.Policy;
+import burlap.debugtools.RandomFactory;
 import burlap.mdp.core.action.Action;
 import burlap.mdp.core.action.ActionType;
 import burlap.mdp.core.state.State;
@@ -52,7 +53,7 @@ public class RMAXPolicy implements Policy {
 		List<Action> unmodeled = unmodeledActions(s);
 		
 		if(unmodeled.size() > 0)
-			return unmodeled.get((int) (Math.random() * unmodeled.size()));
+			return unmodeled.get((int) (RandomFactory.getMapped(0).nextDouble() * unmodeled.size()));
 
 		//if not, default to original policy
 		return basePolicy.action(s);
