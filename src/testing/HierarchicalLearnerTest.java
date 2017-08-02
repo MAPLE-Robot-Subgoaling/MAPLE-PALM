@@ -5,6 +5,7 @@ import java.util.List;
 
 import burlap.behavior.singleagent.Episode;
 import burlap.behavior.singleagent.auxiliary.EpisodeSequenceVisualizer;
+import burlap.debugtools.RandomFactory;
 import burlap.mdp.auxiliary.StateGenerator;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.common.VisualActionObserver;
@@ -31,7 +32,7 @@ public class HierarchicalLearnerTest {
     public static void runRAMDPEpisodes(int numEpisode, int maxSteps, Task root,
 			State initial, OOSADomain groundDomain,
 			int threshold, double discount, double rmax, double maxDelta,
-            boolean relearn, int relearnThreshold, int lowerThreshold){
+            boolean relearn, int relearnThreshold, int lowerThreshold, int numTrial, long seed){
 		List<Episode> episodes = new ArrayList<Episode>();
 		GroundedTask rootgt = root.getAllGroundedTasks(initial).get(0);
 
@@ -39,27 +40,32 @@ public class HierarchicalLearnerTest {
                 new RAMDPLearningAgent(rootgt, threshold, discount, rmax,
 				new SimpleHashableStateFactory(true), maxDelta,
                 relearn, relearnThreshold, lowerThreshold);
+		ramdp.setSeed(numTrial);
         UniformPassengerClassicTaxiState uniSG = new UniformPassengerClassicTaxiState();
+        System.out.println("%%%%%%%%%%%%%%%%% TRIAL # "+numTrial+"%%%%%%%%%%%%");
+        System.out.println("seed# "+seed);
         System.out.println("next ep--Pass goal: "+getColor(uniSG.getPassengerStartGoal()));
         System.out.println("---------Pass start: "+getColor(uniSG.getPassengerStartLocation()));
         SimulatedEnvironment env = new SimulatedEnvironment(groundDomain, uniSG);
-//		VisualActionObserver obs = new VisualActionObserver(groundDomain, TaxiVisualizer.getVisualizer(5, 5));
-//		obs.initGUI();
-//		obs.setDefaultCloseOperation(obs.EXIT_ON_CLOSE);
-//		env.addObservers(obs);
+		VisualActionObserver obs = new VisualActionObserver(groundDomain, TaxiVisualizer.getVisualizer(5, 5));
+		obs.initGUI();
+		obs.setDefaultCloseOperation(obs.EXIT_ON_CLOSE);
+		env.addObservers(obs);
 		for(int i = 0; i < numEpisode; i++){
-
             long time = System.currentTimeMillis();
             ramdp.goal = getColor(uniSG.getPassengerStartGoal());
-            ramdp.start = getColor(uniSG.getPassengerStartLocation());
+            ramdp.start = getColor(uniSG.getPassengerStartLocation());;
 			Episode e = ramdp.runLearningEpisode(env, maxSteps);
 			time = System.currentTimeMillis() - time;
 			episodes.add(e);
-			System.out.println("##### Episode " + i + " time " + (double)time/1000 );
+
+            System.out.println("##### Episode " + i + " time " + (double)time/1000 );
             System.out.println("next ep--Pass goal: "+getColor(uniSG.getPassengerStartGoal()));
             System.out.println("---------Pass start: "+getColor(uniSG.getPassengerStartLocation()));
 			env.resetEnvironment();
 		}
+        System.out.println("%%%%%%%%%%%%%%%%% END TRIAL # "+numTrial+"%%%%%%%%%%%%");
+        System.out.println("seed# "+seed);
 		ramdp.first32();
 		EpisodeSequenceVisualizer ev = new EpisodeSequenceVisualizer
 				(TaxiVisualizer.getVisualizer(5, 5), groundDomain, episodes);
@@ -105,7 +111,7 @@ public class HierarchicalLearnerTest {
 	public static void main(String[] args) {
 
         int numTrials = 5;
-
+        RandomFactory.seedMapped(0, 2320942930L);
         double correctMoveprob = 1;
 		double fickleProb = .03;
 //        double fickleProb = .25;
@@ -127,9 +133,12 @@ public class HierarchicalLearnerTest {
 
 		OOSADomain base = TaxiHierarchy.getBaseDomain();
 //		Task RMAXQroot = TaxiHierarchy.createRMAXQHierarchy(correctMoveprob, fickleProb);
-		for(int i = 1; i <= numTrials; i++)
-		    runRAMDPEpisodes(numEpisodes, maxSteps, RAMDProot, s, base, rmaxThreshold, gamma, rmax, maxDelta,
-                    true, episodeRelearn, 0);
+        for(int i = 1; i <= numTrials; i++){
+            Long seed = RandomFactory.getMapped(0).nextLong();
+            RandomFactory.seedMapped(i, seed);
+            runRAMDPEpisodes(numEpisodes, maxSteps, RAMDProot, s, base, rmaxThreshold, gamma, rmax, maxDelta,
+                    true, episodeRelearn, 0, i, seed);
+        }
 //		runRMAXQEpsodes(numEpisodes, maxSteps, RMAXQroot, s, rmax, rmaxThreshold, maxDelta, base);
 	}
 }

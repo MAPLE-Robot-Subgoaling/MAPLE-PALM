@@ -5,6 +5,7 @@ import java.util.*;
 import burlap.behavior.policy.Policy;
 import burlap.behavior.singleagent.Episode;
 import burlap.behavior.singleagent.learning.LearningAgent;
+import burlap.debugtools.RandomFactory;
 import burlap.mdp.core.action.Action;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.environment.Environment;
@@ -79,6 +80,7 @@ public class RAMDPLearningAgent implements LearningAgent{
 	private int autoterminalCount = 0;
 	public String goal;
 	public String start;
+	private int seed;
     //private Map<GroundedTask, Integer> taskRelearnCount;
     private Map<String,Map<String, Integer>> firstFewAC = new HashMap<>();
     private Map<String,Map<String, Integer>> firstFewRRC =  new HashMap<>();
@@ -299,7 +301,7 @@ public class RAMDPLearningAgent implements LearningAgent{
 		return (task.isComplete(currentState)||earlyterminal) || actionCount == 0;
 	}
 	private boolean randomRelearn(){
-		Random rand = new Random();
+		Random rand = RandomFactory.getMapped(this.seed);
         if(relearn)
             relearnFromRoot = alpha(episodeCount, lowerThreshold, relearnThreshold);
         else
@@ -359,5 +361,11 @@ public class RAMDPLearningAgent implements LearningAgent{
 			this.models.put(t, model);
 		}
 		return model;
+	}
+	public void setSeed(int s){
+		this.seed = s;
+	}
+	public void setRelearn(boolean relearn){
+		this.relearn = relearn;
 	}
 }
