@@ -78,10 +78,11 @@ public class RAMDPLearningAgent implements LearningAgent{
 	private int randomReplanCount = 0;
 	private int randomNoReplanCount = 0;
 	private int autoterminalCount = 0;
+	private int parentNoReplanCount= 0;
 	public String goal;
 	public String start;
 	private int seed;
-    //private Map<GroundedTask, Integer> taskRelearnCount;
+    private Map<String, Integer> taskParentNoRelearnCount;
     private Map<String,Map<String, Integer>> firstFewAC = new HashMap<>();
     private Map<String,Map<String, Integer>> firstFewRRC =  new HashMap<>();
     private Map<String,Map<String, Integer>> firstFewRNRC = new HashMap<>();
@@ -130,34 +131,38 @@ public class RAMDPLearningAgent implements LearningAgent{
 //        if( this.actionCount<this.lowerThreshold||(episodeCount%5 == 0 ||
 //            this.actionCount < this.relearnThreshold &&
 //            this.actionCount >(this.relearnThreshold /2)))
+        this.taskParentNoRelearnCount = new HashMap<>();
 
 
-
-        solveTask(root, env, maxSteps);
+        solveTask(root, env, maxSteps, this.relearn);
         episodeCount++;
         System.out.println("Action count: "+this.actionCount);
         System.out.println("Random replan count: "+this.randomReplanCount);
         System.out.println("Random noreplan count: "+this.randomNoReplanCount);
         System.out.println("Autoterminal count: "+this.autoterminalCount);
-        if(episodeCount<=32){
-            prepMap(this.firstFewRRC);
-            prepMap(this.firstFewAC);
-            prepMap(this.firstFewRNRC);
-            prepMap(this.firstFewATC);
+        System.out.println("Parent noreplan count: "+this.parentNoReplanCount);
 
-            writeMap(this.firstFewRRC, this.randomReplanCount);
-            writeMap(this.firstFewRNRC,this.randomNoReplanCount);
-            writeMap(this.firstFewATC,this.autoterminalCount);
-            writeMap(this.firstFewAC,this.actionCount);
-            if(episodeCount==32){
-                    first32();
-            }
-        }
+
+//        if(episodeCount<=32){
+//            prepMap(this.firstFewRRC);
+//            prepMap(this.firstFewAC);
+//            prepMap(this.firstFewRNRC);
+//            prepMap(this.firstFewATC);
+//
+//            writeMap(this.firstFewRRC, this.randomReplanCount);
+//            writeMap(this.firstFewRNRC,this.randomNoReplanCount);
+//            writeMap(this.firstFewATC,this.autoterminalCount);
+//            writeMap(this.firstFewAC,this.actionCount);
+//            if(episodeCount==32){
+//                    first32();
+//            }
+//        }
 
 
         this.randomReplanCount =0;
         this.randomNoReplanCount=0;
         this.autoterminalCount=0;
+        this.parentNoReplanCount=0;
         this.actionCount=0;
 		return e;
 	}
@@ -198,7 +203,7 @@ public class RAMDPLearningAgent implements LearningAgent{
 	 * @param maxSteps the max number of primitive actions that can be taken
 	 * @return whether the task was completed 
 	 */
-	protected boolean solveTask(GroundedTask task, Environment baseEnv, int maxSteps){
+	protected boolean solveTask(GroundedTask task, Environment baseEnv, int maxSteps, boolean replan){
 		State baseState = e.stateSequence.get(e.stateSequence.size() - 1);
 		State pastBaseState = baseState;
 		State currentState = task.mapState(baseState);
@@ -234,7 +239,9 @@ public class RAMDPLearningAgent implements LearningAgent{
 				steps++;
 				this.actionCount++;
 			}else{
-				subtaskCompleted = solveTask(action, baseEnv, maxSteps);
+                boolean replanChild = model.getStateActionCount(this.hashingFactory.hashState(currentState), a)
+                        >= rmaxThreshold;
+				subtaskCompleted = solveTask(action, baseEnv, maxSteps, replanChild);
 				baseState = e.stateSequence.get(e.stateSequence.size() - 1);
 				currentState = task.mapState(baseState);
 
@@ -254,39 +261,44 @@ public class RAMDPLearningAgent implements LearningAgent{
 //				System.out.println("state-action count: " + model.getStateActionCount(hashingFactory.hashState(pastState), a));
 //				System.out.println("subtask complete: "+subtaskCompleted);
 			//}
+            if(!task.toString().equals("solve"))
+                if(replan) {
 
-            if(relearn) {
+    //			    List<ActionType> actionTypes= task.getDomain().getActionTypes();
+    //			    int localConverge = 0;
+    //			    int convergeSum = 0;
+    //                for(ActionType type : actionTypes)
+    //                    for (Action act : type.allApplicableActions(pastState)) {
+    //                        localConverge += rmaxThreshold;
+    //                        convergeSum += min(model.getStateActionCount(this.hashingFactory.hashState(pastState), act), rmaxThreshold);
+    //                    }
+    //                System.out.println("######################");
+    //                int localCount = (model.getStateActionCount(this.hashingFactory.hashState(pastState),a));
+    //                System.out.println("Superlocally coverged: "+(localCount>=rmaxThreshold)+" "+localCount+" "+rmaxThreshold);
+    //                System.out.println("Locally converged: "+(convergeSum>=localConverge)+" "+convergeSum+" "+localConverge);
 
-//			    List<ActionType> actionTypes= task.getDomain().getActionTypes();
-//			    int localConverge = 0;
-//			    int convergeSum = 0;
-//                for(ActionType type : actionTypes)
-//                    for (Action act : type.allApplicableActions(pastState)) {
-//                        localConverge += rmaxThreshold;
-//                        convergeSum += min(model.getStateActionCount(this.hashingFactory.hashState(pastState), act), rmaxThreshold);
-//                    }
-//                System.out.println("######################");
-//                int localCount = (model.getStateActionCount(this.hashingFactory.hashState(pastState),a));
-//                System.out.println("Superlocally coverged: "+(localCount>=rmaxThreshold)+" "+localCount+" "+rmaxThreshold);
-//                System.out.println("Locally converged: "+(convergeSum>=localConverge)+" "+convergeSum+" "+localConverge);
+                    if(relearnterminal)
+                        autoterminalCount++;
+                    if ((!relearnterminal) && model.getStateActionCount(this.hashingFactory.hashState(pastState), a)
+                            >= rmaxThreshold) {
+    //                if(convergeSum>=localConverge){
+                        earlyterminal = randomRelearn();
+                        if (earlyterminal)
+                            randomReplanCount++;
+                        else
+                            randomNoReplanCount++;
+                    }else {
+                        earlyterminal = false;
+                        relearnterminal = true;
+                    }
 
-                if(relearnterminal)
-                    autoterminalCount++;
-                if ((!relearnterminal) && model.getStateActionCount(this.hashingFactory.hashState(pastState), a)
-                        >= rmaxThreshold) {
-//                if(convergeSum>=localConverge){
-                    earlyterminal = randomRelearn();
-                    if (earlyterminal)
-                        randomReplanCount++;
-                    else
-                        randomNoReplanCount++;
-                }else {
-                    earlyterminal = false;
-                    relearnterminal = true;
+    //
+                }else if(relearn){
+			        String taskName = task.toString();
+                    taskParentNoRelearnCount.putIfAbsent(taskName,0);
+                    taskParentNoRelearnCount.put(taskName, taskParentNoRelearnCount.get(taskName)+1);
+                    this.parentNoReplanCount++;
                 }
-
-//
-            }
 			//earlyterminal = randomRelearn();
 		}
 
@@ -300,6 +312,9 @@ public class RAMDPLearningAgent implements LearningAgent{
 		//if(task.toString().startsWith("navigate"))
 		return (task.isComplete(currentState)||earlyterminal) || actionCount == 0;
 	}
+	private boolean alwaysRelearn(){
+	    return true;
+    }
 	private boolean randomRelearn(){
 		Random rand = RandomFactory.getMapped(this.seed);
         if(relearn)

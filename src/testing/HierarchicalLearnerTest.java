@@ -47,10 +47,10 @@ public class HierarchicalLearnerTest {
         System.out.println("next ep--Pass goal: "+getColor(uniSG.getPassengerStartGoal()));
         System.out.println("---------Pass start: "+getColor(uniSG.getPassengerStartLocation()));
         SimulatedEnvironment env = new SimulatedEnvironment(groundDomain, uniSG);
-		VisualActionObserver obs = new VisualActionObserver(groundDomain, TaxiVisualizer.getVisualizer(5, 5));
-		obs.initGUI();
-		obs.setDefaultCloseOperation(obs.EXIT_ON_CLOSE);
-		env.addObservers(obs);
+//		VisualActionObserver obs = new VisualActionObserver(groundDomain, TaxiVisualizer.getVisualizer(5, 5));
+//		obs.initGUI();
+//		obs.setDefaultCloseOperation(obs.EXIT_ON_CLOSE);
+//		env.addObservers(obs);
 		for(int i = 0; i < numEpisode; i++){
             long time = System.currentTimeMillis();
             ramdp.goal = getColor(uniSG.getPassengerStartGoal());
@@ -66,7 +66,7 @@ public class HierarchicalLearnerTest {
 		}
         System.out.println("%%%%%%%%%%%%%%%%% END TRIAL # "+numTrial+"%%%%%%%%%%%%");
         System.out.println("seed# "+seed);
-		ramdp.first32();
+//		ramdp.first32();
 		EpisodeSequenceVisualizer ev = new EpisodeSequenceVisualizer
 				(TaxiVisualizer.getVisualizer(5, 5), groundDomain, episodes);
 		ev.setDefaultCloseOperation(ev.EXIT_ON_CLOSE);
@@ -110,7 +110,7 @@ public class HierarchicalLearnerTest {
 
 	public static void main(String[] args) {
 
-        int numTrials = 5;
+        int numTrials = 20;
         RandomFactory.seedMapped(0, 2320942930L);
         double correctMoveprob = 1;
 		double fickleProb = .03;
