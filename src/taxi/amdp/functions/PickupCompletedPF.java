@@ -2,15 +2,15 @@ package taxi.amdp.functions;
 
 import burlap.mdp.core.oo.propositional.PropositionalFunction;
 import burlap.mdp.core.oo.state.OOState;
-import taxi.abstraction1.PickupActionType;
-import taxi.abstraction1.TaxiL1;
+import taxi.PickupActionType;
+import taxi.Taxi;
 import taxi.state.TaxiState;
 
 public class PickupCompletedPF extends PropositionalFunction {
 	//pickup is complete when passenger is in taxi 
 	
 	public PickupCompletedPF() {
-		super("pickupL1", new String[]{TaxiL1.CLASS_L1PASSENGER});
+		super("pickupL1", new String[]{Taxi.CLASS_PASSENGER});
 	}
 	
 	@Override
@@ -20,7 +20,7 @@ public class PickupCompletedPF extends PropositionalFunction {
 		PickupActionType.PickupAction a = pass.associatedAction(action);
 		TaxiState st = (TaxiState) s;
 
-		return (boolean)st.getPassengerAtt(a.getPassenger(), TaxiL1.ATT_IN_TAXI);
+		return (boolean)st.getPassengerAtt(a.getPassenger(), Taxi.ATT_IN_TAXI);
 	}
 
 }

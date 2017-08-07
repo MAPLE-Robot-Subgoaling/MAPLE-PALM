@@ -5,7 +5,6 @@ import java.util.List;
 
 import burlap.mdp.core.StateTransitionProb;
 import burlap.mdp.core.action.Action;
-import burlap.mdp.core.oo.ObjectParameterizedAction;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.model.statemodel.FullStateModel;
 import taxi.state.TaxiAgent;
@@ -76,7 +75,7 @@ public class TaxiModel implements FullStateModel{
 		}else if(action == Taxi.IND_DROPOFF){
 			dropoff(taxiS, tps);
 		}else if(action == Taxi.IND_PICKUP){
-			pickup(taxiS, ((ObjectParameterizedAction)a).getObjectParameters()[0], tps);
+			pickup(taxiS, ((PickupActionType.PickupAction)a).getPassenger(), tps);
 		}
 		
 		return tps;
@@ -265,7 +264,7 @@ public class TaxiModel implements FullStateModel{
 			return Taxi.IND_SOUTH;
 		else if(aname.equals(Taxi.ACTION_WEST))
 			return Taxi.IND_WEST;
-		else if(aname.equals(Taxi.ACTION_PICKUP))
+		else if(aname.startsWith(Taxi.ACTION_PICKUP))
 			return Taxi.IND_PICKUP;
 		else if(aname.equals(Taxi.ACTION_DROPOFF))
 			return Taxi.IND_DROPOFF;
