@@ -29,7 +29,7 @@ public class CATTest {
 		double maxDelta = 0.01;
 		int maxIterations = 100;
 		int numTrajectories = 50;
-		boolean loadFiles = true;
+		boolean loadFiles = false;
 		String directory = "trees";
 
 //        EpisodeSequenceVisualizer ev = new EpisodeSequenceVisualizer

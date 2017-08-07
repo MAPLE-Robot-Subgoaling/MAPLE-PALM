@@ -11,9 +11,24 @@ import java.util.*;
 
 public class CATrajectory {
 
+	/**
+	 * the list of actions in the CAT
+	 */
 	private List<String> actions;
+
+	/**
+	 * the list of edges
+	 */
 	private List<CausalEdge> edges;
+
+	/**
+	 * lists of state variables that are changed or checked by each actions
+	 */
 	private Set<String>[] checkedVariables, changedVariables;
+
+	/**
+	 * the trajectories thi CAT is derived from
+	 */
 	private Episode baseTrajectory;
 	
 	public CATrajectory() {
@@ -22,8 +37,17 @@ public class CATrajectory {
 	}
 	
 	//parent structure  action -> variable/ R(reward) -> relevant var
+
+	/**
+	 * add annotated causal edges from the given episode
+	 * @param e the episode to annotate
+	 * @param decisions the decision trees for all variables from each action
+	 * @param model the base domain
+	 */
 	public void annotateTrajectory(Episode e, Map<String, Map<String, VariableTree>> decisions, FullModel model){
 		baseTrajectory = e;
+
+		//add all actions to the CAT
 		actions.add("START");
 		for(Action a : e.actionSequence){
 			actions.add(a.actionName());
@@ -33,11 +57,13 @@ public class CATrajectory {
 		checkedVariables = new Set[actions.size()];
 		changedVariables = new Set[actions.size()];
 
+		//extract the checked and changed variables for each actionn
 		for(int i = 0; i < actions.size(); i++){
 			String action = actions.get(i);
 			checkedVariables[i] = new HashSet<String>();
 			changedVariables[i] = new HashSet<String>();
 
+			//dummy start and end nodes check and change all variables
 			if(action.equals("START") || action.equals("END")){
 				State s = e.stateSequence.get(0);
 				for(Object var : s.variableKeys()){
@@ -45,7 +71,6 @@ public class CATrajectory {
 					changedVariables[i].add(var.toString());
 				}
 				continue;
-
 			}
 
 			State s = e.stateSequence.get(i - 1);
@@ -58,6 +83,8 @@ public class CATrajectory {
 
 			for(Object var : s.variableKeys()){
 				Object sVal = s.get(var);
+
+				//determine if this variable is changed
 				boolean changed = false;
 				List<TransitionProb> transitions = model.transitions(s, a);
 				for(TransitionProb tp : transitions){
@@ -68,6 +95,7 @@ public class CATrajectory {
 					}
 				}
 
+				//if the variable changed, its checked variables are checked
 				if(changed){
 					changedVariables[i].add(var.toString());
 					VariableTree varTree = decisions.get(action).get(var.toString());
@@ -77,6 +105,7 @@ public class CATrajectory {
 			}
 		}
 
+		//create edges
 		//created edges - a changes x, b checks x, and x is not changed by action in between
 		for(int i = 0; i < actions.size() - 1; i++){
 			for (String var : changedVariables[i]){
@@ -94,7 +123,13 @@ public class CATrajectory {
 			}
 		}
 	}
-	
+
+	/**
+	 * find a edge
+	 * @param start start index of the edge
+	 * @param variable edge label
+	 * @return the end index of the edge
+	 */
 	public int findEdge(int start, String variable){
 		for(CausalEdge edge : edges){
 			if(edge.getStart() == start && edge.getRelavantVariable().equals(variable)){
@@ -103,7 +138,11 @@ public class CATrajectory {
 		}
 		return -1;
 	}
-	
+
+	/**
+	 * find the number of real actions
+	 * @return length of the base trajectory
+	 */
 	public int actionCount(){
 		if(baseTrajectory == null){
 			return 0;
@@ -131,7 +170,12 @@ public class CATrajectory {
 		}
 		return out;
 	}
-	
+
+	/**
+	 * get a state from the trajectory
+	 * @param index the index of interest
+	 * @return the requested state
+	 */
 	public State getState(int index){
 		return baseTrajectory.stateSequence.get(index);
 	}

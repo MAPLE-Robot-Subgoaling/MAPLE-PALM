@@ -2,13 +2,16 @@ package hierarchies.structureLearning;
 
 public class CausalEdge {
 
+	/**
+	 * start and end index of the edge
+	 */
 	private int start, end;
-	private String relavantVariable;
+	private String edgeVariable;
 	
 	public CausalEdge(int start, int end, String var) {
 		this.start = start;
 		this.end = end;
-		this.relavantVariable = var;
+		this.edgeVariable = var;
 	}
 	
 	public int getStart() {
@@ -20,6 +23,7 @@ public class CausalEdge {
 	}
 	
 	public String getRelavantVariable() {
-		return relavantVariable;
+		return edgeVariable;
 	}
 }
+

@@ -17,6 +17,15 @@ import java.util.List;
 
 public class TrajectoryGengerator {
 
+	/**
+	 * generate a certain number of trajectories on a domain using a q learner agent
+	 * @param stateGen the collect of start states
+	 * @param numTrajectories the number of trajectories to generate*
+	 * @param domain the domain
+	 * @param gamma the discount factor
+	 * @param hashingFactory a state hashing factory
+	 * @return the list of learned trajectories
+	 */
 	public static List<Episode> generateQLearnedTrajectories(StateGenerator stateGen, int numTrajectories,
 															 SADomain domain, double gamma, HashableStateFactory hashingFactory){
 
@@ -32,6 +41,17 @@ public class TrajectoryGengerator {
 		return episodes;
 	}
 
+	/**
+	 * create a given number of trajectores from a value iteration agent
+	 * @param stateGen the starting state set
+	 * @param numTrajectories the number of trajectories to make
+	 * @param domain the domain to plan in
+	 * @param gamma the discount factor
+	 * @param hashingFactory the state hashing factory
+	 * @param maxDelta the maximum allowed error for value iteration
+	 * @param maxIterations the maximum number of vi iterations
+	 * @return a list of planned trajectories
+	 */
 	public static List<Episode> generateVIPlannedTrajectories(StateGenerator stateGen, int numTrajectories,
 															  SADomain domain, double gamma, HashableStateFactory hashingFactory,
 															  double maxDelta, int maxIterations){

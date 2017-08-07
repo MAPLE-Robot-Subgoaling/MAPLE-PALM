@@ -7,6 +7,7 @@ import burlap.behavior.singleagent.Episode;
 import burlap.behavior.singleagent.learning.LearningAgent;
 import burlap.mdp.auxiliary.StateGenerator;
 import burlap.mdp.singleagent.environment.Environment;
+import burlap.mdp.singleagent.model.FullModel;
 import burlap.mdp.singleagent.oo.OOSADomain;
 import burlap.statehashing.HashableStateFactory;
 import hierarchy.framework.GroundedTask;
@@ -61,9 +62,14 @@ public class HierGenLearningAgent implements LearningAgent {
 		this.treeDirerctory = null;
 	}
 
+	/**
+	 * create action model, CATrajectories, and a AMDP hierarchy
+	 * @return the root task of the AMDP hierarchy
+	 */
 	protected Task createHierarchy(){
 		Map<String, Map<String, VariableTree>> actionMoodels;
 
+		//create the decision tree models
 		if(treeDirerctory == null){
 			List<Episode> trajectories = TrajectoryGengerator.generateQLearnedTrajectories
 					(trainingStates, numTrajectories, baseDomain, gamma, HashingFactory);
@@ -72,16 +78,17 @@ public class HierGenLearningAgent implements LearningAgent {
 			actionMoodels = CreateActionModels.readTreeFiles(treeDirerctory);
 		}
 
+		//annotate trajectories from planned trajectories
 		List<Episode> trajectories = TrajectoryGengerator.generateVIPlannedTrajectories
 				(trainingStates, numTrajectories, baseDomain, gamma, HashingFactory, maxDelta, numIteraions);
 		List<CATrajectory> caTrajectories = new ArrayList<CATrajectory>();
 		for(Episode trajectory : trajectories){
 			CATrajectory cat = new CATrajectory();
-			cat.annotateTrajectory(trajectory, actionMoodels, baseDomain.getModel());
+			cat.annotateTrajectory(trajectory, actionMoodels, (FullModel) baseDomain.getModel());
 			caTrajectories.add(cat);
 		}
 
-
+		return null;
 	}
 
 	@Override
@@ -91,6 +98,8 @@ public class HierGenLearningAgent implements LearningAgent {
 
 	@Override
 	public Episode runLearningEpisode(Environment env, int maxSteps) {
+		//if the RAMDP hierarchy is created, run a episode with it
+		//if not, generate a hierarchy
 		if(ramdpLearningAgent == null){
 			Task root = createHierarchy();
 			GroundedTask gRoot = root.getAllGroundedTasks(env.currentObservation()).get(0);
