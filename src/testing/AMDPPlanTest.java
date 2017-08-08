@@ -1,8 +1,5 @@
 package testing;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import amdp.planning.AMDPPlanner;
 import burlap.behavior.singleagent.Episode;
 import burlap.behavior.singleagent.auxiliary.EpisodeSequenceVisualizer;
@@ -15,6 +12,9 @@ import taxi.TaxiVisualizer;
 import taxi.hierarchies.TaxiHierarchy;
 import taxi.state.TaxiState;
 import taxi.stateGenerator.TaxiStateFactory;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class AMDPPlanTest {
 	
@@ -36,7 +36,7 @@ public class AMDPPlanTest {
 	
 	public static void main(String[] args) {
 		double correctMoveprob = 1;
-		double fickleProb = 0.9;
+		double fickleProb = 0.5;
 		double gamma = 0.9;
 		double maxDelta = 0.01;
 		int maxRollouts = 1000;

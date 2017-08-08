@@ -1,8 +1,5 @@
 package taxi;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import burlap.mdp.core.StateTransitionProb;
 import burlap.mdp.core.action.Action;
 import burlap.mdp.core.state.State;
@@ -10,6 +7,9 @@ import burlap.mdp.singleagent.model.statemodel.FullStateModel;
 import taxi.state.TaxiAgent;
 import taxi.state.TaxiPassenger;
 import taxi.state.TaxiState;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class TaxiModel implements FullStateModel{
 
@@ -149,7 +149,6 @@ public class TaxiModel implements FullStateModel{
 					if(inTaxi && justPickedUp){
 						passengerChanged = true;
 						TaxiPassenger np = ns.touchPassenger(passengerName);
-						np.set(Taxi.ATT_JUST_PICKED_UP, false);
 						// may change goal
 						for(String locName : s.getLocations()){
 							TaxiState nfickles = ns.copy();
@@ -162,6 +161,7 @@ public class TaxiModel implements FullStateModel{
 								//set goal to loc
 								TaxiPassenger npf = nfickles.touchPassenger(passengerName);
 								npf.set(Taxi.ATT_GOAL_LOCATION, locName);
+								npf.set(Taxi.ATT_JUST_PICKED_UP, false);
 								tps.add(new StateTransitionProb(nfickles, p * (fickleChangeGoalProbaility
 										/ (s.getLocations().length - 1))));
 							}
