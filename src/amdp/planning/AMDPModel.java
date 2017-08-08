@@ -1,13 +1,13 @@
 package amdp.planning;
 
-import java.util.List;
-
 import burlap.mdp.core.action.Action;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.environment.EnvironmentOutcome;
 import burlap.mdp.singleagent.model.FullModel;
 import burlap.mdp.singleagent.model.TransitionProb;
 import hierarchy.framework.GroundedTask;
+
+import java.util.List;
 
 public class AMDPModel implements FullModel {
 
@@ -55,6 +55,13 @@ public class AMDPModel implements FullModel {
 		return task.isComplete(s) || task.isFailure(s);
 	}
 
+	/**
+	 * the transitions are drawn from original model and reward
+	 * and terminal value are made task specific
+	 * @param s current state
+	 * @param a the action taken
+	 * @return a list of possible next states
+	 */
 	@Override
 	public List<TransitionProb> transitions(State s, Action a) {
  		List<TransitionProb> tps = baseModel.transitions(s, a);

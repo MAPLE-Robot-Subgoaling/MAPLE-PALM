@@ -17,11 +17,11 @@ import rmaxq.agent.RmaxQLearningAgent;
 import taxi.TaxiVisualizer;
 import taxi.hierarchies.TaxiHierarchy;
 import taxi.state.TaxiState;
-import taxi.stateGenerator.FullRandomTaxiState;
 import taxi.stateGenerator.RandonPassengerTaxiState;
 import taxi.stateGenerator.TaxiStateFactory;
-//import utilities.SimpleHashableStateFactory;
 import utilities.LearningAlgorithmExperimenter;
+
+//import utilities.SimpleHashableStateFactory;
 
 public class HierarchicalCharts {
 
@@ -63,7 +63,7 @@ public class HierarchicalCharts {
 			}
 		};
 		
-		LearningAlgorithmExperimenter exp = new LearningAlgorithmExperimenter(env, numTrial, numEpisode, maxSteps, ramdp);
+		LearningAlgorithmExperimenter exp = new LearningAlgorithmExperimenter(env, numTrial, numEpisode, maxSteps, rmaxq);
 		exp.setUpPlottingConfiguration(500, 300, 2, 1000,
 				TrialMode.MOST_RECENT_AND_AVERAGE,
 				PerformanceMetric.CUMULATIVE_REWARD_PER_EPISODE

@@ -49,10 +49,10 @@ public class NonprimitiveTask extends Task{
 	 * @param compl the completion PF
 	 */
 	public NonprimitiveTask(Task[] children, ActionType aType,
-			PropositionalFunction term, PropositionalFunction compl) {
+			PropositionalFunction fail, PropositionalFunction compl) {
 		super(children, aType,  null, null);
 		this.rf = new NonprimitiveRewardFunction(this);
-		this.failure = term;
+		this.failure = fail;
 		this.completed = compl;
 	}
 	
@@ -68,10 +68,10 @@ public class NonprimitiveTask extends Task{
 	 * @param compl the completion PF
 	 */
 	public NonprimitiveTask(Task[] children, ActionType aType, OOSADomain abstractDomain, StateMapping map,
-			 RewardFunction taskrf, PropositionalFunction term, PropositionalFunction compl) {
+			 RewardFunction taskrf, PropositionalFunction fail, PropositionalFunction compl) {
 		super(children, aType, abstractDomain, map);
 		this.rf = taskrf;
-		this.failure = term;
+		this.failure = fail;
 		this.completed = compl;
 	}
 	

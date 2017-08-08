@@ -12,13 +12,13 @@ public class NonprimitiveRewardFunction implements RewardFunction{
 	public NonprimitiveRewardFunction(Task t) {
 		this.t = t;
 	}
-	
+
 	/**
-	 * the action is associated with the grounded task 
-	 * the sprime is the state to assign award to
-	 * this returns +1 for completion
-	 * -1 for failure 
-	 * and 0 otherwise
+	 * return a reward assigned to the resulting s prime state
+	 * @param s the pprevious state
+	 * @param a the grounded action of the task currently being solved
+	 * @param sprime the resulting state whick is associated with the reward
+	 * @return 1 if s prime completes the task, -1 if the task fails, 0 otherwise
 	 */
 	@Override
 	public double reward(State s, Action a, State sprime) {

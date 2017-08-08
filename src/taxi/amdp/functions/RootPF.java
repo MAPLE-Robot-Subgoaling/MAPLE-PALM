@@ -1,16 +1,14 @@
 package taxi.amdp.functions;
 
-import java.util.List;
 import burlap.mdp.core.oo.propositional.PropositionalFunction;
 import burlap.mdp.core.oo.state.OOState;
-import taxi.Taxi;
 import taxi.abstraction2.TaxiL2;
 import taxi.abstraction2.state.TaxiL2State;
 
 public class RootPF extends PropositionalFunction {
 
 	public RootPF() {
-		super("root", new String[]{TaxiL2.CLASS_L2LOCATION});
+		super("root", new String[]{});
 	}
 	
 	@Override
