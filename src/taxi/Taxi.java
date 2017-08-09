@@ -176,8 +176,8 @@ public class Taxi implements DomainGenerator{
                 new UniversalActionType(ACTION_SOUTH),
                 new UniversalActionType(ACTION_EAST),
                 new UniversalActionType(ACTION_WEST),
-                new UniversalActionType(ACTION_DROPOFF),
                 new PickupActionType());
+				new DropOffActionType();
 		
 		return domain;
 	}
@@ -207,7 +207,7 @@ public class Taxi implements DomainGenerator{
 	public OOSADomain generateDropOffDomain(){
 		OOSADomain d = generateDomain();
 		d.clearActionTypes();
-		d.addActionType(new UniversalActionType(ACTION_DROPOFF));
+		d.addActionType(new DropOffActionType());
 		
 		return d;
 	}

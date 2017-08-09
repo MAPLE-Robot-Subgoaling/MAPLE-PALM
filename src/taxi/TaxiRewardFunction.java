@@ -64,8 +64,8 @@ public class TaxiRewardFunction implements RewardFunction{
 		
 		//illegal pickup when no passenger at taxi's location or if taxi is occupied
 		if(a.actionName().equals(Taxi.ACTION_PICKUP)){
-			if(taxiOccupied)
-				return stepReward + illegalActionReward;
+			//if(taxiOccupied)
+				//return stepReward + illegalActionReward;
 			
 			boolean passengerAtTaxi = false;
 			for(String passengerName : state.getPassengers()){

@@ -112,10 +112,10 @@ public class HierarchicalCharts {
 	public static void main(String[] args) {
 		double correctMoveprob = 1;
 		double fickleProb = 0;
-		int numEpisodes = 50;
+		int numEpisodes = 200;
 		int maxSteps = 1000;
 		int rmaxThreshold = 3;
-		int numTrials = 2;
+		int numTrials = 5;
 		double gamma = 0.9;
 		double rmax = 20;
 		double maxDelta = 0.01;

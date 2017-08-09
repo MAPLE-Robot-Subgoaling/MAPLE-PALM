@@ -111,7 +111,7 @@ public class TaxiL1 implements DomainGenerator {
 		domain.addActionTypes(
 				new NavigateActionType(),
 				new PickupActionType(),
-				new UniversalActionType(ACTION_L1DROPOFF)
+				new DropOffActionType()
 				);
 		
 		return domain;
@@ -133,7 +133,7 @@ public class TaxiL1 implements DomainGenerator {
 		d.clearActionTypes();
 		d.addActionTypes(
 				new NavigateActionType(),
-				new UniversalActionType(ACTION_L1DROPOFF)
+				new DropOffActionType()
 				);
 		return d;
 	}

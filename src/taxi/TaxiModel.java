@@ -73,7 +73,7 @@ public class TaxiModel implements FullStateModel{
 		if(action <= Taxi.IND_WEST){
 			movement(taxiS, action, tps);
 		}else if(action == Taxi.IND_DROPOFF){
-			dropoff(taxiS, tps);
+			dropoff(taxiS, ((DropOffActionType.DropOffAction)a).getPassenger(), tps);
 		}else if(action == Taxi.IND_PICKUP){
 			pickup(taxiS, ((PickupActionType.PickupAction)a).getPassenger(), tps);
 		}
@@ -189,7 +189,7 @@ public class TaxiModel implements FullStateModel{
 		int ty = (int) s.getTaxiAtt(Taxi.ATT_Y);
 		boolean taxiOccupied = (boolean) s.getTaxiAtt(Taxi.ATT_TAXI_OCCUPIED);
 
-		if (!taxiOccupied) {
+		//if (!taxiOccupied) {
 			int px = (int) s.getPassengerAtt(p, Taxi.ATT_X);
 			int py = (int) s.getPassengerAtt(p, Taxi.ATT_Y);
 			boolean inTaxi = (boolean) s.getPassengerAtt(p, Taxi.ATT_IN_TAXI);
@@ -210,7 +210,7 @@ public class TaxiModel implements FullStateModel{
 				return;
 			}
 			tps.add(new StateTransitionProb(s.copy(), 1.));
-		}
+
 	}
 	
 	/**
@@ -218,7 +218,7 @@ public class TaxiModel implements FullStateModel{
 	 * @param s the current state
 	 * @param tps a list of state transition probabilities to add to
 	 */
-	public void dropoff(TaxiState s, List<StateTransitionProb> tps){
+	public void dropoff(TaxiState s, String p, List<StateTransitionProb> tps){
 		int tx = (int) s.getTaxiAtt(Taxi.ATT_X);
 		int ty = (int) s.getTaxiAtt(Taxi.ATT_Y); 
 		boolean taxiOccupied = (boolean) s.getTaxiAtt(Taxi.ATT_TAXI_OCCUPIED);
@@ -230,20 +230,31 @@ public class TaxiModel implements FullStateModel{
 				int ly = (int) s.getLocationAtt(loc, Taxi.ATT_Y);
 
 				if( tx == lx && ty == ly){
-					for(String passengerName : s.getPassengers()){
-						int px = (int) s.getPassengerAtt(passengerName, Taxi.ATT_X);
-						int py = (int) s.getPassengerAtt(passengerName, Taxi.ATT_Y);
-						boolean inTaxi = (boolean) s.getPassengerAtt(passengerName, Taxi.ATT_IN_TAXI);
+						int px = (int) s.getPassengerAtt(p, Taxi.ATT_X);
+						int py = (int) s.getPassengerAtt(p, Taxi.ATT_Y);
+						boolean inTaxi = (boolean) s.getPassengerAtt(p, Taxi.ATT_IN_TAXI);
                         if(inTaxi){
-                            TaxiPassenger np = ns.touchPassenger(passengerName);
+                            TaxiPassenger np = ns.touchPassenger(p);
                             np.set(Taxi.ATT_IN_TAXI, false);
-                        }
+
                     }
 				}
 			}
 
-            TaxiAgent ntaxi = ns.touchTaxi();
-            ntaxi.set(Taxi.ATT_TAXI_OCCUPIED, false);
+			boolean passengersInTaxi = false;
+			// iterate through every passenger except the one that was just dropped off and see if taxi is empty
+			for(String passengerName : s.getPassengers()) {
+				boolean inTaxi = (boolean) s.getPassengerAtt(passengerName, Taxi.ATT_IN_TAXI);
+				if ((!passengerName.equals(p)) && inTaxi) {
+					passengersInTaxi = true;
+				}
+			}
+
+			if (!passengersInTaxi) {
+				TaxiAgent ntaxi = ns.touchTaxi();
+				ntaxi.set(Taxi.ATT_TAXI_OCCUPIED, false);
+				System.out.println("no passengers in taxi");
+			}
 		}
 
 		tps.add(new StateTransitionProb(ns, 1.));
@@ -266,7 +277,7 @@ public class TaxiModel implements FullStateModel{
 			return Taxi.IND_WEST;
 		else if(aname.startsWith(Taxi.ACTION_PICKUP))
 			return Taxi.IND_PICKUP;
-		else if(aname.equals(Taxi.ACTION_DROPOFF))
+		else if(aname.startsWith(Taxi.ACTION_DROPOFF))
 			return Taxi.IND_DROPOFF;
 		throw new RuntimeException("Invalid action " + aname);
 	}
