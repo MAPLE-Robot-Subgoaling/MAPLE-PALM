@@ -229,14 +229,11 @@ public class TaxiModel implements FullStateModel{
 				int ly = (int) s.getLocationAtt(loc, Taxi.ATT_Y);
 
 				if( tx == lx && ty == ly){
-						int px = (int) s.getPassengerAtt(p, Taxi.ATT_X);
-						int py = (int) s.getPassengerAtt(p, Taxi.ATT_Y);
-						boolean inTaxi = (boolean) s.getPassengerAtt(p, Taxi.ATT_IN_TAXI);
-                        if(inTaxi){
-                            TaxiPassenger np = ns.touchPassenger(p);
-                            np.set(Taxi.ATT_IN_TAXI, false);
-
-                    }
+                    boolean inTaxi = (boolean) s.getPassengerAtt(p, Taxi.ATT_IN_TAXI);
+					if(inTaxi){
+						TaxiPassenger np = ns.touchPassenger(p);
+						np.set(Taxi.ATT_IN_TAXI, false);
+					}
 				}
 			}
 
@@ -246,6 +243,7 @@ public class TaxiModel implements FullStateModel{
 				boolean inTaxi = (boolean) s.getPassengerAtt(passengerName, Taxi.ATT_IN_TAXI);
 				if ((!passengerName.equals(p)) && inTaxi) {
 					passengersInTaxi = true;
+					break;
 				}
 			}
 
@@ -257,7 +255,7 @@ public class TaxiModel implements FullStateModel{
 
 		tps.add(new StateTransitionProb(ns, 1.));
 	}
-	
+
 	/**
 	 * map a action to its number
 	 * @param a the action

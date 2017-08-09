@@ -21,26 +21,6 @@ public class DropoffFailurePF extends PropositionalFunction {
 		DropOffActionType.DropOffAction a = pass.associatedAction(action);
 		TaxiState st = (TaxiState) s;
 
-		return (boolean)st.getPassengerAtt(a.getPassenger(), Taxi.ATT_IN_TAXI);
+		return !(boolean)st.getPassengerAtt(a.getPassenger(), Taxi.ATT_IN_TAXI);
 	}
-		
-		/*
-		
-		
-		TaxiState st = (TaxiState) s;
-		
-		int tx = (int) st.getTaxiAtt(Taxi.ATT_X);
-		int ty = (int) st.getTaxiAtt(Taxi.ATT_Y);
-		
-		for(String locationName : st.getLocations()){
-			int lx = (int) st.getLocationAtt(locationName, Taxi.ATT_X);
-			int ly = (int) st.getLocationAtt(locationName, Taxi.ATT_Y);
-			if(tx == lx && ty == ly){
-				return !((boolean) st.getTaxiAtt(Taxi.ATT_TAXI_OCCUPIED));
-			}
-		}
-		
-		return true;
-	}
-*/
 }

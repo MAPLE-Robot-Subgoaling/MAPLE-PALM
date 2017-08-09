@@ -25,11 +25,7 @@ public class PickupFailurePF extends PropositionalFunction {
 		
         int px = (int) st.getPassengerAtt(a.getPassenger(), Taxi.ATT_X);
         int py = (int) st.getPassengerAtt(a.getPassenger(), Taxi.ATT_Y);
-        if(tx == px && ty == py){
-            return (boolean) st.getTaxiAtt(Taxi.ATT_TAXI_OCCUPIED);
-        }
-
-		return true;
+        return !(tx == px && ty == py);
 	}
 
 }

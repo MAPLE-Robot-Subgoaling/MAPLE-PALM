@@ -29,11 +29,7 @@ public class DropoffCompletedPF extends PropositionalFunction {
 		boolean inTaxi = (boolean) st.getPassengerAtt(a.getPassenger(), Taxi.ATT_IN_TAXI);
 
 
-		if(tx == px && ty == py && !inTaxi){
-			return true;
-		}
-
-		return false;
+		return (tx == px && ty == py && !inTaxi);
 	}
 
 }
