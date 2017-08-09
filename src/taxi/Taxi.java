@@ -176,8 +176,8 @@ public class Taxi implements DomainGenerator{
                 new UniversalActionType(ACTION_SOUTH),
                 new UniversalActionType(ACTION_EAST),
                 new UniversalActionType(ACTION_WEST),
-                new PickupActionType());
-				new DropOffActionType();
+                new PickupActionType(),
+				new DropOffActionType());
 		
 		return domain;
 	}

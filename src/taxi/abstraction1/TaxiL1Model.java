@@ -157,33 +157,29 @@ public class TaxiL1Model implements FullStateModel {
 	 */
 	public void dropoff(TaxiL1State s, DropOffAction a, List<StateTransitionProb> tps){
 		String passengerName = a.getPassenger();
-		String passengerLocation = (String) s.getPassengerAtt(passengerName, TaxiL1.ATT_CURRENT_LOCATION);
+		boolean passengerInTaxi = (boolean)s.getPassengerAtt(passengerName, TaxiL1.ATT_IN_TAXI);
 		String taxiLocation = (String) s.getTaxiAtt(TaxiL1.ATT_CURRENT_LOCATION);
-		boolean taxiOccupied = (boolean) s.getTaxiAtt(TaxiL1.ATT_TAXI_OCCUPIED);
 		TaxiL1State ns = s.copy();
 
 		//if some one is in taxi and it is at depot
-		if(!taxiLocation.equals(TaxiL1.ON_ROAD) && taxiLocation.equals(passengerLocation)) {
-			for(String locName : s.getLocations()) {
-				if(taxiLocation.equals(locName)) {
-					TaxiL1Passenger np = ns.touchPassenger(passengerName);
-					np.set(Taxi.ATT_IN_TAXI, false);
+		if(!taxiLocation.equals(TaxiL1.ON_ROAD) && passengerInTaxi) {
+			TaxiL1Passenger np = ns.touchPassenger(passengerName);
+			np.set(Taxi.ATT_IN_TAXI, false);
 
-					boolean passengersInTaxi = false;
-					// iterate through every passenger except the one that was just dropped off and see if taxi is empty
-					for(String passenger : s.getPassengers()) {
-						boolean inTaxi = (boolean) s.getPassengerAtt(passenger, Taxi.ATT_IN_TAXI);
-						if ((!passenger.equals(passengerName)) && inTaxi) {
-							passengersInTaxi = true;
-						}
-					}
-
-					// after iterating through passengers, if none are in taxi
-					if (!passengersInTaxi) {
-						TaxiL1Agent nt = ns.touchTaxi();
-						nt.set(Taxi.ATT_TAXI_OCCUPIED, false);
-					}
+			boolean passengersInTaxi = false;
+			// iterate through every passenger except the one that was just dropped off and see if taxi is empty
+			for(String passenger : s.getPassengers()) {
+				boolean inTaxi = (boolean) s.getPassengerAtt(passenger, Taxi.ATT_IN_TAXI);
+				if ((!passenger.equals(passengerName)) && inTaxi) {
+					passengersInTaxi = true;
+					break;
 				}
+			}
+
+			// after iterating through passengers, if none are in taxi
+			if (!passengersInTaxi) {
+				TaxiL1Agent nt = ns.touchTaxi();
+				nt.set(Taxi.ATT_TAXI_OCCUPIED, false);
 			}
 		}
 		tps.add(new StateTransitionProb(ns, 1));

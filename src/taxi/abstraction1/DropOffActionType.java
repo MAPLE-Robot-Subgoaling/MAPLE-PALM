@@ -29,7 +29,7 @@ public class DropOffActionType implements ActionType {
 
         for(String pass : state.getPassengers()){
             String pass_loc = (String)state.getPassengerAtt(pass, TaxiL1.ATT_CURRENT_LOCATION);
-            if(pass_loc.equals(taxi_loc)) {
+            if(pass_loc.equals(taxi_loc) && (boolean)state.getPassengerAtt(pass, TaxiL1.ATT_IN_TAXI)) {
                 acts.add(new DropOffAction(pass));
             }
         }
