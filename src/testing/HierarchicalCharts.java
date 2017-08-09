@@ -5,6 +5,7 @@ import burlap.behavior.singleagent.auxiliary.performance.TrialMode;
 import burlap.behavior.singleagent.learning.LearningAgent;
 import burlap.behavior.singleagent.learning.LearningAgentFactory;
 import burlap.mdp.core.state.State;
+import burlap.mdp.singleagent.common.VisualActionObserver;
 import burlap.mdp.singleagent.environment.SimulatedEnvironment;
 import burlap.mdp.singleagent.oo.OOSADomain;
 import burlap.statehashing.HashableStateFactory;
@@ -12,13 +13,14 @@ import burlap.statehashing.simple.SimpleHashableStateFactory;
 import hierarchy.framework.GroundedTask;
 import hierarchy.framework.Task;
 import ramdp.agent.RAMDPLearningAgent;
+import taxi.TaxiVisualizer;
 import taxi.hierarchies.TaxiHierarchy;
 import taxi.state.TaxiState;
-
 import taxi.stateGenerator.RandomPassengerClassicTaxiState;
 import taxi.stateGenerator.TaxiStateFactory;
-//import utilities.SimpleHashableStateFactory;
 import utilities.LearningAlgorithmExperimenter;
+
+//import utilities.SimpleHashableStateFactory;
 
 public class HierarchicalCharts {
 
@@ -32,10 +34,10 @@ public class HierarchicalCharts {
 //		SimulatedEnvironment env = new SimulatedEnvironment(domain, s);
 		SimulatedEnvironment env = new SimulatedEnvironment(domain, new RandomPassengerClassicTaxiState());
 
-//		VisualActionObserver obs = new VisualActionObserver(domain, TaxiVisualizer.getVisualizer(5, 5));
-//        obs.initGUI();
-//        obs.setDefaultCloseOperation(obs.EXIT_ON_CLOSE);
-//        env.addObservers(obs);
+		VisualActionObserver obs = new VisualActionObserver(domain, TaxiVisualizer.getVisualizer(5, 5));
+        obs.initGUI();
+        obs.setDefaultCloseOperation(obs.EXIT_ON_CLOSE);
+        env.addObservers(obs);
 		
 		LearningAgentFactory reamdp = new LearningAgentFactory() {
 
@@ -128,7 +130,7 @@ public class HierarchicalCharts {
 //		int numTrials =20;
 
 		double correctMoveprob = 1;
-		double fickleProb = .03;
+		double fickleProb = .05;
 		int numEpisodes = 600;
 		int maxSteps = 1000;
 		int rmaxThreshold = 3;
@@ -141,12 +143,12 @@ public class HierarchicalCharts {
 		int relearnThreshold = 3;
 		int numTrials = 10;
 		
-		TaxiState s = TaxiStateFactory.createTinyState();
+		TaxiState s = TaxiStateFactory.createClassicState();
 		Task RAMDProot = TaxiHierarchy.createAMDPHierarchy(correctMoveprob, fickleProb, false);
 		OOSADomain base = TaxiHierarchy.getBaseDomain();
 //		Task RMAXQroot = TaxiHierarchy.createRMAXQHierarchy(correctMoveprob, fickleProb);
 		createCrarts(s, base, RAMDProot, RAMDProot, rmax, rmaxThreshold, maxDelta, gamma,
-				numEpisodes, maxSteps, numTrials, true, actionRelearn, 0);
+				numEpisodes, maxSteps, numTrials, true, episodeRelearn, 0);
 //		createRandomCrarts(base, RAMDProot, rmax, rmaxThreshold, maxDelta, gamma, numEpisodes, maxSteps, numTrials);
 	}
 }

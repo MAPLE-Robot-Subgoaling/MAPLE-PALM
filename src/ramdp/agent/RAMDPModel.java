@@ -1,10 +1,5 @@
 package ramdp.agent;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import burlap.debugtools.RandomFactory;
 import burlap.mdp.core.action.Action;
 import burlap.mdp.core.state.State;
@@ -14,6 +9,11 @@ import burlap.mdp.singleagent.model.TransitionProb;
 import burlap.statehashing.HashableState;
 import burlap.statehashing.HashableStateFactory;
 import hierarchy.framework.GroundedTask;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class RAMDPModel implements FullModel{
 
@@ -108,11 +108,11 @@ public class RAMDPModel implements FullModel{
 		HashableState hs = this.hashingFactory.hashState(s);
 		Map<HashableState, Double> resultingStates = getResultingStates(hs, a);
 		List<TransitionProb> tps = new ArrayList<TransitionProb>();
-		double reward = getReward(hs, a);
-		
+
 		for(HashableState hsprime : resultingStates.keySet()){
+
 			EnvironmentOutcome eo = new EnvironmentOutcome(s, a, hsprime.s(),
-					reward, terminal(hsprime.s()));
+					task.getReward(hsprime.s()), terminal(hsprime.s()));
 			double p = resultingStates.get(hsprime);
 			tps.add( new TransitionProb(p, eo));
 		}

@@ -1,12 +1,8 @@
 package testing;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import burlap.behavior.singleagent.Episode;
 import burlap.behavior.singleagent.auxiliary.EpisodeSequenceVisualizer;
 import burlap.debugtools.RandomFactory;
-import burlap.mdp.auxiliary.StateGenerator;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.common.VisualActionObserver;
 import burlap.mdp.singleagent.environment.SimulatedEnvironment;
@@ -20,11 +16,11 @@ import rmaxq.agent.RmaxQLearningAgent;
 import taxi.TaxiVisualizer;
 import taxi.hierarchies.TaxiHierarchy;
 import taxi.state.TaxiState;
-
-import taxi.stateGenerator.RandomPassengerClassicTaxiState;
-import taxi.stateGenerator.RandomPassengerSmallTaxiState;
 import taxi.stateGenerator.TaxiStateFactory;
 import taxi.stateGenerator.UniformPassengerClassicTaxiState;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class HierarchicalLearnerTest {
 
@@ -47,10 +43,11 @@ public class HierarchicalLearnerTest {
         System.out.println("next ep--Pass goal: "+getColor(uniSG.getPassengerStartGoal()));
         System.out.println("---------Pass start: "+getColor(uniSG.getPassengerStartLocation()));
         SimulatedEnvironment env = new SimulatedEnvironment(groundDomain, uniSG);
-//		VisualActionObserver obs = new VisualActionObserver(groundDomain, TaxiVisualizer.getVisualizer(5, 5));
-//		obs.initGUI();
-//		obs.setDefaultCloseOperation(obs.EXIT_ON_CLOSE);
-//		env.addObservers(obs);
+		VisualActionObserver obs = new VisualActionObserver(groundDomain, TaxiVisualizer.getVisualizer(5, 5));
+		obs.initGUI();
+		obs.setDefaultCloseOperation(obs.EXIT_ON_CLOSE);
+		env.addObservers(obs);
+
 		for(int i = 0; i < numEpisode; i++){
             long time = System.currentTimeMillis();
             ramdp.goal = getColor(uniSG.getPassengerStartGoal());
@@ -60,8 +57,8 @@ public class HierarchicalLearnerTest {
 			episodes.add(e);
 
             System.out.println("##### Episode " + i + " time " + (double)time/1000 );
-            System.out.println("next ep--Pass goal: "+getColor(uniSG.getPassengerStartGoal()));
-            System.out.println("---------Pass start: "+getColor(uniSG.getPassengerStartLocation()));
+//            System.out.println("next ep--Pass goal: "+getColor(uniSG.getPassengerStartGoal()));
+//            System.out.println("---------Pass start: "+getColor(uniSG.getPassengerStartLocation()));
 			env.resetEnvironment();
 		}
         System.out.println("%%%%%%%%%%%%%%%%% END TRIAL # "+numTrial+"%%%%%%%%%%%%");
@@ -113,7 +110,7 @@ public class HierarchicalLearnerTest {
         int numTrials = 20;
         RandomFactory.seedMapped(0, 2320942930L);
         double correctMoveprob = 1;
-		double fickleProb = .03;
+		double fickleProb = .1;
 //        double fickleProb = .25;
 		int maxSteps = 1000;
 		int rmaxThreshold = 3;

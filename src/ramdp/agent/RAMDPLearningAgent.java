@@ -1,8 +1,7 @@
 package ramdp.agent;
 
-import java.util.*;
-
 import burlap.behavior.policy.Policy;
+import burlap.behavior.policy.PolicyUtils;
 import burlap.behavior.singleagent.Episode;
 import burlap.behavior.singleagent.learning.LearningAgent;
 import burlap.debugtools.RandomFactory;
@@ -14,6 +13,11 @@ import burlap.mdp.singleagent.oo.OOSADomain;
 import burlap.statehashing.HashableStateFactory;
 import hierarchy.framework.GroundedTask;
 import utilities.ValueIteration;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
 
 public class RAMDPLearningAgent implements LearningAgent{
 
@@ -134,13 +138,13 @@ public class RAMDPLearningAgent implements LearningAgent{
         this.taskParentNoRelearnCount = new HashMap<>();
 
 
-        solveTask(root, env, maxSteps, this.relearn);
+        solveTask(root, env, maxSteps, false);
         episodeCount++;
-        System.out.println("Action count: "+this.actionCount);
-        System.out.println("Random replan count: "+this.randomReplanCount);
-        System.out.println("Random noreplan count: "+this.randomNoReplanCount);
-        System.out.println("Autoterminal count: "+this.autoterminalCount);
-        System.out.println("Parent noreplan count: "+this.parentNoReplanCount);
+//        System.out.println("Action count: "+this.actionCount);
+//        System.out.println("Random replan count: "+this.randomReplanCount);
+//        System.out.println("Random noreplan count: "+this.randomNoReplanCount);
+//        System.out.println("Autoterminal count: "+this.autoterminalCount);
+//        System.out.println("Parent noreplan count: "+this.parentNoReplanCount);
 
 
 //        if(episodeCount<=32){
@@ -170,10 +174,12 @@ public class RAMDPLearningAgent implements LearningAgent{
         mp.putIfAbsent(goal, new HashMap<>());
         mp.get(goal).putIfAbsent(start, 0);
     }
+
     private void writeMap(Map<String, Map<String, Integer>> mp, int value){
         int val = mp.get(goal).get(start);
         mp.get(goal).put(start,val+value);
     }
+
     public void first32(){
         System.out.println("@@@@@@@ FIRST 32 EPISODE COUNTS @@@@@@@");
         System.out.println("ACTION COUNTS");
@@ -212,94 +218,98 @@ public class RAMDPLearningAgent implements LearningAgent{
 		int actionCount = 0;
 		boolean earlyterminal = false;
 		boolean relearnterminal = false;
-		while( (task.toString().equals("solve")||!earlyterminal ) &&(!(task.isFailure(currentState) || task.isComplete(currentState)) && (steps < maxSteps || maxSteps == -1))){
+		while( !earlyterminal  && (!(task.isFailure(currentState) || task.isComplete(currentState)) && (steps < maxSteps || maxSteps == -1))){
 			actionCount++;
 			boolean subtaskCompleted = false;
 			pastState = currentState;
 			pastBaseState = baseState;
 			EnvironmentOutcome result;
 
-			Action a = nextAction(task, currentState);
+			Policy pi = createPolicy(task, currentState);
+			Action a = pi.action(currentState);
 			GroundedTask action = this.taskNames.get(a.actionName());
 			if(action == null){
 				addChildrenToMap(task, currentState);
 				action = this.taskNames.get(a.actionName());
 			}
 
+			int pastStateInx = e.stateSequence.size() - 1;
 			if(action.isPrimitive()){
 				subtaskCompleted = true;
 				result = baseEnv.executeAction(a);
 				e.transition(result);
 				baseState = result.op;
 				currentState = task.mapState(result.op);
-				result.o = pastState;
-				result.op = currentState;
-				result.a = a;
-				result.r = task.getReward(currentState);
+//				result.o = pastState;
+//				result.op = currentState;
+//				result.a = a;
+//				result.r = task.getReward(currentState);
 				steps++;
 				this.actionCount++;
 			}else{
-                boolean replanChild = model.getStateActionCount(this.hashingFactory.hashState(currentState), a)
+                boolean replanChild = this.relearn && model.getStateActionCount(this.hashingFactory.hashState(currentState), a)
                         >= rmaxThreshold;
 				subtaskCompleted = solveTask(action, baseEnv, maxSteps, replanChild);
 				baseState = e.stateSequence.get(e.stateSequence.size() - 1);
 				currentState = task.mapState(baseState);
-
-				result = new EnvironmentOutcome(pastState, a, currentState,
-						task.getReward(currentState), task.isFailure
-						(currentState));
+//
+//				result = new EnvironmentOutcome(pastState, a, currentState,
+//						task.getReward(currentState), task.isFailure
+//						(currentState));
 			}
 			
 			//update task model if the subtask completed correctly
 			if(subtaskCompleted){
-				model.updateModel(result);
+				for(int state = pastStateInx; state < e.stateSequence.size(); state++){
+					State middleState = task.mapState(e.stateSequence.get(state));
+					double reward = task.getReward(currentState);
+					result = new EnvironmentOutcome(middleState, a, currentState, reward, false);
+					model.updateModel(result);
+				}
 			}
-//			String goalColor = (String) ((TaxiState)pastBaseState).getPassengerAtt(Taxi.CLASS_PASSENGER+"0", Taxi.ATT_GOAL_LOCATION);
-			//if(!goalColor.equals(Taxi.COLOR_RED)) {
-//				System.out.println("Task: "+task.toString());
-//				System.out.println("Goal color: "+goalColor);
-//				System.out.println("state-action count: " + model.getStateActionCount(hashingFactory.hashState(pastState), a));
-//				System.out.println("subtask complete: "+subtaskCompleted);
-			//}
-            if(!task.toString().equals("solve"))
-                if(replan) {
 
-    //			    List<ActionType> actionTypes= task.getDomain().getActionTypes();
-    //			    int localConverge = 0;
-    //			    int convergeSum = 0;
-    //                for(ActionType type : actionTypes)
-    //                    for (Action act : type.allApplicableActions(pastState)) {
-    //                        localConverge += rmaxThreshold;
-    //                        convergeSum += min(model.getStateActionCount(this.hashingFactory.hashState(pastState), act), rmaxThreshold);
-    //                    }
-    //                System.out.println("######################");
-    //                int localCount = (model.getStateActionCount(this.hashingFactory.hashState(pastState),a));
-    //                System.out.println("Superlocally coverged: "+(localCount>=rmaxThreshold)+" "+localCount+" "+rmaxThreshold);
-    //                System.out.println("Locally converged: "+(convergeSum>=localConverge)+" "+convergeSum+" "+localConverge);
+//            if(!task.toString().equals("solve"))
+//                if(replan) {
+//                    if(relearnterminal)
+//                        autoterminalCount++;
+//                    if ((!relearnterminal) && model.getStateActionCount(this.hashingFactory.hashState(pastState), a)
+//                            >= rmaxThreshold) {
+//    //                if(convergeSum>=localConverge){
+//                        earlyterminal = randomRelearn();
+//                        if (earlyterminal)
+//                            randomReplanCount++;
+//                        else
+//                            randomNoReplanCount++;
+//                    }else {
+//                        earlyterminal = false;
+//                        relearnterminal = true;
+//                    }
+//
+//    //
+//                }else if(relearn){
+//			        String taskName = task.toString();
+//                    taskParentNoRelearnCount.putIfAbsent(taskName,0);
+//                    taskParentNoRelearnCount.put(taskName, taskParentNoRelearnCount.get(taskName)+1);
+//                    this.parentNoReplanCount++;
+//                }
 
-                    if(relearnterminal)
-                        autoterminalCount++;
-                    if ((!relearnterminal) && model.getStateActionCount(this.hashingFactory.hashState(pastState), a)
-                            >= rmaxThreshold) {
-    //                if(convergeSum>=localConverge){
-                        earlyterminal = randomRelearn();
-                        if (earlyterminal)
-                            randomReplanCount++;
-                        else
-                            randomNoReplanCount++;
-                    }else {
-                        earlyterminal = false;
-                        relearnterminal = true;
-                    }
+			if(replan){
+				try {
+					Episode plan = PolicyUtils.rollout(pi, pastState, model, maxSteps);
+					State plannedState = plan.stateSequence.get(1);
+					//				earlyterminal = randomRelearn();
+					if(!currentState.equals(plannedState)){
+						earlyterminal = randomRelearn();
+					}
+				}catch (RuntimeException e){
+					earlyterminal = false;
+				}
 
-    //
-                }else if(relearn){
-			        String taskName = task.toString();
-                    taskParentNoRelearnCount.putIfAbsent(taskName,0);
-                    taskParentNoRelearnCount.put(taskName, taskParentNoRelearnCount.get(taskName)+1);
-                    this.parentNoReplanCount++;
-                }
-			//earlyterminal = randomRelearn();
+				if (earlyterminal)
+					randomReplanCount++;
+				else
+					randomNoReplanCount++;
+			}
 		}
 
 //		System.out.println("task: "+task.toString());
@@ -315,14 +325,16 @@ public class RAMDPLearningAgent implements LearningAgent{
 	private boolean alwaysRelearn(){
 	    return true;
     }
+
 	private boolean randomRelearn(){
 		Random rand = RandomFactory.getMapped(this.seed);
         if(relearn)
             relearnFromRoot = alpha(episodeCount, lowerThreshold, relearnThreshold);
         else
             relearnFromRoot = 0;
-		return rand.nextDouble()<this.relearnFromRoot;
+		return rand.nextDouble() < this.relearnFromRoot;
 	}
+
     private static double alpha(int count, int lowerThreshold, int relearnThreshold){
 	    int halfThreshold = relearnThreshold/2;
         if(count<=lowerThreshold)
@@ -354,14 +366,14 @@ public class RAMDPLearningAgent implements LearningAgent{
 	 * @param s the current state
 	 * @return the best action to take
 	 */
-	protected Action nextAction(GroundedTask task, State s){
+	protected Policy createPolicy(GroundedTask task, State s){
 		RAMDPModel model = getModel(task);
 		OOSADomain domain = task.getDomain(model);
 		ValueIteration plan = new ValueIteration(domain, gamma, hashingFactory, maxDelta, 1000);
 		Policy viPolicy = plan.planFromState(s);
 		Policy rmaxPolicy = new RMAXPolicy(model, viPolicy, domain.getActionTypes(), hashingFactory);
 		
-		return rmaxPolicy.action(s);
+		return rmaxPolicy;
 	}
 
 	/**

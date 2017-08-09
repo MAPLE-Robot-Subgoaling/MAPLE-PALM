@@ -1,9 +1,8 @@
 package ramdp.agent;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import burlap.behavior.policy.EnumerablePolicy;
 import burlap.behavior.policy.Policy;
+import burlap.behavior.policy.support.ActionProb;
 import burlap.debugtools.RandomFactory;
 import burlap.mdp.core.action.Action;
 import burlap.mdp.core.action.ActionType;
@@ -11,7 +10,10 @@ import burlap.mdp.core.state.State;
 import burlap.statehashing.HashableState;
 import burlap.statehashing.HashableStateFactory;
 
-public class RMAXPolicy implements Policy {
+import java.util.ArrayList;
+import java.util.List;
+
+public class RMAXPolicy implements Policy, EnumerablePolicy {
 
 	/**
 	 * the model this policy is planning for
@@ -66,6 +68,24 @@ public class RMAXPolicy implements Policy {
 		if(unmodeled.size() > 0)
 			return 1 / (double) unmodeled.size();
 		return basePolicy.actionProb(s, a);
+	}
+
+
+	@Override
+	public List<ActionProb> policyDistribution(State s) {
+		List<Action> unmodeled = unmodeledActions(s);
+
+		if(!unmodeled.isEmpty()){
+			List<ActionProb> aps = new ArrayList<ActionProb>(unmodeled.size());
+			double p = 1./(double)unmodeled.size();
+			for(Action ga : unmodeled){
+				aps.add(new ActionProb(ga, p));
+			}
+			return aps;
+		}
+
+		return ((EnumerablePolicy)this.basePolicy).policyDistribution(s);
+
 	}
 
 	@Override
