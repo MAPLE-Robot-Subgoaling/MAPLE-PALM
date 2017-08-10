@@ -1,8 +1,5 @@
 package taxi;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import burlap.behavior.singleagent.Episode;
 import burlap.behavior.singleagent.auxiliary.EpisodeSequenceVisualizer;
 import burlap.behavior.singleagent.learning.tdmethods.QLearning;
@@ -21,6 +18,9 @@ import taxi.state.TaxiLocation;
 import taxi.state.TaxiPassenger;
 import taxi.state.TaxiWall;
 import taxi.stateGenerator.TaxiStateFactory;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Taxi implements DomainGenerator{
 
@@ -83,6 +83,7 @@ public class Taxi implements DomainGenerator{
 	private RewardFunction rf;
 	private TerminalFunction tf;
 	private boolean fickle;
+	private boolean oneTimeFickle;
 	private double fickleProbability;
 	private double[][] moveDynamics;
 	
@@ -94,11 +95,12 @@ public class Taxi implements DomainGenerator{
 	 * @param fickleprob probability the passenger that is just picked up will change their goal
 	 * @param correctMoveprob probability the taxi will go in the correct direction they select
 	 */
-	public Taxi(RewardFunction r, TerminalFunction t, boolean fickle,
+	public Taxi(RewardFunction r, TerminalFunction t, boolean fickle, boolean oneTimeFickle,
 			double fickleprob, double correctMoveprob) {
 		rf = r;
 		tf = t;
 		this.fickle = fickle;
+		this.oneTimeFickle = oneTimeFickle;
 		this.fickleProbability = fickleprob;
 		setMoveDynamics(correctMoveprob);
 	}
@@ -109,8 +111,9 @@ public class Taxi implements DomainGenerator{
 	 * @param fickleprob probability the passenger that is just picked up will change their goal
 	 * @param correctMoveprob probability the taxi will go in the correct direction they select
 	 */
-	public Taxi(boolean fickle, double fickleprob, double correctMoveprob) {
+	public Taxi(boolean fickle, boolean oneTimeFickle, double fickleprob, double correctMoveprob) {
 		this.fickle = fickle;
+		this.oneTimeFickle = oneTimeFickle;
 		this.fickleProbability = fickleprob;
 		setMoveDynamics(correctMoveprob);
 		this.rf = new TaxiRewardFunction();
@@ -124,8 +127,9 @@ public class Taxi implements DomainGenerator{
 	 * @param movement a array saying the probability of execution each action (2nd index) given 
 	 * the selected action (1rt action)
 	 */
-	public Taxi(boolean fickle, double fickleprob, double[][] movement) {
+	public Taxi(boolean fickle, boolean oneTimeFickle, double fickleprob, double[][] movement) {
 		this.fickle = fickle;
+		this.oneTimeFickle = oneTimeFickle;
 		this.fickleProbability = fickleprob;
 		this.moveDynamics = movement;
 		this.rf = new TaxiRewardFunction();
@@ -136,7 +140,7 @@ public class Taxi implements DomainGenerator{
 	 * creates a non fickle deterministic taxi domain generator
 	 */
 	public Taxi() {
-		this(false, 0, 1);
+		this(false, false, 0, 1);
 	}
 	
 	/**
@@ -170,7 +174,7 @@ public class Taxi implements DomainGenerator{
 		domain.addStateClass(CLASS_TAXI, TaxiAgent.class).addStateClass(CLASS_PASSENGER, TaxiPassenger.class)
 				.addStateClass(CLASS_LOCATION, TaxiLocation.class).addStateClass(CLASS_WALL, TaxiWall.class);
 		
-		TaxiModel model = new TaxiModel(moveDynamics, fickle, fickleProbability);
+		TaxiModel model = new TaxiModel(moveDynamics, fickle, oneTimeFickle, fickleProbability);
 		FactoredModel taxiModel = new FactoredModel(model, rf, tf);
 		domain.setModel(taxiModel);
 		
@@ -217,7 +221,7 @@ public class Taxi implements DomainGenerator{
 				
 	public static void main(String[] args) {
 		
-		Taxi taxiBuild = new Taxi(true, 0.225, 0.8);
+		Taxi taxiBuild = new Taxi(true, true,0.225, 0.8);
 		OOSADomain domain = taxiBuild.generateDomain();
 				
 		HashableStateFactory hs = new SimpleHashableStateFactory();
