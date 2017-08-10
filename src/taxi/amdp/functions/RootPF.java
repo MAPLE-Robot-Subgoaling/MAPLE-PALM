@@ -7,6 +7,7 @@ import taxi.abstraction2.state.TaxiL2State;
 
 public class RootPF extends PropositionalFunction {
 
+	//root complete when all passengers have been taken to their goal
 	public RootPF() {
 		super("root", new String[]{});
 	}

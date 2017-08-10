@@ -1,10 +1,5 @@
 package rmaxq.agent;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import burlap.behavior.policy.GreedyQPolicy;
 import burlap.behavior.policy.SolverDerivedPolicy;
 import burlap.behavior.singleagent.Episode;
@@ -17,6 +12,11 @@ import burlap.statehashing.HashableState;
 import burlap.statehashing.HashableStateFactory;
 import hierarchy.framework.GroundedTask;
 import hierarchy.framework.Task;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class RmaxQLearningAgent implements LearningAgent {
 
@@ -88,6 +88,7 @@ public class RmaxQLearningAgent implements LearningAgent {
 	public long getTime(){
 		return time;
 	}
+
 	public Episode runLearningEpisode(Environment env) {
 		return runLearningEpisode(env, -1);
 	}
@@ -99,7 +100,6 @@ public class RmaxQLearningAgent implements LearningAgent {
 		timestep = 0;
 		actionTimestaps.clear();
 		
-		//look at equals in grounded task
 		time = System.currentTimeMillis();
 		HashableState hs = hashingFactory.hashState(env.currentObservation());
 		e = R_MaxQ(hs, rootSolve, e, maxSteps);

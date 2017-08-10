@@ -140,6 +140,7 @@ public class TaxiL1Model implements FullStateModel {
 					TaxiL1Passenger np = ns.touchPassenger(passengerName);
 					np.set(Taxi.ATT_IN_TAXI, true);
 					np.set(TaxiL1.ATT_PICKED_UP_AT_LEAST_ONCE, true);
+
 					if(fickle){
 						np.set(TaxiL1.ATT_JUST_PICKED_UP, true);
 					}
@@ -174,7 +175,8 @@ public class TaxiL1Model implements FullStateModel {
 						if(passLocation.equals(locName))
 							passengersAtL++;
 					}
-					
+
+					//in this version there can only be one passenger at a deot
 					if(passengersAtL == 1){
 						for(String passengerName : s.getPassengers()){
 							String passengerLocation = (String) s.getPassengerAtt(passengerName, TaxiL1.ATT_CURRENT_LOCATION);

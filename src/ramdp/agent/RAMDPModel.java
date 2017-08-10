@@ -1,10 +1,5 @@
 package ramdp.agent;
 
-import java.util.ArrayList; 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import burlap.mdp.core.action.Action;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.environment.EnvironmentOutcome;
@@ -13,6 +8,11 @@ import burlap.mdp.singleagent.model.TransitionProb;
 import burlap.statehashing.HashableState;
 import burlap.statehashing.HashableStateFactory;
 import hierarchy.framework.GroundedTask;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class RAMDPModel implements FullModel{
 
@@ -120,7 +120,7 @@ public class RAMDPModel implements FullModel{
 	
 	/**
 	 * updates the model counts, rewards and probabilities given the
-	 * information in the outcome
+	 * information in the outcome according to r-max
 	 * @param result the outcome of the latest action specific to the task rewards and abstractions
 	 */
 	public void updateModel(EnvironmentOutcome result){
