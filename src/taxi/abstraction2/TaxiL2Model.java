@@ -3,6 +3,7 @@ package taxi.abstraction2;
 import java.util.ArrayList;
 import java.util.List;
 
+import burlap.debugtools.RandomFactory;
 import burlap.mdp.core.StateTransitionProb;
 import burlap.mdp.core.action.Action;
 import burlap.mdp.core.state.State;
@@ -25,7 +26,7 @@ public class TaxiL2Model implements FullStateModel {
 	@Override
 	public State sample(State s, Action a) {
 		List<StateTransitionProb> stpList = this.stateTransitions(s,a);
-        double roll = Math.random();
+        double roll = RandomFactory.getMapped(0).nextDouble();
         double curSum = 0.;
         for(int i = 0; i < stpList.size(); i++){
             curSum += stpList.get(i).p;
@@ -60,11 +61,23 @@ public class TaxiL2Model implements FullStateModel {
 		String passegerName = a.getPassenger();
 		TaxiL2State ns = s.copy();
 		
-		TaxiL2Passenger np = ns.touchPassenger(passegerName);
-		np.set(TaxiL2.ATT_IN_TAXI, true);
-		np.set(TaxiL2.ATT_PICKED_UP_AT_LEAST_ONCE, true);
-		np.set(TaxiL2.ATT_JUST_PICKED_UP, true);
-		tps.add(new StateTransitionProb(ns, 1));
+		boolean taxiOcc = false;
+		for(String pName : s.getPassengers()){
+			boolean inTaxi = (boolean) s.getPassengerAtt(pName, TaxiL2.ATT_IN_TAXI);
+			taxiOcc = taxiOcc || inTaxi;
+		}
+		
+		if(!taxiOcc){
+			TaxiL2Passenger np = ns.touchPassenger(passegerName);
+			np.set(TaxiL2.ATT_IN_TAXI, true);
+			np.set(TaxiL2.ATT_PICKED_UP_AT_LEAST_ONCE, true);
+			if(fickle)
+				np.set(TaxiL2.ATT_JUST_PICKED_UP, true);
+			tps.add(new StateTransitionProb(ns, 1));
+		}else{
+			tps.add(new StateTransitionProb(ns, 1));
+		}
+		
 	}
 	
 	/**

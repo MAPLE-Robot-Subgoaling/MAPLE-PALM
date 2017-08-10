@@ -1,10 +1,11 @@
 package ramdp.agent;
 
-import java.util.ArrayList; 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import burlap.debugtools.RandomFactory;
 import burlap.mdp.core.action.Action;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.environment.EnvironmentOutcome;
@@ -83,7 +84,7 @@ public class RAMDPModel implements FullModel{
 	@Override
 	public EnvironmentOutcome sample(State s, Action a) {
 		List<TransitionProb> tps = transitions(s, a);
-		double sample = Math.random();
+		double sample = RandomFactory.getMapped(0).nextDouble();
 		double sum = 0;
 		for(TransitionProb tp : tps){
 			sum += tp.p;
