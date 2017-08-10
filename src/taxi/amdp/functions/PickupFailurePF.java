@@ -7,6 +7,7 @@ import taxi.state.TaxiState;
 
 public class PickupFailurePF extends PropositionalFunction {
 	//pickup fails when taxi is not at a depot
+
 	public PickupFailurePF() {
 		super("pickup>L!", new String[]{});
 	}

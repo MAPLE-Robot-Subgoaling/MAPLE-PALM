@@ -1,19 +1,16 @@
 package taxi.stateGenerator;
 
-import java.awt.Point;
-import java.util.ArrayList;
-import java.util.List;
-
 import burlap.mdp.auxiliary.StateGenerator;
 import burlap.mdp.core.state.State;
 import taxi.Taxi;
-import taxi.state.TaxiAgent;
-import taxi.state.TaxiLocation;
-import taxi.state.TaxiPassenger;
-import taxi.state.TaxiState;
-import taxi.state.TaxiWall;
+import taxi.state.*;
+
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class FullRandomTaxiState implements StateGenerator {
+	//creates random depots and places passenger randomly on depots
 
 	@Override
 	public State generateState(){ 

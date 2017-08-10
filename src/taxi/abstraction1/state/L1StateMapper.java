@@ -1,14 +1,13 @@
 package taxi.abstraction1.state;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import burlap.mdp.auxiliary.StateMapping;
 import burlap.mdp.core.state.State;
 import taxi.Taxi;
 import taxi.abstraction1.TaxiL1;
-import taxi.state.TaxiAgent;
 import taxi.state.TaxiState;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class L1StateMapper implements StateMapping {
 	//projection function from the base taxi to abstraction 1
@@ -36,6 +35,8 @@ public class L1StateMapper implements StateMapping {
 			boolean inTax = (boolean) st.getPassengerAtt(passengerName, Taxi.ATT_IN_TAXI);
 			boolean pickedUp = (boolean) st.getPassengerAtt(passengerName, Taxi.ATT_PICKED_UP_AT_LEAST_ONCE);
 			boolean justpickup = (boolean) st.getPassengerAtt(passengerName, Taxi.ATT_JUST_PICKED_UP);
+
+			//figure out what depot the passenger is at
 			String currentLocation = "";
 			
 			for(String locName : st.getLocations()){

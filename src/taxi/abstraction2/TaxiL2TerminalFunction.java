@@ -15,11 +15,13 @@ public class TaxiL2TerminalFunction implements TerminalFunction {
 		for(String passengerName : state.getPassengers()){
 			String location = (String) state.getPassengerAtt(passengerName, TaxiL2.ATT_CURRENT_LOCATION);
 			String goalLocation = (String) state.getPassengerAtt(passengerName, TaxiL2.ATT_GOAL_LOCATION);
+
 			if(!location.equals(goalLocation))
 				return false;
 			
 			boolean inTaxi = (boolean) state.getPassengerAtt(passengerName, TaxiL2.ATT_IN_TAXI);
 			boolean pickedUp = (boolean) state.getPassengerAtt(passengerName, TaxiL2.ATT_PICKED_UP_AT_LEAST_ONCE);
+
 			if(inTaxi || !pickedUp)
 				return false;
 		}

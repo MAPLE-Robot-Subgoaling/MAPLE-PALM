@@ -6,6 +6,7 @@ import taxi.Taxi;
 import taxi.state.TaxiState;
 
 public class BaseRootPF  extends PropositionalFunction{
+	//root is complet when all pasengers are at their goal and not in taxi
 
 	public BaseRootPF (){
 		super("root", new String[]{});

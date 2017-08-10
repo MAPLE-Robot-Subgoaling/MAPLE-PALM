@@ -1,15 +1,16 @@
 package taxi.abstraction2;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import burlap.mdp.core.action.Action;
 import burlap.mdp.core.action.ActionType;
 import burlap.mdp.core.state.State;
 import taxi.abstraction2.state.TaxiL2State;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class PutActionType implements ActionType {
 	//the put action which put the current ride at the given location
+
 	@Override
 	public String typeName() {
 		return TaxiL2.ACTION_PUT;
