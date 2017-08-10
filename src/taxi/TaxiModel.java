@@ -201,7 +201,6 @@ public class TaxiModel implements FullStateModel{
 					TaxiState ns = s.copy();
 					TaxiPassenger np = ns.touchPassenger(passengerName);
 					np.set(Taxi.ATT_IN_TAXI, true);
-					np.set(Taxi.ATT_PICKED_UP_AT_LEAST_ONCE, true);
 					if(fickle)
 						np.set(Taxi.ATT_JUST_PICKED_UP, true);
 					

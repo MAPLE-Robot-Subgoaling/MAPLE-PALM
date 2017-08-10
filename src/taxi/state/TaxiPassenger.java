@@ -17,31 +17,27 @@ public class TaxiPassenger extends MutableObject{
 			Taxi.ATT_Y,
 			Taxi.ATT_IN_TAXI,
 			Taxi.ATT_GOAL_LOCATION,
-			Taxi.ATT_PICKED_UP_AT_LEAST_ONCE,
 			Taxi.ATT_JUST_PICKED_UP
 			);
 	
 	public TaxiPassenger(String name, int x, int y, String goalLocation){
-		this(name, (Object) x, (Object) y, (Object) goalLocation, false, false, false);
+		this(name, (Object) x, (Object) y, (Object) goalLocation, false, false);
 	}
 	
 	public TaxiPassenger(String name, int x, int y, String goalLocation, boolean inTaxi){
-		this(name, (Object) x, (Object) y, (Object) goalLocation, (Object) inTaxi, false, false);
+		this(name, (Object) x, (Object) y, (Object) goalLocation, (Object) inTaxi, false);
 	}
 	
 	public TaxiPassenger(String name, int x, int y, String goalLocation, boolean inTaxi,
 			boolean pickedUpAlLeastOnce, boolean justPickedUp){
-		this(name, (Object) x, (Object) y, (Object) goalLocation, (Object) inTaxi,
-				(Object) pickedUpAlLeastOnce, (Object) justPickedUp);
+		this(name, (Object) x, (Object) y, (Object) goalLocation, (Object) inTaxi, (Object) justPickedUp);
 	}
 	
-	private TaxiPassenger(String name, Object x, Object y, Object goalLocation, Object inTaxi,
-			Object pickedUpAtLeastOnce, Object justpickedUp){
+	private TaxiPassenger(String name, Object x, Object y, Object goalLocation, Object inTaxi, Object justpickedUp){
 		this.set(Taxi.ATT_X, x);
 		this.set(Taxi.ATT_Y, y);
 		this.set(Taxi.ATT_GOAL_LOCATION, goalLocation);
 		this.set(Taxi.ATT_IN_TAXI, inTaxi);
-		this.set(Taxi.ATT_PICKED_UP_AT_LEAST_ONCE, pickedUpAtLeastOnce);
 		this.set(Taxi.ATT_JUST_PICKED_UP, justpickedUp);
 		this.setName(name);
 	}
@@ -55,7 +51,6 @@ public class TaxiPassenger extends MutableObject{
 				get(Taxi.ATT_Y),
 				get(Taxi.ATT_GOAL_LOCATION),
 				get(Taxi.ATT_IN_TAXI),
-				get(Taxi.ATT_PICKED_UP_AT_LEAST_ONCE),
 				get(Taxi.ATT_JUST_PICKED_UP)
 				);
 	}

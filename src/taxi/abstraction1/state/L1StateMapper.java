@@ -33,7 +33,6 @@ public class L1StateMapper implements StateMapping {
 			int px = (int) st.getPassengerAtt(passengerName, Taxi.ATT_X);
 			int py = (int) st.getPassengerAtt(passengerName, Taxi.ATT_Y);
 			boolean inTax = (boolean) st.getPassengerAtt(passengerName, Taxi.ATT_IN_TAXI);
-			boolean pickedUp = (boolean) st.getPassengerAtt(passengerName, Taxi.ATT_PICKED_UP_AT_LEAST_ONCE);
 			boolean justpickup = (boolean) st.getPassengerAtt(passengerName, Taxi.ATT_JUST_PICKED_UP);
 			String currentLocation = "";
 			
@@ -48,7 +47,7 @@ public class L1StateMapper implements StateMapping {
 					taxiLocation = locName;
 				}
 			}
-			passengers.add(new TaxiL1Passenger(passengerName, currentLocation, goalLocation, inTax, pickedUp, justpickup));
+			passengers.add(new TaxiL1Passenger(passengerName, currentLocation, goalLocation, inTax, justpickup));
 		}
 		
 		boolean taxiOccupied = (boolean) st.getTaxiAtt(Taxi.ATT_TAXI_OCCUPIED);
