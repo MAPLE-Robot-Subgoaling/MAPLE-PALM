@@ -40,18 +40,18 @@ public class HierarchicalLearnerTest {
         UniformPassengerClassicTaxiState uniSG = new UniformPassengerClassicTaxiState();
         System.out.println("%%%%%%%%%%%%%%%%% TRIAL # "+numTrial+"%%%%%%%%%%%%");
         System.out.println("seed# "+seed);
-        System.out.println("next ep--Pass goal: "+getColor(uniSG.getPassengerStartGoal()));
-        System.out.println("---------Pass start: "+getColor(uniSG.getPassengerStartLocation()));
+//        System.out.println("next ep--Pass goal: "+getColor(uniSG.getPassengerStartGoal()));
+//        System.out.println("---------Pass start: "+getColor(uniSG.getPassengerStartLocation()));
         SimulatedEnvironment env = new SimulatedEnvironment(groundDomain, uniSG);
-		VisualActionObserver obs = new VisualActionObserver(groundDomain, TaxiVisualizer.getVisualizer(5, 5));
-		obs.initGUI();
-		obs.setDefaultCloseOperation(obs.EXIT_ON_CLOSE);
-		env.addObservers(obs);
+//		VisualActionObserver obs = new VisualActionObserver(groundDomain, TaxiVisualizer.getVisualizer(5, 5));
+//		obs.initGUI();
+//		obs.setDefaultCloseOperation(obs.EXIT_ON_CLOSE);
+//		env.addObservers(obs);
 
 		for(int i = 0; i < numEpisode; i++){
             long time = System.currentTimeMillis();
-            ramdp.goal = getColor(uniSG.getPassengerStartGoal());
-            ramdp.start = getColor(uniSG.getPassengerStartLocation());;
+//            ramdp.goal = getColor(uniSG.getPassengerStartGoal());
+//            ramdp.start = getColor(uniSG.getPassengerStartLocation());;
 			Episode e = ramdp.runLearningEpisode(env, maxSteps);
 			time = System.currentTimeMillis() - time;
 			episodes.add(e);

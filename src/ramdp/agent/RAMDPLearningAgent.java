@@ -268,48 +268,48 @@ public class RAMDPLearningAgent implements LearningAgent{
 				}
 			}
 
-//            if(!task.toString().equals("solve"))
-//                if(replan) {
-//                    if(relearnterminal)
-//                        autoterminalCount++;
-//                    if ((!relearnterminal) && model.getStateActionCount(this.hashingFactory.hashState(pastState), a)
-//                            >= rmaxThreshold) {
-//    //                if(convergeSum>=localConverge){
-//                        earlyterminal = randomRelearn();
-//                        if (earlyterminal)
-//                            randomReplanCount++;
-//                        else
-//                            randomNoReplanCount++;
-//                    }else {
-//                        earlyterminal = false;
-//                        relearnterminal = true;
-//                    }
+            if(!task.toString().equals("solve"))
+                if(replan) {
+                    if(relearnterminal)
+                        autoterminalCount++;
+                    if ((!relearnterminal) && model.getStateActionCount(this.hashingFactory.hashState(pastState), a)
+                            >= rmaxThreshold) {
+    //                if(convergeSum>=localConverge){
+                        earlyterminal = gateRelearn();
+                        if (earlyterminal)
+                            randomReplanCount++;
+                        else
+                            randomNoReplanCount++;
+                    }else {
+                        earlyterminal = false;
+                        relearnterminal = true;
+                    }
+
+    //
+                }else if(relearn){
+			        String taskName = task.toString();
+                    taskParentNoRelearnCount.putIfAbsent(taskName,0);
+                    taskParentNoRelearnCount.put(taskName, taskParentNoRelearnCount.get(taskName)+1);
+                    this.parentNoReplanCount++;
+                }
+
+//			if(replan){
+//				try {
+//					Episode plan = PolicyUtils.rollout(pi, pastState, model, maxSteps);
+//					State plannedState = plan.stateSequence.get(1);
+//					//				earlyterminal = randomRelearn();
+//					if(!currentState.equals(plannedState)){
+//						earlyterminal = randomRelearn();
+//					}
+//				}catch (RuntimeException e){
+//					earlyterminal = false;
+//				}
 //
-//    //
-//                }else if(relearn){
-//			        String taskName = task.toString();
-//                    taskParentNoRelearnCount.putIfAbsent(taskName,0);
-//                    taskParentNoRelearnCount.put(taskName, taskParentNoRelearnCount.get(taskName)+1);
-//                    this.parentNoReplanCount++;
-//                }
-
-			if(replan){
-				try {
-					Episode plan = PolicyUtils.rollout(pi, pastState, model, maxSteps);
-					State plannedState = plan.stateSequence.get(1);
-					//				earlyterminal = randomRelearn();
-					if(!currentState.equals(plannedState)){
-						earlyterminal = randomRelearn();
-					}
-				}catch (RuntimeException e){
-					earlyterminal = false;
-				}
-
-				if (earlyterminal)
-					randomReplanCount++;
-				else
-					randomNoReplanCount++;
-			}
+//				if (earlyterminal)
+//					randomReplanCount++;
+//				else
+//					randomNoReplanCount++;
+//			}
 		}
 
 //		System.out.println("task: "+task.toString());
@@ -326,6 +326,9 @@ public class RAMDPLearningAgent implements LearningAgent{
 	    return true;
     }
 
+    private boolean gateRelearn(){
+		return this.episodeCount>=this.relearnThreshold;
+	}
 	private boolean randomRelearn(){
 		Random rand = RandomFactory.getMapped(this.seed);
         if(relearn)
