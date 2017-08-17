@@ -68,7 +68,7 @@ public class Taxi implements DomainGenerator{
 	public static final String ACTION_SOUTH =				"south";
 	public static final String ACTION_WEST = 				"west";
 	public static final String ACTION_PICKUP = 				"pickup";
-	public static final String ACTION_DROPOFF = 			"dropoff";
+	public static final String ACTION_PUTDOWN = 			"putdown";
 
 	//action indexes
 	public static int IND_NORTH = 							0;
@@ -76,7 +76,7 @@ public class Taxi implements DomainGenerator{
 	public static int IND_SOUTH = 							2;
 	public static int IND_WEST = 							3;
 	public static int IND_PICKUP = 							4;
-	public static int IND_DROPOFF = 						5;
+	public static int IND_PUTDOWN = 						5;
 	
 	//parameters dictating probabilities of the model
 	private RewardFunction rf;
@@ -178,8 +178,8 @@ public class Taxi implements DomainGenerator{
                 new UniversalActionType(ACTION_SOUTH),
                 new UniversalActionType(ACTION_EAST),
                 new UniversalActionType(ACTION_WEST),
-                new UniversalActionType(ACTION_DROPOFF),
-                new UniversalActionType(ACTION_PICKUP));
+                new PutdownActionType(),
+                new PickupActionType());
 		
 		return domain;
 	}
@@ -189,8 +189,7 @@ public class Taxi implements DomainGenerator{
 	public OOSADomain generatePickupDomain(){
 		OOSADomain d = generateDomain();
 		d.clearActionTypes();
-		d.addActionType(new UniversalActionType(ACTION_PICKUP));
-		
+		d.addActionType(new PickupActionType());
 		return d;
 	}
 	
@@ -209,8 +208,7 @@ public class Taxi implements DomainGenerator{
 	public OOSADomain generateDropOffDomain(){
 		OOSADomain d = generateDomain();
 		d.clearActionTypes();
-		d.addActionType(new UniversalActionType(ACTION_DROPOFF));
-		
+		d.addActionType(new PutdownActionType());
 		return d;
 	}
 				
