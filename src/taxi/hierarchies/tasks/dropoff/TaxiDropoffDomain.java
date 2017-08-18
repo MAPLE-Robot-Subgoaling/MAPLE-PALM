@@ -6,7 +6,6 @@ import burlap.behavior.singleagent.Episode;
 import burlap.behavior.singleagent.planning.stochastic.valueiteration.ValueIteration;
 import burlap.mdp.auxiliary.DomainGenerator;
 import burlap.mdp.core.TerminalFunction;
-import burlap.mdp.core.action.UniversalActionType;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.common.GoalBasedRF;
 import burlap.mdp.singleagent.environment.SimulatedEnvironment;
@@ -17,27 +16,20 @@ import burlap.statehashing.HashableStateFactory;
 import burlap.statehashing.simple.SimpleHashableStateFactory;
 import taxi.PutdownActionType;
 import taxi.hierarchies.tasks.dropoff.state.DropoffStateMapper;
-import taxi.hierarchies.tasks.dropoff.state.TaxiDropoffAgent;
-import taxi.hierarchies.tasks.dropoff.state.TaxiDropoffLocation;
 import taxi.hierarchies.tasks.dropoff.state.TaxiDropoffPassenger;
 import taxi.stateGenerator.TaxiStateFactory;
 
 public class TaxiDropoffDomain implements DomainGenerator {
 
-	//public constants for general use
 	//object classes
-	public static final String CLASS_TAXI = 				"DropoffTaxi";
 	public static final String CLASS_PASSENGER =			"DropoffPassenger";
-	public static final String CLASS_LOCATION = 			"DropoffLocation";
+
+	public static final String ON_ROAD =					"onRoad";
+	public static final String NOT_IN_TAXI =				"notInTaxi";
 
 	// attributes
-	public static final String ATT_CURRENT_LOCATION = 		"currentLocation";
-	public static final String ATT_TAXI_OCCUPIED = 			"taxiOccupied";
-	public static final String ATT_IN_TAXI =				"inTaxi";
-	public static final String ATT_COLOR =					"color";
-	
-	public static final String ON_ROAD =					"onRoad";
-	
+	public static final String ATT_LOCATION = 				"currentLocation";
+
 	//actions
 	public static final String ACTION_DROPOFF = 			"dropoff";
 
@@ -65,8 +57,7 @@ public class TaxiDropoffDomain implements DomainGenerator {
 	public OOSADomain generateDomain() {
 		OOSADomain domain = new OOSADomain();
 		
-		domain.addStateClass(CLASS_TAXI, TaxiDropoffAgent.class).addStateClass(CLASS_PASSENGER, TaxiDropoffPassenger.class)
-				.addStateClass(CLASS_LOCATION, TaxiDropoffLocation.class);
+		domain.addStateClass(CLASS_PASSENGER, TaxiDropoffPassenger.class);
 		
 		TaxiDropoffModel taxiModel = new TaxiDropoffModel();
 		FactoredModel model = new FactoredModel(taxiModel, rf, tf);

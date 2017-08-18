@@ -17,10 +17,12 @@ public class GetCompletedPF extends PropositionalFunction{
 	@Override
 	public boolean isTrue(OOState s, String... params) {
 		String action = params[0];
+		TaxiGetState st = (TaxiGetState) s;
 		GetActionType actyp = new GetActionType();
 		GetAction a = actyp.associatedAction(action);
-		TaxiGetState st = (TaxiGetState) s;
-		
-		return (boolean) st.getPassengerAtt(a.getPassenger(), TaxiGetDomain.ATT_IN_TAXI);
+		String passenger = a.getPassenger();
+		String pass_loc = (String)st.getPassengerAtt(passenger, TaxiGetDomain.ATT_LOCATION);
+
+		return pass_loc.equals(TaxiGetDomain.IN_TAXI);
 	}
 }

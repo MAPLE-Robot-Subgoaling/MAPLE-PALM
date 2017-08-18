@@ -20,20 +20,16 @@ import taxi.stateGenerator.TaxiStateFactory;
 
 public class TaxiBringonDomain implements DomainGenerator {
 
-	//public constants for general use
 	//object classes
 	public static final String CLASS_TAXI = 				"BringonTaxi";
 	public static final String CLASS_PASSENGER =			"BringonPassenger";
-	public static final String CLASS_LOCATION = 			"BringonLocation";
-	
-	public static final String ATT_CURRENT_LOCATION = 		"currentLocation";
-
-	//passenger attributes
-	public static final String ATT_IN_TAXI = 				"inTaxi";
-	public static final String ATT_COLOR = 					"color";
 
 	public static final String ON_ROAD =					"onRoad";
-	
+	public static final String IN_TAXI =					"inTaxi";
+
+	// attributes
+	public static final String ATT_LOCATION = 				"location";
+
 	//actions
 	public static final String ACTION_BRINGON = 			"bringon";
 
@@ -61,9 +57,8 @@ public class TaxiBringonDomain implements DomainGenerator {
 	public OOSADomain generateDomain() {
 		OOSADomain domain = new OOSADomain();
 		
-		domain.addStateClass(CLASS_TAXI, TaxiBringonAgent.class).addStateClass(CLASS_PASSENGER, TaxiBringonPassenger.class)
-				.addStateClass(CLASS_LOCATION, TaxiBringonLocation.class);
-		
+		domain.addStateClass(CLASS_TAXI, TaxiBringonAgent.class).addStateClass(CLASS_PASSENGER, TaxiBringonPassenger.class);
+
 		TaxiBringonModel taxiModel = new TaxiBringonModel();
 		FactoredModel model = new FactoredModel(taxiModel, rf, tf);
 		domain.setModel(model);

@@ -25,7 +25,7 @@ public class TaxiNavLocation extends MutableObject{
 	}
 	@Override
 	public String className() {
-		return TaxiNavState.CLASS_LOCATION;
+		return TaxiNavDomain.CLASS_LOCATION;
 	}
 
 	@Override

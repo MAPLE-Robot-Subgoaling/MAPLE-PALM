@@ -2,8 +2,9 @@ package taxi.functions.amdp;
 
 import burlap.mdp.core.oo.propositional.PropositionalFunction;
 import burlap.mdp.core.oo.state.OOState;
-import taxi.Taxi;
-import taxi.state.TaxiState;
+import taxi.hierarchies.tasks.dropoff.DropoffActionType;
+import taxi.hierarchies.tasks.dropoff.TaxiDropoffDomain;
+import taxi.hierarchies.tasks.dropoff.state.TaxiDropoffState;
 
 public class DropoffCompletedPF extends PropositionalFunction {
 	//dropoff is complete when there is no passenger in the taxi
@@ -14,9 +15,14 @@ public class DropoffCompletedPF extends PropositionalFunction {
 	
 	@Override
 	public boolean isTrue(OOState s, String... params) {
-		TaxiState st = (TaxiState) s;
-		
-		return !((boolean) st.getTaxiAtt(Taxi.ATT_TAXI_OCCUPIED));
+		String action = params[0];
+		TaxiDropoffState st = (TaxiDropoffState)s;
+		DropoffActionType pickup = new DropoffActionType();
+		DropoffActionType.DropoffAction a = pickup.associatedAction(action);
+		String passenger = a.getPassenger();
+		String pass_loc = (String)st.getPassengerAtt(passenger, TaxiDropoffDomain.ATT_LOCATION);
+
+		return pass_loc.equals(TaxiDropoffDomain.NOT_IN_TAXI);
 	}
 
 }

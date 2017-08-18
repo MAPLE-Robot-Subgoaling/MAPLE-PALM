@@ -11,6 +11,7 @@ import hierarchy.framework.RootTask;
 import hierarchy.framework.SolveActionType;
 import hierarchy.framework.Task;
 import taxi.Taxi;
+import taxi.functions.amdp.*;
 import taxi.hierarchies.tasks.bringon.TaxiBringonDomain;
 import taxi.hierarchies.tasks.bringon.state.BringonStateMapper;
 import taxi.hierarchies.tasks.dropoff.TaxiDropoffDomain;
@@ -19,16 +20,6 @@ import taxi.hierarchies.tasks.get.TaxiGetDomain;
 import taxi.hierarchies.tasks.get.state.GetStateMapper;
 import taxi.hierarchies.tasks.nav.TaxiNavDomain;
 import taxi.hierarchies.tasks.nav.state.NavStateMapper;
-import taxi.functions.amdp.DropoffCompletedPF;
-import taxi.functions.amdp.DropoffFailurePF;
-import taxi.functions.amdp.GetCompletedPF;
-import taxi.functions.amdp.GetFailurePF;
-import taxi.functions.amdp.NavigatePF;
-import taxi.functions.amdp.BringonCompletedPF;
-import taxi.functions.amdp.BringonFailurePF;
-import taxi.functions.amdp.PutCompletedPF;
-import taxi.functions.amdp.PutFailurePF;
-import taxi.functions.amdp.RootPF;
 import taxi.functions.rmaxq.BaseGetActionType;
 import taxi.functions.rmaxq.BaseGetCompletedPF;
 import taxi.functions.rmaxq.BaseGetFailurePF;
@@ -101,7 +92,7 @@ public class TaxiHierarchy {
 
 		Task[] navTasks = {north, east, south, wast};
 		StateMapping navMap = new NavStateMapper();
-		PropositionalFunction navPF = new NavigatePF();
+		PropositionalFunction navPF = new NavigateAbstractPF();
 		if(plan) {
 			navMap = new IdentityMap();
 			navPF = new NavigatePF();

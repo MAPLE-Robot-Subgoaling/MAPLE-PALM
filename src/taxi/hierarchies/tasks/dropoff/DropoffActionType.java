@@ -25,11 +25,11 @@ public class DropoffActionType implements ActionType {
     public List<Action> allApplicableActions(State s) {
         TaxiDropoffState state = (TaxiDropoffState) s;
         List<Action> acts = new ArrayList<Action>();
-        String taxi_loc = (String)state.getTaxiAtt(TaxiDropoffDomain.ATT_CURRENT_LOCATION);
 
         for(String pass : state.getPassengers()){
-            String pass_loc = (String)state.getPassengerAtt(pass, TaxiDropoffDomain.ATT_CURRENT_LOCATION);
-            if(pass_loc.equals(taxi_loc) && (boolean)state.getPassengerAtt(pass, TaxiDropoffDomain.ATT_IN_TAXI)) {
+            String pass_loc = (String)state.getPassengerAtt(pass, TaxiDropoffDomain.ATT_LOCATION);
+            // Can only dropoff if we're in the taxi and at a depot
+            if(!(pass_loc.equals(TaxiDropoffDomain.NOT_IN_TAXI)) || pass_loc.equals(TaxiDropoffDomain.ON_ROAD)) {
                 acts.add(new DropoffAction(pass));
             }
         }

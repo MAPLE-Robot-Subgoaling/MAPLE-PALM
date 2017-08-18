@@ -13,8 +13,8 @@ public class TaxiBringonTerminalFunction implements TerminalFunction {
 		TaxiBringonState state = (TaxiBringonState) s;
 		
 		for(String passengerName : state.getPassengers()){
-			boolean inTaxi = (boolean) state.getPassengerAtt(passengerName, TaxiBringonDomain.ATT_IN_TAXI);
-			if(!inTaxi)
+			String passengerLocation = (String)state.getPassengerAtt(passengerName, TaxiBringonDomain.ATT_LOCATION);
+			if(!passengerLocation.equals(TaxiBringonDomain.IN_TAXI))
 				return false;
 		}
 		return true;

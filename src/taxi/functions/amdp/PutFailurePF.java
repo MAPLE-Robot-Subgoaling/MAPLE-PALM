@@ -10,17 +10,17 @@ public class PutFailurePF extends PropositionalFunction{
 	//put fail if taxi is empty 
 	
 	public PutFailurePF() {
-		super("put", new String[]{TaxiPutDomain.CLASS_LOCATION});
+		super("put", new String[]{TaxiPutDomain.CLASS_PASSENGER});
 	}
 
 	@Override
 	public boolean isTrue(OOState s, String... params) {
 		String action = params[0];
+		TaxiPutState st = (TaxiPutState) s;
 		PutActionType actyp = new PutActionType();
 		PutActionType.PutAction a = actyp.associatedAction(action);
-		TaxiPutState st = (TaxiPutState) s;
-
-		boolean inTaxi = (boolean) st.getPassengerAtt(a.getPassengerName(), TaxiPutDomain.ATT_IN_TAXI);
+		String passenger = a.getPassenger();
+		boolean inTaxi = (boolean)st.getPassengerAtt(passenger, TaxiPutDomain.ATT_IN_TAXI);
 
 		return !inTaxi;
 	}

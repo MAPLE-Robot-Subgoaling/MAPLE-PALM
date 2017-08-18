@@ -10,19 +10,14 @@ import burlap.mdp.core.oo.state.MutableOOState;
 import burlap.mdp.core.oo.state.OOStateUtilities;
 import burlap.mdp.core.oo.state.ObjectInstance;
 import burlap.mdp.core.state.MutableState;
+import taxi.hierarchies.tasks.nav.TaxiNavDomain;
 
 public class TaxiNavState implements MutableOOState{
-
-	public static final String CLASS_TAXI = 	"navTaxi";
-	public static final String CLASS_LOCATION = "navLocation";
-	public static final String CLASS_WALL =		"navWall";
-	
 	private TaxiNavAgent taxi;
 	private Map<String, TaxiNavLocation> locations;
 	private Map<String, TaxiNavWall> walls;
 
-	public TaxiNavState(TaxiNavAgent taxi, List<TaxiNavLocation> locations,
-			List<TaxiNavWall> walls) {
+	public TaxiNavState(TaxiNavAgent taxi, List<TaxiNavLocation> locations, List<TaxiNavWall> walls) {
 		this.taxi = taxi;
 		
 		this.locations = new HashMap<String, TaxiNavLocation>();
@@ -36,8 +31,7 @@ public class TaxiNavState implements MutableOOState{
 		}
 	}
 	
-	public TaxiNavState(TaxiNavAgent t, Map<String, TaxiNavLocation> locs,
-			Map<String, TaxiNavWall> walls) {
+	public TaxiNavState(TaxiNavAgent t, Map<String, TaxiNavLocation> locs, Map<String, TaxiNavWall> walls) {
 		this.taxi = t;
 		this.locations = locs;
 		this.walls = walls;
@@ -80,11 +74,11 @@ public class TaxiNavState implements MutableOOState{
 
 	@Override
 	public List<ObjectInstance> objectsOfClass(String oclass) {
-		if(oclass.equals(CLASS_TAXI))
+		if(oclass.equals(TaxiNavDomain.CLASS_TAXI))
 			return Arrays.<ObjectInstance>asList(taxi);
-		else if(oclass.equals(CLASS_LOCATION))
+		else if(oclass.equals(TaxiNavDomain.CLASS_LOCATION))
 			return new ArrayList<ObjectInstance>(locations.values());
-		else if(oclass.equals(CLASS_WALL))
+		else if(oclass.equals(TaxiNavDomain.CLASS_WALL))
 			return new ArrayList<ObjectInstance>(walls.values());
 		throw new RuntimeException("No object class " + oclass);
 	}

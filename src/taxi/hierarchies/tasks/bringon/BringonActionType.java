@@ -26,10 +26,10 @@ public class BringonActionType implements ActionType {
     public List<Action> allApplicableActions(State s) {
         TaxiBringonState state = (TaxiBringonState) s;
         List<Action> acts = new ArrayList<Action>();
-        String taxi_loc = (String)state.getTaxiAtt(TaxiBringonDomain.ATT_CURRENT_LOCATION);
+        String taxi_loc = (String)state.getTaxiAtt(TaxiBringonDomain.ATT_LOCATION);
 
         for(String pass : state.getPassengers()){
-            String pass_loc = (String)state.getPassengerAtt(pass, TaxiBringonDomain.ATT_CURRENT_LOCATION);
+            String pass_loc = (String)state.getPassengerAtt(pass, TaxiBringonDomain.ATT_LOCATION);
             if(pass_loc.equals(taxi_loc)) {
                 acts.add(new BringonAction(pass));
             }

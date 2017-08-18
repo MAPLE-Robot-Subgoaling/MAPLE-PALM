@@ -8,10 +8,10 @@ import burlap.mdp.core.StateTransitionProb;
 import burlap.mdp.core.action.Action;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.model.statemodel.FullStateModel;
-import taxi.hierarchies.tasks.dropoff.state.TaxiDropoffAgent;
+import taxi.PutdownActionType.PutdownAction;
+import taxi.Taxi;
 import taxi.hierarchies.tasks.dropoff.state.TaxiDropoffPassenger;
 import taxi.hierarchies.tasks.dropoff.state.TaxiDropoffState;
-import taxi.hierarchies.tasks.dropoff.DropoffActionType.DropoffAction;
 
 public class TaxiDropoffModel implements FullStateModel {
 
@@ -34,8 +34,8 @@ public class TaxiDropoffModel implements FullStateModel {
 		List<StateTransitionProb> tps = new ArrayList<StateTransitionProb>();
 		TaxiDropoffState state = (TaxiDropoffState) s;
 		
-		if(a.actionName().startsWith(TaxiDropoffDomain.ACTION_DROPOFF)){
-			dropoff(state, (DropoffAction)a, tps);
+		if(a.actionName().startsWith(Taxi.ACTION_PUTDOWN)){
+			putdown(state, (PutdownAction)a, tps);
 		}
 		return tps;
 	}
@@ -45,32 +45,16 @@ public class TaxiDropoffModel implements FullStateModel {
 	 * @param s
 	 * @param tps
 	 */
-	public void dropoff(TaxiDropoffState s, DropoffAction a, List<StateTransitionProb> tps){
-		String taxiLocation = (String) s.getTaxiAtt(TaxiDropoffDomain.ATT_CURRENT_LOCATION);
+	public void putdown(TaxiDropoffState s, PutdownAction a, List<StateTransitionProb> tps){
 		String passenger = (String)a.getPassenger();
-		boolean inTaxi = (boolean) s.getPassengerAtt(passenger, TaxiDropoffDomain.ATT_IN_TAXI);
 		TaxiDropoffState ns = s.copy();
-		
+
+		String pass_loc = (String)s.getPassengerAtt(passenger, TaxiDropoffDomain.ATT_LOCATION);
+
 		//if some one is in taxi and it is at depot
-		if(inTaxi && !taxiLocation.equals(TaxiDropoffDomain.ON_ROAD)){
+		if(!(pass_loc.equals(TaxiDropoffDomain.NOT_IN_TAXI) || pass_loc.equals(TaxiDropoffDomain.ON_ROAD))){
 			TaxiDropoffPassenger np = ns.touchPassenger(passenger);
-			np.set(TaxiDropoffDomain.ATT_IN_TAXI, false);
-
-			// iterate through every passenger except the one that was just dropped off and see if taxi is empty
-			boolean passengersInTaxi = false;
-			for(String p : s.getPassengers()) {
-				boolean thisPinT = (boolean) s.getPassengerAtt(p, TaxiDropoffDomain.ATT_IN_TAXI);
-				if ((!p.equals(passenger)) && thisPinT) {
-					passengersInTaxi = true;
-					break;
-				}
-			}
-
-			// after iterating through passengers, if none are in taxi
-			if (!passengersInTaxi) {
-				TaxiDropoffAgent nt = ns.touchTaxi();
-				nt.set(TaxiDropoffDomain.ATT_TAXI_OCCUPIED, false);
-			}
+			np.set(TaxiDropoffDomain.ATT_LOCATION, TaxiDropoffDomain.NOT_IN_TAXI);
 		}
 		tps.add(new StateTransitionProb(ns, 1));
 	}

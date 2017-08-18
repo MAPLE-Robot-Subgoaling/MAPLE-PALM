@@ -13,7 +13,7 @@ public class TaxiBringonAgent extends MutableObject{
 	 * contains if taxi is occupied and where it is (onRoad or at depot
 	 */
 	private final static List<Object> keys = Arrays.<Object>asList(
-			TaxiBringonDomain.ATT_CURRENT_LOCATION
+			TaxiBringonDomain.ATT_LOCATION
 			);
 	
 	public TaxiBringonAgent(String name, String currentLocation) {
@@ -21,7 +21,7 @@ public class TaxiBringonAgent extends MutableObject{
 	}
 	
 	private TaxiBringonAgent(String name, Object currentLocation) {
-		this.set(TaxiBringonDomain.ATT_CURRENT_LOCATION, currentLocation);
+		this.set(TaxiBringonDomain.ATT_LOCATION, currentLocation);
 		this.setName(name);
 	}
 
@@ -39,7 +39,7 @@ public class TaxiBringonAgent extends MutableObject{
 	public ObjectInstance copyWithName(String objectName) {
 		return new TaxiBringonAgent(
 				objectName,
-				get(TaxiBringonDomain.ATT_CURRENT_LOCATION)
+				get(TaxiBringonDomain.ATT_LOCATION)
 				);
 	}
 

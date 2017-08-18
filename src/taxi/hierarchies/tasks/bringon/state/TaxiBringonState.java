@@ -20,30 +20,23 @@ public class TaxiBringonState implements MutableOOState{
 	 */
 	private TaxiBringonAgent taxi;
 	private Map<String, TaxiBringonPassenger> passengers;
-	private Map<String, TaxiBringonLocation> locations;
-	
-	public TaxiBringonState(TaxiBringonAgent t, List<TaxiBringonPassenger> pass, List<TaxiBringonLocation> loc) {
+
+	public TaxiBringonState(TaxiBringonAgent t, List<TaxiBringonPassenger> pass) {
 		this.taxi = t;
 		
 		this.passengers = new HashMap<>();
 		for(TaxiBringonPassenger p : pass){
 			this.passengers.put(p.name(), p);
 		}
-		
-		this.locations = new HashMap<>();
-		for(TaxiBringonLocation l : loc){
-			this.locations.put(l.name(), l);
-		}
 	}
 	
-	private TaxiBringonState(TaxiBringonAgent t, Map<String, TaxiBringonPassenger> pass, Map<String, TaxiBringonLocation> loc) {
+	private TaxiBringonState(TaxiBringonAgent t, Map<String, TaxiBringonPassenger> pass) {
 		this.taxi = t;
 		this.passengers = pass;
-		this.locations = loc;
 	}
 	@Override
 	public int numObjects() {
-		return 1 + passengers.size() + locations.size();
+		return 1 + passengers.size();
 	}
 
 	@Override
@@ -54,11 +47,7 @@ public class TaxiBringonState implements MutableOOState{
 		ObjectInstance o = passengers.get(oname);
 		if(o != null)
 			return o;
-		
-		o = locations.get(oname);
-		if(o != null)
-			return o;
-		
+
 		return null;
 	}
 
@@ -67,7 +56,6 @@ public class TaxiBringonState implements MutableOOState{
 		List<ObjectInstance> obj = new ArrayList<ObjectInstance>();
 		obj.add(taxi);
 		obj.addAll(passengers.values());
-		obj.addAll(locations.values());
 		return obj;
 	}
 
@@ -77,8 +65,6 @@ public class TaxiBringonState implements MutableOOState{
 			return Arrays.<ObjectInstance>asList(taxi);
 		else if(oclass.equals(TaxiBringonDomain.CLASS_PASSENGER))
 			return new ArrayList<ObjectInstance>(passengers.values());
-		else if(oclass.equals(TaxiBringonDomain.CLASS_LOCATION))
-			return new ArrayList<ObjectInstance>(locations.values());
 		throw new RuntimeException("No object class " + oclass);
 	}
 
@@ -94,7 +80,7 @@ public class TaxiBringonState implements MutableOOState{
 
 	@Override
 	public TaxiBringonState copy() {
-		return new TaxiBringonState(taxi, passengers, locations);
+		return new TaxiBringonState(taxi, passengers);
 	}
 
 	@Override
@@ -105,8 +91,6 @@ public class TaxiBringonState implements MutableOOState{
 			touchTaxi().set(variableKey, value);
 		}else if(passengers.get(key.obName) != null){
 			touchPassenger(key.obName).set(variableKey, value);
-		}else if(locations.get(key.obName) != null){
-			touchLocation(key.obName).set(variableKey, value);
 		} else {
 			throw new RuntimeException("ERROR: unable to set value for " + variableKey);
 		}
@@ -120,8 +104,6 @@ public class TaxiBringonState implements MutableOOState{
 			taxi = (TaxiBringonAgent) o;
 		}else if(o instanceof TaxiBringonPassenger || o.className().equals(TaxiBringonDomain.CLASS_PASSENGER)){
 			touchPassengers().put(o.name(), (TaxiBringonPassenger) o);
-		}else if(o instanceof TaxiBringonLocation || o.className().equals(TaxiBringonDomain.CLASS_LOCATION)){
-			touchLocations().put(o.name(), (TaxiBringonLocation) o);
 		}else{
 			throw new RuntimeException("Can only add certain objects to state.");
 		}
@@ -150,24 +132,12 @@ public class TaxiBringonState implements MutableOOState{
 		passengers.put(passName, p);
 		return p;
 	}
-	
-	public TaxiBringonLocation touchLocation(String locName){
-		TaxiBringonLocation l = locations.get(locName).copy();
-		touchLocations().remove(locName);
-		locations.put(locName, l);
-		return l;
-	}
-	
+
 	public Map<String, TaxiBringonPassenger> touchPassengers(){
 		this.passengers = new HashMap<String, TaxiBringonPassenger>(passengers);
 		return passengers;
 	}
-	
-	public Map<String, TaxiBringonLocation> touchLocations(){
-		this.locations = new HashMap<String, TaxiBringonLocation>(locations);
-		return locations;
-	}
-	
+
 	//get values from objects
 	public String[] getPassengers(){
 		String[] ret = new String[passengers.size()];
@@ -175,14 +145,6 @@ public class TaxiBringonState implements MutableOOState{
 		for(String name : passengers.keySet())
 			ret[i++] = name;
 		return ret;
-	}
-	
-	public String[] getLocations(){
-		String[] ret = new String[locations.size()];
-		int i = 0;
-		for(String name : locations.keySet())
-			ret[i++] = name;
-		return ret; 
 	}
 	
 	public Object getTaxiAtt(String attName){
@@ -193,10 +155,6 @@ public class TaxiBringonState implements MutableOOState{
 		return passengers.get(passname).get(attName);
 	}
 	
-	public Object getLocationAtt(String locName, String attName){
-		return locations.get(locName).get(attName);
-	}
-	
 	@Override
 	public String toString(){
 		String out = "{\n";
@@ -204,10 +162,6 @@ public class TaxiBringonState implements MutableOOState{
 		
 		for(TaxiBringonPassenger p : passengers.values()){
 			out += p.toString() + "\n";
-		}
-		
-		for(TaxiBringonLocation l : locations.values()){
-			out += l.toString() + "\n";
 		}
 		return out;
 	}

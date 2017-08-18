@@ -8,7 +8,12 @@ public class TaxiDropoffTerminalFunction implements TerminalFunction {
 	@Override
 	public boolean isTerminal(State s) {
 		TaxiDropoffState state = (TaxiDropoffState) s;
-        return !((boolean)state.getTaxiAtt(TaxiDropoffDomain.ATT_TAXI_OCCUPIED));
+		for(String passenger : state.getPassengers()) {
+			String pass_loc = (String)state.getPassengerAtt(passenger, TaxiDropoffDomain.ATT_LOCATION);
+			if(!pass_loc.equals(TaxiDropoffDomain.NOT_IN_TAXI))
+				return false;
+		}
+		return true;
 	}
 
 }

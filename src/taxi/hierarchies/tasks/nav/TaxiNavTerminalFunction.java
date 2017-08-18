@@ -13,7 +13,7 @@ public class TaxiNavTerminalFunction implements TerminalFunction {
 		TaxiNavState st = (TaxiNavState)s;
 
 	    for(String loc : st.getLocations()) {
-	    	if(loc.equals(st.getTaxiAtt(TaxiNavState.CLASS_LOCATION))) {
+	    	if(loc.equals(st.getTaxiAtt(TaxiNavDomain.CLASS_LOCATION))) {
 	    		return true;
 			}
 		}

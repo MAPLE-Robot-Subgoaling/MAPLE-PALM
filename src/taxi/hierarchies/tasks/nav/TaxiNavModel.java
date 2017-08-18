@@ -55,7 +55,6 @@ public class TaxiNavModel implements FullStateModel {
 		
 		TaxiNavState ns = s.copy();
 		TaxiNavAgent taxi = ns.touchTaxi();
-		taxi.set(TaxiNavDomain.ATT_CURRENT_LOCATION, goal);
         tps.add(new StateTransitionProb(ns, 1.));
 	}
 }

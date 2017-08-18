@@ -14,17 +14,15 @@ public class TaxiDropoffPassenger extends MutableObject {
 	 * and if they have been just picked up 
 	 */
 	private final static List<Object> keys = Arrays.<Object>asList(
-			TaxiDropoffDomain.ATT_CURRENT_LOCATION,
-			TaxiDropoffDomain.ATT_IN_TAXI
+			TaxiDropoffDomain.ATT_LOCATION
 			);
 	
-	public TaxiDropoffPassenger(String name, String currentLocation, boolean inTaxi) {
-		this(name, (Object) currentLocation, (Object) inTaxi);
+	public TaxiDropoffPassenger(String name, String currentLocation) {
+		this(name, (Object) currentLocation);
 	}
 
-	private TaxiDropoffPassenger(String name, Object currentLocation, Object inTaxi){
-		this.set(TaxiDropoffDomain.ATT_CURRENT_LOCATION, currentLocation);
-		this.set(TaxiDropoffDomain.ATT_IN_TAXI, inTaxi);
+	private TaxiDropoffPassenger(String name, Object currentLocation){
+		this.set(TaxiDropoffDomain.ATT_LOCATION, currentLocation);
 		this.setName(name);
 	}
 
@@ -42,8 +40,7 @@ public class TaxiDropoffPassenger extends MutableObject {
 	public ObjectInstance copyWithName(String objectName) {
 		return new TaxiDropoffPassenger(
 				objectName,
-				get(TaxiDropoffDomain.ATT_CURRENT_LOCATION),
-				get(TaxiDropoffDomain.ATT_IN_TAXI)
+				get(TaxiDropoffDomain.ATT_LOCATION)
 				);
 	}
 

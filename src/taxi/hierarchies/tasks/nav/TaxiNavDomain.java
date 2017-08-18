@@ -15,6 +15,7 @@ import burlap.mdp.singleagent.model.RewardFunction;
 import burlap.mdp.singleagent.oo.OOSADomain;
 import burlap.statehashing.HashableStateFactory;
 import burlap.statehashing.simple.SimpleHashableStateFactory;
+import taxi.Taxi;
 import taxi.hierarchies.tasks.nav.state.NavStateMapper;
 import taxi.hierarchies.tasks.nav.state.TaxiNavAgent;
 import taxi.hierarchies.tasks.nav.state.TaxiNavLocation;
@@ -26,13 +27,18 @@ public class TaxiNavDomain implements DomainGenerator {
 	//object classes
 	public static final String CLASS_TAXI = 				"NavTaxi";
 	public static final String CLASS_LOCATION = 			"NavLocation";
+	public static final String CLASS_WALL =					"NavWall";
 
 	//attributes
 	public static final String ATT_X =						"x";
 	public static final String ATT_Y =						"y";
+	public static final String ATT_GOAL_LOCATION =			"goalLocation";
 
-	public static final String ATT_GOAL_LOCATION =				"goalLocation";
-	public static final String ATT_CURRENT_LOCATION =			"currentLocation";
+	// wall attributes
+	public static final String ATT_START_X = 				"startX";
+	public static final String ATT_START_Y = 				"startY";
+	public static final String ATT_IS_HORIZONTAL =			"isHorizontal";
+	public static final String ATT_LENGTH =					"length";
 
 	//actions
 	public static final String ACTION_NAVIGATE =			"navigate";
@@ -67,18 +73,23 @@ public class TaxiNavDomain implements DomainGenerator {
 		FactoredModel model = new FactoredModel(taxiModel, rf, tf);
 		domain.setModel(model);
 		
-		domain.addActionTypes( new NavigateActionType() );
-		
+		domain.addActionTypes(
+				new UniversalActionType(Taxi.ACTION_NORTH),
+				new UniversalActionType(Taxi.ACTION_SOUTH),
+				new UniversalActionType(Taxi.ACTION_EAST),
+				new UniversalActionType(Taxi.ACTION_WEST)
+            );
+
 		return domain;
 	}
 
 	public static void main(String[] args) {
 		TaxiNavDomain taxiBuild = new TaxiNavDomain();
 		OOSADomain domain = taxiBuild.generateDomain();
-		
+
 		HashableStateFactory hs = new SimpleHashableStateFactory();
 		ValueIteration vi = new ValueIteration(domain, 0.5, hs, 0.01, 10);
-		
+
 		State base = TaxiStateFactory.createClassicState();
 		NavStateMapper map = new NavStateMapper();
 		State L1s = map.mapState(base);

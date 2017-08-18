@@ -8,7 +8,7 @@ import burlap.mdp.core.StateTransitionProb;
 import burlap.mdp.core.action.Action;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.model.statemodel.FullStateModel;
-import taxi.hierarchies.tasks.bringon.BringonActionType.BringonAction;
+import taxi.PickupActionType.PickupAction;
 import taxi.Taxi;
 import taxi.hierarchies.tasks.bringon.state.TaxiBringonPassenger;
 import taxi.hierarchies.tasks.bringon.state.TaxiBringonState;
@@ -34,8 +34,8 @@ public class TaxiBringonModel implements FullStateModel {
 		List<StateTransitionProb> tps = new ArrayList<StateTransitionProb>();
 		TaxiBringonState state = (TaxiBringonState) s;
 		
-		if(a.actionName().startsWith(TaxiBringonDomain.ACTION_BRINGON)){
-            bringon(state, (BringonAction)a, tps);
+		if(a.actionName().startsWith(Taxi.ACTION_PICKUP)){
+            pickup(state, (PickupAction)a, tps);
 		}
 		return tps;
 	}
@@ -46,16 +46,16 @@ public class TaxiBringonModel implements FullStateModel {
 	 * @param s the current state
 	 * @param tps the list of outcomes to add to
 	 */
-	public void bringon(TaxiBringonState s, BringonAction a, List<StateTransitionProb> tps){
-		String taxiLocation = (String) s.getTaxiAtt(TaxiBringonDomain.ATT_CURRENT_LOCATION);
-		String passengerName = a.getPassenger();
-		String passengerLocation = (String) s.getPassengerAtt(passengerName, TaxiBringonDomain.ATT_CURRENT_LOCATION);
+	public void pickup(TaxiBringonState s, PickupAction a, List<StateTransitionProb> tps){
+		String taxiLocation = (String) s.getTaxiAtt(TaxiBringonDomain.ATT_LOCATION);
+		String passenger = a.getPassenger();
+		String passengerLocation = (String) s.getPassengerAtt(passenger, TaxiBringonDomain.ATT_LOCATION);
 		TaxiBringonState ns = s.copy();
 
 		//if no one is in taxi and it is at depot
-		if(!taxiLocation.equals(TaxiBringonDomain.ON_ROAD) && taxiLocation.equals(passengerLocation)){
-			TaxiBringonPassenger np = ns.touchPassenger(passengerName);
-			np.set(Taxi.ATT_IN_TAXI, true);
+		if(taxiLocation.equals(passengerLocation)) {
+			TaxiBringonPassenger np = ns.touchPassenger(passenger);
+			np.set(TaxiBringonDomain.ATT_LOCATION, TaxiBringonDomain.IN_TAXI);
 		}
 		tps.add(new StateTransitionProb(ns, 1));
 	}

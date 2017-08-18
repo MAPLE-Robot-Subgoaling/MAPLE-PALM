@@ -18,11 +18,10 @@ public class RootPF extends PropositionalFunction {
 		TaxiRootState st = (TaxiRootState) s;
 
 		for(String passengerName : st.getPassengers()){
-			boolean inTaxi = (boolean) st.getPassengerAtt(passengerName, TaxiRootDomain.ATT_IN_TAXI);
 			String locationName = (String) st.getPassengerAtt(passengerName, TaxiRootDomain.ATT_CURRENT_LOCATION);
 			String goalLocation = (String) st.getPassengerAtt(passengerName, TaxiRootDomain.ATT_GOAL_LOCATION);
 		
-			if(!locationName.equals(goalLocation) || inTaxi)
+			if(!locationName.equals(goalLocation))
 				return false;
 		}
  		return true;

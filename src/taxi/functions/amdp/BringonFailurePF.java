@@ -2,8 +2,9 @@ package taxi.functions.amdp;
 
 import burlap.mdp.core.oo.propositional.PropositionalFunction;
 import burlap.mdp.core.oo.state.OOState;
-import taxi.Taxi;
-import taxi.state.TaxiState;
+import taxi.hierarchies.tasks.bringon.BringonActionType;
+import taxi.hierarchies.tasks.bringon.TaxiBringonDomain;
+import taxi.hierarchies.tasks.bringon.state.TaxiBringonState;
 
 public class BringonFailurePF extends PropositionalFunction {
 	//pickup fails when taxi is not at a depot
@@ -13,21 +14,15 @@ public class BringonFailurePF extends PropositionalFunction {
 	
 	@Override
 	public boolean isTrue(OOState s, String... params) {
-		// if the taxi is not at depot or not occupied
-		TaxiState st = (TaxiState) s;
-		
-		int tx = (int) st.getTaxiAtt(Taxi.ATT_X);
-		int ty = (int) st.getTaxiAtt(Taxi.ATT_Y);
-		
-		for(String passengerName : st.getPassengers()){
-			int px = (int) st.getPassengerAtt(passengerName, Taxi.ATT_X);
-			int py = (int) st.getPassengerAtt(passengerName, Taxi.ATT_Y);
-			if(tx == px && ty == py){
-				return (boolean) st.getTaxiAtt(Taxi.ATT_TAXI_OCCUPIED);
-			}
-		}
-		
-		return true;
+		String action = params[0];
+		TaxiBringonState st = (TaxiBringonState)s;
+		BringonActionType pickup = new BringonActionType();
+		BringonActionType.BringonAction a = pickup.associatedAction(action);
+		String passenger = a.getPassenger();
+		String pass_loc = (String)st.getPassengerAtt(passenger, TaxiBringonDomain.ATT_LOCATION);
+		String taxi_loc = (String)st.getTaxiAtt(TaxiBringonDomain.ATT_LOCATION);
+
+		return !pass_loc.equals(taxi_loc);
 	}
 
 }

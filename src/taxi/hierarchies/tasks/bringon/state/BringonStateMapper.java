@@ -15,45 +15,44 @@ public class BringonStateMapper implements StateMapping {
 	@Override
 	public State mapState(State s) {
 		List<TaxiBringonPassenger> passengers = new ArrayList<TaxiBringonPassenger>();
-		List<TaxiBringonLocation> locations = new ArrayList<TaxiBringonLocation>();
-		
 		TaxiState st = (TaxiState) s;
 
+		// Get Taxi
 		String taxiLocation = TaxiBringonDomain.ON_ROAD;
-		int tx = (int) st.getTaxiAtt(Taxi.ATT_X);
-		int ty = (int) st.getTaxiAtt(Taxi.ATT_Y);
-		
-		for(String locName : st.getLocations()){
-			String color = (String) st.getLocationAtt(locName, Taxi.ATT_COLOR);
-			locations.add(new TaxiBringonLocation(locName, color));
+		int tx = (int)st.getTaxiAtt(Taxi.ATT_X);
+		int ty = (int)st.getTaxiAtt(Taxi.ATT_Y);
+		for (String locName : st.getLocations()) {
+			int lx = (int) st.getLocationAtt(locName, Taxi.ATT_X);
+			int ly = (int) st.getLocationAtt(locName, Taxi.ATT_Y);
+
+			if (tx == lx && ty == ly) {
+				taxiLocation = locName;
+				break;
+			}
 		}
-		
+		TaxiBringonAgent taxi = new TaxiBringonAgent(TaxiBringonDomain.CLASS_TAXI, taxiLocation);
+
+		// Get Passengers
 		for(String passengerName : st.getPassengers()){
 			int px = (int) st.getPassengerAtt(passengerName, Taxi.ATT_X);
 			int py = (int) st.getPassengerAtt(passengerName, Taxi.ATT_Y);
 			boolean inTaxi = (boolean) st.getPassengerAtt(passengerName, Taxi.ATT_IN_TAXI);
-			String currentLocation = "";
-			
-			for(String locName : st.getLocations()){
-				int lx = (int) st.getLocationAtt(locName, Taxi.ATT_X);
-				int ly = (int) st.getLocationAtt(locName, Taxi.ATT_Y);
-				
-				if(px == lx && py == ly){
-					currentLocation = locName;
-				}
-				if(tx == lx && ty == ly){
-					taxiLocation = locName;
+			String passengerLocation = TaxiBringonDomain.IN_TAXI;
+
+			if(!inTaxi) {
+				for (String locName : st.getLocations()) {
+					int lx = (int) st.getLocationAtt(locName, Taxi.ATT_X);
+					int ly = (int) st.getLocationAtt(locName, Taxi.ATT_Y);
+
+					if (px == lx && py == ly) {
+						passengerLocation = locName;
+						break;
+					}
 				}
 			}
-			passengers.add(new TaxiBringonPassenger(passengerName, currentLocation, inTaxi));
+			passengers.add(new TaxiBringonPassenger(passengerName, passengerLocation));
 		}
-		
-		boolean taxiOccupied = (boolean) st.getTaxiAtt(Taxi.ATT_TAXI_OCCUPIED);
-		String Tname = st.getTaxiName();
-		
-		TaxiBringonAgent taxi = new TaxiBringonAgent(Tname, taxiLocation);
-		
-		return new TaxiBringonState(taxi, passengers, locations);
+		return new TaxiBringonState(taxi, passengers);
 	}
 
 }

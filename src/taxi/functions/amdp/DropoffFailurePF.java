@@ -2,8 +2,9 @@ package taxi.functions.amdp;
 
 import burlap.mdp.core.oo.propositional.PropositionalFunction;
 import burlap.mdp.core.oo.state.OOState;
-import taxi.Taxi;
-import taxi.state.TaxiState;
+import taxi.hierarchies.tasks.dropoff.DropoffActionType;
+import taxi.hierarchies.tasks.dropoff.TaxiDropoffDomain;
+import taxi.hierarchies.tasks.dropoff.state.TaxiDropoffState;
 
 public class DropoffFailurePF extends PropositionalFunction {
 	//dropoff fails if taxi is not at a depot  
@@ -14,27 +15,13 @@ public class DropoffFailurePF extends PropositionalFunction {
 	
 	@Override
 	public boolean isTrue(OOState s, String... params) {
-		// if the taxi is not at depot or not occupied
-		TaxiState st = (TaxiState) s;
-		
-		int tx = (int) st.getTaxiAtt(Taxi.ATT_X);
-		int ty = (int) st.getTaxiAtt(Taxi.ATT_Y);
-		
-		for(String locationName : st.getLocations()){
-			int lx = (int) st.getLocationAtt(locationName, Taxi.ATT_X);
-			int ly = (int) st.getLocationAtt(locationName, Taxi.ATT_Y);
-			if(tx == lx && ty == ly){
-				int passCount = 0;
-				for(String passengerName : st.getPassengers()){
-					int px = (int) st.getPassengerAtt(passengerName, Taxi.ATT_X);
-					int py = (int) st.getPassengerAtt(passengerName, Taxi.ATT_Y);
-					if(px == lx && py == ly)
-						passCount++;
-				}
-				return !((boolean) st.getTaxiAtt(Taxi.ATT_TAXI_OCCUPIED)) || passCount > 1;
-			}
-		}
-		
-		return true;
+		String action = params[0];
+		TaxiDropoffState st = (TaxiDropoffState)s;
+		DropoffActionType pickup = new DropoffActionType();
+		DropoffActionType.DropoffAction a = pickup.associatedAction(action);
+		String passenger = a.getPassenger();
+		String pass_loc = (String)st.getPassengerAtt(passenger, TaxiDropoffDomain.ATT_LOCATION);
+
+		return pass_loc.equals(TaxiDropoffDomain.NOT_IN_TAXI) || pass_loc.equals(TaxiDropoffDomain.ON_ROAD);
 	}
 }

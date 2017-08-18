@@ -2,9 +2,9 @@ package taxi.functions.amdp;
 
 import burlap.mdp.core.oo.propositional.PropositionalFunction;
 import burlap.mdp.core.oo.state.OOState;
-import taxi.PickupActionType;
-import taxi.Taxi;
-import taxi.state.TaxiState;
+import taxi.hierarchies.tasks.bringon.BringonActionType;
+import taxi.hierarchies.tasks.bringon.TaxiBringonDomain;
+import taxi.hierarchies.tasks.bringon.state.TaxiBringonState;
 
 public class BringonCompletedPF extends PropositionalFunction {
 	//pickup is complete when passenger is in taxi 
@@ -16,10 +16,13 @@ public class BringonCompletedPF extends PropositionalFunction {
 	@Override
 	public boolean isTrue(OOState s, String... params) {
 		String action = params[0];
-		PickupActionType pass = new PickupActionType();
-		PickupActionType.PickupAction a = pass.associatedAction(action);
-		TaxiState st = (TaxiState) s;
-		return (boolean) st.getTaxiAtt(Taxi.ATT_TAXI_OCCUPIED);
+		TaxiBringonState st = (TaxiBringonState)s;
+		BringonActionType pickup = new BringonActionType();
+		BringonActionType.BringonAction a = pickup.associatedAction(action);
+		String passenger = a.getPassenger();
+		String pass_loc = (String)st.getPassengerAtt(passenger, TaxiBringonDomain.ATT_LOCATION);
+
+		return pass_loc.equals(TaxiBringonDomain.IN_TAXI);
 	}
 
 }

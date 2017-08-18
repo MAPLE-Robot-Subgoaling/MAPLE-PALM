@@ -11,22 +11,20 @@ public class PutCompletedPF extends PropositionalFunction{
 	//put is complete when the passenger at the put actions goal 
 	
 	public PutCompletedPF() {
-		super("put", new String[]{TaxiPutDomain.CLASS_LOCATION});
+		super("put", new String[]{TaxiPutDomain.CLASS_PASSENGER});
 	}
 
 	@Override
 	public boolean isTrue(OOState s, String... params) {
 		String action = params[0];
-		PutActionType actyp = new PutActionType();
-		PutAction a = actyp.associatedAction(action);
 		TaxiPutState st = (TaxiPutState) s;
+		PutActionType actyp = new PutActionType();
+		PutActionType.PutAction a = actyp.associatedAction(action);
+		String passenger = a.getPassenger();
+		String goal_loc = (String)st.getPassengerAtt(passenger, TaxiPutDomain.ATT_GOAL_LOCATION);
+		boolean inTaxi = (boolean)st.getPassengerAtt(passenger, TaxiPutDomain.ATT_IN_TAXI);
+		String taxi_loc = (String)st.getTaxiAtt(TaxiPutDomain.ATT_TAXI_LOCATION);
 
-		//is the passenger that is at goal not in the taxi
-		String pLocation = (String) st.getPassengerAtt(a.getPassengerName(), TaxiPutDomain.ATT_CURRENT_LOCATION);
-		if(pLocation.equals(a.getGoalLocation())){
-			return !((boolean) st.getPassengerAtt(a.getPassengerName(), TaxiPutDomain.ATT_IN_TAXI));
-		}
-
-return false;
+		return taxi_loc.equals(goal_loc) && !inTaxi;
 	}
 }
