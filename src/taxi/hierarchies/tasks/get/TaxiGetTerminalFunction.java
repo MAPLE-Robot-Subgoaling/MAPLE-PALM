@@ -10,8 +10,8 @@ public class TaxiGetTerminalFunction implements TerminalFunction {
 		TaxiGetState state = (TaxiGetState) s;
 		
 		for(String passengerName : state.getPassengers()){
-			boolean inTaxi = (boolean) state.getPassengerAtt(passengerName, TaxiGetDomain.ATT_IN_TAXI);
-			if(!inTaxi) return false;
+			String passLocation = (String) state.getPassengerAtt(passengerName, TaxiGetDomain.ATT_LOCATION);
+			if(!passLocation.equals(TaxiGetDomain.IN_TAXI)) return false;
 		}
 		return true;
 	}

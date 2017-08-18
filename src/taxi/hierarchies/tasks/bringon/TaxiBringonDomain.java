@@ -14,6 +14,7 @@ import burlap.mdp.singleagent.model.RewardFunction;
 import burlap.mdp.singleagent.oo.OOSADomain;
 import burlap.statehashing.HashableStateFactory;
 import burlap.statehashing.simple.SimpleHashableStateFactory;
+import taxi.PickupActionType;
 import taxi.hierarchies.tasks.bringon.state.*;
 import taxi.stateGenerator.TaxiStateFactory;
 
@@ -67,7 +68,7 @@ public class TaxiBringonDomain implements DomainGenerator {
 		FactoredModel model = new FactoredModel(taxiModel, rf, tf);
 		domain.setModel(model);
 		
-		domain.addActionTypes( new BringonActionType() );
+		domain.addActionTypes( new PickupActionType() );
 		
 		return domain;
 	}

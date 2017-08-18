@@ -12,8 +12,7 @@ public class TaxiRootTerminalFunction implements TerminalFunction {
 		for(String passengerName : state.getPassengers()){
 			String goalLocation = (String)state.getPassengerAtt(passengerName, TaxiRootDomain.ATT_GOAL_LOCATION);
 			String currentLocation = (String)state.getPassengerAtt(passengerName, TaxiRootDomain.ATT_CURRENT_LOCATION);
-			boolean inTaxi = (boolean)state.getPassengerAtt(passengerName, TaxiRootDomain.ATT_IN_TAXI);
-			if(!goalLocation.equals(currentLocation) || inTaxi) return false;
+			if(!goalLocation.equals(currentLocation)) return false;
 		}
 		return true;
 	}

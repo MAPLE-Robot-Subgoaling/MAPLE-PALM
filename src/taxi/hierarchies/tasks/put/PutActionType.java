@@ -18,7 +18,7 @@ public class PutActionType implements ActionType {
 	@Override
 	public PutAction associatedAction(String strRep) {
 	    String[] parameters = strRep.split("_");
-		return new PutAction(parameters[1], parameters[2]);
+		return new PutAction(parameters[1]);
 	}
 
 	@Override
@@ -28,9 +28,7 @@ public class PutActionType implements ActionType {
 
 		for(String pass : state.getPassengers()) {
 			if((boolean)state.getPassengerAtt(pass, TaxiPutDomain.ATT_IN_TAXI)) {
-				for(String loc : state.getLocations()){
-					acts.add(new PutAction(loc, pass));
-				}
+                acts.add(new PutAction( pass));
 			}
 		}
 
@@ -39,30 +37,24 @@ public class PutActionType implements ActionType {
 
 	public class PutAction implements Action{
 
-		private String goalLocation;
 		private String passengerName;
 		
-		public PutAction(String goal, String passenger) {
-			this.goalLocation = goal;
+		public PutAction(String passenger) {
 			this.passengerName = passenger;
 		}
 		
-		public String getGoalLocation(){
-			return goalLocation;
-		}
-
-		public String getPassengerName() {
+		public String getPassenger() {
 			return passengerName;
 		}
 		
 		@Override
 		public String actionName() {
-			return TaxiPutDomain.ACTION_PUT + "_" + goalLocation + "_" + passengerName;
+			return TaxiPutDomain.ACTION_PUT + "_" + passengerName;
 		}
 
 		@Override
 		public Action copy() {
-			return new PutAction(goalLocation, passengerName);
+			return new PutAction(passengerName);
 		}
 		
 		@Override
@@ -78,7 +70,7 @@ public class PutActionType implements ActionType {
 			
 			PutAction a = (PutAction) other;
 			
-			return a.goalLocation.equals(goalLocation) && a.passengerName.equals(passengerName);
+			return a.passengerName.equals(passengerName);
 		}
 		
 		@Override

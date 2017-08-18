@@ -14,23 +14,23 @@ import burlap.mdp.singleagent.model.RewardFunction;
 import burlap.mdp.singleagent.oo.OOSADomain;
 import burlap.statehashing.HashableStateFactory;
 import burlap.statehashing.simple.SimpleHashableStateFactory;
+import taxi.hierarchies.tasks.bringon.BringonActionType;
 import taxi.hierarchies.tasks.get.state.GetStateMapper;
-import taxi.hierarchies.tasks.get.state.TaxiGetLocation;
+import taxi.hierarchies.tasks.get.state.TaxiGetAgent;
 import taxi.hierarchies.tasks.get.state.TaxiGetPassenger;
+import taxi.hierarchies.tasks.nav.NavigateActionType;
 import taxi.stateGenerator.TaxiStateFactory;
 
 public class TaxiGetDomain implements DomainGenerator {
 
+    public static final String CLASS_TAXI =					"GetTaxi";
 	public static final String CLASS_PASSENGER =			"GetPassenger";
-	public static final String CLASS_LOCATION = 			"GetLocation";
-	
-	public static final String ATT_CURRENT_LOCATION = 		"currentLocation";
-	
-	//passenger attributes
-	public static final String ATT_IN_TAXI = 				"inTaxi";
 
-	//location attributes 
-	public static final String ATT_COLOR =					"color";
+	public static final String IN_TAXI =					"inTaxi";
+	public static final String ON_ROAD =					"onRoad";
+
+	// attributes
+	public static final String ATT_LOCATION = 				"location";
 
 	//actions
 	public static final String ACTION_GET = 				"get";
@@ -43,7 +43,7 @@ public class TaxiGetDomain implements DomainGenerator {
 	 * @param rf reward function
 	 * @param tf terminal function
 	 */
-	public TaxiGetDomain(RewardFunction rf, TerminalFunction tf, boolean fickle, double fickleprob) {
+	public TaxiGetDomain(RewardFunction rf, TerminalFunction tf) {
 		this.rf = rf;
 		this.tf = tf;
 	}
@@ -61,13 +61,16 @@ public class TaxiGetDomain implements DomainGenerator {
 		OOSADomain domain = new OOSADomain();
 		
 		domain.addStateClass(CLASS_PASSENGER, TaxiGetPassenger.class)
-			.addStateClass(CLASS_LOCATION, TaxiGetLocation.class);
-		
+			.addStateClass(CLASS_TAXI, TaxiGetAgent.class);
+
 		TaxiGetModel tmodel = new TaxiGetModel();
 		FactoredModel model = new FactoredModel(tmodel, rf, tf);
 		domain.setModel(model);
 		
-		domain.addActionTypes( new GetActionType() );
+		domain.addActionTypes(
+				new NavigateActionType(),
+				new BringonActionType()
+		);
 		
 		return domain;
 	}

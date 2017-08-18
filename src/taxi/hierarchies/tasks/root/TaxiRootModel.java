@@ -5,6 +5,10 @@ import burlap.mdp.core.StateTransitionProb;
 import burlap.mdp.core.action.Action;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.model.statemodel.FullStateModel;
+import taxi.hierarchies.tasks.get.GetActionType.GetAction;
+import taxi.hierarchies.tasks.put.PutActionType.PutAction;
+import taxi.hierarchies.tasks.get.TaxiGetDomain;
+import taxi.hierarchies.tasks.put.TaxiPutDomain;
 import taxi.hierarchies.tasks.root.state.TaxiRootPassenger;
 import taxi.hierarchies.tasks.root.state.TaxiRootState;
 
@@ -32,10 +36,27 @@ public class TaxiRootModel implements FullStateModel {
 		List<StateTransitionProb> tps = new ArrayList<StateTransitionProb>();
 		TaxiRootState state = (TaxiRootState) s;
 	
-		if(a.actionName().startsWith(TaxiRootDomain.ACTION_SOLVE)){
-			solve(state, tps);
+		if(a.actionName().startsWith(TaxiGetDomain.ACTION_GET)) {
+			get(state, (GetAction)a, tps);
+		} else if(a.actionName().startsWith(TaxiPutDomain.ACTION_PUT)) {
+			put(state, (PutAction)a, tps);
 		}
 		return tps;
+	}
+
+	/**
+	 * get the requested passenger into the taxi
+	 * @param s the current state
+	 * @param tps the list of transition probabilities
+	 */
+	public void get(TaxiRootState s, GetAction a, List<StateTransitionProb> tps){
+		TaxiRootState ns = s.copy();
+		String passenger = a.getPassenger();
+
+		TaxiRootPassenger np = ns.touchPassenger(passenger);
+		np.set(TaxiRootDomain.ATT_CURRENT_LOCATION, TaxiRootDomain.IN_TAXI);
+
+		tps.add(new StateTransitionProb(ns, 1));
 	}
 
 	/**
@@ -43,16 +64,13 @@ public class TaxiRootModel implements FullStateModel {
 	 * @param s the current state
 	 * @param tps the list of transition probabilities
 	 */
-	public void solve(TaxiRootState s, List<StateTransitionProb> tps){
+	public void put(TaxiRootState s, PutAction a, List<StateTransitionProb> tps){
 		TaxiRootState ns = s.copy();
-		for(String p : s.getPassengers()) {
-			String currentLocation = (String)s.getPassengerAtt(p, TaxiRootDomain.ATT_CURRENT_LOCATION);
-			String goalLocation = (String)s.getPassengerAtt(p, TaxiRootDomain.ATT_GOAL_LOCATION);
-			if(!currentLocation.equals(goalLocation)) {
-				TaxiRootPassenger np = ns.touchPassenger(p);
-				np.set(TaxiRootDomain.ATT_CURRENT_LOCATION, goalLocation);
-			}
-		}
+		String passenger = a.getPassenger();
+
+		TaxiRootPassenger np = ns.touchPassenger(passenger);
+		np.set(TaxiRootDomain.ATT_CURRENT_LOCATION, TaxiRootDomain.ATT_GOAL_LOCATION);
+
 		tps.add(new StateTransitionProb(ns, 1));
 	}
 }

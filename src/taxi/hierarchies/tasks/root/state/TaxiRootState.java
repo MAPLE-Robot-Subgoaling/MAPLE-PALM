@@ -7,37 +7,27 @@ import burlap.mdp.core.oo.state.ObjectInstance;
 import burlap.mdp.core.state.MutableState;
 import taxi.hierarchies.tasks.root.TaxiRootDomain;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class TaxiRootState implements MutableOOState {
 
 	//this state has passengers and depots
 	private Map<String, TaxiRootPassenger> passengers;
-	private Map<String, TaxiRootLocation> locations;
 
-	public TaxiRootState(List<TaxiRootPassenger> pass, List<TaxiRootLocation> loc) {
-		this.passengers = new HashMap<String, TaxiRootPassenger>();
+	public TaxiRootState(List<TaxiRootPassenger> pass) {
+		this.passengers = new HashMap<>();
 		for(TaxiRootPassenger p : pass){
 			this.passengers.put(p.name(), p);
 		}
-
-		this.locations = new HashMap<String, TaxiRootLocation>();
-		for(TaxiRootLocation l : loc){
-			this.locations.put(l.name(), l);
-		}
 	}
 
-	private TaxiRootState(Map<String, TaxiRootPassenger> pass, Map<String, TaxiRootLocation> loc) {
+	private TaxiRootState(Map<String, TaxiRootPassenger> pass) {
 		this.passengers = pass;
-		this.locations = loc;
 	}
 
 	@Override
 	public int numObjects() {
-		return passengers.size() + locations.size();
+		return passengers.size();
 	}
 
 	@Override
@@ -46,18 +36,13 @@ public class TaxiRootState implements MutableOOState {
 		if(o != null)
 			return o;
 
-		o = locations.get(oname);
-		if(o != null)
-			return o;
-
 		return null;
 	}
 
 	@Override
 	public List<ObjectInstance> objects() {
-		List<ObjectInstance> obj = new ArrayList<ObjectInstance>();
+		List<ObjectInstance> obj = new ArrayList<>();
 		obj.addAll(passengers.values());
-		obj.addAll(locations.values());
 		return obj;
 	}
 
@@ -65,8 +50,6 @@ public class TaxiRootState implements MutableOOState {
 	public List<ObjectInstance> objectsOfClass(String oclass) {
 		if(oclass.equals(TaxiRootDomain.CLASS_PASSENGER))
 			return new ArrayList<ObjectInstance>(passengers.values());
-		else if(oclass.equals(TaxiRootDomain.CLASS_LOCATION))
-			return new ArrayList<ObjectInstance>(locations.values());
 		throw new RuntimeException("No object class " + oclass);
 	}
 
@@ -82,7 +65,7 @@ public class TaxiRootState implements MutableOOState {
 
 	@Override
 	public TaxiRootState copy() {
-		return new TaxiRootState(passengers, locations);
+		return new TaxiRootState(passengers);
 	}
 
 	@Override
@@ -91,8 +74,6 @@ public class TaxiRootState implements MutableOOState {
 
 		if(passengers.get(key.obName) != null){
 			touchPassenger(key.obName).set(variableKey, value);
-		}else if(locations.get(key.obName) != null){
-			touchLocation(key.obName).set(variableKey, value);
 		} else {
 			throw new RuntimeException("ERROR: unable to set value for " + variableKey);
 		}
@@ -103,8 +84,6 @@ public class TaxiRootState implements MutableOOState {
 	public MutableOOState addObject(ObjectInstance o) {
 		if(o instanceof TaxiRootPassenger || o.className().equals(TaxiRootDomain.CLASS_PASSENGER)){
 			touchPassengers().put(o.name(), (TaxiRootPassenger) o);
-		}else if(o instanceof TaxiRootLocation || o.className().equals(TaxiRootDomain.CLASS_LOCATION)){
-			touchLocations().put(o.name(), (TaxiRootLocation) o);
 		}else{
 			throw new RuntimeException("Can only add certain objects to state.");
 		}
@@ -129,23 +108,11 @@ public class TaxiRootState implements MutableOOState {
 		return p;
 	}
 
-	public TaxiRootLocation touchLocation(String locName){
-		TaxiRootLocation l = locations.get(locName).copy();
-		touchLocations().remove(locName);
-		locations.put(locName, l);
-		return l;
-	}
-
 	public Map<String, TaxiRootPassenger> touchPassengers(){
-		this.passengers = new HashMap<String, TaxiRootPassenger>(passengers);
+		this.passengers = new HashMap<>(passengers);
 		return passengers;
 	}
 
-	public Map<String, TaxiRootLocation> touchLocations(){
-		this.locations = new HashMap<String, TaxiRootLocation>(locations);
-		return locations;
-	}
-	
 	//get values from objects
 	public String[] getPassengers(){
 		String[] ret = new String[passengers.size()];
@@ -154,34 +121,18 @@ public class TaxiRootState implements MutableOOState {
 			ret[i++] = name;
 		return ret;
 	}
-	
-	public String[] getLocations(){
-		String[] ret = new String[locations.size()];
-		int i = 0;
-		for(String name : locations.keySet())
-			ret[i++] = name;
-		return ret;
-	}
-	
+
 	public Object getPassengerAtt(String passname, String attName){
 		return passengers.get(passname).get(attName);
 	}
-	
-	public Object getLocationAtt(String locName, String attName){
-		return locations.get(locName).get(attName);
-	}
-	
+
 	@Override
 	public String toString(){
 		String out = "{\n";
-		
+
 		for(TaxiRootPassenger p : passengers.values()){
 			out += p.toString() + "\n";
 		}
-		
-		for(TaxiRootLocation l : locations.values()){
-			out += l.toString() + "\n";
-		}
 		return out;
 	}
-	}
+}

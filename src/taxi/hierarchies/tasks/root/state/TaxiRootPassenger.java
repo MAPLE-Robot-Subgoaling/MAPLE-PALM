@@ -14,25 +14,19 @@ public class TaxiRootPassenger extends MutableObject {
 	 * whether they have just been picked up and haven't changed goal
 	 */
 	private final static List<Object> keys = Arrays.<Object>asList(
-			TaxiRootDomain.ATT_CURRENT_LOCATION,
-			TaxiRootDomain.ATT_IN_TAXI
+			TaxiRootDomain.ATT_CURRENT_LOCATION
 			);
 	
 	public TaxiRootPassenger(String name, String currentLocation) {
-		this(name, (Object) currentLocation, null, false);
+		this(name, (Object) currentLocation, null);
 	}
 
 	public TaxiRootPassenger(String name, String currentLocation, String goalLocation) {
-		this(name, (Object) currentLocation, (Object) goalLocation, false);
+		this(name, (Object) currentLocation, (Object) goalLocation);
 	}
 
-	public TaxiRootPassenger(String name, String currentLocation, String goalLocation, boolean inTaxi){
-		this(name, (Object) currentLocation, (Object) goalLocation, (Object) inTaxi);
-	}
-
-	private TaxiRootPassenger(String name, Object currentLocation, Object goalLocation, Object inTaxi){
+	private TaxiRootPassenger(String name, Object currentLocation, Object goalLocation){
 		this.set(TaxiRootDomain.ATT_CURRENT_LOCATION, currentLocation);
-		this.set(TaxiRootDomain.ATT_IN_TAXI, inTaxi);
 		this.set(TaxiRootDomain.ATT_GOAL_LOCATION, goalLocation);
 		this.setName(name);
 	}
@@ -52,8 +46,7 @@ public class TaxiRootPassenger extends MutableObject {
 		return new TaxiRootPassenger(
 				objectName,
 				get(TaxiRootDomain.ATT_CURRENT_LOCATION),
-				get(TaxiRootDomain.ATT_GOAL_LOCATION),
-				get(TaxiRootDomain.ATT_IN_TAXI)
+				get(TaxiRootDomain.ATT_GOAL_LOCATION)
 				);
 	}
 

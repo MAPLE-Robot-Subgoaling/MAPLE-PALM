@@ -13,22 +13,14 @@ public class TaxiGetPassenger extends MutableObject {
 	 * current location, whether they are in taxi, the goal, whether they haven been picked up
 	 * whether they have just been picked up and haven't changed goal
 	 */
-	private final static List<Object> keys = Arrays.<Object>asList(
-			TaxiGetDomain.ATT_CURRENT_LOCATION,
-			TaxiGetDomain.ATT_IN_TAXI
-			);
+	private final static List<Object> keys = Arrays.<Object>asList( TaxiGetDomain.ATT_LOCATION );
 	
 	public TaxiGetPassenger(String name, String currentLocation) {
-		this(name, (Object) currentLocation, false);
-	}
-	
-	public TaxiGetPassenger(String name, String currentLocation, boolean inTaxi){
-		this(name, (Object) currentLocation, (Object) inTaxi);
+		this(name, (Object) currentLocation);
 	}
 
-	private TaxiGetPassenger(String name, Object currentLocation, Object inTaxi){
-		this.set(TaxiGetDomain.ATT_CURRENT_LOCATION, currentLocation);
-		this.set(TaxiGetDomain.ATT_IN_TAXI, inTaxi);
+	private TaxiGetPassenger(String name, Object currentLocation){
+		this.set(TaxiGetDomain.ATT_LOCATION, currentLocation);
 		this.setName(name);
 	}
 	
@@ -44,11 +36,7 @@ public class TaxiGetPassenger extends MutableObject {
 
 	@Override
 	public ObjectInstance copyWithName(String objectName) {
-		return new TaxiGetPassenger(
-				objectName,
-				get(TaxiGetDomain.ATT_CURRENT_LOCATION),
-				get(TaxiGetDomain.ATT_IN_TAXI)
-				);
+		return new TaxiGetPassenger( objectName, get(TaxiGetDomain.ATT_LOCATION) );
 	}
 
 	@Override

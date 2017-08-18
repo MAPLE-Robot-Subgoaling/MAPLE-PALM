@@ -14,7 +14,7 @@ public class TaxiPutTerminalFunction implements TerminalFunction {
 		
 		for(String passengerName : state.getPassengers()){
 			boolean inTaxi = (boolean) state.getPassengerAtt(passengerName, TaxiPutDomain.ATT_IN_TAXI);
-			if(inTaxi) return false;
+			if(!inTaxi) return false;
 		}
 		return true;
 	}

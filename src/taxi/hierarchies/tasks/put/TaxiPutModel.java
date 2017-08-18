@@ -5,7 +5,11 @@ import burlap.mdp.core.StateTransitionProb;
 import burlap.mdp.core.action.Action;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.model.statemodel.FullStateModel;
-import taxi.hierarchies.tasks.put.PutActionType.PutAction;
+import taxi.hierarchies.tasks.dropoff.DropoffActionType.DropoffAction;
+import taxi.hierarchies.tasks.dropoff.TaxiDropoffDomain;
+import taxi.hierarchies.tasks.nav.NavigateActionType.NavigateAction;
+import taxi.hierarchies.tasks.nav.TaxiNavDomain;
+import taxi.hierarchies.tasks.put.state.TaxiPutAgent;
 import taxi.hierarchies.tasks.put.state.TaxiPutPassenger;
 import taxi.hierarchies.tasks.put.state.TaxiPutState;
 
@@ -32,43 +36,44 @@ public class TaxiPutModel implements FullStateModel {
 	public List<StateTransitionProb> stateTransitions(State s, Action a) {
 		List<StateTransitionProb> tps = new ArrayList<StateTransitionProb>();
 		TaxiPutState state = (TaxiPutState) s;
-	
-		if(a.actionName().startsWith(TaxiPutDomain.ACTION_PUT)){
-			put(state, (PutAction) a , tps);
+
+		if(a.actionName().startsWith(TaxiDropoffDomain.ACTION_DROPOFF)) {
+			dropoff(state, (DropoffAction)a, tps);
+		} else if(a.actionName().startsWith(TaxiNavDomain.ACTION_NAVIGATE)) {
+			navigate(state, (NavigateAction) a, tps);
 		}
 		return tps;
 	}
 
 	/**
-	 * puts current passenger at requested depot
+	 * put the requested passenger into the taxi
 	 * @param s the current state
-	 * @param a the put action
-	 * @param tps the list of state transition probabilities
+	 * @param a the get action type
+	 * @param tps the list of transition probabilities
 	 */
-	public void put(TaxiPutState s, PutAction a, List<StateTransitionProb> tps){
-		String goalLoaction = a.getGoalLocation();
+	public void dropoff(TaxiPutState s, DropoffAction a, List<StateTransitionProb> tps) {
 		TaxiPutState ns = s.copy();
+		String passenger = a.getPassenger();
 
-		int passengersAtGoal = 0;
-		for(String passengerNamer : s.getPassengers()){
-			String pLocation = (String) s.getPassengerAtt(passengerNamer, TaxiPutDomain.ATT_CURRENT_LOCATION);
-			boolean inTaxi = (boolean) s.getPassengerAtt(passengerNamer, TaxiPutDomain.ATT_IN_TAXI);
-			if(goalLoaction.equals(pLocation) && !inTaxi)
-				passengersAtGoal++;
-		}
+        TaxiPutPassenger np = s.touchPassenger(passenger);
+        np.set(TaxiPutDomain.ATT_IN_TAXI, false);
 
-		for(String passengerName : s.getPassengers()){
-			boolean inTaxi = (boolean) s.getPassengerAtt(passengerName, TaxiPutDomain.ATT_IN_TAXI);
-			if(inTaxi){
-				//change location and remove from taxi
+		tps.add(new StateTransitionProb(ns, 1));
+	}
 
-				if(passengersAtGoal == 0){
-					TaxiPutPassenger np = ns.touchPassenger(passengerName);
-					np.set(TaxiPutDomain.ATT_CURRENT_LOCATION, goalLoaction);
-					np.set(TaxiPutDomain.ATT_IN_TAXI, false);
-				}
-			}
-		}
+	/**
+	 * put the requested passenger into the taxi
+	 * @param s the current state
+	 * @param a the get action type
+	 * @param tps the list of transition probabilities
+	 */
+	public void navigate(TaxiPutState s, NavigateAction a, List<StateTransitionProb> tps){
+		TaxiPutState ns = s.copy();
+		String goal = a.getGoalLocation();
+
+		TaxiPutAgent nt = s.touchTaxi();
+		nt.set(TaxiPutDomain.ATT_TAXI_LOCATION, goal);
+
 		tps.add(new StateTransitionProb(ns, 1));
 	}
 }

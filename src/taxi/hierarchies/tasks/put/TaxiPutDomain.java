@@ -14,23 +14,24 @@ import burlap.mdp.singleagent.model.RewardFunction;
 import burlap.mdp.singleagent.oo.OOSADomain;
 import burlap.statehashing.HashableStateFactory;
 import burlap.statehashing.simple.SimpleHashableStateFactory;
+import taxi.hierarchies.tasks.dropoff.DropoffActionType;
+import taxi.hierarchies.tasks.nav.NavigateActionType;
 import taxi.hierarchies.tasks.put.state.PutStateMapper;
-import taxi.hierarchies.tasks.put.state.TaxiPutLocation;
+import taxi.hierarchies.tasks.put.state.TaxiPutAgent;
 import taxi.hierarchies.tasks.put.state.TaxiPutPassenger;
 import taxi.stateGenerator.TaxiStateFactory;
 
 public class TaxiPutDomain implements DomainGenerator {
 
 	public static final String CLASS_PASSENGER =			"PutPassenger";
-	public static final String CLASS_LOCATION = 			"PutLocation";
-	
-	public static final String ATT_CURRENT_LOCATION = 		"currentLocation";
-	
-	//passenger attributes
-	public static final String ATT_IN_TAXI = 				"inTaxi";
+	public static final String CLASS_TAXI =					"PutTaxi";
 
-	//location attributes 
-	public static final String ATT_COLOR =					"color";
+	public static final String ON_ROAD =					"onRoad";
+
+	// attributes
+	public static final String ATT_GOAL_LOCATION =			"goalLocation";
+	public static final String ATT_TAXI_LOCATION =			"taxiLocation";
+	public static final String ATT_IN_TAXI = 				"inTaxi";
 
 	//actions
 	public static final String ACTION_PUT = 				"put";
@@ -61,13 +62,16 @@ public class TaxiPutDomain implements DomainGenerator {
 		OOSADomain domain = new OOSADomain();
 		
 		domain.addStateClass(CLASS_PASSENGER, TaxiPutPassenger.class)
-			.addStateClass(CLASS_LOCATION, TaxiPutLocation.class);
-		
+			.addStateClass(CLASS_TAXI, TaxiPutAgent.class);
+
 		TaxiPutModel tmodel = new TaxiPutModel();
 		FactoredModel model = new FactoredModel(tmodel, rf, tf);
 		domain.setModel(model);
 		
-		domain.addActionTypes( new PutActionType() );
+		domain.addActionTypes(
+				new NavigateActionType(),
+				new DropoffActionType()
+		);
 		
 		return domain;
 	}
