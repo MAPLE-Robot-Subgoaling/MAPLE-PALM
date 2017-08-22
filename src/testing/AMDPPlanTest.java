@@ -30,7 +30,7 @@ public class AMDPPlanTest {
 		}
 		
 		EpisodeSequenceVisualizer ev = new EpisodeSequenceVisualizer
-				(TaxiVisualizer.getVisualizer(7, 7), baseDomain, eps);;
+				(TaxiVisualizer.getVisualizer(5, 5), baseDomain, eps);;
 		ev.setDefaultCloseOperation(ev.EXIT_ON_CLOSE);
 		ev.initGUI();
 	}
