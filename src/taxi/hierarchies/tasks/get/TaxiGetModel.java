@@ -8,13 +8,11 @@ import burlap.mdp.core.StateTransitionProb;
 import burlap.mdp.core.action.Action;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.model.statemodel.FullStateModel;
-import taxi.hierarchies.tasks.bringon.BringonActionType.BringonAction;
-import taxi.hierarchies.tasks.bringon.TaxiBringonDomain;
 import taxi.hierarchies.tasks.get.state.TaxiGetAgent;
 import taxi.hierarchies.tasks.get.state.TaxiGetPassenger;
 import taxi.hierarchies.tasks.get.state.TaxiGetState;
-import taxi.hierarchies.tasks.nav.NavigateActionType.NavigateAction;
-import taxi.hierarchies.tasks.nav.TaxiNavDomain;
+import taxi.hierarchies.tasks.get.NavigateActionType.NavigateAction;
+import taxi.hierarchies.tasks.get.BringonActionType.BringonAction;
 
 public class TaxiGetModel implements FullStateModel {
 
@@ -37,9 +35,9 @@ public class TaxiGetModel implements FullStateModel {
 		List<StateTransitionProb> tps = new ArrayList<>();
 		TaxiGetState state = (TaxiGetState) s;
 	
-		if(a.actionName().startsWith(TaxiBringonDomain.ACTION_BRINGON)) {
-			bringon(state, (BringonAction)a, tps);
-		} else if(a.actionName().startsWith(TaxiNavDomain.ACTION_NAVIGATE)) {
+		if(a.actionName().startsWith(TaxiGetDomain.ACTION_BRINGON)) {
+			bringon(state, (BringonAction) a, tps);
+		} else if(a.actionName().startsWith(TaxiGetDomain.ACTION_NAV)) {
 			navigate(state, (NavigateAction)a, tps);
 		}
 		return tps;

@@ -6,7 +6,7 @@ import java.util.List;
 import burlap.mdp.core.action.Action;
 import burlap.mdp.core.action.ActionType;
 import burlap.mdp.core.state.State;
-import taxi.hierarchies.tasks.put.TaxiPutDomain;
+import taxi.hierarchies.tasks.root.TaxiRootDomain;
 import taxi.state.TaxiState;
 
 public class BasePutActionType implements ActionType {
@@ -14,7 +14,7 @@ public class BasePutActionType implements ActionType {
 	
 	@Override
 	public String typeName() {
-		return TaxiPutDomain.ACTION_PUT;
+		return TaxiRootDomain.ACTION_PUT;
 	}
 
 	@Override
@@ -28,8 +28,8 @@ public class BasePutActionType implements ActionType {
 		TaxiState state = (TaxiState) s;
 		List<Action> acts = new ArrayList<>();
 		
-		for(String loc : state.getLocations()){
-			acts.add(new PutAction(loc));
+		for(String pass : state.getPassengers()){
+			acts.add(new PutAction(pass));
 		}
 		
 		return acts;
@@ -37,24 +37,24 @@ public class BasePutActionType implements ActionType {
 
 	public class PutAction implements Action{
 
-		private String goalLocation;
+		private String passenger;
 		
-		public PutAction(String goal) {
-			this.goalLocation = goal;
+		public PutAction(String passenger) {
+			this.passenger = passenger;
 		}
 		
-		public String getGoalLocation(){
-			return goalLocation;
+		public String getPassenger(){
+			return passenger;
 		}
 		
 		@Override
 		public String actionName() {
-			return TaxiPutDomain.ACTION_PUT + "_" + goalLocation;
+			return TaxiRootDomain.ACTION_PUT + "_" + passenger;
 		}
 
 		@Override
 		public Action copy() {
-			return new PutAction(goalLocation);
+			return new PutAction(passenger);
 		}
 		
 		@Override
@@ -70,7 +70,7 @@ public class BasePutActionType implements ActionType {
 			
 			PutAction a = (PutAction) other;
 			
-			return a.goalLocation.equals(goalLocation);
+			return a.passenger.equals(passenger);
 		}
 		
 		@Override

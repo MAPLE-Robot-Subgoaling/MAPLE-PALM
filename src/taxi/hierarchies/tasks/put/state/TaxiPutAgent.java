@@ -2,7 +2,6 @@ package taxi.hierarchies.tasks.put.state;
 
 import burlap.mdp.core.oo.state.ObjectInstance;
 import taxi.hierarchies.tasks.put.TaxiPutDomain;
-import taxi.hierarchies.tasks.nav.state.TaxiNavState;
 import utilities.MutableObject;
 
 import java.util.Arrays;
@@ -25,7 +24,7 @@ public class TaxiPutAgent extends MutableObject {
 	
 	@Override
 	public String className() {
-		return TaxiNavState.CLASS_TAXI;
+		return TaxiPutDomain.CLASS_TAXI;
 	}
 
 	@Override

@@ -14,17 +14,16 @@ import burlap.mdp.singleagent.model.RewardFunction;
 import burlap.mdp.singleagent.oo.OOSADomain;
 import burlap.statehashing.HashableStateFactory;
 import burlap.statehashing.simple.SimpleHashableStateFactory;
-import taxi.hierarchies.tasks.bringon.BringonActionType;
 import taxi.hierarchies.tasks.get.state.GetStateMapper;
 import taxi.hierarchies.tasks.get.state.TaxiGetAgent;
 import taxi.hierarchies.tasks.get.state.TaxiGetPassenger;
-import taxi.hierarchies.tasks.nav.NavigateActionType;
 import taxi.stateGenerator.TaxiStateFactory;
 
 public class TaxiGetDomain implements DomainGenerator {
 
     public static final String CLASS_TAXI =					"GetTaxi";
 	public static final String CLASS_PASSENGER =			"GetPassenger";
+	public static final String CLASS_LOCATION =				"GetLocation";
 
 	public static final String IN_TAXI =					"inTaxi";
 	public static final String ON_ROAD =					"onRoad";
@@ -32,8 +31,9 @@ public class TaxiGetDomain implements DomainGenerator {
 	// attributes
 	public static final String ATT_LOCATION = 				"location";
 
-	//actions
-	public static final String ACTION_GET = 				"get";
+	// actions
+	public static final String ACTION_NAV =					"nav";
+	public static final String ACTION_BRINGON =				"bringon";
 
 	private RewardFunction rf;
 	private TerminalFunction tf;

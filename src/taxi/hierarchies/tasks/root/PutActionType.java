@@ -1,4 +1,4 @@
-package taxi.hierarchies.tasks.put;
+package taxi.hierarchies.tasks.root;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,13 +6,13 @@ import java.util.List;
 import burlap.mdp.core.action.Action;
 import burlap.mdp.core.action.ActionType;
 import burlap.mdp.core.state.State;
-import taxi.hierarchies.tasks.put.state.TaxiPutState;
+import taxi.hierarchies.tasks.root.state.TaxiRootState;
 
 public class PutActionType implements ActionType {
 	//the put action which put the current ride at the given location
 	@Override
 	public String typeName() {
-		return TaxiPutDomain.ACTION_PUT;
+		return TaxiRootDomain.ACTION_PUT;
 	}
 
 	@Override
@@ -23,11 +23,12 @@ public class PutActionType implements ActionType {
 
 	@Override
 	public List<Action> allApplicableActions(State s) {
-		TaxiPutState state = (TaxiPutState) s;
+		TaxiRootState state = (TaxiRootState) s;
 		List<Action> acts = new ArrayList<>();
 
 		for(String pass : state.getPassengers()) {
-			if((boolean)state.getPassengerAtt(pass, TaxiPutDomain.ATT_IN_TAXI)) {
+		    String loc = (String)state.getPassengerAtt(pass, TaxiRootDomain.ATT_CURRENT_LOCATION);
+			if(loc.equals(TaxiRootDomain.IN_TAXI)) {
                 acts.add(new PutAction( pass));
 			}
 		}
@@ -49,7 +50,7 @@ public class PutActionType implements ActionType {
 		
 		@Override
 		public String actionName() {
-			return TaxiPutDomain.ACTION_PUT + "_" + passengerName;
+			return TaxiRootDomain.ACTION_PUT + "_" + passengerName;
 		}
 
 		@Override

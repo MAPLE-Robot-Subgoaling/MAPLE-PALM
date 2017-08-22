@@ -1,4 +1,4 @@
-package taxi.hierarchies.tasks.get;
+package taxi.hierarchies.tasks.root;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,14 +6,14 @@ import java.util.List;
 import burlap.mdp.core.action.Action;
 import burlap.mdp.core.action.ActionType;
 import burlap.mdp.core.state.State;
-import taxi.hierarchies.tasks.get.state.TaxiGetState;
+import taxi.hierarchies.tasks.root.state.TaxiRootState;
 
 public class GetActionType implements ActionType {
 	//the get action type which puts the passenger with given name in taxi
 	
 	@Override
 	public String typeName() {
-		return TaxiGetDomain.ACTION_GET;
+		return TaxiRootDomain.ACTION_GET;
 	}
 
 	@Override
@@ -24,7 +24,7 @@ public class GetActionType implements ActionType {
 
 	@Override
 	public List<Action> allApplicableActions(State s) {
-		TaxiGetState state = (TaxiGetState) s;
+		TaxiRootState state = (TaxiRootState) s;
 		List<Action> acts = new ArrayList<Action>();
 		
 		for(String passengerName : state.getPassengers()){
@@ -48,7 +48,7 @@ public class GetActionType implements ActionType {
 		
 		@Override
 		public String actionName() {
-			return TaxiGetDomain.ACTION_GET + "_" + passenger;
+			return TaxiRootDomain.ACTION_GET + "_" + passenger;
 		}
 
 		@Override

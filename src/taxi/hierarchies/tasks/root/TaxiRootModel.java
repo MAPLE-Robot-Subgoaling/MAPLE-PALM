@@ -5,10 +5,8 @@ import burlap.mdp.core.StateTransitionProb;
 import burlap.mdp.core.action.Action;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.model.statemodel.FullStateModel;
-import taxi.hierarchies.tasks.get.GetActionType.GetAction;
-import taxi.hierarchies.tasks.put.PutActionType.PutAction;
-import taxi.hierarchies.tasks.get.TaxiGetDomain;
-import taxi.hierarchies.tasks.put.TaxiPutDomain;
+import taxi.hierarchies.tasks.root.GetActionType.GetAction;
+import taxi.hierarchies.tasks.root.PutActionType.PutAction;
 import taxi.hierarchies.tasks.root.state.TaxiRootPassenger;
 import taxi.hierarchies.tasks.root.state.TaxiRootState;
 
@@ -36,9 +34,9 @@ public class TaxiRootModel implements FullStateModel {
 		List<StateTransitionProb> tps = new ArrayList<StateTransitionProb>();
 		TaxiRootState state = (TaxiRootState) s;
 	
-		if(a.actionName().startsWith(TaxiGetDomain.ACTION_GET)) {
+		if(a.actionName().startsWith(TaxiRootDomain.ACTION_GET)) {
 			get(state, (GetAction)a, tps);
-		} else if(a.actionName().startsWith(TaxiPutDomain.ACTION_PUT)) {
+		} else if(a.actionName().startsWith(TaxiRootDomain.ACTION_PUT)) {
 			put(state, (PutAction)a, tps);
 		}
 		return tps;

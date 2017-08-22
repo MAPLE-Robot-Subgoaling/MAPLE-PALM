@@ -2,7 +2,7 @@ package taxi.functions.amdp;
 
 import burlap.mdp.core.oo.propositional.PropositionalFunction;
 import burlap.mdp.core.oo.state.OOState;
-import taxi.hierarchies.tasks.put.PutActionType;
+import taxi.hierarchies.tasks.root.PutActionType;
 import taxi.hierarchies.tasks.put.TaxiPutDomain;
 import taxi.hierarchies.tasks.put.state.TaxiPutState;
 

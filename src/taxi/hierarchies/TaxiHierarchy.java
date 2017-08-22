@@ -67,11 +67,12 @@ public class TaxiHierarchy {
 		ActionType aWest = baseDomain.getAction(Taxi.ACTION_WEST);
 		ActionType aPickup = baseDomain.getAction(Taxi.ACTION_PICKUP);
 		ActionType aPutdown = baseDomain.getAction(Taxi.ACTION_PUTDOWN);
-		ActionType aBringon = bringonDomain.getAction(TaxiBringonDomain.ACTION_BRINGON);
-		ActionType aDropoff = dropoffDomain.getAction(TaxiDropoffDomain.ACTION_DROPOFF);
-		ActionType aNavigate = navigateDomain.getAction(TaxiNavDomain.ACTION_NAVIGATE);
-		ActionType aGet = getDomain.getAction(TaxiGetDomain.ACTION_GET);
-		ActionType aPut = putDomain.getAction(TaxiPutDomain.ACTION_PUT);
+		ActionType aBringon = bringonDomain.getAction(TaxiGetDomain.ACTION_BRINGON);
+		ActionType aGetNavigate = getDomain.getAction(TaxiGetDomain.ACTION_NAV);
+		ActionType aDropoff = dropoffDomain.getAction(TaxiPutDomain.ACTION_DROPOFF);
+		ActionType aPutNavigate = putDomain.getAction(TaxiPutDomain.ACTION_NAV);
+		ActionType aGet = rootDomain.getAction(TaxiRootDomain.ACTION_GET);
+		ActionType aPut = rootDomain.getAction(TaxiRootDomain.ACTION_PUT);
 		ActionType aSolve = new SolveActionType();
 		
 		//tasks
@@ -97,14 +98,16 @@ public class TaxiHierarchy {
 			navMap = new IdentityMap();
 			navPF = new NavigatePF();
 		}
-		NonprimitiveTask navigate = new NonprimitiveTask(navTasks, aNavigate, taxiDomain.generateNavigateDomain(),
+		NonprimitiveTask getNavigate = new NonprimitiveTask(navTasks, aGetNavigate, taxiDomain.generateNavigateDomain(),
+				navMap, navPF, navPF);
+		NonprimitiveTask putNavigate = new NonprimitiveTask(navTasks, aPutNavigate, taxiDomain.generateNavigateDomain(),
 				navMap, navPF, navPF);
 
-		Task[] getTasks = {bringon, navigate};
+		Task[] getTasks = {bringon, getNavigate};
 		NonprimitiveTask get = new NonprimitiveTask(getTasks, aGet, getDomain,
                 new GetStateMapper(), new GetFailurePF(), new GetCompletedPF());
 
-		Task[] putTasks = {navigate, dropoff};
+		Task[] putTasks = {putNavigate, dropoff};
 		NonprimitiveTask put = new NonprimitiveTask(putTasks, aPut, putDomain,
 				new GetStateMapper(), new PutFailurePF(), new PutCompletedPF());
 		

@@ -14,24 +14,31 @@ public class TaxiPutState implements MutableOOState {
 	//this state has passengers and depots
     private TaxiPutAgent taxi;
 	private Map<String, TaxiPutPassenger> passengers;
+	private Map<String, TaxiPutLocation> locations;
 
-	public TaxiPutState(TaxiPutAgent taxi, List<TaxiPutPassenger> pass) {
+	public TaxiPutState(TaxiPutAgent taxi, List<TaxiPutPassenger> pass, List<TaxiPutLocation> locs) {
 	    this.taxi = taxi;
 
-		this.passengers = new HashMap<String, TaxiPutPassenger>();
+		this.passengers = new HashMap<>();
 		for(TaxiPutPassenger p : pass){
 			this.passengers.put(p.name(), p);
 		}
+
+		this.locations = new HashMap<>();
+		for(TaxiPutLocation loc : locs){
+			this.locations.put(loc.name(), loc);
+		}
 	}
 	
-	private TaxiPutState(TaxiPutAgent taxi, Map<String, TaxiPutPassenger> pass) {
+	private TaxiPutState(TaxiPutAgent taxi, Map<String, TaxiPutPassenger> pass, Map<String, TaxiPutLocation> locs) {
 	    this.taxi = taxi;
 		this.passengers = pass;
+		this.locations = locs;
 	}
 	
 	@Override
 	public int numObjects() {
-		return 1 + passengers.size();
+		return 1 + passengers.size() + locations.size();
 	}
 
 	@Override
@@ -44,6 +51,10 @@ public class TaxiPutState implements MutableOOState {
 		if(o != null)
 			return o;
 
+		o = locations.get(oname);
+		if(o != null)
+			return o;
+
 		return null;
 	}
 
@@ -52,6 +63,7 @@ public class TaxiPutState implements MutableOOState {
 		List<ObjectInstance> obj = new ArrayList<ObjectInstance>();
 		obj.add(taxi);
 		obj.addAll(passengers.values());
+		obj.addAll(locations.values());
 		return obj;
 	}
 
@@ -61,6 +73,8 @@ public class TaxiPutState implements MutableOOState {
 	        return Arrays.<ObjectInstance>asList(taxi);
 		if(oclass.equals(TaxiPutDomain.CLASS_PASSENGER))
 			return new ArrayList<ObjectInstance>(passengers.values());
+		if(oclass.equals(TaxiPutDomain.CLASS_LOCATION))
+			return new ArrayList<ObjectInstance>(locations.values());
 		throw new RuntimeException("No object class " + oclass);
 	}
 
@@ -76,7 +90,7 @@ public class TaxiPutState implements MutableOOState {
 
 	@Override
 	public TaxiPutState copy() {
-		return new TaxiPutState(taxi, passengers);
+		return new TaxiPutState(taxi, passengers, locations);
 	}
 
 	@Override
@@ -87,6 +101,8 @@ public class TaxiPutState implements MutableOOState {
 			touchTaxi().set(variableKey, value);
 		} else if(passengers.get(key.obName) != null){
 			touchPassenger(key.obName).set(variableKey, value);
+		} else if(locations.get(key.obName) != null){
+			touchLocation(key.obName).set(variableKey, value);
 		} else {
 			throw new RuntimeException("ERROR: unable to set value for " + variableKey);
 		}
@@ -99,7 +115,9 @@ public class TaxiPutState implements MutableOOState {
 	    	taxi = (TaxiPutAgent)o;
 		} else if(o instanceof TaxiPutPassenger || o.className().equals(TaxiPutDomain.CLASS_PASSENGER)){
 			touchPassengers().put(o.name(), (TaxiPutPassenger) o);
-		}else{
+		} else if(o instanceof TaxiPutLocation || o.className().equals(TaxiPutDomain.CLASS_LOCATION)){
+			touchLocations().put(o.name(), (TaxiPutLocation) o);
+		} else {
 			throw new RuntimeException("Can only add certain objects to state.");
 		}
 		return this;
@@ -142,6 +160,27 @@ public class TaxiPutState implements MutableOOState {
 		return ret;
 	}
 
+	public TaxiPutLocation touchLocation(String locName){
+		TaxiPutLocation loc = locations.get(locName).copy();
+		touchLocations().remove(locName);
+		locations.put(locName, loc);
+		return loc;
+	}
+
+	public Map<String, TaxiPutLocation> touchLocations(){
+		this.locations = new HashMap<String, TaxiPutLocation>(locations);
+		return locations;
+	}
+
+	//get values from objects
+	public String[] getLocations(){
+		String[] ret = new String[locations.size()];
+		int i = 0;
+		for(String name : locations.keySet())
+			ret[i++] = name;
+		return ret;
+	}
+
 	public Object getTaxiAtt(String attName) {
 		return taxi.get(attName);
 	}
@@ -149,8 +188,13 @@ public class TaxiPutState implements MutableOOState {
 	public Object getPassengerAtt(String passname, String attName){
 		return passengers.get(passname).get(attName);
 	}
-	
-	@Override
+
+	public Object getLocationAtt(String locname, String attName) {
+		return locations.get(locname).get(attName);
+	}
+
+
+		@Override
 	public String toString(){
 		String out = "{\n";
 

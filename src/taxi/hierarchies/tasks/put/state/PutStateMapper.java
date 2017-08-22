@@ -14,6 +14,7 @@ public class PutStateMapper implements StateMapping {
 	@Override
 	public State mapState(State s) {
 		List<TaxiPutPassenger> passengers = new ArrayList<TaxiPutPassenger>();
+		List<TaxiPutLocation> locations = new ArrayList<>();
 
 		TaxiState st = (TaxiState) s;
 
@@ -24,6 +25,8 @@ public class PutStateMapper implements StateMapping {
 		for (String locName : st.getLocations()) {
 			int lx = (int) st.getLocationAtt(locName, Taxi.ATT_X);
 			int ly = (int) st.getLocationAtt(locName, Taxi.ATT_Y);
+
+			locations.add(new TaxiPutLocation(locName));
 
 			if (tx == lx && ty == ly) {
 				taxiLocation = locName;
@@ -38,7 +41,7 @@ public class PutStateMapper implements StateMapping {
 			passengers.add(new TaxiPutPassenger(passengerName, goal, inTaxi));
 		}
 
-		return new TaxiPutState(taxi, passengers);
+		return new TaxiPutState(taxi, passengers, locations);
 	}
 
 }

@@ -30,9 +30,6 @@ public class TaxiDropoffDomain implements DomainGenerator {
 	// attributes
 	public static final String ATT_LOCATION = 				"currentLocation";
 
-	//actions
-	public static final String ACTION_DROPOFF = 			"dropoff";
-
 	private RewardFunction rf;
 	private TerminalFunction tf;
 

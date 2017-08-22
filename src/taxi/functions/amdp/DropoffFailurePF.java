@@ -2,7 +2,7 @@ package taxi.functions.amdp;
 
 import burlap.mdp.core.oo.propositional.PropositionalFunction;
 import burlap.mdp.core.oo.state.OOState;
-import taxi.hierarchies.tasks.dropoff.DropoffActionType;
+import taxi.hierarchies.tasks.put.DropoffActionType;
 import taxi.hierarchies.tasks.dropoff.TaxiDropoffDomain;
 import taxi.hierarchies.tasks.dropoff.state.TaxiDropoffState;
 

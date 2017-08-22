@@ -1,36 +1,39 @@
-package taxi.hierarchies.tasks.dropoff;
-
-import java.util.ArrayList;
-import java.util.List;
+package taxi.hierarchies.tasks.bringon;
 
 import burlap.mdp.core.action.Action;
 import burlap.mdp.core.action.ActionType;
 import burlap.mdp.core.state.State;
-import taxi.hierarchies.tasks.dropoff.state.TaxiDropoffState;
+import taxi.Taxi;
+import taxi.state.TaxiState;
 
-public class DropoffActionType implements ActionType {
+import java.util.ArrayList;
+import java.util.List;
+
+public class PickupActionType implements ActionType {
+    // the pickup actions for picking up a passenger at the current location
 
     public String typeName() {
-        return TaxiDropoffDomain.ACTION_DROPOFF;
+        return Taxi.ACTION_PICKUP;
     }
 
     @Override
-    public DropoffAction associatedAction(String strRep) {
+    public PickupAction associatedAction(String strRep) {
         String pass = strRep.split("_")[1];
-        return new DropoffAction(pass);
+        return new PickupAction(pass);
     }
 
-    //there is a action for each passenger in the current configuration
     @Override
     public List<Action> allApplicableActions(State s) {
-        TaxiDropoffState state = (TaxiDropoffState) s;
-        List<Action> acts = new ArrayList<Action>();
+        TaxiState state = (TaxiState)s;
+        List<Action> acts = new ArrayList<>();
+        int taxi_x = (int)state.getTaxiAtt(Taxi.ATT_X);
+        int taxi_y = (int)state.getTaxiAtt(Taxi.ATT_Y);
 
         for(String pass : state.getPassengers()){
-            String pass_loc = (String)state.getPassengerAtt(pass, TaxiDropoffDomain.ATT_LOCATION);
-            // Can only dropoff if we're in the taxi and at a depot
-            if(!(pass_loc.equals(TaxiDropoffDomain.NOT_IN_TAXI)) || pass_loc.equals(TaxiDropoffDomain.ON_ROAD)) {
-                acts.add(new DropoffAction(pass));
+            int pass_x = (int)state.getPassengerAtt(pass, Taxi.ATT_X);
+            int pass_y = (int)state.getPassengerAtt(pass, Taxi.ATT_Y);
+            if(pass_x == taxi_x && pass_y == taxi_y) {
+                acts.add(new PickupAction(pass));
             }
         }
 
@@ -38,11 +41,11 @@ public class DropoffActionType implements ActionType {
     }
 
     //each navigate action is given a goal
-    public class DropoffAction implements Action {
+    public class PickupAction implements Action {
 
         private String passenger;
 
-        public DropoffAction(String passenger) {
+        public PickupAction(String passenger) {
             this.passenger = passenger;
         }
 
@@ -52,12 +55,12 @@ public class DropoffActionType implements ActionType {
 
         @Override
         public String actionName() {
-            return TaxiDropoffDomain.ACTION_DROPOFF + "_" + passenger;
+            return Taxi.ACTION_PICKUP + "_" + passenger;
         }
 
         @Override
         public Action copy() {
-            return new DropoffAction(passenger);
+            return new PickupAction(passenger);
         }
 
         @Override
@@ -70,7 +73,7 @@ public class DropoffActionType implements ActionType {
             if(this == other) return true;
             if(other == null || getClass() != other.getClass()) return false;
 
-            DropoffAction a = (DropoffAction) other;
+            PickupAction a = (PickupAction) other;
 
             return a.passenger.equals(passenger);
         }
@@ -81,3 +84,4 @@ public class DropoffActionType implements ActionType {
         }
     }
 }
+

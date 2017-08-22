@@ -5,15 +5,16 @@ import java.util.List;
 
 import burlap.mdp.auxiliary.StateMapping;
 import burlap.mdp.core.state.State;
-import taxi.Taxi;
 import taxi.hierarchies.tasks.get.TaxiGetDomain;
 import taxi.state.TaxiState;
+import taxi.Taxi;
 
 public class GetStateMapper implements StateMapping {
 	//maps a base taxi state to L2
 	@Override
 	public State mapState(State s) {
 		List<TaxiGetPassenger> passengers = new ArrayList<TaxiGetPassenger>();
+		List<TaxiGetLocation> locations = new ArrayList<TaxiGetLocation>();
 		TaxiState st = (TaxiState) s;
 
 		// Get Taxi
@@ -23,6 +24,8 @@ public class GetStateMapper implements StateMapping {
 		for (String locName : st.getLocations()) {
 			int lx = (int) st.getLocationAtt(locName, Taxi.ATT_X);
 			int ly = (int) st.getLocationAtt(locName, Taxi.ATT_Y);
+
+			locations.add(new TaxiGetLocation(locName));
 
 			if (tx == lx && ty == ly) {
 				taxiLocation = locName;
@@ -52,7 +55,7 @@ public class GetStateMapper implements StateMapping {
 			passengers.add(new TaxiGetPassenger(passengerName, passengerLocation));
 		}
 
-		return new TaxiGetState(taxi, passengers);
+		return new TaxiGetState(taxi, passengers, locations);
 	}
 
 }

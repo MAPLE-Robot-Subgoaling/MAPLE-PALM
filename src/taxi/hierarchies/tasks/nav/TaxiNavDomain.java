@@ -40,7 +40,7 @@ public class TaxiNavDomain implements DomainGenerator {
 	public static final String ATT_IS_HORIZONTAL =			"isHorizontal";
 	public static final String ATT_LENGTH =					"length";
 
-	//actions
+	//  action
 	public static final String ACTION_NAVIGATE =			"navigate";
 
 	private RewardFunction rf;

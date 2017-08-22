@@ -1,38 +1,37 @@
-package taxi;
-
-import burlap.mdp.core.action.Action;
-import burlap.mdp.core.action.ActionType;
-import burlap.mdp.core.state.State;
-import taxi.state.TaxiState;
+package taxi.hierarchies.tasks.get;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class PickupActionType implements ActionType {
-    // the pickup actions for picking up a passenger at the current location
+import burlap.mdp.core.action.Action;
+import burlap.mdp.core.action.ActionType;
+import burlap.mdp.core.state.State;
+import taxi.hierarchies.tasks.get.state.TaxiGetState;
+
+public class BringonActionType implements ActionType {
+    //the pickup actions are for pickup up a passenger from the current depot
 
     public String typeName() {
-        return Taxi.ACTION_PICKUP;
+        return TaxiGetDomain.ACTION_BRINGON;
     }
 
     @Override
-    public PickupAction associatedAction(String strRep) {
+    public BringonAction associatedAction(String strRep) {
         String pass = strRep.split("_")[1];
-        return new PickupAction(pass);
+        return new BringonAction(pass);
     }
 
+    //there is a action for each passenger in the current configuration
     @Override
     public List<Action> allApplicableActions(State s) {
-        TaxiState state = (TaxiState)s;
-        List<Action> acts = new ArrayList<>();
-        int taxi_x = (int)state.getTaxiAtt(Taxi.ATT_X);
-        int taxi_y = (int)state.getTaxiAtt(Taxi.ATT_Y);
+        TaxiGetState state = (TaxiGetState) s;
+        List<Action> acts = new ArrayList<Action>();
+        String taxi_loc = (String)state.getTaxiAtt(TaxiGetDomain.ATT_LOCATION);
 
         for(String pass : state.getPassengers()){
-            int pass_x = (int)state.getPassengerAtt(pass, Taxi.ATT_X);
-            int pass_y = (int)state.getPassengerAtt(pass, Taxi.ATT_Y);
-            if(pass_x == taxi_x && pass_y == taxi_y) {
-                acts.add(new PickupAction(pass));
+            String pass_loc = (String)state.getPassengerAtt(pass, TaxiGetDomain.ATT_LOCATION);
+            if(pass_loc.equals(taxi_loc)) {
+                acts.add(new BringonAction(pass));
             }
         }
 
@@ -40,11 +39,11 @@ public class PickupActionType implements ActionType {
     }
 
     //each navigate action is given a goal
-    public class PickupAction implements Action {
+    public class BringonAction implements Action {
 
         private String passenger;
 
-        public PickupAction(String passenger) {
+        public BringonAction(String passenger) {
             this.passenger = passenger;
         }
 
@@ -54,12 +53,12 @@ public class PickupActionType implements ActionType {
 
         @Override
         public String actionName() {
-            return Taxi.ACTION_PICKUP + "_" + passenger;
+            return TaxiGetDomain.ACTION_BRINGON + "_" + passenger;
         }
 
         @Override
         public Action copy() {
-            return new PickupAction(passenger);
+            return new BringonAction(passenger);
         }
 
         @Override
@@ -72,7 +71,7 @@ public class PickupActionType implements ActionType {
             if(this == other) return true;
             if(other == null || getClass() != other.getClass()) return false;
 
-            PickupAction a = (PickupAction) other;
+            BringonAction a = (BringonAction) other;
 
             return a.passenger.equals(passenger);
         }

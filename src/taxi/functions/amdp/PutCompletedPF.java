@@ -4,8 +4,7 @@ import burlap.mdp.core.oo.propositional.PropositionalFunction;
 import burlap.mdp.core.oo.state.OOState;
 import taxi.hierarchies.tasks.put.TaxiPutDomain;
 import taxi.hierarchies.tasks.put.state.TaxiPutState;
-import taxi.hierarchies.tasks.put.PutActionType;
-import taxi.hierarchies.tasks.put.PutActionType.PutAction;
+import taxi.hierarchies.tasks.root.PutActionType;
 
 public class PutCompletedPF extends PropositionalFunction{
 	//put is complete when the passenger at the put actions goal 

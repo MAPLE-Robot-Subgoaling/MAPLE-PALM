@@ -14,8 +14,6 @@ import burlap.mdp.singleagent.model.RewardFunction;
 import burlap.mdp.singleagent.oo.OOSADomain;
 import burlap.statehashing.HashableStateFactory;
 import burlap.statehashing.simple.SimpleHashableStateFactory;
-import taxi.hierarchies.tasks.dropoff.DropoffActionType;
-import taxi.hierarchies.tasks.nav.NavigateActionType;
 import taxi.hierarchies.tasks.put.state.PutStateMapper;
 import taxi.hierarchies.tasks.put.state.TaxiPutAgent;
 import taxi.hierarchies.tasks.put.state.TaxiPutPassenger;
@@ -25,6 +23,7 @@ public class TaxiPutDomain implements DomainGenerator {
 
 	public static final String CLASS_PASSENGER =			"PutPassenger";
 	public static final String CLASS_TAXI =					"PutTaxi";
+	public static final String CLASS_LOCATION =				"PutLocation";
 
 	public static final String ON_ROAD =					"onRoad";
 
@@ -34,7 +33,8 @@ public class TaxiPutDomain implements DomainGenerator {
 	public static final String ATT_IN_TAXI = 				"inTaxi";
 
 	//actions
-	public static final String ACTION_PUT = 				"put";
+    public static final String ACTION_NAV =					"nav";
+	public static final String ACTION_DROPOFF = 			"dropoff";
 
 	private RewardFunction rf;
 	private TerminalFunction tf;

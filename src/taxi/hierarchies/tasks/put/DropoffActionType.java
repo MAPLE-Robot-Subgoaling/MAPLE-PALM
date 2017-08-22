@@ -1,4 +1,4 @@
-package taxi.hierarchies.tasks.bringon;
+package taxi.hierarchies.tasks.put;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,32 +6,32 @@ import java.util.List;
 import burlap.mdp.core.action.Action;
 import burlap.mdp.core.action.ActionType;
 import burlap.mdp.core.state.State;
-import taxi.hierarchies.tasks.bringon.state.TaxiBringonState;
+import taxi.hierarchies.tasks.put.state.TaxiPutState;
 
-public class BringonActionType implements ActionType {
-    //the pickup actions are for pickup up a passenger from the current depot
+public class DropoffActionType implements ActionType {
 
     public String typeName() {
-        return TaxiBringonDomain.ACTION_BRINGON;
+        return TaxiPutDomain.ACTION_DROPOFF;
     }
 
     @Override
-    public BringonAction associatedAction(String strRep) {
+    public DropoffAction associatedAction(String strRep) {
         String pass = strRep.split("_")[1];
-        return new BringonAction(pass);
+        return new DropoffAction(pass);
     }
 
     //there is a action for each passenger in the current configuration
     @Override
     public List<Action> allApplicableActions(State s) {
-        TaxiBringonState state = (TaxiBringonState) s;
+        TaxiPutState state = (TaxiPutState) s;
         List<Action> acts = new ArrayList<Action>();
-        String taxi_loc = (String)state.getTaxiAtt(TaxiBringonDomain.ATT_LOCATION);
 
+        String taxiLoc = (String)state.getTaxiAtt(TaxiPutDomain.ATT_TAXI_LOCATION);
         for(String pass : state.getPassengers()){
-            String pass_loc = (String)state.getPassengerAtt(pass, TaxiBringonDomain.ATT_LOCATION);
-            if(pass_loc.equals(taxi_loc)) {
-                acts.add(new BringonAction(pass));
+            boolean inTaxi = (boolean)state.getPassengerAtt(pass, TaxiPutDomain.ATT_IN_TAXI);
+            // Can only dropoff if we're in the taxi and at a depot
+            if(inTaxi && !taxiLoc.equals(TaxiPutDomain.ON_ROAD)) {
+                acts.add(new DropoffAction(pass));
             }
         }
 
@@ -39,11 +39,11 @@ public class BringonActionType implements ActionType {
     }
 
     //each navigate action is given a goal
-    public class BringonAction implements Action {
+    public class DropoffAction implements Action {
 
         private String passenger;
 
-        public BringonAction(String passenger) {
+        public DropoffAction(String passenger) {
             this.passenger = passenger;
         }
 
@@ -53,12 +53,12 @@ public class BringonActionType implements ActionType {
 
         @Override
         public String actionName() {
-            return TaxiBringonDomain.ACTION_BRINGON + "_" + passenger;
+            return TaxiPutDomain.ACTION_DROPOFF + "_" + passenger;
         }
 
         @Override
         public Action copy() {
-            return new BringonAction(passenger);
+            return new DropoffAction(passenger);
         }
 
         @Override
@@ -71,7 +71,7 @@ public class BringonActionType implements ActionType {
             if(this == other) return true;
             if(other == null || getClass() != other.getClass()) return false;
 
-            BringonAction a = (BringonAction) other;
+            DropoffAction a = (DropoffAction) other;
 
             return a.passenger.equals(passenger);
         }
@@ -82,4 +82,3 @@ public class BringonActionType implements ActionType {
         }
     }
 }
-

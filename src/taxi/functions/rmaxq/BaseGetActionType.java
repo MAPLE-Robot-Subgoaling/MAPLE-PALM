@@ -6,7 +6,7 @@ import java.util.List;
 import burlap.mdp.core.action.Action;
 import burlap.mdp.core.action.ActionType;
 import burlap.mdp.core.state.State;
-import taxi.hierarchies.tasks.get.TaxiGetDomain;
+import taxi.hierarchies.tasks.root.TaxiRootDomain;
 import taxi.state.TaxiState;
 
 public class BaseGetActionType implements ActionType {
@@ -14,7 +14,7 @@ public class BaseGetActionType implements ActionType {
 	
 	@Override
 	public String typeName() {
-		return TaxiGetDomain.ACTION_GET;
+		return TaxiRootDomain.ACTION_GET;
 	}
 
 	@Override
@@ -49,7 +49,7 @@ public class BaseGetActionType implements ActionType {
 		
 		@Override
 		public String actionName() {
-			return TaxiGetDomain.ACTION_GET + "_" + passenger;
+			return TaxiRootDomain.ACTION_GET + "_" + passenger;
 		}
 
 		@Override

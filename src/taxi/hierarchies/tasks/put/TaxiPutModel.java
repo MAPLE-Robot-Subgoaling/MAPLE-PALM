@@ -5,10 +5,8 @@ import burlap.mdp.core.StateTransitionProb;
 import burlap.mdp.core.action.Action;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.model.statemodel.FullStateModel;
-import taxi.hierarchies.tasks.dropoff.DropoffActionType.DropoffAction;
-import taxi.hierarchies.tasks.dropoff.TaxiDropoffDomain;
-import taxi.hierarchies.tasks.nav.NavigateActionType.NavigateAction;
-import taxi.hierarchies.tasks.nav.TaxiNavDomain;
+import taxi.hierarchies.tasks.put.DropoffActionType.DropoffAction;
+import taxi.hierarchies.tasks.put.NavigateActionType.NavigateAction;
 import taxi.hierarchies.tasks.put.state.TaxiPutAgent;
 import taxi.hierarchies.tasks.put.state.TaxiPutPassenger;
 import taxi.hierarchies.tasks.put.state.TaxiPutState;
@@ -37,9 +35,9 @@ public class TaxiPutModel implements FullStateModel {
 		List<StateTransitionProb> tps = new ArrayList<StateTransitionProb>();
 		TaxiPutState state = (TaxiPutState) s;
 
-		if(a.actionName().startsWith(TaxiDropoffDomain.ACTION_DROPOFF)) {
+		if(a.actionName().startsWith(TaxiPutDomain.ACTION_DROPOFF)) {
 			dropoff(state, (DropoffAction)a, tps);
-		} else if(a.actionName().startsWith(TaxiNavDomain.ACTION_NAVIGATE)) {
+		} else if(a.actionName().startsWith(TaxiPutDomain.ACTION_NAV)) {
 			navigate(state, (NavigateAction) a, tps);
 		}
 		return tps;

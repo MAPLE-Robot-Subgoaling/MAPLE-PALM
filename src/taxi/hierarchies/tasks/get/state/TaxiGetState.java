@@ -7,7 +7,6 @@ import burlap.mdp.core.oo.state.OOStateUtilities;
 import burlap.mdp.core.oo.state.OOVariableKey;
 import burlap.mdp.core.oo.state.ObjectInstance;
 import burlap.mdp.core.state.MutableState;
-import cern.colt.list.adapter.ObjectListAdapter;
 import taxi.hierarchies.tasks.get.TaxiGetDomain;
 
 public class TaxiGetState implements MutableOOState {
@@ -15,23 +14,31 @@ public class TaxiGetState implements MutableOOState {
 	//this state has passengers and depots
 	private TaxiGetAgent taxi;
 	private Map<String, TaxiGetPassenger> passengers;
+	private Map<String, TaxiGetLocation> locations;
 
-	public TaxiGetState(TaxiGetAgent taxi, List<TaxiGetPassenger> pass) {
+	public TaxiGetState(TaxiGetAgent taxi, List<TaxiGetPassenger> pass, List<TaxiGetLocation> locs) {
 		this.taxi = taxi;
+
 		this.passengers = new HashMap<String, TaxiGetPassenger>();
 		for(TaxiGetPassenger p : pass){
 			this.passengers.put(p.name(), p);
 		}
+
+		this.locations = new HashMap<String, TaxiGetLocation>();
+		for(TaxiGetLocation loc : locs){
+			this.locations.put(loc.name(), loc);
+		}
 	}
 	
-	private TaxiGetState(TaxiGetAgent taxi, Map<String, TaxiGetPassenger> pass) {
+	private TaxiGetState(TaxiGetAgent taxi, Map<String, TaxiGetPassenger> pass, Map<String, TaxiGetLocation> locs) {
 		this.taxi = taxi;
 		this.passengers = pass;
+		this.locations = locs;
 	}
 	
 	@Override
 	public int numObjects() {
-		return 1 + passengers.size();
+		return 1 + passengers.size() + locations.size();
 	}
 
 	@Override
@@ -44,6 +51,10 @@ public class TaxiGetState implements MutableOOState {
 		if(o != null)
 			return o;
 
+		o = locations.get(oname);
+		if(o != null)
+			return o;
+
 		return null;
 	}
 
@@ -52,6 +63,7 @@ public class TaxiGetState implements MutableOOState {
 		List<ObjectInstance> obj = new ArrayList<ObjectInstance>();
 		obj.add(taxi);
 		obj.addAll(passengers.values());
+		obj.addAll(locations.values());
 		return obj;
 	}
 
@@ -61,6 +73,8 @@ public class TaxiGetState implements MutableOOState {
 	        return Arrays.<ObjectInstance>asList(taxi);
 		if(oclass.equals(TaxiGetDomain.CLASS_PASSENGER))
 			return new ArrayList<ObjectInstance>(passengers.values());
+		if(oclass.equals(TaxiGetDomain.CLASS_LOCATION))
+			return new ArrayList<ObjectInstance>(locations.values());
 		throw new RuntimeException("No object class " + oclass);
 	}
 
@@ -76,7 +90,7 @@ public class TaxiGetState implements MutableOOState {
 
 	@Override
 	public TaxiGetState copy() {
-		return new TaxiGetState(taxi, passengers);
+		return new TaxiGetState(taxi, passengers, locations);
 	}
 
 	@Override
@@ -87,6 +101,8 @@ public class TaxiGetState implements MutableOOState {
 			touchTaxi().set(variableKey, value);
 		} else if(passengers.get(key.obName) != null){
 			touchPassenger(key.obName).set(variableKey, value);
+		} else if(locations.get(key.obName) != null){
+			touchLocation(key.obName).set(variableKey, value);
 		} else {
 			throw new RuntimeException("ERROR: unable to set value for " + variableKey);
 		}
@@ -99,7 +115,9 @@ public class TaxiGetState implements MutableOOState {
 	    	taxi = (TaxiGetAgent)o;
 		} else if(o instanceof TaxiGetPassenger || o.className().equals(TaxiGetDomain.CLASS_PASSENGER)){
 			touchPassengers().put(o.name(), (TaxiGetPassenger) o);
-		}else{
+		} else if(o instanceof TaxiGetLocation || o.className().equals(TaxiGetDomain.CLASS_LOCATION)){
+			touchLocations().put(o.name(), (TaxiGetLocation) o);
+		} else {
 			throw new RuntimeException("Can only add certain objects to state.");
 		}
 		return this;
@@ -142,12 +160,37 @@ public class TaxiGetState implements MutableOOState {
 		return ret;
 	}
 
+	public TaxiGetLocation touchLocation(String passName){
+		TaxiGetLocation loc = locations.get(passName).copy();
+		touchLocations().remove(passName);
+		locations.put(passName, loc);
+		return loc;
+	}
+
+	public Map<String, TaxiGetLocation> touchLocations(){
+		this.locations = new HashMap<String, TaxiGetLocation>(locations);
+		return locations;
+	}
+
+	//get values from objects
+	public String[] getLocations(){
+		String[] ret = new String[locations.size()];
+		int i = 0;
+		for(String name : locations.keySet())
+			ret[i++] = name;
+		return ret;
+	}
+
 	public Object getTaxiAtt(String attName) {
 		return taxi.get(attName);
 	}
 
 	public Object getPassengerAtt(String passname, String attName){
 		return passengers.get(passname).get(attName);
+	}
+
+	public Object getLocationAtt(String locname, String attName) {
+		return locations.get(locname).get(attName);
 	}
 
 	@Override
@@ -158,6 +201,10 @@ public class TaxiGetState implements MutableOOState {
 		
 		for(TaxiGetPassenger p : passengers.values()){
 			out += p.toString() + "\n";
+		}
+
+		for(TaxiGetLocation loc : locations.values()){
+			out += loc.toString() + "\n";
 		}
 		return out;
 	}
