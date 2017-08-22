@@ -3,6 +3,7 @@ package taxi.abstraction1;
 import java.util.ArrayList;
 import java.util.List;
 
+import burlap.debugtools.RandomFactory;
 import burlap.mdp.core.StateTransitionProb;
 import burlap.mdp.core.action.Action;
 import burlap.mdp.core.state.State;
@@ -40,7 +41,7 @@ public class TaxiL1Model implements FullStateModel {
 	@Override
 	public State sample(State s, Action a) {
 		List<StateTransitionProb> stpList = this.stateTransitions(s,a);
-        double roll = Math.random();
+        double roll = RandomFactory.getMapped(0).nextDouble();
         double curSum = 0.;
         for(int i = 0; i < stpList.size(); i++){
             curSum += stpList.get(i).p;
@@ -146,6 +147,7 @@ public class TaxiL1Model implements FullStateModel {
 
             TaxiL1Agent nt = ns.touchTaxi();
             nt.set(TaxiL1.ATT_TAXI_OCCUPIED, true);
+
 		}
 		tps.add(new StateTransitionProb(ns, 1));
 	}
@@ -194,9 +196,9 @@ public class TaxiL1Model implements FullStateModel {
 		String aname = a.actionName();
 		if(aname.startsWith(TaxiL1.ACTION_NAVIGATE))
 			return TaxiL1.IND_NAVIGATE;
-		else if(aname.equals(TaxiL1.ACTION_L1PICKUP))
+		else if(aname.startsWith(TaxiL1.ACTION_L1PICKUP))
 			return TaxiL1.IND_L1PICKUP;
-		else if(aname.equals(TaxiL1.ACTION_L1DROPOFF))
+		else if(aname.startsWith(TaxiL1.ACTION_L1DROPOFF))
 			return TaxiL1.IND_L1DROPOFF;
 		throw new RuntimeException("Invalid action " + aname);
 	}

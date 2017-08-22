@@ -33,14 +33,14 @@ public class HierarchicalLearnerTest {
 				new SimpleHashableStateFactory(true), maxDelta);
 		SimulatedEnvironment env;
 		if(randomStart)
-			env = new SimulatedEnvironment(groundDomain, new RandonPassengerTaxiState());
+			env = new SimulatedEnvironment(groundDomain, initial);
 		else
 			env= new SimulatedEnvironment(groundDomain, initial);
 
-		VisualActionObserver obs = new VisualActionObserver(groundDomain, TaxiVisualizer.getVisualizer(5, 5));
-        obs.initGUI();
-        obs.setDefaultCloseOperation(obs.EXIT_ON_CLOSE);
-        env.addObservers(obs);
+//		VisualActionObserver obs = new VisualActionObserver(groundDomain, TaxiVisualizer.getVisualizer(5, 5));
+//        obs.initGUI();
+//        obs.setDefaultCloseOperation(obs.EXIT_ON_CLOSE);
+//        env.addObservers(obs);
 		
 		for(int i = 1; i <= numEpisode; i++){
 			long time = System.currentTimeMillis();
@@ -84,21 +84,22 @@ public class HierarchicalLearnerTest {
 	}
 	
 	public static void main(String[] args) {
+		int numTrials = 20;
 		double correctMoveprob = 1;
-		double fickleProb = 0.5;
-		int numEpisodes = 200;
-		int maxSteps = 1000;
-		int rmaxThreshold = 3;
+		double fickleProb = 0;
+		int numEpisodes = 100;
+		int maxSteps = 3000;
+		int rmaxThreshold = 1;
 		double gamma = 0.9;
 		double rmax = 20;
 		double maxDelta = 0.01;
 		boolean randomStart = true;
-		TaxiState s = TaxiStateFactory.createClassicState();
+		TaxiState s = TaxiStateFactory.createMultiState();
 		Task RAMDProot = TaxiHierarchy.createAMDPHierarchy(correctMoveprob, fickleProb, false);
 		OOSADomain base = TaxiHierarchy.getBaseDomain();
 //		Task RMAXQroot = TaxiHierarchy.createRMAXQHierarchy(correctMoveprob, fickleProb);
-		
-		runRAMDPEpisodes(numEpisodes, maxSteps, RAMDProot, s, base, rmaxThreshold, gamma, rmax, maxDelta, randomStart);
+		for(int i = 0; i < numTrials; i++)
+			runRAMDPEpisodes(numEpisodes, maxSteps, RAMDProot, s, base, rmaxThreshold, gamma, rmax, maxDelta, randomStart);
 //		runRMAXQEpsodes(numEpisodes, maxSteps, RMAXQroot, s, rmax, rmaxThreshold, maxDelta, base);
 	}
 }

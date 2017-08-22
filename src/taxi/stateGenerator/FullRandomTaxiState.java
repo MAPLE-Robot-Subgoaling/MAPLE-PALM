@@ -4,6 +4,7 @@ import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
 
+import burlap.debugtools.RandomFactory;
 import burlap.mdp.auxiliary.StateGenerator;
 import burlap.mdp.core.state.State;
 import taxi.Taxi;
@@ -24,8 +25,8 @@ public class FullRandomTaxiState implements StateGenerator {
 		List<Point> points = new ArrayList<Point>();
 		
 		while(locations.size() < 4){
-			int lx = (int) (Math.random() * width);
-			int ly = (int) (Math.random() * hieght);
+			int lx = (int) (RandomFactory.getMapped(0).nextDouble() * width);
+			int ly = (int) (RandomFactory.getMapped(0).nextDouble() * hieght);
 			Point newp = new Point(lx, ly);
 			if(!points.contains(newp)){
 				points.add(newp);
@@ -35,16 +36,16 @@ public class FullRandomTaxiState implements StateGenerator {
 			}
 		}
 		
-		int passengerLoc = (int) (Math.random() * 4);
+		int passengerLoc = (int) (RandomFactory.getMapped(0).nextDouble() * 4);
 		Point loc = points.get(passengerLoc);
-		int goal = (int) (Math.random() * 4);
+		int goal = (int) (RandomFactory.getMapped(0).nextDouble() * 4);
 		String goalName = locations.get(goal).name();
 		TaxiPassenger p = new TaxiPassenger(Taxi.CLASS_PASSENGER, loc.x, loc.y, goalName);
 		List<TaxiPassenger> passengers = new ArrayList<TaxiPassenger>();
 		passengers.add(p);
 		
-		int tx = (int)(Math.random() * width);
-		int ty = (int)(Math.random() * hieght);
+		int tx = (int)(RandomFactory.getMapped(0).nextDouble() * width);
+		int ty = (int)(RandomFactory.getMapped(0).nextDouble() * hieght);
 		TaxiAgent taxi = new TaxiAgent(Taxi.CLASS_TAXI + 0, tx, ty);
 		
 		List<TaxiWall> walls = new ArrayList<TaxiWall>();
