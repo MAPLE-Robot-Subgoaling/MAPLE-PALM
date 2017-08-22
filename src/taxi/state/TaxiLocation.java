@@ -1,6 +1,7 @@
 package taxi.state;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import burlap.mdp.core.oo.state.ObjectInstance;
@@ -19,7 +20,7 @@ public class TaxiLocation extends MutableObject{
 			);
 	
 	public TaxiLocation(String name, int x, int y, String color) {
-		this(name, (Object) x, (Object) y, (Object) color);
+		this(name, x,y, (Object)color);
 	}
 	
 	private TaxiLocation(String name, Object x, Object y, Object color) {
