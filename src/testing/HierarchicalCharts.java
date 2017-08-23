@@ -31,10 +31,10 @@ public class HierarchicalCharts {
 		final GroundedTask RAMDPGroot = RAMDPRoot.getAllGroundedTasks(s).get(0); 
 		
 		SimulatedEnvironment env = new SimulatedEnvironment(domain, s);
-//		VisualActionObserver obs = new VisualActionObserver(domain, TaxiVisualizer.getVisualizer(5, 5));
-//        obs.initGUI();
-//        obs.setDefaultCloseOperation(obs.EXIT_ON_CLOSE);
-//        env.addObservers(obs);
+		VisualActionObserver obs = new VisualActionObserver(domain, TaxiVisualizer.getVisualizer(5, 5));
+        obs.initGUI();
+        obs.setDefaultCloseOperation(obs.EXIT_ON_CLOSE);
+        env.addObservers(obs);
 		
 		LearningAgentFactory rmaxq = new LearningAgentFactory() {
 			
@@ -69,10 +69,10 @@ public class HierarchicalCharts {
 				);
 		
 		exp.startExperiment();
-		exp.writeEpisodeDataToCSV("C:\\Users\\mland\\Box Sync\\Maple\\hierarchical learning data\\ramdp full state fickle.csv");
+		exp.writeEpisodeDataToCSV("results/ramdp-full-fickle.csv");
 	}
 	
-	public static void createRandomCrarts(OOSADomain domain, final Task RAMDPRoot, 
+	public static void createRandomCharts(OOSADomain domain, final Task RAMDPRoot,
 			final double rmax, final int threshold, final double maxDelta, final double discount,
 			int numEpisode, int maxSteps, int numTrial){
 		
@@ -107,7 +107,7 @@ public class HierarchicalCharts {
 				);
 		
 		exp.startExperiment();
-		exp.writeEpisodeDataToCSV("C:\\Users\\mland\\Box Sync\\Maple\\hierarchical learning data\\ramdp classic state fickle.csv");
+		exp.writeEpisodeDataToCSV("results/ramdp-classic-fickle.csv");
 	}
 	
 	public static void main(String[] args) {
@@ -127,6 +127,6 @@ public class HierarchicalCharts {
 		Task RMAXQroot = TaxiHierarchy.createRMAXQHierarchy(correctMoveprob, fickleProb);
 		createCharts(s, base, RAMDProot, RMAXQroot, rmax, rmaxThreshold, maxDelta, gamma,
 				numEpisodes, maxSteps, numTrials);
-//		createRandomCrarts(base, RAMDProot, rmax, rmaxThreshold, maxDelta, gamma, numEpisodes, maxSteps, numTrials);
+//		createRandomCharts(base, RAMDProot, rmax, rmaxThreshold, maxDelta, gamma, numEpisodes, maxSteps, numTrials);
 	}
 }
