@@ -24,9 +24,9 @@ import utilities.LearningAlgorithmExperimenter;
 
 public class HierarchicalCharts {
 
-	public static void createCrarts(final State s, OOSADomain domain, final Task RAMDPRoot, final Task RMEXQRoot, 
-			final double rmax, final int threshold, final double maxDelta, final double discount,
-			int numEpisode, int maxSteps, int numTrial){
+	public static void createCharts(final State s, OOSADomain domain, final Task RAMDPRoot, final Task RMEXQRoot,
+									final double rmax, final int threshold, final double maxDelta, final double discount,
+									int numEpisode, int maxSteps, int numTrial){
 		final HashableStateFactory hs = new SimpleHashableStateFactory(true);
 		final GroundedTask RAMDPGroot = RAMDPRoot.getAllGroundedTasks(s).get(0); 
 		
@@ -125,7 +125,7 @@ public class HierarchicalCharts {
 		Task RAMDProot = TaxiHierarchy.createAMDPHierarchy(correctMoveprob, fickleProb, false);
 		OOSADomain base = TaxiHierarchy.getBaseDomain();
 		Task RMAXQroot = TaxiHierarchy.createRMAXQHierarchy(correctMoveprob, fickleProb);
-		createCrarts(s, base, RAMDProot, RMAXQroot, rmax, rmaxThreshold, maxDelta, gamma, 
+		createCharts(s, base, RAMDProot, RMAXQroot, rmax, rmaxThreshold, maxDelta, gamma,
 				numEpisodes, maxSteps, numTrials);
 //		createRandomCrarts(base, RAMDProot, rmax, rmaxThreshold, maxDelta, gamma, numEpisodes, maxSteps, numTrials);
 	}

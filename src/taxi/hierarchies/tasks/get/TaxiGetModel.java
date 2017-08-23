@@ -11,7 +11,7 @@ import burlap.mdp.singleagent.model.statemodel.FullStateModel;
 import taxi.hierarchies.tasks.get.state.TaxiGetAgent;
 import taxi.hierarchies.tasks.get.state.TaxiGetPassenger;
 import taxi.hierarchies.tasks.get.state.TaxiGetState;
-import taxi.hierarchies.tasks.get.NavigateActionType.NavigateAction;
+import taxi.hierarchies.tasks.nav.NavigateActionType.NavigateAction;
 import taxi.hierarchies.tasks.get.BringonActionType.BringonAction;
 
 public class TaxiGetModel implements FullStateModel {

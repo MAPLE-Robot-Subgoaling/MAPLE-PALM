@@ -1,9 +1,9 @@
-package taxi.hierarchies.tasks.get;
+package taxi.hierarchies.tasks.nav;
 
 import burlap.mdp.core.action.Action;
 import burlap.mdp.core.action.ActionType;
 import burlap.mdp.core.state.State;
-import taxi.hierarchies.tasks.get.state.TaxiGetState;
+import taxi.hierarchies.interfaces.LocationParameterizable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +12,7 @@ public class NavigateActionType implements ActionType {
 	//the navigate actions are for moving the taxi to each of the depots
 	
 	public String typeName() {
-		return TaxiGetDomain.ACTION_NAV;
+		return TaxiNavDomain.ACTION_NAVIGATE;
 	}
 
 	@Override
@@ -24,7 +24,7 @@ public class NavigateActionType implements ActionType {
 	//there is a action for each depot in the current configuration
 	@Override
 	public List<Action> allApplicableActions(State s) {
-		TaxiGetState state = (TaxiGetState) s;
+		LocationParameterizable state = (LocationParameterizable) s;
 		List<Action> acts = new ArrayList<Action>();
 		
 		for(String loc : state.getLocations()){
@@ -49,7 +49,7 @@ public class NavigateActionType implements ActionType {
 		
 		@Override
 		public String actionName() {
-			return TaxiGetDomain.ACTION_NAV + "_" + goalLocation;
+			return TaxiNavDomain.ACTION_NAVIGATE + "_" + goalLocation;
 		}
 
 		@Override

@@ -2,8 +2,8 @@ package taxi.functions.amdp;
 
 import burlap.mdp.core.oo.propositional.PropositionalFunction;
 import burlap.mdp.core.oo.state.OOState;
-import taxi.hierarchies.tasks.put.NavigateActionType;
-import taxi.hierarchies.tasks.put.NavigateActionType.NavigateAction;
+import taxi.hierarchies.tasks.nav.NavigateActionType;
+import taxi.hierarchies.tasks.nav.NavigateActionType.NavigateAction;
 import taxi.hierarchies.tasks.nav.TaxiNavDomain;
 import taxi.hierarchies.tasks.nav.state.TaxiNavState;
 
@@ -24,8 +24,8 @@ public class NavigatePF extends PropositionalFunction {
 
 		int tx = (int) st.getTaxiAtt(TaxiNavDomain.ATT_X);
 		int ty = (int) st.getTaxiAtt(TaxiNavDomain.ATT_Y);
-		int lx = (int) st.getLocationAtt(a.getGoalLocation(), TaxiNavDomain.ATT_X);
-		int ly = (int) st.getLocationAtt(a.getGoalLocation(), TaxiNavDomain.ATT_Y);
+		int lx = (int) st.getLocationAtt(goal, TaxiNavDomain.ATT_X);
+		int ly = (int) st.getLocationAtt(goal, TaxiNavDomain.ATT_Y);
 
 		return tx == lx && ty == ly;
 	}

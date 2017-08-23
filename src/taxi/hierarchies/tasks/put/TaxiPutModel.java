@@ -6,7 +6,7 @@ import burlap.mdp.core.action.Action;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.model.statemodel.FullStateModel;
 import taxi.hierarchies.tasks.put.DropoffActionType.DropoffAction;
-import taxi.hierarchies.tasks.put.NavigateActionType.NavigateAction;
+import taxi.hierarchies.tasks.nav.NavigateActionType.NavigateAction;
 import taxi.hierarchies.tasks.put.state.TaxiPutAgent;
 import taxi.hierarchies.tasks.put.state.TaxiPutPassenger;
 import taxi.hierarchies.tasks.put.state.TaxiPutState;
