@@ -35,7 +35,11 @@ public class RandonPassengerTaxiState implements StateGenerator{
 		int start = (int)(RandomFactory.getMapped(0).nextDouble() * 4);
 		int px = (int)(locations.get(start).get(Taxi.ATT_X));
 		int py = (int)(locations.get(start).get(Taxi.ATT_Y));
-		int goal = (int)(RandomFactory.getMapped(0).nextDouble() * 4);
+		int goal;
+		do
+			goal = (int)(RandomFactory.getMapped(0).nextDouble() * 4);
+		while(goal==start);
+
 		String goalName =  locations.get(goal).name();
 		
 		passengers.add(new TaxiPassenger(Taxi.CLASS_PASSENGER + 0, px, py, goalName));
