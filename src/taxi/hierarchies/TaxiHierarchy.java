@@ -10,14 +10,17 @@ import hierarchy.framework.PrimitiveTask;
 import hierarchy.framework.RootTask;
 import hierarchy.framework.SolveActionType;
 import hierarchy.framework.Task;
+import taxi.PutdownActionType;
 import taxi.Taxi;
 import taxi.functions.amdp.*;
 import taxi.hierarchies.tasks.bringon.TaxiBringonDomain;
 import taxi.hierarchies.tasks.bringon.state.BringonStateMapper;
 import taxi.hierarchies.tasks.dropoff.TaxiDropoffDomain;
 import taxi.hierarchies.tasks.dropoff.state.DropoffStateMapper;
+import taxi.hierarchies.tasks.get.BringonActionType;
 import taxi.hierarchies.tasks.get.TaxiGetDomain;
 import taxi.hierarchies.tasks.get.state.GetStateMapper;
+import taxi.hierarchies.tasks.nav.NavigateActionType;
 import taxi.hierarchies.tasks.nav.TaxiNavDomain;
 import taxi.hierarchies.tasks.nav.state.NavStateMapper;
 import taxi.functions.rmaxq.BaseGetActionType;
@@ -27,7 +30,11 @@ import taxi.functions.rmaxq.BaseNavigateActionType;
 import taxi.functions.rmaxq.BasePutActionType;
 import taxi.functions.rmaxq.BasePutCompletedPF;
 import taxi.functions.rmaxq.BasePutFailurePF;
+import taxi.hierarchies.tasks.put.DropoffActionType;
 import taxi.hierarchies.tasks.put.TaxiPutDomain;
+import taxi.hierarchies.tasks.put.state.PutStateMapper;
+import taxi.hierarchies.tasks.root.GetActionType;
+import taxi.hierarchies.tasks.root.PutActionType;
 import taxi.hierarchies.tasks.root.TaxiRootDomain;
 import taxi.hierarchies.tasks.root.state.RootStateMapper;
 
@@ -56,7 +63,7 @@ public class TaxiHierarchy {
 		baseDomain = taxiDomain.generateDomain();
 		OOSADomain bringonDomain = (new TaxiBringonDomain()).generateDomain();
 		OOSADomain dropoffDomain = (new TaxiDropoffDomain()).generateDomain();
-		OOSADomain navigateDomain = (new TaxiNavDomain()).generateDomain();
+		OOSADomain navDomain = (new TaxiNavDomain()).generateDomain();
 		OOSADomain getDomain = (new TaxiGetDomain()).generateDomain();
 		OOSADomain putDomain = (new TaxiPutDomain()).generateDomain();
 		OOSADomain rootDomain = (new TaxiRootDomain()).generateDomain();
@@ -66,50 +73,47 @@ public class TaxiHierarchy {
 		ActionType aSouth = baseDomain.getAction(Taxi.ACTION_SOUTH);
 		ActionType aWest = baseDomain.getAction(Taxi.ACTION_WEST);
 		ActionType aPickup = baseDomain.getAction(Taxi.ACTION_PICKUP);
-		ActionType aPutdown = baseDomain.getAction(Taxi.ACTION_PUTDOWN);
-		ActionType aBringon = bringonDomain.getAction(TaxiGetDomain.ACTION_BRINGON);
-		ActionType aGetNavigate = getDomain.getAction(TaxiGetDomain.ACTION_NAV);
-		ActionType aDropoff = dropoffDomain.getAction(TaxiPutDomain.ACTION_DROPOFF);
-		ActionType aPutNavigate = putDomain.getAction(TaxiPutDomain.ACTION_NAV);
-		ActionType aGet = rootDomain.getAction(TaxiRootDomain.ACTION_GET);
-		ActionType aPut = rootDomain.getAction(TaxiRootDomain.ACTION_PUT);
+		ActionType aPutdown = new PutdownActionType();
+		ActionType aBringon = new BringonActionType();
+		ActionType aDropoff = new DropoffActionType();
+		ActionType aNavigate = new NavigateActionType();
+		ActionType aGet = new GetActionType();
+		ActionType aPut = new PutActionType();
 		ActionType aSolve = new SolveActionType();
 		
 		//tasks
 		PrimitiveTask north = new PrimitiveTask(aNorth, baseDomain);
 		PrimitiveTask east = new PrimitiveTask(aEast, baseDomain);
 		PrimitiveTask south = new PrimitiveTask(aSouth, baseDomain);
-		PrimitiveTask wast = new PrimitiveTask(aWest, baseDomain);
+		PrimitiveTask west = new PrimitiveTask(aWest, baseDomain);
 		PrimitiveTask pickup = new PrimitiveTask(aPickup, baseDomain);
 		PrimitiveTask putdown = new PrimitiveTask(aPutdown, baseDomain);
 
 		Task[] bringonTasks = {pickup};
-		NonprimitiveTask bringon = new NonprimitiveTask(bringonTasks, aBringon, taxiDomain.generatePickupDomain(),
+		NonprimitiveTask bringon = new NonprimitiveTask(bringonTasks, aBringon, bringonDomain,
 				new BringonStateMapper(), new BringonFailurePF(), new BringonCompletedPF());
 
 		Task[] dropoffTasks = {putdown};
-		NonprimitiveTask dropoff = new NonprimitiveTask(dropoffTasks, aDropoff, taxiDomain.generateDropOffDomain(),
+		NonprimitiveTask dropoff = new NonprimitiveTask(dropoffTasks, aDropoff, dropoffDomain,
 				new DropoffStateMapper(), new DropoffFailurePF(), new DropoffCompletedPF());
 
-		Task[] navTasks = {north, east, south, wast};
+		Task[] navTasks = {north, east, south, west};
 		StateMapping navMap = new NavStateMapper();
 		PropositionalFunction navPF = new NavigateAbstractPF();
 		if(plan) {
 			navMap = new IdentityMap();
 			navPF = new NavigatePF();
 		}
-		NonprimitiveTask getNavigate = new NonprimitiveTask(navTasks, aGetNavigate, taxiDomain.generateNavigateDomain(),
-				navMap, navPF, navPF);
-		NonprimitiveTask putNavigate = new NonprimitiveTask(navTasks, aPutNavigate, taxiDomain.generateNavigateDomain(),
+		NonprimitiveTask navigate = new NonprimitiveTask(navTasks, aNavigate, navDomain,
 				navMap, navPF, navPF);
 
-		Task[] getTasks = {bringon, getNavigate};
+		Task[] getTasks = {bringon, navigate};
 		NonprimitiveTask get = new NonprimitiveTask(getTasks, aGet, getDomain,
                 new GetStateMapper(), new GetFailurePF(), new GetCompletedPF());
 
-		Task[] putTasks = {putNavigate, dropoff};
+		Task[] putTasks = {navigate, dropoff};
 		NonprimitiveTask put = new NonprimitiveTask(putTasks, aPut, putDomain,
-				new GetStateMapper(), new PutFailurePF(), new PutCompletedPF());
+				new PutStateMapper(), new PutFailurePF(), new PutCompletedPF());
 		
 		Task[] rootTasks = {get, put};
 		NonprimitiveTask root = new NonprimitiveTask(rootTasks, aSolve, rootDomain,
@@ -155,8 +159,8 @@ public class TaxiHierarchy {
 		PrimitiveTask dropoff = new PrimitiveTask(aPutdown, baseDomain);
 		
 		Task[] navTasks = new Task[]{north, east, south, wast};
-		Task[] pickupL1Tasks = new Task[]{pickup};
-		Task[] dropoffL1Tasks = new Task[]{dropoff};
+		Task[] bringonTasks = new Task[]{pickup};
+		Task[] dropoffTasks = new Task[]{dropoff};
 
 		PropositionalFunction navPF =/* new NavigateAbstractPF()*/ new NavigatePF();
 		NonprimitiveTask navigate = new NonprimitiveTask(navTasks, aNavigate, taxiDomain.generateNavigateDomain(),
@@ -164,11 +168,11 @@ public class TaxiHierarchy {
 		
 		PropositionalFunction pickupFailPF = new BringonFailurePF();
 		PropositionalFunction pickupCompPF = new BringonCompletedPF();
-		NonprimitiveTask pickupL1 = new NonprimitiveTask(pickupL1Tasks, aPickup, pickupFailPF, pickupCompPF);
+		NonprimitiveTask pickupL1 = new NonprimitiveTask(bringonTasks, aPickup, pickupFailPF, pickupCompPF);
 		
 		PropositionalFunction dropoffFailPF = new DropoffFailurePF();
 		PropositionalFunction dropoffCompPF = new DropoffCompletedPF();
-		NonprimitiveTask dropoffL1 = new NonprimitiveTask(dropoffL1Tasks, aPutdown, dropoffFailPF, dropoffCompPF);
+		NonprimitiveTask dropoffL1 = new NonprimitiveTask(dropoffTasks, aPutdown, dropoffFailPF, dropoffCompPF);
 		
 		Task[] getTasks = new Task[]{pickupL1, navigate};
 		Task[] putTasks = new Task[]{navigate, dropoffL1};

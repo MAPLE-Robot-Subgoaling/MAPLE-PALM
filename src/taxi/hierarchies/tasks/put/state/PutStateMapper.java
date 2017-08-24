@@ -30,7 +30,6 @@ public class PutStateMapper implements StateMapping {
 
 			if (tx == lx && ty == ly) {
 				taxiLocation = locName;
-				break;
 			}
 		}
 		TaxiPutAgent taxi = new TaxiPutAgent(TaxiPutDomain.CLASS_TAXI, taxiLocation);

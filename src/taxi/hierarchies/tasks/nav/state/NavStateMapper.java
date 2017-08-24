@@ -6,12 +6,13 @@ import java.util.List;
 import burlap.mdp.auxiliary.StateMapping;
 import burlap.mdp.core.state.State;
 import taxi.hierarchies.tasks.nav.TaxiNavDomain;
+import taxi.state.TaxiState;
 
 public class NavStateMapper implements StateMapping {
 
 	@Override
 	public State mapState(State s) {
-		TaxiNavState st = (TaxiNavState) s;
+		TaxiState st = (TaxiState) s;
 		
 		int tx = (int) st.getTaxiAtt(TaxiNavDomain.ATT_X);
 		int ty = (int) st.getTaxiAtt(TaxiNavDomain.ATT_Y);

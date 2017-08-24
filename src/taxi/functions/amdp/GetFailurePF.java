@@ -23,7 +23,7 @@ public class GetFailurePF extends PropositionalFunction {
 		String pass_loc = (String)st.getPassengerAtt(passenger, TaxiGetDomain.ATT_LOCATION);
 		String taxi_loc = (String)st.getTaxiAtt(TaxiGetDomain.ATT_LOCATION);
 
-		return !pass_loc.equals(taxi_loc);
+		return false;
 	}
 
 }

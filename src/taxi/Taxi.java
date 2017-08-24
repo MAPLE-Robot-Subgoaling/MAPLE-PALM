@@ -187,7 +187,7 @@ public class Taxi implements DomainGenerator{
 	
 	//for the taxi hierarchy, each node has a different set of actions, 
 	//these mothods remove all actions besides the subtask for each task  
-	public OOSADomain generatePickupDomain(){
+	public OOSADomain generateBringOnDomain(){
 		OOSADomain d = generateDomain();
 		d.clearActionTypes();
 		d.addActionType(new PickupActionType());

@@ -29,7 +29,6 @@ public class GetStateMapper implements StateMapping {
 
 			if (tx == lx && ty == ly) {
 				taxiLocation = locName;
-				break;
 			}
 		}
 		TaxiGetAgent taxi = new TaxiGetAgent(TaxiGetDomain.CLASS_TAXI, taxiLocation);

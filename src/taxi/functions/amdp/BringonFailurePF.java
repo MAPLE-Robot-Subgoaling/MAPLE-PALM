@@ -9,7 +9,7 @@ import taxi.hierarchies.tasks.bringon.state.TaxiBringonState;
 public class BringonFailurePF extends PropositionalFunction {
 	//pickup fails when taxi is not at a depot
 	public BringonFailurePF() {
-		super("pickupFail", new String[]{});
+		super("bringonFail", new String[]{});
 	}
 	
 	@Override

@@ -4,6 +4,7 @@ import burlap.mdp.core.action.Action;
 import burlap.mdp.core.action.ActionType;
 import burlap.mdp.core.state.State;
 import taxi.Taxi;
+import taxi.hierarchies.tasks.bringon.state.TaxiBringonState;
 import taxi.state.TaxiState;
 
 import java.util.ArrayList;
@@ -24,15 +25,13 @@ public class PickupActionType implements ActionType {
 
     @Override
     public List<Action> allApplicableActions(State s) {
-        TaxiState state = (TaxiState)s;
+        TaxiBringonState state = (TaxiBringonState)s;
         List<Action> acts = new ArrayList<>();
-        int taxi_x = (int)state.getTaxiAtt(Taxi.ATT_X);
-        int taxi_y = (int)state.getTaxiAtt(Taxi.ATT_Y);
+        String taxi_location = (String)state.getTaxiAtt(TaxiBringonDomain.ATT_LOCATION);
 
         for(String pass : state.getPassengers()){
-            int pass_x = (int)state.getPassengerAtt(pass, Taxi.ATT_X);
-            int pass_y = (int)state.getPassengerAtt(pass, Taxi.ATT_Y);
-            if(pass_x == taxi_x && pass_y == taxi_y) {
+            String pass_location = (String)state.getPassengerAtt(pass, TaxiBringonDomain.ATT_LOCATION);
+            if(pass_location.equals(taxi_location)) {
                 acts.add(new PickupAction(pass));
             }
         }

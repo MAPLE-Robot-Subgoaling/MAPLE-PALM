@@ -3,6 +3,8 @@ package taxi;
 import burlap.mdp.core.action.Action;
 import burlap.mdp.core.action.ActionType;
 import burlap.mdp.core.state.State;
+import taxi.hierarchies.tasks.dropoff.TaxiDropoffDomain;
+import taxi.hierarchies.tasks.dropoff.state.TaxiDropoffState;
 import taxi.state.TaxiState;
 
 import java.util.ArrayList;
@@ -22,17 +24,14 @@ public class PutdownActionType implements ActionType {
 
     @Override
     public List<Action> allApplicableActions(State s) {
-        TaxiState state = (TaxiState) s;
+        TaxiDropoffState state = (TaxiDropoffState) s;
         List<Action> acts = new ArrayList<>();
-        boolean taxiOccupied = (boolean) state.getTaxiAtt(Taxi.ATT_TAXI_OCCUPIED);
 
-        if (taxiOccupied) {
-
-            for (String pass : state.getPassengers()) {
-                boolean inTaxi = (boolean) state.getPassengerAtt(pass, Taxi.ATT_IN_TAXI);
-                if (inTaxi) {
-                    acts.add(new PutdownAction(pass));
-                }
+        for (String pass : state.getPassengers()) {
+            String pass_loc = (String)state.getPassengerAtt(pass, TaxiDropoffDomain.ATT_LOCATION);
+            boolean notInTaxi = pass_loc.equals(TaxiDropoffDomain.NOT_IN_TAXI);
+            if (!notInTaxi) {
+                acts.add(new PutdownAction(pass));
             }
         }
 
