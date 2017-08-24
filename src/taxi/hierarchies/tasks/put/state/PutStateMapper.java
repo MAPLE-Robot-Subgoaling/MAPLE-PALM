@@ -6,13 +6,15 @@ import java.util.List;
 import burlap.mdp.auxiliary.StateMapping;
 import burlap.mdp.core.state.State;
 import taxi.Taxi;
+import taxi.hierarchies.interfaces.ParameterizedStateMapping;
 import taxi.hierarchies.tasks.put.TaxiPutDomain;
 import taxi.state.TaxiState;
 
-public class PutStateMapper implements StateMapping {
+public class PutStateMapper implements ParameterizedStateMapping {
+
 	//maps a base taxi state to L2
 	@Override
-	public State mapState(State s) {
+	public State mapState(State s, String... params) {
 		List<TaxiPutPassenger> passengers = new ArrayList<TaxiPutPassenger>();
 		List<TaxiPutLocation> locations = new ArrayList<>();
 
@@ -34,7 +36,7 @@ public class PutStateMapper implements StateMapping {
 		}
 		TaxiPutAgent taxi = new TaxiPutAgent(TaxiPutDomain.CLASS_TAXI, taxiLocation);
 
-		for(String passengerName : st.getPassengers()){
+		for(String passengerName : params){
 			String goal = (String) st.getPassengerAtt(passengerName, Taxi.ATT_GOAL_LOCATION);
 			boolean inTaxi = (boolean) st.getPassengerAtt(passengerName, Taxi.ATT_IN_TAXI);
 			passengers.add(new TaxiPutPassenger(passengerName, goal, inTaxi));

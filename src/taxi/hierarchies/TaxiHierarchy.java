@@ -19,6 +19,7 @@ import taxi.hierarchies.tasks.dropoff.TaxiDropoffDomain;
 import taxi.hierarchies.tasks.dropoff.state.DropoffStateMapper;
 import taxi.hierarchies.tasks.get.BringonActionType;
 import taxi.hierarchies.tasks.get.TaxiGetDomain;
+import taxi.hierarchies.tasks.get.state.GetParameterizedMapper;
 import taxi.hierarchies.tasks.get.state.GetStateMapper;
 import taxi.hierarchies.tasks.nav.NavigateActionType;
 import taxi.hierarchies.tasks.nav.TaxiNavDomain;
@@ -107,6 +108,7 @@ public class TaxiHierarchy {
 		NonprimitiveTask navigate = new NonprimitiveTask(navTasks, aNavigate, navDomain,
 				navMap, navPF, navPF);
 
+		//using parameterized state mapper for get
 		Task[] getTasks = {bringon, navigate};
 		NonprimitiveTask get = new NonprimitiveTask(getTasks, aGet, getDomain,
                 new GetStateMapper(), new GetFailurePF(), new GetCompletedPF());

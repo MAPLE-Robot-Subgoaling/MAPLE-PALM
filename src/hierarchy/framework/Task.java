@@ -8,6 +8,7 @@ import burlap.mdp.core.action.Action;
 import burlap.mdp.core.action.ActionType;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.oo.OOSADomain;
+import taxi.hierarchies.interfaces.ParameterizedStateMapping;
 
 public abstract class Task {
 
@@ -86,8 +87,11 @@ public abstract class Task {
 	 * @param lowerState state at level just below current level
 	 * @return the same state but projected up one level
 	 */
-	public State mapState(State lowerState){
-		return mapper.mapState(lowerState);
+	public State mapState(State lowerState, String...params){
+		if(mapper instanceof ParameterizedStateMapping)
+			return ((ParameterizedStateMapping)mapper).mapState(lowerState, params);
+		else
+			return mapper.mapState(lowerState);
 	}
 	
 	/**

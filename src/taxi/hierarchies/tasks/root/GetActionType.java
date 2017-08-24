@@ -5,6 +5,7 @@ import java.util.List;
 
 import burlap.mdp.core.action.Action;
 import burlap.mdp.core.action.ActionType;
+import burlap.mdp.core.oo.ObjectParameterizedAction;
 import burlap.mdp.core.state.State;
 import taxi.hierarchies.tasks.root.state.TaxiRootState;
 
@@ -34,18 +35,17 @@ public class GetActionType implements ActionType {
 		return acts;
 	}
 
-	public class GetAction implements Action{
+	public class GetAction implements ObjectParameterizedAction{
 
 		private String passenger;
 		
 		public GetAction(String passengerName) {
 			this.passenger = passengerName;
 		}
-		
+
 		public String getPassenger(){
 			return passenger;
 		}
-		
 		@Override
 		public String actionName() {
 			return TaxiRootDomain.ACTION_GET + "_" + passenger;
@@ -74,6 +74,15 @@ public class GetActionType implements ActionType {
 		@Override
 		public int hashCode(){
 			return actionName().hashCode();
+		}
+
+		@Override
+		public String[] getObjectParameters() {
+			return new String[]{passenger};
+		}
+		@Override
+		public void setObjectParameters(String[] strings) {
+			passenger = strings[0];
 		}
 	}
 }
