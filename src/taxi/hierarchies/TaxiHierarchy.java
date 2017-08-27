@@ -7,7 +7,6 @@ import burlap.mdp.singleagent.oo.OOSADomain;
 import hierarchy.framework.IdentityMap;
 import hierarchy.framework.NonprimitiveTask;
 import hierarchy.framework.PrimitiveTask;
-import hierarchy.framework.RootTask;
 import hierarchy.framework.SolveActionType;
 import hierarchy.framework.Task;
 import taxi.PutdownActionType;
@@ -187,9 +186,9 @@ public class TaxiHierarchy {
 		NonprimitiveTask put = new NonprimitiveTask(putTasks, aPut, putFailPF, putCompPF);
 		
 		Task[] rootTasks = {get, put};
-		Task root = new RootTask(rootTasks, baseDomain, new IdentityMap());
-		
-		return root;
+//		Task root = new RootTask(rootTasks, baseDomain, new IdentityMap());
+
+		return null;
 		
 	}
 	

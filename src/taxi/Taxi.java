@@ -1,8 +1,5 @@
 package taxi;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import burlap.behavior.singleagent.Episode;
 import burlap.behavior.singleagent.auxiliary.EpisodeSequenceVisualizer;
 import burlap.behavior.singleagent.learning.tdmethods.QLearning;
@@ -23,6 +20,9 @@ import taxi.state.TaxiPassenger;
 import taxi.state.TaxiWall;
 import taxi.stateGenerator.TaxiStateFactory;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Taxi implements DomainGenerator{
 
 	//public constants for general use
@@ -42,6 +42,7 @@ public class Taxi implements DomainGenerator{
 	//passenger attributes
 	public static final String ATT_GOAL_LOCATION = 			"goalLocation";
 	public static final String ATT_IN_TAXI = 				"inTaxi";
+	public static final String ATT_PICKED_UP_AT_LEAST_ONCE ="pickedUpAtLeastOnce";
 	public static final String ATT_JUST_PICKED_UP =			"justPickedUp";
 
 	//location attributes 
