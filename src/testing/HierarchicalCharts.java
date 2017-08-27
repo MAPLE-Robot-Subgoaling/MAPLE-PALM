@@ -19,15 +19,14 @@ import taxi.hierarchies.TaxiHierarchy;
 import taxi.state.TaxiState;
 import taxi.stateGenerator.RandonPassengerTaxiState;
 import taxi.stateGenerator.TaxiStateFactory;
-import utilities.LearningAlgorithmExperimenter;
-
 //import utilities.SimpleHashableStateFactory;
+import utilities.LearningAlgorithmExperimenter;
 
 public class HierarchicalCharts {
 
-	public static void createCrarts(final State s, OOSADomain domain, final Task RAMDPRoot, final Task RMEXQRoot, 
-			final double rmax, final int threshold, final double maxDelta, final double discount,
-			int numEpisode, int maxSteps, int numTrial){
+	public static void createCharts(final State s, OOSADomain domain, final Task RAMDPRoot, final Task RMEXQRoot,
+									final double rmax, final int threshold, final double maxDelta, final double discount,
+									int numEpisode, int maxSteps, int numTrial){
 		final HashableStateFactory hs = new SimpleHashableStateFactory(true);
 		final GroundedTask RAMDPGroot = RAMDPRoot.getAllGroundedTasks(s).get(0); 
 		
@@ -63,19 +62,20 @@ public class HierarchicalCharts {
 			}
 		};
 		
-		LearningAlgorithmExperimenter exp = new LearningAlgorithmExperimenter(env, numTrial, numEpisode, maxSteps, ramdp);
+		LearningAlgorithmExperimenter exp = new LearningAlgorithmExperimenter(env, numTrial, numEpisode, maxSteps, ramdp, rmaxq);
 		exp.setUpPlottingConfiguration(500, 300, 2, 1000,
 				TrialMode.MOST_RECENT_AND_AVERAGE,
 				PerformanceMetric.CUMULATIVE_REWARD_PER_EPISODE
 				);
 		
 		exp.startExperiment();
-		exp.writeEpisodeDataToCSV("C:\\Users\\mland\\Box Sync\\Maple\\hierarchical learning data\\ramdp full state fickle.csv");
+		exp.writeEpisodeDataToCSV("results/ramdp-full-fickle.csv");
 	}
 	
-	public static void createRandomCrarts(OOSADomain domain, final Task RAMDPRoot, 
+	public static void createRandomCharts(OOSADomain domain, final Task RAMDPRoot,
 			final double rmax, final int threshold, final double maxDelta, final double discount,
 			int numEpisode, int maxSteps, int numTrial){
+		
 		SimulatedEnvironment env = new SimulatedEnvironment(domain, new RandonPassengerTaxiState());
 		
 		final HashableStateFactory hs = new SimpleHashableStateFactory(true);
@@ -107,28 +107,26 @@ public class HierarchicalCharts {
 				);
 		
 		exp.startExperiment();
-		exp.writeEpisodeDataToCSV("C:\\Users\\mland\\Box Sync\\Maple\\hierarchical learning data\\ramdp full state fickle.csv");
+		exp.writeEpisodeDataToCSV("results/ramdp-classic-fickle.csv");
 	}
-
+	
 	public static void main(String[] args) {
-		double correctMoveprob = 1;
-		double fickleProb = 0.5;
-		boolean oneTimeFickle = true;
-		int numEpisodes = 100;
+		double correctMoveprob = 0.8;
+		double fickleProb = 0.225;
+		int numEpisodes = 30;
 		int maxSteps = 2000;
-		int rmaxThreshold = 3;
-		int numTrials = 10;
+		int rmaxThreshold = 5;
+		int numTrials = 20;
 		double gamma = 0.9;
 		double rmax = 20;
 		double maxDelta = 0.01;
 		
-		TaxiState s = TaxiStateFactory.createClassicState();
-		Task RAMDProot = TaxiHierarchy.createAMDPHierarchy(correctMoveprob, fickleProb,
-				oneTimeFickle, false);
+		TaxiState s = TaxiStateFactory.createTinyState();
+		Task RAMDProot = TaxiHierarchy.createAMDPHierarchy(correctMoveprob, fickleProb, false);
 		OOSADomain base = TaxiHierarchy.getBaseDomain();
-		Task RMAXQroot = TaxiHierarchy.createRMAXQHierarchy(correctMoveprob, oneTimeFickle, fickleProb);
-		createCrarts(s, base, RAMDProot, RMAXQroot, rmax, rmaxThreshold, maxDelta, gamma, 
+		Task RMAXQroot = TaxiHierarchy.createRMAXQHierarchy(correctMoveprob, fickleProb);
+		createCharts(s, base, RAMDProot, RMAXQroot, rmax, rmaxThreshold, maxDelta, gamma,
 				numEpisodes, maxSteps, numTrials);
-//		createRandomCrarts(base, RAMDProot, rmax, rmaxThreshold, maxDelta, gamma, numEpisodes, maxSteps, numTrials);
+//		createRandomCharts(base, RAMDProot, rmax, rmaxThreshold, maxDelta, gamma, numEpisodes, maxSteps, numTrials);
 	}
 }

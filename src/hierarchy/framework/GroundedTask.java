@@ -3,12 +3,11 @@ package hierarchy.framework;
 import java.util.ArrayList;
 import java.util.List;
 
+import burlap.mdp.core.oo.ObjectParameterizedAction;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import burlap.mdp.core.action.Action;
 import burlap.mdp.core.state.State;
-import burlap.mdp.singleagent.environment.EnvironmentOutcome;
-import burlap.mdp.singleagent.environment.SimulatedEnvironment;
 import burlap.mdp.singleagent.model.FullModel;
 import burlap.mdp.singleagent.oo.OOSADomain;
 
@@ -95,7 +94,12 @@ public class GroundedTask {
 	 * @return the abstracted state
 	 */
 	public State mapState(State s){
-		return t.mapState(s);
+		if(action instanceof ObjectParameterizedAction) {
+			String[] params = ((ObjectParameterizedAction) action).getObjectParameters();
+			return t.mapState(s, params);
+		}
+		else
+			return t.mapState(s);
 	}
 	
 	/**

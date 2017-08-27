@@ -1,5 +1,7 @@
 /bin/
 .idea/
+out/
+trees/
 Maple-RAMDP.iml
 .classpath
 .project

@@ -1,16 +1,19 @@
 
 package taxi.stateGenerator;
 
-import taxi.Taxi;
-import taxi.state.*;
-
 import java.util.ArrayList;
 import java.util.List;
 
+import taxi.Taxi;
+import taxi.state.TaxiAgent;
+import taxi.state.TaxiLocation;
+import taxi.state.TaxiPassenger;
+import taxi.state.TaxiState;
+import taxi.state.TaxiWall;
+
 public class TaxiStateFactory {
 	//generates taxi states
-
-	//5 x 5 taxi problem
+	
 	public static TaxiState createClassicState(){
 		TaxiAgent taxi = new TaxiAgent(Taxi.CLASS_TAXI + 0, 0, 3);
 		
@@ -22,6 +25,7 @@ public class TaxiStateFactory {
 		
 		List<TaxiPassenger> passengers = new ArrayList<TaxiPassenger>();
 		passengers.add(new TaxiPassenger(Taxi.CLASS_PASSENGER + 0, 3, 0, Taxi.CLASS_LOCATION + 0));
+//		passengers.add(new TaxiPassenger(Taxi.CLASS_PASSENGER + 1, 0, 0, Taxi.CLASS_LOCATION + 3));
 		
 		List<TaxiWall> walls = new ArrayList<TaxiWall>();
 		walls.add(new TaxiWall(Taxi.CLASS_WALL + 0, 0, 0, 5, false));
@@ -34,11 +38,7 @@ public class TaxiStateFactory {
 		
 		return new TaxiState(taxi, passengers, locations, walls);
 	}
-
-	/**
-	 * creates a 1 x 5 state with 4 depots
-	 * @return a small taxi state
-	 */
+	
 	public static TaxiState createSmallState(){
 		TaxiAgent taxi = new TaxiAgent(Taxi.CLASS_TAXI + 0, 0, 4);
 		
@@ -59,11 +59,7 @@ public class TaxiStateFactory {
 			
 		return new TaxiState(taxi, passengers, locations, walls);
 	}
-
-	/**
-	 * creates a 1 by 2 state
-	 * @return a tiny taxi state
-	 */
+	
 	public static TaxiState createTinyState(){
 		TaxiAgent taxi = new TaxiAgent(Taxi.CLASS_TAXI + 0, 0, 1);
 		

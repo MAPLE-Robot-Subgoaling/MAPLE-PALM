@@ -4,11 +4,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.swing.plaf.basic.BasicScrollPaneUI.HSBChangeListener;
-
 import burlap.behavior.policy.Policy;
 import burlap.behavior.singleagent.Episode;
-import burlap.behavior.singleagent.planning.stochastic.valueiteration.ValueIteration;
 import burlap.behavior.valuefunction.ConstantValueFunction;
 import burlap.mdp.core.action.Action;
 import burlap.mdp.core.action.ActionType;
@@ -118,7 +115,7 @@ public class AMDPPlanner {
 			while(!(task.isFailure(currentState) || task.isComplete(currentState))){
 				Action a = taskPolicy.action(currentState);
 				GroundedTask child = getChildGT(task, a, currentState);
-				
+				System.out.println(child);
 				//recurse to solve the chosen subtask
 				solveTask(child, e, env);
 				

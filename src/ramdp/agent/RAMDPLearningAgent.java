@@ -1,5 +1,9 @@
 package ramdp.agent;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import burlap.behavior.policy.Policy;
 import burlap.behavior.singleagent.Episode;
 import burlap.behavior.singleagent.learning.LearningAgent;
@@ -11,10 +15,6 @@ import burlap.mdp.singleagent.oo.OOSADomain;
 import burlap.statehashing.HashableStateFactory;
 import hierarchy.framework.GroundedTask;
 import utilities.ValueIteration;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class RAMDPLearningAgent implements LearningAgent{
 
@@ -116,8 +116,7 @@ public class RAMDPLearningAgent implements LearningAgent{
 		RAMDPModel model = getModel(task);
 		int actionCount = 0;
 		
-		while(!(task.isFailure(currentState) || task.isComplete(currentState)) &&
-				(steps < maxSteps || maxSteps == -1)){
+		while(!(task.isFailure(currentState) || task.isComplete(currentState)) && (steps < maxSteps || maxSteps == -1)){
 			actionCount++;
 			boolean subtaskCompleted = false;
 			pastState = currentState;
@@ -131,7 +130,6 @@ public class RAMDPLearningAgent implements LearningAgent{
 			}
 
 			if(action.isPrimitive()){
-				//base actions are executed in the envirnment
 				subtaskCompleted = true;
 				result = baseEnv.executeAction(a);
 				e.transition(result);
@@ -143,7 +141,6 @@ public class RAMDPLearningAgent implements LearningAgent{
 				result.r = task.getReward(currentState);
 				steps++;
 			}else{
-				//nonprimitive tasks are  executed through recursive solving the child task
 				subtaskCompleted = solveTask(action, baseEnv, maxSteps);
 				baseState = e.stateSequence.get(e.stateSequence.size() - 1);
 				currentState = task.mapState(baseState);
@@ -159,6 +156,7 @@ public class RAMDPLearningAgent implements LearningAgent{
 			}
 		}
 		
+//		System.out.println(task + " " + actionCount);
 		return task.isComplete(currentState) || actionCount == 0;
 	}
 	
