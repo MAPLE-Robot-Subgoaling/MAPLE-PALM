@@ -85,7 +85,7 @@ public class HierarchicalLearnerTest {
 	
 	public static void main(String[] args) {
 		double correctMoveprob = 1;
-		double fickleProb = 0.5;
+		double fickleProb = 0.05;
 		int numEpisodes = 200;
 		int maxSteps = 1000;
 		int rmaxThreshold = 3;
