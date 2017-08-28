@@ -1,4 +1,4 @@
-package taxi.hierGen.root.state;
+package taxi.hierGen.Task7.state;
 
 import burlap.mdp.core.oo.state.MutableOOState;
 import burlap.mdp.core.oo.state.OOStateUtilities;
@@ -8,26 +8,24 @@ import burlap.mdp.core.state.State;
 
 import java.util.*;
 
-public class TaxiHierGenRootState implements MutableOOState{
+public class TaxiHierGenTask7State implements MutableOOState{
 
-	public static final String CLASS_ROOT_PASSENGER = 		"rootPassenger";
-	public static final String CLASS_ROOT_Taxi =			"rootTaxi";
-	public static final String ATT_DESTINAION_X = 			"destX";
-	public static final String ATT_DESTINAION_Y = 			"destY";
+	public static final String CLASS_TASK7_PASSENGER = 		"task7Passenger";
+	public static final String CLASS_TASK7_Taxi =			"Task7axi";
 
-	private TaxiHierGenRootTaxi taxi;
-	private Map<String, TaxiHierGenRootPassenger> passengers;
+	private TaxiHierGenTask7Taxi taxi;
+	private Map<String, TaxiHierGenTask7Passenger> passengers;
 
-	public TaxiHierGenRootState(TaxiHierGenRootTaxi taxi, List<TaxiHierGenRootPassenger> passes){
+	public TaxiHierGenTask7State(TaxiHierGenTask7Taxi taxi, List<TaxiHierGenTask7Passenger> passes){
 		this.taxi = taxi;
 
-		this.passengers = new HashMap<String, TaxiHierGenRootPassenger>();
-		for(TaxiHierGenRootPassenger passenger : passes){
+		this.passengers = new HashMap<String, TaxiHierGenTask7Passenger>();
+		for(TaxiHierGenTask7Passenger passenger : passes){
 			this.passengers.put(passenger.name(), passenger);
 		}
 	}
 
-	private TaxiHierGenRootState(TaxiHierGenRootTaxi taxi, Map<String, TaxiHierGenRootPassenger> passes){
+	private TaxiHierGenTask7State(TaxiHierGenTask7Taxi taxi, Map<String, TaxiHierGenTask7Passenger> passes){
 		this.taxi = taxi;
 		this.passengers = passes;
 	}
@@ -68,9 +66,9 @@ public class TaxiHierGenRootState implements MutableOOState{
 
 	@Override
 	public List<ObjectInstance> objectsOfClass(String oclass) {
-		if(oclass.equals(CLASS_ROOT_Taxi))
+		if(oclass.equals(CLASS_TASK7_Taxi))
 			return Arrays.<ObjectInstance>asList(taxi);
-		else if(oclass.equals(CLASS_ROOT_PASSENGER))
+		else if(oclass.equals(CLASS_TASK7_PASSENGER))
 			return new ArrayList<>(passengers.values());
 		throw new RuntimeException("No object class " + oclass);
 	}
@@ -92,7 +90,7 @@ public class TaxiHierGenRootState implements MutableOOState{
 
 	@Override
 	public State copy() {
-		return new TaxiHierGenRootState(taxi, passengers);
+		return new TaxiHierGenTask7State(taxi, passengers);
 	}
 
 	//get values from objects
