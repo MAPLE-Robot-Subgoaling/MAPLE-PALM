@@ -1,42 +1,40 @@
 package cleanup.hierarchies;
 
-import burlap.mdp.core.oo.state.OOStateUtilities;
 import burlap.mdp.core.oo.state.ObjectInstance;
-import burlap.mdp.core.state.State;
-import cleanup.state.CleanupRoom;
+import cleanup.Cleanup;
+import cleanup.state.CleanupDoor;
 import utilities.MutableObject;
 
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static cleanup.Cleanup.ATT_COLOR;
 import static cleanup.Cleanup.ATT_CONNECTED;
-import static cleanup.Cleanup.CLASS_ROOM;
+import static cleanup.Cleanup.ATT_LOCKED;
+import static cleanup.Cleanup.CLASS_DOOR;
 
-
-public class MoveRoom extends CleanupRoom {
+public class MoveDoor extends CleanupDoor {
 
     private final static List<Object> keys = Arrays.<Object>asList(
-            ATT_CONNECTED,
-            ATT_COLOR
+            ATT_LOCKED,
+            ATT_CONNECTED
     );
 
-    public MoveRoom(String name, String color, Set<String> connected) {
-        this.setName(name);
-        this.set(ATT_COLOR, color);
+    public MoveDoor(String name, String lockedStatus, HashSet<String> connected) {
+        this.set(ATT_LOCKED, lockedStatus);
         this.set(ATT_CONNECTED, connected);
+        this.setName(name);
     }
 
     @Override
     public String className() {
-        return CLASS_ROOM;
+        return CLASS_DOOR;
     }
 
     @Override
     public ObjectInstance copyWithName(String objectName) {
-        return new MoveRoom(objectName, (String) get(ATT_COLOR), (Set<String>) this.get(ATT_CONNECTED));
+        return new MoveDoor(objectName, (String) get(ATT_LOCKED), (HashSet<String>) get(ATT_CONNECTED));
     }
 
     @Override
@@ -48,6 +46,5 @@ public class MoveRoom extends CleanupRoom {
         Set<String> connected = (Set<String>) get(ATT_CONNECTED);
         connected.add(name);
     }
-
 
 }

@@ -3,15 +3,17 @@ package cleanup.hierarchies;
 import burlap.mdp.core.oo.state.ObjectInstance;
 import burlap.mdp.core.state.annotations.DeepCopyState;
 import cleanup.Cleanup;
+import cleanup.state.CleanupAgent;
 import utilities.MutableObject;
 
 import java.util.Arrays;
 import java.util.List;
 
-@DeepCopyState
-public class MoveAgent extends MutableObject {
+import static cleanup.Cleanup.ATT_REGION;
 
-    public static final String ATT_REGION = "inRegion";
+@DeepCopyState
+public class MoveAgent extends CleanupAgent {
+
 
     private final static List<Object> keys = Arrays.<Object>asList(
             ATT_REGION

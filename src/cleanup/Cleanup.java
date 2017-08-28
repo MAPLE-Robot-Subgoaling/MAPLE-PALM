@@ -42,6 +42,10 @@ public class Cleanup implements DomainGenerator {
     public static final String ATT_SHAPE = "shape";
     public static final String ATT_LOCKED = "locked";
 
+    // used in abstract cleanup
+    public static final String ATT_CONNECTED = "connected";
+    public static final String ATT_REGION = "inRegion";
+
     public static final String CLASS_AGENT = "agent";
     public static final String CLASS_BLOCK = "block";
     public static final String CLASS_ROOM = "room";

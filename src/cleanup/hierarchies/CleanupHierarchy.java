@@ -68,35 +68,35 @@ public class CleanupHierarchy {
         Task[] subTasks = {north, south, east, west, pull};
 
         StateMapping agentDoorMapper = new AgentDoorMapper();
-        PropositionalFunction agentDoorFail = new AgentDoorFailPF();
-        PropositionalFunction agentDoorGoal = new AgentDoorGoalPF();
+        PropositionalFunction agentDoorFail = new AgentDoorFailPF("AgentDoorFailPF", new String[]{});
+        PropositionalFunction agentDoorGoal = new AgentDoorGoalPF("AgentDoorGoalPF", new String[]{});
         NonprimitiveTask agentToDoor = new NonprimitiveTask(subTasks, aMoveAgentToDoor, moveAgentDoorDomain,
                 agentDoorMapper, agentDoorFail, agentDoorGoal);
 
         StateMapping agentRoomMapper = new AgentDoorMapper();
-        PropositionalFunction agentRoomFail = new AgentDoorFailPF();
-        PropositionalFunction agentRoomGoal = new AgentDoorGoalPF();
+        PropositionalFunction agentRoomFail = new AgentDoorFailPF("AgentDoorFailPF", new String[]{});
+        PropositionalFunction agentRoomGoal = new AgentDoorGoalPF("AgentDoorGoalPF", new String[]{});
         NonprimitiveTask agentToRoom = new NonprimitiveTask(subTasks, aMoveAgentToRoom, moveAgentRoomDomain,
                 agentRoomMapper, agentRoomFail, agentRoomGoal);
 
         StateMapping blockDoorMapper = new AgentDoorMapper();
-        PropositionalFunction blockDoorFail = new AgentDoorFailPF();
-        PropositionalFunction blockDoorGoal = new AgentDoorGoalPF();
+        PropositionalFunction blockDoorFail = new AgentDoorFailPF("AgentDoorFailPF", new String[]{});
+        PropositionalFunction blockDoorGoal = new AgentDoorGoalPF("AgentDoorGoalPF", new String[]{});
         NonprimitiveTask blockToDoor = new NonprimitiveTask(subTasks, aMoveBlockToDoor, moveBlockDoorDomain,
                 blockDoorMapper, blockDoorFail, blockDoorGoal);
 
         StateMapping blockRoomMapper = new AgentDoorMapper();
-        PropositionalFunction blockRoomFail = new AgentDoorFailPF();
-        PropositionalFunction blockRoomGoal = new AgentDoorGoalPF();
+        PropositionalFunction blockRoomFail = new AgentDoorFailPF("AgentDoorFailPF", new String[]{});
+        PropositionalFunction blockRoomGoal = new AgentDoorGoalPF("AgentDoorGoalPF", new String[]{});
         NonprimitiveTask blockToRoom = new NonprimitiveTask(subTasks, aMoveBlockToRoom, moveBlockRoomDomain,
                 blockRoomMapper, blockRoomFail, blockRoomGoal);
 
         Task[] subTasks2 = {agentToDoor, agentToRoom, blockToDoor, blockToRoom};
-        NonprimitiveTask pickRoomAgent = new NonprimitiveTask(, aPickRoomForAgent, pickRoomAgentDomain,
-                new PickRoomAgentMapper(), new PickRoomAgentFailPF(), new PickRoomAgentGoalPF());
+        NonprimitiveTask pickRoomAgent = new NonprimitiveTask(subTasks2, aPickRoomForAgent, pickRoomAgentDomain,
+                new PickRoomAgentMapper(), new PickRoomAgentFailPF("PickRoomAgentFailPF", new String[]{}), new PickRoomAgentGoalPF("PickRoomAgentGoalPF", new String[]{}));
 
-        NonprimitiveTask pickRoomBlock = new NonprimitiveTask(, aPickRoomForBlock, pickRoomBlockDomain,
-                new PickRoomBlockMapper(), new PickRoomBlockFailPF(), new PickRoomBlockGoalPF());
+        NonprimitiveTask pickRoomBlock = new NonprimitiveTask(subTasks2, aPickRoomForBlock, pickRoomBlockDomain,
+                new PickRoomBlockMapper(), new PickRoomBlockFailPF("PickRoomBlockFailPF", new String[]{}), new PickRoomBlockGoalPF("PickRoomBlockGoalPF", new String[]{}));
 
         Task[] rootTasks = {pickRoomAgent, pickRoomBlock};
         NonprimitiveTask root = new NonprimitiveTask(rootTasks, aSolve, rootDomain,

@@ -16,17 +16,14 @@ import static cleanup.Cleanup.ATT_Y;
 @ShallowCopyState
 public class CleanupState implements MutableOOState {
 
-    private static final int DEFAULT_MIN_X = 0;
-    private static final int DEFAULT_MIN_Y = 0;
-    private int width;
-    private int height;
-    private CleanupAgent agent;
-    private Map<String, CleanupBlock> blocks = new HashMap<String, CleanupBlock>();
-    ;
-    private Map<String, CleanupRoom> rooms = new HashMap<String, CleanupRoom>();
-    ;
-    private Map<String, CleanupDoor> doors = new HashMap<String, CleanupDoor>();
-    ;
+    protected static final int DEFAULT_MIN_X = 0;
+    protected static final int DEFAULT_MIN_Y = 0;
+    protected int width;
+    protected int height;
+    protected CleanupAgent agent;
+    protected Map<String, CleanupBlock> blocks = new HashMap<String, CleanupBlock>();
+    protected Map<String, CleanupRoom> rooms = new HashMap<String, CleanupRoom>();
+    protected Map<String, CleanupDoor> doors = new HashMap<String, CleanupDoor>();
 
     public CleanupState() {
 

@@ -1,8 +1,5 @@
 package cleanup.hierarchies;
 
-import amdp.cleanup.CleanupDomain;
-import amdp.cleanup.state.*;
-import amdp.cleanupamdpdomains.cleanuplevel1.state.*;
 import burlap.mdp.auxiliary.StateMapping;
 import burlap.mdp.core.oo.state.ObjectInstance;
 import burlap.mdp.core.state.State;
@@ -45,14 +42,14 @@ public class AgentDoorMapper implements StateMapping{
         List<CleanupRoom> rooms = (List<CleanupRoom>) s.getRooms().values();
         List<MoveRoom> abstractRooms = new ArrayList<MoveRoom>();
         for(CleanupRoom r : rooms){
-            MoveRoom rL1 = new MoveRoom(r.name(), r.get(ATT_COLOR), new HashSet<String>());
+            MoveRoom rL1 = new MoveRoom(r.name(), (String) r.get(ATT_COLOR), new HashSet<String>());
             abstractRooms.add(rL1);
         }
 
         List<CleanupDoor> doors = (List<CleanupDoor>) s.getDoors();
         List<MoveDoor> abstractDoors = new ArrayList<MoveDoor>();
         for(CleanupDoor d : doors){
-            MoveDoor ad = new MoveDoor(d.name(), d.get(ATT_LOCKED), new HashSet<String>());
+            MoveDoor ad = new MoveDoor(d.name(), (String) d.get(ATT_LOCKED), new HashSet<String>());
             abstractDoors.add(ad);
         }
 
@@ -73,7 +70,7 @@ public class AgentDoorMapper implements StateMapping{
                 blockInRegion = blockInDoor.name();
             }
 
-            MoveBlock ab  = new MoveBlock(b.name(), b.get(ATT_SHAPE), b.get(ATT_COLOR), blockInRegion);
+            MoveBlock ab  = new MoveBlock(b.name(), (String) b.get(ATT_SHAPE), (String) b.get(ATT_COLOR), blockInRegion);
             abstractBlocks.add(ab);
         }
 
@@ -112,11 +109,11 @@ public class AgentDoorMapper implements StateMapping{
 
                         if(dL1Temp.name().equals(d.name())){
                             dL1 = dL1Temp;
-                            dL1.connectedRegions.add(rL1.name());
+                            dL1.addConnectedRegion(rL1.name());
                             break;
                         }
                     }
-                    rL1.connectedRegions.add(dL1.name());
+                    rL1.addConnectedRegion(dL1.name());
                 }
 
             }

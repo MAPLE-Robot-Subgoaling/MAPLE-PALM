@@ -1,32 +1,24 @@
 package cleanup.hierarchies;
 
-import burlap.mdp.core.oo.state.OOStateUtilities;
 import burlap.mdp.core.oo.state.ObjectInstance;
-import burlap.mdp.core.state.State;
 import cleanup.state.CleanupRoom;
-import utilities.MutableObject;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
 import static cleanup.Cleanup.ATT_COLOR;
-import static cleanup.Cleanup.ATT_CONNECTED;
 import static cleanup.Cleanup.CLASS_ROOM;
 
-
-public class MoveRoom extends CleanupRoom {
+public class PickRoom extends CleanupRoom {
 
     private final static List<Object> keys = Arrays.<Object>asList(
-            ATT_CONNECTED,
             ATT_COLOR
     );
 
-    public MoveRoom(String name, String color, Set<String> connected) {
+    public PickRoom(String name, String color) {
         this.setName(name);
         this.set(ATT_COLOR, color);
-        this.set(ATT_CONNECTED, connected);
     }
 
     @Override
@@ -36,18 +28,12 @@ public class MoveRoom extends CleanupRoom {
 
     @Override
     public ObjectInstance copyWithName(String objectName) {
-        return new MoveRoom(objectName, (String) get(ATT_COLOR), (Set<String>) this.get(ATT_CONNECTED));
+        return new PickRoom(objectName, (String) get(ATT_COLOR));
     }
 
     @Override
     public List<Object> variableKeys() {
         return keys;
     }
-
-    public void addConnectedRegion(String name) {
-        Set<String> connected = (Set<String>) get(ATT_CONNECTED);
-        connected.add(name);
-    }
-
 
 }
