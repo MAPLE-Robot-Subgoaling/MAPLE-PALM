@@ -42,7 +42,6 @@ public class Taxi implements DomainGenerator{
 	//passenger attributes
 	public static final String ATT_GOAL_LOCATION = 			"goalLocation";
 	public static final String ATT_IN_TAXI = 				"inTaxi";
-	public static final String ATT_JUST_PICKED_UP =			"justPickedUp";
 
 	//location attributes 
 	public static final String ATT_COLOR =					"color";
