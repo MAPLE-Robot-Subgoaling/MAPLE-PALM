@@ -6,17 +6,22 @@ import java.util.List;
 import java.util.Map;
 
 import burlap.mdp.core.state.MutableState;
+import burlap.mdp.core.state.State;
 
 public abstract class MutableObject implements MutableObjectInstance, Serializable {
 
 	protected Map<String, Object> values = new HashMap<String, Object>();
 	
-	private String name;
+	protected String name;
 	
 	@Override
 	public String name() {
 		return name;
 	}
+
+    public String getName() {
+        return name;
+    }
 
 	public void setName(String name){
 		this.name = name;
@@ -32,7 +37,12 @@ public abstract class MutableObject implements MutableObjectInstance, Serializab
 		this.values.put(variableKey.toString(), value);
 		return this;
 	}
-	
+
+	@Override
+	public MutableObject copy() {
+		return (MutableObject) this.copyWithName(name());
+	}
+
 	@Override
 	public String toString() {
 		StringBuilder buf = new StringBuilder();
