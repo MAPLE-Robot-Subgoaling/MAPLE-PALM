@@ -100,10 +100,9 @@ public class TaxiHierarchy {
 		Task[] navTasks = {north, east, south, west};
 		StateMapping navMap = new NavStateMapper();
 		PropositionalFunction navPF = new NavigateAbstractPF();
-		if(plan) {
-			navMap = new IdentityMap();
-			navPF = new NavigatePF();
-		}
+//		if(plan)
+//			navPF = new NavigatePF();
+
 		NonprimitiveTask navigate = new NonprimitiveTask(navTasks, aNavigate, navDomain,
 				navMap, navPF, navPF);
 

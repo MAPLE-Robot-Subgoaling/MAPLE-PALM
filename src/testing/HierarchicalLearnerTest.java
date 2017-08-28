@@ -5,6 +5,7 @@ import java.util.List;
 
 import burlap.behavior.singleagent.Episode;
 import burlap.behavior.singleagent.auxiliary.EpisodeSequenceVisualizer;
+import burlap.debugtools.RandomFactory;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.common.VisualActionObserver;
 import burlap.mdp.singleagent.environment.SimulatedEnvironment;
@@ -38,9 +39,9 @@ public class HierarchicalLearnerTest {
 			env= new SimulatedEnvironment(groundDomain, initial);
 
 		VisualActionObserver obs = new VisualActionObserver(groundDomain, TaxiVisualizer.getVisualizer(5, 5));
-        obs.initGUI();
-        obs.setDefaultCloseOperation(obs.EXIT_ON_CLOSE);
-        env.addObservers(obs);
+		obs.initGUI();
+		obs.setDefaultCloseOperation(obs.EXIT_ON_CLOSE);
+		env.addObservers(obs);
 		
 		for(int i = 1; i <= numEpisode; i++){
 			long time = System.currentTimeMillis();
@@ -86,13 +87,14 @@ public class HierarchicalLearnerTest {
 	public static void main(String[] args) {
 		double correctMoveprob = 1;
 		double fickleProb = 0.5;
-		int numEpisodes = 200;
+		int numEpisodes = 100;
 		int maxSteps = 1000;
 		int rmaxThreshold = 3;
 		double gamma = 0.9;
 		double rmax = 20;
 		double maxDelta = 0.01;
 		boolean randomStart = true;
+		RandomFactory.seedMapped(0, 1320942930L);
 		TaxiState s = TaxiStateFactory.createClassicState();
 		Task RAMDProot = TaxiHierarchy.createAMDPHierarchy(correctMoveprob, fickleProb, false);
 		OOSADomain base = TaxiHierarchy.getBaseDomain();
