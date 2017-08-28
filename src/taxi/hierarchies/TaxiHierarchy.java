@@ -17,9 +17,11 @@ import taxi.hierGen.Task5.state.Task5StateMapper;
 import taxi.hierGen.Task7.state.Task7StateMapper;
 import taxi.hierGen.actions.RootTask5ActionType;
 import taxi.hierGen.actions.Task7Task5ActionType;
+import taxi.hierGen.functions.FailureFunction;
 import taxi.hierGen.functions.HierGenRootCompleted;
 import taxi.hierGen.functions.HierGenTask5Completed;
 import taxi.hierGen.functions.HierGenTask7Completed;
+import taxi.hierGen.root.state.HierGenRootStateMapper;
 import taxi.hierarchies.tasks.bringon.TaxiBringonDomain;
 import taxi.hierarchies.tasks.bringon.state.BringonStateMapper;
 import taxi.hierarchies.tasks.dropoff.TaxiDropoffDomain;
@@ -238,7 +240,7 @@ public class TaxiHierarchy {
 		//state mapper
 		StateMapping task5Map = new Task5StateMapper();
 		StateMapping task7Map = new Task7StateMapper();
-		StateMapping rootMap = new RootStateMapper();
+		StateMapping rootMap = new HierGenRootStateMapper();
 
 		//tasks
 		PrimitiveTask north = new PrimitiveTask(aNorth, baseDomain);
@@ -250,7 +252,7 @@ public class TaxiHierarchy {
 
 		Task[] task5Children = {north, east, south, wast};
 		PropositionalFunction task5CompletedPF = new HierGenTask5Completed();
-		PropositionalFunction task5FailPF = null;
+		PropositionalFunction task5FailPF = new FailureFunction();
 		NonprimitiveTask task7Task5 = new NonprimitiveTask(task5Children, aTask7Task5, task5Map
 				,task5FailPF, task5CompletedPF);
 		NonprimitiveTask rootTask5 = new NonprimitiveTask(task5Children, aRootTask5, task5Map,
@@ -258,13 +260,13 @@ public class TaxiHierarchy {
 
 		Task[] task7Children = {task7Task5, pickup};
 		PropositionalFunction task7CompletedPF = new HierGenTask7Completed();
-		PropositionalFunction task7FailPF = null;
+		PropositionalFunction task7FailPF = new FailureFunction();
 		NonprimitiveTask task7 = new NonprimitiveTask(task7Children, aTask7, task7Map,
 				task7FailPF, task7CompletedPF);
 
 		Task[] rootChildren = {task7, dropoff, rootTask5};
 		PropositionalFunction rootCompletedPF = new HierGenRootCompleted();
-		PropositionalFunction rootFailPF = null;
+		PropositionalFunction rootFailPF = new FailureFunction();
 		NonprimitiveTask root = new NonprimitiveTask(rootChildren, asolve, rootMap,
 				rootFailPF, rootCompletedPF);
 

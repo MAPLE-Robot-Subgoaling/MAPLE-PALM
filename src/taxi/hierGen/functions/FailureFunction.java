@@ -11,6 +11,6 @@ public class FailureFunction extends PropositionalFunction {
 
 	@Override
 	public boolean isTrue(OOState s, String... params) {
-
+		return false;
 	}
 }
