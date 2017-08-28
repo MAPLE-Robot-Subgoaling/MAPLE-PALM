@@ -1,0 +1,48 @@
+package taxi.hierarchies.tasks.put.state;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import burlap.mdp.auxiliary.StateMapping;
+import burlap.mdp.core.state.State;
+import taxi.Taxi;
+import taxi.hierarchies.interfaces.ParameterizedStateMapping;
+import taxi.hierarchies.tasks.put.TaxiPutDomain;
+import taxi.state.TaxiState;
+
+public class PutStateMapper implements ParameterizedStateMapping {
+
+	//maps a base taxi state to L2
+	@Override
+	public State mapState(State s, String... params) {
+		List<TaxiPutPassenger> passengers = new ArrayList<TaxiPutPassenger>();
+		List<TaxiPutLocation> locations = new ArrayList<>();
+
+		TaxiState st = (TaxiState) s;
+
+		// Get Taxi
+		String taxiLocation = TaxiPutDomain.ON_ROAD;
+		int tx = (int)st.getTaxiAtt(Taxi.ATT_X);
+		int ty = (int)st.getTaxiAtt(Taxi.ATT_Y);
+		for (String locName : st.getLocations()) {
+			int lx = (int) st.getLocationAtt(locName, Taxi.ATT_X);
+			int ly = (int) st.getLocationAtt(locName, Taxi.ATT_Y);
+
+			locations.add(new TaxiPutLocation(locName));
+
+			if (tx == lx && ty == ly) {
+				taxiLocation = locName;
+			}
+		}
+		TaxiPutAgent taxi = new TaxiPutAgent(TaxiPutDomain.CLASS_TAXI, taxiLocation);
+
+		for(String passengerName : params){
+			String goal = (String) st.getPassengerAtt(passengerName, Taxi.ATT_GOAL_LOCATION);
+			boolean inTaxi = (boolean) st.getPassengerAtt(passengerName, Taxi.ATT_IN_TAXI);
+			passengers.add(new TaxiPutPassenger(passengerName, goal, inTaxi));
+		}
+
+		return new TaxiPutState(taxi, passengers, locations);
+	}
+
+}
