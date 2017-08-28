@@ -5,7 +5,7 @@ import burlap.mdp.core.state.State;
 import taxi.Taxi;
 import taxi.state.TaxiState;
 
-public class HierGenTask5StateMapper implements StateMapping {
+public class Task5StateMapper implements StateMapping {
 	@Override
 	public State mapState(State s) {
 		TaxiState st = (TaxiState) s;

@@ -1,7 +1,6 @@
 package taxi.hierGen.actions;
 
 import burlap.mdp.core.action.Action;
-import burlap.mdp.core.action.ActionType;
 import burlap.mdp.core.state.State;
 import taxi.Taxi;
 import taxi.hierGen.Task7.state.TaxiHierGenTask7State;
@@ -9,7 +8,7 @@ import taxi.hierGen.Task7.state.TaxiHierGenTask7State;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class Task7Task5ActionType implements ActionType {
+public class Task7Task5ActionType extends NavActionType {
 	@Override
 	public List<Action> allApplicableActions(State s) {
 		TaxiHierGenTask7State st = (TaxiHierGenTask7State) s;

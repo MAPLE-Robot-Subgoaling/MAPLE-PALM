@@ -8,7 +8,7 @@ import taxi.state.TaxiState;
 import java.util.ArrayList;
 import java.util.List;
 
-public class HierGenTask7StateMapper implements StateMapping {
+public class Task7StateMapper implements StateMapping {
 	@Override
 	public State mapState(State s) {
 		TaxiState st = (TaxiState) s;
