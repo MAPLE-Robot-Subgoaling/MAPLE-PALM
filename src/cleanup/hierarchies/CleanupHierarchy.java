@@ -10,8 +10,6 @@ import hierarchy.framework.NonprimitiveTask;
 import hierarchy.framework.PrimitiveTask;
 import hierarchy.framework.SolveActionType;
 import hierarchy.framework.Task;
-import taxi.functions.amdp.RootPF;
-import taxi.hierarchies.tasks.root.state.RootStateMapper;
 
 public class CleanupHierarchy {
 
@@ -21,13 +19,13 @@ public class CleanupHierarchy {
         Cleanup domainGenerator;
         domainGenerator = new Cleanup(minX, minY, maxX, maxY);
 
-        DomainGenerator praDomainG = null;
-        DomainGenerator prbDomainG = null;
-        DomainGenerator madDomainG = null;
-        DomainGenerator marDomainG = null;
-        DomainGenerator mbdDomainG = null;
-        DomainGenerator mbrDomainG = null;
-        DomainGenerator rootDomainG = null;
+        DomainGenerator praDomainG = new Cleanup(minX, minY, maxX, maxY);
+        DomainGenerator prbDomainG = new Cleanup(minX, minY, maxX, maxY);
+        DomainGenerator madDomainG = new Cleanup(minX, minY, maxX, maxY);
+        DomainGenerator marDomainG = new Cleanup(minX, minY, maxX, maxY);
+        DomainGenerator mbdDomainG = new Cleanup(minX, minY, maxX, maxY);
+        DomainGenerator mbrDomainG = new Cleanup(minX, minY, maxX, maxY);
+        DomainGenerator rootDomainG = new Cleanup(minX, minY, maxX, maxY);
 
         //action type domain - not for tasks
         baseDomain = (OOSADomain) domainGenerator.generateDomain();
@@ -100,74 +98,11 @@ public class CleanupHierarchy {
 
         Task[] rootTasks = {pickRoomAgent, pickRoomBlock};
         NonprimitiveTask root = new NonprimitiveTask(rootTasks, aSolve, rootDomain,
-                new RootStateMapper(), new RootPF(), new RootPF());
+                new CleanupRootMapper(), new CleanupRootPF(), new CleanupRootPF());
 
         return root;
     }
 
-//    public static Task createRMAXQHierarchy(double correctMoveprob, double fickleProbability){
-//        Taxi taxiDomain;
-//
-//        if(fickleProbability == 0){
-//            taxiDomain = new Taxi(false, fickleProbability, correctMoveprob);
-//        }else{
-//            taxiDomain = new Taxi(true, fickleProbability, correctMoveprob);
-//        }
-//
-//        //action type domain - not for tasks
-//        baseDomain = taxiDomain.generateDomain();
-//
-//        ActionType aNorth = baseDomain.getAction(Taxi.ACTION_NORTH);
-//        ActionType aEast = baseDomain.getAction(Taxi.ACTION_EAST);
-//        ActionType aSouth = baseDomain.getAction(Taxi.ACTION_SOUTH);
-//        ActionType aWest = baseDomain.getAction(Taxi.ACTION_WEST);
-//        ActionType aPickup = baseDomain.getAction(Taxi.ACTION_PICKUP);
-//        ActionType aPutdown = baseDomain.getAction(Taxi.ACTION_PUTDOWN);
-//        ActionType aNavigate = new BaseNavigateActionType();
-//        ActionType aGet = new BaseGetActionType();
-//        ActionType aPut = new BasePutActionType();
-//
-//        //tasks
-//        PrimitiveTask north = new PrimitiveTask(aNorth, baseDomain);
-//        PrimitiveTask east = new PrimitiveTask(aEast, baseDomain);
-//        PrimitiveTask south = new PrimitiveTask(aSouth, baseDomain);
-//        PrimitiveTask wast = new PrimitiveTask(aWest, baseDomain);
-//        PrimitiveTask pickup = new PrimitiveTask(aPickup, baseDomain);
-//        PrimitiveTask dropoff = new PrimitiveTask(aPutdown, baseDomain);
-//
-//        Task[] navTasks = new Task[]{north, east, south, wast};
-//        Task[] bringonTasks = new Task[]{pickup};
-//        Task[] dropoffTasks = new Task[]{dropoff};
-//
-//        PropositionalFunction navPF =/* new NavigateAbstractPF()*/ new NavigatePF();
-//        NonprimitiveTask navigate = new NonprimitiveTask(navTasks, aNavigate, taxiDomain.generateNavigateDomain(),
-//                new IdentityMap(), navPF, navPF);
-//
-//        PropositionalFunction pickupFailPF = new BringonFailurePF();
-//        PropositionalFunction pickupCompPF = new BringonCompletedPF();
-//        NonprimitiveTask pickupL1 = new NonprimitiveTask(bringonTasks, aPickup, pickupFailPF, pickupCompPF);
-//
-//        PropositionalFunction dropoffFailPF = new DropoffFailurePF();
-//        PropositionalFunction dropoffCompPF = new DropoffCompletedPF();
-//        NonprimitiveTask dropoffL1 = new NonprimitiveTask(dropoffTasks, aPutdown, dropoffFailPF, dropoffCompPF);
-//
-//        Task[] getTasks = new Task[]{pickupL1, navigate};
-//        Task[] putTasks = new Task[]{navigate, dropoffL1};
-//
-//        PropositionalFunction getFailPF = new BaseGetFailurePF();
-//        PropositionalFunction getCompPF = new BaseGetCompletedPF();
-//        NonprimitiveTask get = new NonprimitiveTask(getTasks, aGet, getFailPF, getCompPF);
-//
-//        PropositionalFunction putFailPF = new BasePutFailurePF();
-//        PropositionalFunction putCompPF = new BasePutCompletedPF();
-//        NonprimitiveTask put = new NonprimitiveTask(putTasks, aPut, putFailPF, putCompPF);
-//
-//        Task[] rootTasks = {get, put};
-//        Task root = new RootTask(rootTasks, baseDomain, new IdentityMap());
-//
-//        return root;
-//
-//    }
 
     public static OOSADomain getBaseDomain(){
         return baseDomain;
