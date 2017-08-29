@@ -1,12 +1,7 @@
-package cleanup.hierarchies;
+package cleanup.hierarchies.tasks.move;
 
-import burlap.mdp.core.oo.state.OOStateUtilities;
-import burlap.mdp.core.oo.state.ObjectInstance;
-import burlap.mdp.core.state.State;
 import cleanup.state.CleanupRoom;
-import utilities.MutableObject;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
@@ -35,7 +30,7 @@ public class MoveRoom extends CleanupRoom {
     }
 
     @Override
-    public ObjectInstance copyWithName(String objectName) {
+    public MoveRoom copyWithName(String objectName) {
         return new MoveRoom(objectName, (String) get(ATT_COLOR), (Set<String>) this.get(ATT_CONNECTED));
     }
 

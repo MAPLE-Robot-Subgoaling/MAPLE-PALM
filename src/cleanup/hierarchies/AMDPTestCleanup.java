@@ -9,6 +9,7 @@ import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.oo.OOSADomain;
 import burlap.statehashing.HashableStateFactory;
 import burlap.statehashing.simple.SimpleHashableStateFactory;
+import cleanup.CleanupVisualizer;
 import cleanup.state.CleanupRandomStateGenerator;
 import cleanup.state.CleanupState;
 import hierarchy.framework.Task;
@@ -23,7 +24,7 @@ import java.util.List;
 public class AMDPTestCleanup {
 
     public static void plan(Task root, State init, HashableStateFactory hs, OOSADomain baseDomain,
-                            double gamma, double maxDelta, int maxRollouts, int numEpisodes){
+                            double gamma, double maxDelta, int maxRollouts, int numEpisodes, int width, int height){
 
         AMDPPlanner amdp = new AMDPPlanner(root, gamma, hs, maxDelta, maxRollouts);
         List<Episode> eps = new ArrayList<Episode>();
@@ -33,7 +34,7 @@ public class AMDPTestCleanup {
         }
 
         EpisodeSequenceVisualizer ev = new EpisodeSequenceVisualizer
-                (TaxiVisualizer.getVisualizer(5, 5), baseDomain, eps);;
+                (CleanupVisualizer.getVisualizer(width, height), baseDomain, eps);;
         ev.setDefaultCloseOperation(ev.EXIT_ON_CLOSE);
         ev.initGUI();
     }
@@ -58,7 +59,9 @@ public class AMDPTestCleanup {
         double maxDelta = 0.01;
         int maxRollouts = 1000;
         int numEpisodes = 2;
-        plan(RAMDProot, s, hs, base, gamma, maxDelta, maxRollouts, numEpisodes);
+        int width = maxX - minX;
+        int height = maxY - minY;
+        plan(RAMDProot, s, hs, base, gamma, maxDelta, maxRollouts, numEpisodes, width, height);
     }
 
 }

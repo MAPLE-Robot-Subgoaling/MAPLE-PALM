@@ -45,7 +45,7 @@ public class CleanupRoom extends MutableObject {
     }
 
     @Override
-    public ObjectInstance copyWithName(String objectName) {
+    public CleanupRoom copyWithName(String objectName) {
         return new CleanupRoom(objectName,
                 (int) get(Cleanup.ATT_LEFT),
                 (int) get(Cleanup.ATT_RIGHT),

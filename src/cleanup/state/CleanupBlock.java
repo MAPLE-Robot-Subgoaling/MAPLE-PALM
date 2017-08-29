@@ -49,7 +49,7 @@ public class CleanupBlock extends MutableObject {
     }
 
     @Override
-    public ObjectInstance copyWithName(String objectName) {
+    public CleanupBlock copyWithName(String objectName) {
         return new CleanupBlock(objectName,
                 (int) get(Cleanup.ATT_X),
                 (int) get(Cleanup.ATT_Y),

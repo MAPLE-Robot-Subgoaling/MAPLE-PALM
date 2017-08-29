@@ -1,8 +1,6 @@
-package cleanup.hierarchies;
+package cleanup.hierarchies.tasks.move;
 
-import burlap.mdp.core.oo.state.ObjectInstance;
 import cleanup.state.CleanupBlock;
-import utilities.MutableObject;
 
 import java.util.Arrays;
 import java.util.List;
@@ -30,7 +28,7 @@ public class MoveBlock extends CleanupBlock {
     }
 
     @Override
-    public ObjectInstance copyWithName(String objectName) {
+    public MoveBlock copyWithName(String objectName) {
         return new MoveBlock(objectName,
                 (String) get(ATT_SHAPE),
                 (String) get(ATT_COLOR),

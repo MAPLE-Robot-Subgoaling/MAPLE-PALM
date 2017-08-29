@@ -190,16 +190,16 @@ public class CleanupState implements MutableOOState {
         return n;
     }
 
-    public Map<String, CleanupDoor> touchDoors() {
-        this.doors = new HashMap<String, CleanupDoor>(doors);
-        return doors;
-    }
-
     public CleanupRoom touchRoom(String name) {
         CleanupRoom n = (CleanupRoom) rooms.get(name).copy();
         touchRooms().remove(name);
         rooms.put(name, n);
         return n;
+    }
+
+    public Map<String, CleanupDoor> touchDoors() {
+        this.doors = new HashMap<String, CleanupDoor>(doors);
+        return doors;
     }
 
     public Map<String, CleanupRoom> touchRooms() {

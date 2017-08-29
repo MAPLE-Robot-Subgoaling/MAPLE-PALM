@@ -1,16 +1,16 @@
-package cleanup.hierarchies;
+package cleanup.hierarchies.tasks.root;
 
 import burlap.mdp.core.oo.propositional.PropositionalFunction;
 import burlap.mdp.core.oo.state.OOState;
 
-public class PickRoomAgentGoalPF extends PropositionalFunction {
+public class CleanupRootGoalPF extends PropositionalFunction {
 
-    public PickRoomAgentGoalPF(String name, String[] parameterClasses) {
+    public CleanupRootGoalPF(String name, String[] parameterClasses) {
         super(name, parameterClasses);
     }
 
     @Override
     public boolean isTrue(OOState ooState, String... strings) {
-        return false;
+        return true;
     }
 }

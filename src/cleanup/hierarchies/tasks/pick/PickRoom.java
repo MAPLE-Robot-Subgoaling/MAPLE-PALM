@@ -1,11 +1,9 @@
-package cleanup.hierarchies;
+package cleanup.hierarchies.tasks.pick;
 
-import burlap.mdp.core.oo.state.ObjectInstance;
 import cleanup.state.CleanupRoom;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
 
 import static cleanup.Cleanup.ATT_COLOR;
 import static cleanup.Cleanup.CLASS_ROOM;
@@ -27,7 +25,7 @@ public class PickRoom extends CleanupRoom {
     }
 
     @Override
-    public ObjectInstance copyWithName(String objectName) {
+    public PickRoom copyWithName(String objectName) {
         return new PickRoom(objectName, (String) get(ATT_COLOR));
     }
 

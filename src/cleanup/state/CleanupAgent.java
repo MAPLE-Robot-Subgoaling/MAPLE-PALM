@@ -57,7 +57,7 @@ public class CleanupAgent extends MutableObject {
     }
 
     @Override
-    public ObjectInstance copyWithName(String objectName) {
+    public CleanupAgent copyWithName(String objectName) {
         return new CleanupAgent(objectName,
                 (int) get(Cleanup.ATT_X),
                 (int) get(Cleanup.ATT_Y),

@@ -1,10 +1,8 @@
-package cleanup.hierarchies;
+package cleanup.hierarchies.tasks.move;
 
-import burlap.mdp.core.oo.state.ObjectInstance;
 import burlap.mdp.core.state.annotations.DeepCopyState;
 import cleanup.Cleanup;
 import cleanup.state.CleanupAgent;
-import utilities.MutableObject;
 
 import java.util.Arrays;
 import java.util.List;

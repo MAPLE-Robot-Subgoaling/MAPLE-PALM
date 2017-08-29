@@ -1,9 +1,6 @@
-package cleanup.hierarchies;
+package cleanup.hierarchies.tasks.move;
 
-import burlap.mdp.core.oo.state.ObjectInstance;
-import cleanup.Cleanup;
 import cleanup.state.CleanupDoor;
-import utilities.MutableObject;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -33,7 +30,7 @@ public class MoveDoor extends CleanupDoor {
     }
 
     @Override
-    public ObjectInstance copyWithName(String objectName) {
+    public MoveDoor copyWithName(String objectName) {
         return new MoveDoor(objectName, (String) get(ATT_LOCKED), (HashSet<String>) get(ATT_CONNECTED));
     }
 

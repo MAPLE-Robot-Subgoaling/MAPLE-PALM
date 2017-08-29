@@ -1,4 +1,4 @@
-package cleanup.hierarchies;
+package cleanup.hierarchies.tasks.pick;
 
 import burlap.mdp.core.oo.propositional.PropositionalFunction;
 import burlap.mdp.core.oo.state.OOState;
@@ -11,6 +11,6 @@ public class PickRoomBlockGoalPF extends PropositionalFunction {
 
     @Override
     public boolean isTrue(OOState ooState, String... strings) {
-        return false;
+        return true;
     }
 }

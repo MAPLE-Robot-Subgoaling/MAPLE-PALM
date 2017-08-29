@@ -1,15 +1,13 @@
 package cleanup.hierarchies;
 
 import burlap.mdp.auxiliary.StateMapping;
-import burlap.mdp.core.oo.state.ObjectInstance;
 import burlap.mdp.core.state.State;
-import cleanup.Cleanup;
+import cleanup.hierarchies.tasks.move.*;
 import cleanup.state.*;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 
 import static cleanup.Cleanup.*;
 

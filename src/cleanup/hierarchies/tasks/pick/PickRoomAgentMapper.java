@@ -1,4 +1,4 @@
-package cleanup.hierarchies;
+package cleanup.hierarchies.tasks.pick;
 
 import burlap.mdp.auxiliary.StateMapping;
 import burlap.mdp.core.state.State;
@@ -18,16 +18,20 @@ public class PickRoomAgentMapper implements StateMapping{
         CleanupState s = (CleanupState) sIn;
 
         CleanupAgent agent = s.getAgent();
-        PickAgent agentL2 = new PickAgent(agent.name(), (String) agent.get(ATT_REGION));
+        int ax = (int) agent.get(ATT_X);
+        int ay = (int) agent.get(ATT_Y);
+        CleanupRoom agentInRoom = s.roomContainingPoint(ax, ay);
+        String agentInRegion = agentInRoom.name();
+        PickAgent pickAgent = new PickAgent(agent.name(), agentInRegion);
 
-        List<CleanupRoom> rooms = (List<CleanupRoom>) s.getRooms().values();
+        List<CleanupRoom> rooms = new ArrayList<>(s.getRooms().values());
         List<PickRoom> abstractRooms = new ArrayList<PickRoom>();
         for(CleanupRoom r : rooms){
             PickRoom room = new PickRoom(r.name(), (String) r.get(ATT_COLOR));
             abstractRooms.add(room);
         }
 
-        List<CleanupBlock> blocks = (List<CleanupBlock>) s.getBlocks().values();
+        List<CleanupBlock> blocks = new ArrayList<>(s.getBlocks().values());
         List<PickBlock> abstractBlocks = new ArrayList<PickBlock>();
         for(CleanupBlock b : blocks){
 
@@ -47,7 +51,7 @@ public class PickRoomAgentMapper implements StateMapping{
             abstractBlocks.add(ab);
         }
 
-        return new PickState(agentL2, abstractBlocks, abstractRooms);
+        return new PickState(pickAgent, abstractBlocks, abstractRooms);
     }
 
 

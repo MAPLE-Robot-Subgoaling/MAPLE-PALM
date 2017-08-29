@@ -2,10 +2,21 @@ package cleanup.hierarchies;
 
 import burlap.mdp.auxiliary.DomainGenerator;
 import burlap.mdp.auxiliary.StateMapping;
+import burlap.mdp.auxiliary.common.NullTermination;
+import burlap.mdp.core.TerminalFunction;
 import burlap.mdp.core.action.ActionType;
 import burlap.mdp.core.oo.propositional.PropositionalFunction;
+import burlap.mdp.singleagent.common.UniformCostRF;
+import burlap.mdp.singleagent.model.RewardFunction;
 import burlap.mdp.singleagent.oo.OOSADomain;
 import cleanup.Cleanup;
+import cleanup.CleanupGoal;
+import cleanup.hierarchies.tasks.move.CleanupMove;
+import cleanup.hierarchies.tasks.pick.*;
+import cleanup.hierarchies.tasks.root.CleanupRoot;
+import cleanup.hierarchies.tasks.root.CleanupRootGoalPF;
+import cleanup.hierarchies.tasks.root.CleanupRootMapper;
+import cleanup.hierarchies.tasks.root.CleanupRootFailPF;
 import hierarchy.framework.NonprimitiveTask;
 import hierarchy.framework.PrimitiveTask;
 import hierarchy.framework.SolveActionType;
@@ -16,18 +27,26 @@ public class CleanupHierarchy {
     private static OOSADomain baseDomain;
 
     public static Task createAMDPHierarchy(int minX, int minY, int maxX, int maxY){
-        Cleanup domainGenerator;
-        domainGenerator = new Cleanup(minX, minY, maxX, maxY);
 
-        DomainGenerator praDomainG = new Cleanup(minX, minY, maxX, maxY);
-        DomainGenerator prbDomainG = new Cleanup(minX, minY, maxX, maxY);
-        DomainGenerator madDomainG = new Cleanup(minX, minY, maxX, maxY);
-        DomainGenerator marDomainG = new Cleanup(minX, minY, maxX, maxY);
-        DomainGenerator mbdDomainG = new Cleanup(minX, minY, maxX, maxY);
-        DomainGenerator mbrDomainG = new Cleanup(minX, minY, maxX, maxY);
-        DomainGenerator rootDomainG = new Cleanup(minX, minY, maxX, maxY);
+        CleanupGoal goalCondition = new CleanupGoal();
 
-        //action type domain - not for tasks
+        RewardFunction rootRF = new UniformCostRF();
+        TerminalFunction rootTF = new NullTermination();
+        RewardFunction pickRF = new UniformCostRF();
+        TerminalFunction pickTF = new NullTermination();
+        RewardFunction moveRF = new UniformCostRF();
+        TerminalFunction moveTF = new NullTermination();
+
+        Cleanup domainGenerator = new Cleanup(minX, minY, maxX, maxY);
+        DomainGenerator madDomainG = new CleanupMove(minX, minY, maxX, maxY, moveRF, moveTF);
+        DomainGenerator marDomainG = new CleanupMove(minX, minY, maxX, maxY, moveRF, moveTF);
+        DomainGenerator mbdDomainG = new CleanupMove(minX, minY, maxX, maxY, moveRF, moveTF);
+        DomainGenerator mbrDomainG = new CleanupMove(minX, minY, maxX, maxY, moveRF, moveTF);
+        DomainGenerator praDomainG = new CleanupPick(pickRF, pickTF);
+        DomainGenerator prbDomainG = new CleanupPick(pickRF, pickTF);
+        DomainGenerator rootDomainG = new CleanupRoot(rootRF, rootTF);
+
+                //action type domain - not for tasks
         baseDomain = (OOSADomain) domainGenerator.generateDomain();
         OOSADomain pickRoomAgentDomain = (OOSADomain) praDomainG.generateDomain();
         OOSADomain pickRoomBlockDomain = (OOSADomain) prbDomainG.generateDomain();
@@ -42,18 +61,14 @@ public class CleanupHierarchy {
         ActionType aSouth = baseDomain.getAction(Cleanup.ACTION_SOUTH);
         ActionType aWest = baseDomain.getAction(Cleanup.ACTION_WEST);
         ActionType aPull = baseDomain.getAction(Cleanup.ACTION_PULL);
-        ActionType aPickRoomForAgent = new PickRoomForObjectActionType(
-                "pickRoomForAgent", new String[]{Cleanup.CLASS_AGENT, Cleanup.CLASS_ROOM});
-        ActionType aPickRoomForBlock = new PickRoomForObjectActionType(
-                "pickRoomForBlock", new String[]{Cleanup.CLASS_AGENT, Cleanup.CLASS_ROOM});
-        ActionType aMoveAgentToDoor = new ObjectToRegionActionType(
-                "moveAgentToDoor", new String[]{Cleanup.CLASS_AGENT, Cleanup.CLASS_DOOR});
-        ActionType aMoveAgentToRoom = new ObjectToRegionActionType(
-                "moveAgentToRoom", new String[]{Cleanup.CLASS_AGENT, Cleanup.CLASS_ROOM});
-        ActionType aMoveBlockToDoor = new ObjectToRegionActionType(
-                "moveBlockToDoor", new String[]{Cleanup.CLASS_BLOCK, Cleanup.CLASS_DOOR});
-        ActionType aMoveBlockToRoom = new ObjectToRegionActionType(
-                "moveBlockToRoom", new String[]{Cleanup.CLASS_BLOCK, Cleanup.CLASS_ROOM});
+
+        ActionType aMoveAgentToDoor = pickRoomAgentDomain.getAction(CleanupPick.ACTION_MOVE_AGENT_DOOR);
+        ActionType aMoveAgentToRoom = pickRoomAgentDomain.getAction(CleanupPick.ACTION_MOVE_AGENT_ROOM);
+        ActionType aMoveBlockToDoor = pickRoomBlockDomain.getAction(CleanupPick.ACTION_MOVE_BLOCK_DOOR);
+        ActionType aMoveBlockToRoom = pickRoomBlockDomain.getAction(CleanupPick.ACTION_MOVE_BLOCK_ROOM);
+
+        ActionType aPickRoomForAgent = rootDomain.getAction(CleanupRoot.ACTION_PICK_ROOM_AGENT);
+        ActionType aPickRoomForBlock = rootDomain.getAction(CleanupRoot.ACTION_PICK_ROOM_BLOCK);
         ActionType aSolve = new SolveActionType();
 
         //tasks
@@ -98,7 +113,7 @@ public class CleanupHierarchy {
 
         Task[] rootTasks = {pickRoomAgent, pickRoomBlock};
         NonprimitiveTask root = new NonprimitiveTask(rootTasks, aSolve, rootDomain,
-                new CleanupRootMapper(), new CleanupRootPF(), new CleanupRootPF());
+                new CleanupRootMapper(), new CleanupRootFailPF("CleanupRootFailPF",new String[]{}), new CleanupRootGoalPF("CleanupRootGoalPF",new String[]{}));
 
         return root;
     }

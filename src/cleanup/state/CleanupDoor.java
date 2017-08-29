@@ -60,7 +60,7 @@ public class CleanupDoor extends MutableObject {
     }
 
     @Override
-    public ObjectInstance copyWithName(String objectName) {
+    public CleanupDoor copyWithName(String objectName) {
         return new CleanupDoor(objectName,
                 (int) get(Cleanup.ATT_LEFT),
                 (int) get(Cleanup.ATT_RIGHT),
