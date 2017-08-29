@@ -1,5 +1,8 @@
 package testing;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import burlap.behavior.singleagent.Episode;
 import burlap.behavior.singleagent.auxiliary.EpisodeSequenceVisualizer;
 import burlap.mdp.core.state.State;
@@ -17,9 +20,6 @@ import taxi.hierarchies.TaxiHierarchy;
 import taxi.state.TaxiState;
 import taxi.stateGenerator.RandonPassengerTaxiState;
 import taxi.stateGenerator.TaxiStateFactory;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class HierarchicalLearnerTest {
 
@@ -86,18 +86,17 @@ public class HierarchicalLearnerTest {
 	public static void main(String[] args) {
 		double correctMoveprob = 1;
 		double fickleProb = 0.05;
-		int numEpisodes = 1;
+		int numEpisodes = 200;
 		int maxSteps = 1000;
 		int rmaxThreshold = 3;
 		double gamma = 0.9;
 		double rmax = 20;
 		double maxDelta = 0.01;
 		boolean randomStart = true;
-
 		TaxiState s = TaxiStateFactory.createClassicState();
-		Task RAMDProot = TaxiHierarchy.createHierGenHierarchy(correctMoveprob, fickleProb, false);
+		Task RAMDProot = TaxiHierarchy.createAMDPHierarchy(correctMoveprob, fickleProb, false);
 		OOSADomain base = TaxiHierarchy.getBaseDomain();
-//		Task RMAXQroot = TaxiHierarchy.createRMAXQHierarchy(correctMoveprob, oneTimeFickle, fickleProb);
+//		Task RMAXQroot = TaxiHierarchy.createRMAXQHierarchy(correctMoveprob, fickleProb);
 		
 		runRAMDPEpisodes(numEpisodes, maxSteps, RAMDProot, s, base, rmaxThreshold, gamma, rmax, maxDelta, randomStart);
 //		runRMAXQEpsodes(numEpisodes, maxSteps, RMAXQroot, s, rmax, rmaxThreshold, maxDelta, base);

@@ -4,7 +4,9 @@ import burlap.mdp.core.action.Action;
 import burlap.mdp.core.action.ActionType;
 import burlap.mdp.core.state.State;
 import taxi.hierGen.Task5.state.TaxiHierGenTask5State;
+import taxi.hierarchies.interfaces.PassengerLocationParameterizable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class NavActionType implements ActionType {
@@ -25,6 +27,13 @@ public class NavActionType implements ActionType {
 
 	@Override
 	public List<Action> allApplicableActions(State s) {
-		return null;
+		List<Action> actions = new ArrayList<Action>();
+		PassengerLocationParameterizable st = (PassengerLocationParameterizable) s;
+
+		for(String pname : st.getPassengers()){
+			int goalX = st.getLocationX(pname);
+			int goalY = st.getLocationY(pname);
+			actions.add(new HierGenNavAction(goalX, goalY));
+		}
 	}
 }
