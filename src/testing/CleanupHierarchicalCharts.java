@@ -72,15 +72,13 @@ public class CleanupHierarchicalCharts {
 
         RandomFactory.seedMapped(0, 32525322L);
 
-        DPrint.toggleCode(63634013, true);
-
         int minX = 0;
         int minY = 0;
         int maxX = 7;
         int maxY = 7;
         CleanupRandomStateGenerator sg = new CleanupRandomStateGenerator(minX, minY, maxX, maxY);
 
-        String stateType = "twoRooms";//"threeRooms";
+        String stateType = "threeRooms";//"threeRooms";
         int numBlocks = 1;
         CleanupState s = (CleanupState) sg.getStateFor(stateType, numBlocks);
         Task ramdpRoot = CleanupHierarchy.createAMDPHierarchy(minX, minY, maxX, maxY);

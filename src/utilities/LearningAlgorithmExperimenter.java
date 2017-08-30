@@ -331,6 +331,7 @@ public class LearningAlgorithmExperimenter {
 		this.plotter.startNewTrial();
 		
 		for(int i = 0; i < this.numberEpisodes; i++){
+			DPrint.cl(this.debugCode, "Episode " + (i+1) + "/" + this.numberEpisodes);
 			agent.runLearningEpisode(this.environmentSever, maxSteps);
 			this.plotter.endEpisode();
 			this.environmentSever.resetEnvironment();
