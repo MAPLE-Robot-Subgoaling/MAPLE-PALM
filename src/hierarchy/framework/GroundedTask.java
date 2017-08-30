@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import burlap.mdp.core.oo.ObjectParameterizedAction;
+import burlap.mdp.singleagent.model.FactoredModel;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import burlap.mdp.core.action.Action;
@@ -113,17 +114,25 @@ public class GroundedTask {
 	/**
 	 * each grounded task has a specific reward function
 	 * this returns the reward of a transition into the given state 
-	 * @param s the result of the transition
+	 * @param s the source of the transition
+	 * @param a the action just taken
+	 * @param sPrime the result of the transition
 	 * @return the grounded task's reward of a transition to s
 	 */
-	public double getReward(State s){
-		if(!t.isPrimitive()){
+	public double getReward(State s, Action a, State sPrime) {
+//		if (!a.equals(action)) {
+//			System.out.println("a: " + a);
+//			System.out.println("action: " + action);
+//			throw new RuntimeException("a not equal to action in groundedtask");
+//		}
+		if(!t.isPrimitive()) {
 			NonprimitiveTask npt = (NonprimitiveTask) t;
-			return npt.reward(s, action);
+			return npt.reward(s, a, sPrime);
+		} else {
+			return ((FactoredModel)getDomain().getModel()).getRf().reward(s, a, sPrime);
 		}
-		throw new RuntimeException("Only applicable for nonprimitive tasks");
 	}
-	
+
 	@Override
 	public String toString(){
 		if (action instanceof ObjectParameterizedAction) {

@@ -4,6 +4,7 @@ import burlap.behavior.singleagent.auxiliary.performance.PerformanceMetric;
 import burlap.behavior.singleagent.auxiliary.performance.TrialMode;
 import burlap.behavior.singleagent.learning.LearningAgent;
 import burlap.behavior.singleagent.learning.LearningAgentFactory;
+import burlap.debugtools.DPrint;
 import burlap.debugtools.RandomFactory;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.common.VisualActionObserver;
@@ -58,6 +59,7 @@ public class CleanupHierarchicalCharts {
         exp.setUpPlottingConfiguration(500, 300, 2, 1000,
                 TrialMode.MOST_RECENT_AND_AVERAGE,
                 PerformanceMetric.STEPS_PER_EPISODE,
+                PerformanceMetric.CUMULATIVE_REWARD_PER_STEP,
                 PerformanceMetric.CUMULATIVE_REWARD_PER_EPISODE
         );
 
@@ -68,12 +70,14 @@ public class CleanupHierarchicalCharts {
 
     public static void main(String[] args) {
 
-        RandomFactory.seedMapped(0, 25554440L);
+        RandomFactory.seedMapped(0, 32525322L);
+
+        DPrint.toggleCode(63634013, true);
 
         int minX = 0;
         int minY = 0;
-        int maxX = 5;
-        int maxY = 5;
+        int maxX = 7;
+        int maxY = 7;
         CleanupRandomStateGenerator sg = new CleanupRandomStateGenerator(minX, minY, maxX, maxY);
 
         String stateType = "twoRooms";//"threeRooms";
@@ -83,7 +87,7 @@ public class CleanupHierarchicalCharts {
         OOSADomain base = CleanupHierarchy.getBaseDomain();
         HashableStateFactory hs = new SimpleHashableStateFactory(true);
 
-        int maxSteps = 1000;
+        int maxSteps = 100;
         int rmaxThreshold = 1;
         int numTrials = 4;
         double rmax = 1000;

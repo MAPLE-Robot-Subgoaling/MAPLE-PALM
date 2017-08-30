@@ -154,7 +154,7 @@ public class RAMDPLearningAgent implements LearningAgent{
 				result.o = pastState;
 				result.op = currentState;
 				result.a = a;
-				result.r = task.getReward(currentState);
+				result.r = action.getReward(pastState, a, currentState);
 				steps++;
 			}else{
 				subtaskCompleted = solveTask(action, baseEnv, maxSteps);
@@ -162,8 +162,9 @@ public class RAMDPLearningAgent implements LearningAgent{
 				currentState = task.mapState(baseState);
 
 				result = new EnvironmentOutcome(pastState, a, currentState,
-						task.getReward(currentState), task.isFailure
+						task.getReward(pastState, a, currentState), task.isFailure
 						(currentState));
+                System.out.println(tabLevel + " " + a + " " + result.r);
 			}
 			
 			//update task model if the subtask completed correctly
@@ -172,7 +173,7 @@ public class RAMDPLearningAgent implements LearningAgent{
 			}
 		}
 
-//		System.out.println(tabLevel + task.getAction() + " " + actionCount);
+		System.out.println(tabLevel + task.getAction() + " " + actionCount);
         tabLevel = tabLevel.substring(0, (tabLevel.length() - 1));
 		return task.isComplete(currentState) || actionCount == 0;
 	}

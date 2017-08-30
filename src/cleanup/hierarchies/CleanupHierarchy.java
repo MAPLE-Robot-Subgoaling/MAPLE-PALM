@@ -33,18 +33,20 @@ public class CleanupHierarchy {
 
         CleanupGoal goalCondition = new CleanupGoal();
 
-        double rewardGoal = 1000;
-        double rewardBase = 0;
+        double rewardGoal = 100;
+        double rewardBase = -1;
         double rewardNoop = -1;
         double rewardPull = 0;
         RewardFunction rootRF = new PickRF();//new CleanupRF(goalCondition, rewardGoal, rewardBase, rewardNoop, rewardPull);
         TerminalFunction rootTF = new PickTF();//new GoalConditionTF(goalCondition);
         RewardFunction pickRF = new PickRF();
         TerminalFunction pickTF = new PickTF();
-        RewardFunction moveRF = new MoveRF();
-        TerminalFunction moveTF = new MoveTF();
+        RewardFunction moveRF = new CleanupRF(goalCondition, rewardGoal, rewardBase, rewardNoop, rewardPull);;//new MoveRF();
+        TerminalFunction moveTF = new GoalConditionTF(goalCondition);//new MoveTF();
 
-        DomainGenerator baseDomainG = new Cleanup(minX, minY, maxX, maxY);
+        Cleanup baseDomainG = new Cleanup(minX, minY, maxX, maxY);
+        baseDomainG.setRf(moveRF);
+        baseDomainG.setTf(moveTF);
         DomainGenerator madDomainG = new CleanupMove(minX, minY, maxX, maxY, moveRF, moveTF);
         DomainGenerator marDomainG = new CleanupMove(minX, minY, maxX, maxY, moveRF, moveTF);
         DomainGenerator mbdDomainG = new CleanupMove(minX, minY, maxX, maxY, moveRF, moveTF);

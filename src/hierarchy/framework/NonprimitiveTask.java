@@ -83,12 +83,13 @@ public class NonprimitiveTask extends Task{
 	
 	/**
 	 * uses the defined reward function to assign reward to states
-	 * @param s the state that is being transitioned into
+	 * @param s the original state that is being transitioned from
 	 * @param a the action associated with the grounded version of this task
+	 * @param sPrime the next state that is being transitioned into
 	 * @return the reward assigned to s by the reward function
 	 */
-	public double reward(State s, Action a){
-		return rf.reward(s, a, s);
+	public double reward(State s, Action a, State sPrime){
+		return rf.reward(s, a, sPrime);
 	}
 	
 	/**
