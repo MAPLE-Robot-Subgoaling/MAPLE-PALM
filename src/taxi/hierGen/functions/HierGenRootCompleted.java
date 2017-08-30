@@ -1,3 +1,4 @@
+
 package taxi.hierGen.functions;
 
 import burlap.mdp.core.oo.propositional.PropositionalFunction;

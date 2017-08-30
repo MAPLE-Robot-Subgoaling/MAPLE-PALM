@@ -5,11 +5,15 @@ import burlap.mdp.core.oo.state.OOStateUtilities;
 import burlap.mdp.core.oo.state.OOVariableKey;
 import burlap.mdp.core.oo.state.ObjectInstance;
 import burlap.mdp.core.state.MutableState;
+import taxi.hierarchies.interfaces.PassengerParameterizable;
 import taxi.hierarchies.tasks.dropoff.TaxiDropoffDomain;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-public class TaxiDropoffState implements MutableOOState{
+public class TaxiDropoffState implements MutableOOState, PassengerParameterizable{
 
 	/**
 	 * contain one taxi, and any number of depots and passengers  
@@ -122,6 +126,22 @@ public class TaxiDropoffState implements MutableOOState{
 			ret[i++] = name;
 		return ret;
 	}
+
+	@Override
+	public String getPassengerLocation(String pname) {
+		return (String) passengers.get(pname).get(TaxiDropoffDomain.ATT_LOCATION);
+	}
+
+//
+//	@Override
+//	public String getPassengerLocation(String pname) {
+//		return (String) passengers.get(pname).get(TaxiDropoffDomain.ATT_LOCATION);
+//	}
+//
+//	@Override
+//	public String getTaxiLocation() {
+//		return null;
+//	}
 
 	public Object getPassengerAtt(String passname, String attName){
 		return passengers.get(passname).get(attName);

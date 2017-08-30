@@ -9,7 +9,7 @@ import taxi.hierarchies.interfaces.PassengerLocationParameterizable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class NavActionType implements ActionType {
+public class HierGenTask5ActionType implements ActionType {
 
 	@Override
 	public String typeName() {
@@ -22,7 +22,7 @@ public class NavActionType implements ActionType {
 		int goalX = Integer.parseInt(params[1]);
 		int goalY = Integer.parseInt(params[2]);
 
-		return new HierGenNavAction(goalX, goalY);
+		return new HierGenTask5Action(goalX, goalY);
 	}
 
 	@Override
@@ -33,7 +33,8 @@ public class NavActionType implements ActionType {
 		for(String pname : st.getPassengers()){
 			int goalX = st.getLocationX(pname);
 			int goalY = st.getLocationY(pname);
-			actions.add(new HierGenNavAction(goalX, goalY));
+			actions.add(new HierGenTask5Action(goalX, goalY));
 		}
+		return actions;
 	}
 }

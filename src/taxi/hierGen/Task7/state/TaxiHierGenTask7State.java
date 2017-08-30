@@ -5,13 +5,17 @@ import burlap.mdp.core.oo.state.OOStateUtilities;
 import burlap.mdp.core.oo.state.ObjectInstance;
 import burlap.mdp.core.state.MutableState;
 import burlap.mdp.core.state.State;
+import taxi.Taxi;
+import taxi.hierarchies.interfaces.PassengerLocationParameterizable;
+import taxi.hierarchies.interfaces.PassengerParameterizable;
 
 import java.util.*;
 
-public class TaxiHierGenTask7State implements MutableOOState{
+public class TaxiHierGenTask7State implements MutableOOState, PassengerParameterizable, PassengerLocationParameterizable{
 
 	public static final String CLASS_TASK7_PASSENGER = 		"task7Passenger";
 	public static final String CLASS_TASK7_Taxi =			"Task7axi";
+	public static final String REEADY_TO_PICKUP = 			"pickup";
 
 	private TaxiHierGenTask7Taxi taxi;
 	private Map<String, TaxiHierGenTask7Passenger> passengers;
@@ -93,6 +97,16 @@ public class TaxiHierGenTask7State implements MutableOOState{
 		return new TaxiHierGenTask7State(taxi, passengers);
 	}
 
+	@Override
+	public int getLocationX(String pname) {
+		return (int) passengers.get(pname).get(Taxi.ATT_X);
+	}
+
+	@Override
+	public int getLocationY(String pname) {
+		return (int) passengers.get(pname).get(Taxi.ATT_Y);
+	}
+
 	//get values from objects
 	public String[] getPassengers(){
 		String[] ret = new String[passengers.size()];
@@ -100,6 +114,23 @@ public class TaxiHierGenTask7State implements MutableOOState{
 		for(String name : passengers.keySet())
 			ret[i++] = name;
 		return ret;
+	}
+
+	@Override
+	public String getPassengerLocation(String pname) {
+		boolean inTaxi = (boolean) passengers.get(pname).get(Taxi.ATT_IN_TAXI);
+		int tx = (int) taxi.get(Taxi.ATT_X);
+		int ty = (int) taxi.get(Taxi.ATT_Y);
+		int px = (int) passengers.get(pname).get(Taxi.ATT_X);
+		int py = (int) passengers.get(pname).get(Taxi.ATT_Y);
+
+		if(inTaxi)
+			return Taxi.ATT_IN_TAXI;
+		else if(tx == px && ty == py)
+			return REEADY_TO_PICKUP;
+		else
+			return Taxi.ON_ROAD;
+
 	}
 
 	public Object getTaxiAtt(String attName){

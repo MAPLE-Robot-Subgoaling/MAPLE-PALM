@@ -3,11 +3,11 @@ package taxi.hierGen.actions;
 import burlap.mdp.core.action.Action;
 import taxi.hierGen.Task5.state.TaxiHierGenTask5State;
 
-public class HierGenNavAction implements Action {
+public class HierGenTask5Action implements Action {
 
 	private int goalX, goalY;
 
-	public HierGenNavAction(int x, int y){
+	public HierGenTask5Action(int x, int y){
 		this.goalX = x;
 		this.goalY = y;
 	}
@@ -28,7 +28,7 @@ public class HierGenNavAction implements Action {
 
 	@Override
 	public Action copy() {
-		return new HierGenNavAction(goalX, goalY);
+		return new HierGenTask5Action(goalX, goalY);
 	}
 
 	@Override
@@ -36,12 +36,17 @@ public class HierGenNavAction implements Action {
 		if(this == other) return true;
 		if(other == null || getClass() != other.getClass()) return false;
 
-		HierGenNavAction act = (HierGenNavAction) other ;
+		HierGenTask5Action act = (HierGenTask5Action) other ;
 		return goalX == act.getGoalX() && goalY == act.getGoalY();
 	}
 
 	@Override
 	public int hashCode(){
 		return actionName().hashCode();
+	}
+
+	@Override
+	public String toString(){
+		return actionName();
 	}
 }

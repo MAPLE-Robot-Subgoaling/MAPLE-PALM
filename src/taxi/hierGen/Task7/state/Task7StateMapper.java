@@ -14,7 +14,7 @@ public class Task7StateMapper implements StateMapping {
 		TaxiState st = (TaxiState) s;
 
 		int tx = (int) st.getTaxiAtt(Taxi.ATT_X);
-		int ty = (int) st.getTaxiAtt(Taxi.ATT_X);
+		int ty = (int) st.getTaxiAtt(Taxi.ATT_Y);
 		TaxiHierGenTask7Taxi taxi = new TaxiHierGenTask7Taxi(st.getTaxiName(), tx, ty);
 
 		List<TaxiHierGenTask7Passenger> passengers = new ArrayList<TaxiHierGenTask7Passenger>();

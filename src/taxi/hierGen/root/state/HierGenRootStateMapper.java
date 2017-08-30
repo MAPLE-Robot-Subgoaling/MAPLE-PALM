@@ -14,7 +14,7 @@ public class HierGenRootStateMapper implements StateMapping {
 		TaxiState st = (TaxiState) s;
 
 		int tx = (int) st.getTaxiAtt(Taxi.ATT_X);
-		int ty = (int) st.getTaxiAtt(Taxi.ATT_X);
+		int ty = (int) st.getTaxiAtt(Taxi.ATT_Y);
 		TaxiHierGenRootTaxi taxi = new TaxiHierGenRootTaxi(st.getTaxiName(), tx, ty);
 
 		List<TaxiHierGenRootPassenger> passengers = new ArrayList<TaxiHierGenRootPassenger>();

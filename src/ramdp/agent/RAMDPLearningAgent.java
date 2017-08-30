@@ -1,9 +1,5 @@
 package ramdp.agent;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import burlap.behavior.policy.Policy;
 import burlap.behavior.singleagent.Episode;
 import burlap.behavior.singleagent.learning.LearningAgent;
@@ -15,6 +11,10 @@ import burlap.mdp.singleagent.oo.OOSADomain;
 import burlap.statehashing.HashableStateFactory;
 import hierarchy.framework.GroundedTask;
 import utilities.ValueIteration;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class RAMDPLearningAgent implements LearningAgent{
 
@@ -123,6 +123,8 @@ public class RAMDPLearningAgent implements LearningAgent{
 			EnvironmentOutcome result;
 
 			Action a = nextAction(task, currentState);
+//			System.out.println("Picking " + a.toString() + " \t" + task.getGroundedChildTasks(currentState));
+
 			GroundedTask action = this.taskNames.get(a.actionName());
 			if(action == null){
 				addChildrenToMap(task, currentState);

@@ -5,15 +5,20 @@ import burlap.mdp.core.oo.state.OOStateUtilities;
 import burlap.mdp.core.oo.state.ObjectInstance;
 import burlap.mdp.core.state.MutableState;
 import burlap.mdp.core.state.State;
+import taxi.Taxi;
+import taxi.hierarchies.interfaces.PassengerLocationParameterizable;
+import taxi.hierarchies.interfaces.PassengerParameterizable;
+import taxi.hierarchies.tasks.dropoff.TaxiDropoffDomain;
 
 import java.util.*;
 
-public class TaxiHierGenRootState implements MutableOOState{
+public class TaxiHierGenRootState implements MutableOOState, PassengerParameterizable, PassengerLocationParameterizable {
 
 	public static final String CLASS_ROOT_PASSENGER = 		"rootPassenger";
 	public static final String CLASS_ROOT_Taxi =			"rootTaxi";
 	public static final String ATT_DESTINAION_X = 			"destX";
 	public static final String ATT_DESTINAION_Y = 			"destY";
+	public static final String READY = 						"dropoffReady";
 
 	private TaxiHierGenRootTaxi taxi;
 	private Map<String, TaxiHierGenRootPassenger> passengers;
@@ -95,6 +100,16 @@ public class TaxiHierGenRootState implements MutableOOState{
 		return new TaxiHierGenRootState(taxi, passengers);
 	}
 
+	@Override
+	public int getLocationX(String pname) {
+		return (int) passengers.get(pname).get(ATT_DESTINAION_X);
+	}
+
+	@Override
+	public int getLocationY(String pname) {
+		return (int) passengers.get(pname).get(ATT_DESTINAION_Y);
+	}
+
 	//get values from objects
 	public String[] getPassengers(){
 		String[] ret = new String[passengers.size()];
@@ -104,12 +119,24 @@ public class TaxiHierGenRootState implements MutableOOState{
 		return ret;
 	}
 
-	public Object getTaxiAtt(String attName){
-		return taxi.get(attName);
+	@Override
+	public String getPassengerLocation(String pname) {
+		boolean inTaxi = (boolean) passengers.get(pname).get(Taxi.ATT_IN_TAXI);
+		int tx = (int) taxi.get(Taxi.ATT_X);
+		int ty = (int) taxi.get(Taxi.ATT_Y);
+		int px = (int) passengers.get(pname).get(Taxi.ATT_X);
+		int py = (int) passengers.get(pname).get(Taxi.ATT_Y);
+
+		if(!inTaxi)
+			return TaxiDropoffDomain.NOT_IN_TAXI;
+		else if(tx == px && ty == py)
+			return READY;
+		else
+			return Taxi.ON_ROAD;
 	}
 
-	public String getTaxiName(){
-		return taxi.name();
+	public Object getTaxiAtt(String attName){
+		return taxi.get(attName);
 	}
 
 	public Object getPassengerAtt(String passname, String attName){

@@ -1,19 +1,16 @@
 package taxi.state;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import burlap.mdp.core.oo.state.MutableOOState;
 import burlap.mdp.core.oo.state.OOStateUtilities;
 import burlap.mdp.core.oo.state.OOVariableKey;
 import burlap.mdp.core.oo.state.ObjectInstance;
 import burlap.mdp.core.state.MutableState;
 import taxi.Taxi;
+import taxi.hierarchies.interfaces.PassengerParameterizable;
 
-public class TaxiState implements MutableOOState{
+import java.util.*;
+
+public class TaxiState implements MutableOOState, PassengerParameterizable{
 
 	//contains a taxi, passengers, locations and walls
 	private TaxiAgent taxi;
@@ -207,7 +204,35 @@ public class TaxiState implements MutableOOState{
 			ret[i++] = name;
 		return ret;
 	}
-	
+
+	@Override
+	public String getPassengerLocation(String pname) {
+		int px = (int) passengers.get(pname).get(Taxi.ATT_X);
+		int py = (int) passengers.get(pname).get(Taxi.ATT_Y);
+
+		for(String loc : getLocations()){
+			int lx = (int) locations.get(loc).get(Taxi.ATT_X);
+			int ly = (int) locations.get(loc).get(Taxi.ATT_Y);
+			if(px == lx && py == ly)
+				return loc;
+		}
+		return Taxi.ON_ROAD;
+	}
+//
+//	@Override
+//	public String getTaxiLocation() {
+//		int tx = (int) taxi.get(Taxi.ATT_X);
+//		int ty = (int) taxi.get(Taxi.ATT_Y);
+//
+//		for(String loc : getLocations()){
+//			int lx = (int) getLocationAtt(loc, Taxi.ATT_X);
+//			int ly = (int) getLocationAtt(loc, Taxi.ATT_Y);
+//			if(lx == tx && ly == ty)
+//				return loc;
+//		}
+//		return "Not a deot";
+//	}
+
 	public String[] getLocations(){
 		String[] ret = new String[locations.size()];
 		int i = 0;

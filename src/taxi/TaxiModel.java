@@ -1,17 +1,16 @@
 package taxi;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import burlap.debugtools.RandomFactory;
 import burlap.mdp.core.StateTransitionProb;
 import burlap.mdp.core.action.Action;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.model.statemodel.FullStateModel;
-import taxi.hierarchies.tasks.bringon.PickupActionType;
 import taxi.state.TaxiAgent;
 import taxi.state.TaxiPassenger;
 import taxi.state.TaxiState;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class TaxiModel implements FullStateModel{
 
@@ -75,7 +74,7 @@ public class TaxiModel implements FullStateModel{
 		if(action <= Taxi.IND_WEST){
 			movement(taxiS, action, tps);
 		}else if(action == Taxi.IND_PUTDOWN){
-			putdown(taxiS, ((PutdownActionType.PutdownAction)a).getPassenger(), tps);
+			putdown(taxiS, ((PutdownAction)a).getPassenger(), tps);
 		}else if(action == Taxi.IND_PICKUP){
 			pickup(taxiS, ((PickupActionType.PickupAction)a).getPassenger(), tps);
 		}

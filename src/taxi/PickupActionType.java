@@ -1,11 +1,10 @@
-package taxi.hierarchies.tasks.bringon;
+package taxi;
 
 import burlap.mdp.core.action.Action;
 import burlap.mdp.core.action.ActionType;
 import burlap.mdp.core.state.State;
-import taxi.Taxi;
-import taxi.hierarchies.tasks.bringon.state.TaxiBringonState;
-import taxi.state.TaxiState;
+import taxi.hierarchies.interfaces.PassengerParameterizable;
+import taxi.hierarchies.tasks.bringon.TaxiBringonDomain;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,17 +24,15 @@ public class PickupActionType implements ActionType {
 
     @Override
     public List<Action> allApplicableActions(State s) {
-        TaxiBringonState state = (TaxiBringonState)s;
+        PassengerParameterizable state = (PassengerParameterizable) s;
         List<Action> acts = new ArrayList<>();
-        String taxi_location = (String)state.getTaxiAtt(TaxiBringonDomain.ATT_LOCATION);
 
         for(String pass : state.getPassengers()){
-            String pass_location = (String)state.getPassengerAtt(pass, TaxiBringonDomain.ATT_LOCATION);
-            if(pass_location.equals(taxi_location)) {
+            String location = state.getPassengerLocation(pass);
+             if(! (location.equals(Taxi.ON_ROAD) || location.equals(TaxiBringonDomain.IN_TAXI))) {
                 acts.add(new PickupAction(pass));
             }
         }
-
         return acts;
     }
 

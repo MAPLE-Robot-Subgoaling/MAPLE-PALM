@@ -1,7 +1,6 @@
-package taxi.hierarchies.tasks.bringon;
+package taxi;
 
 import burlap.mdp.core.action.Action;
-import taxi.Taxi;
 
 public class PickupAction implements Action {
 

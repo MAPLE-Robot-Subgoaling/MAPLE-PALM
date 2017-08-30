@@ -1,17 +1,17 @@
 package taxi.hierarchies.tasks.dropoff;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import burlap.debugtools.RandomFactory;
 import burlap.mdp.core.StateTransitionProb;
 import burlap.mdp.core.action.Action;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.model.statemodel.FullStateModel;
-import taxi.PutdownActionType.PutdownAction;
+import taxi.PutdownAction;
 import taxi.Taxi;
 import taxi.hierarchies.tasks.dropoff.state.TaxiDropoffPassenger;
 import taxi.hierarchies.tasks.dropoff.state.TaxiDropoffState;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class TaxiDropoffModel implements FullStateModel {
 

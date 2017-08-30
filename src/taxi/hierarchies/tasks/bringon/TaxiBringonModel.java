@@ -8,7 +8,7 @@ import burlap.mdp.core.StateTransitionProb;
 import burlap.mdp.core.action.Action;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.model.statemodel.FullStateModel;
-import taxi.hierarchies.tasks.bringon.PickupActionType.PickupAction;
+import taxi.PickupActionType.PickupAction;
 import taxi.Taxi;
 import taxi.hierarchies.tasks.bringon.state.TaxiBringonPassenger;
 import taxi.hierarchies.tasks.bringon.state.TaxiBringonState;

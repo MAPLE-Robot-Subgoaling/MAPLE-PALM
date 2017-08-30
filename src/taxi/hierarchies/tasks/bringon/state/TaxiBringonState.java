@@ -1,19 +1,16 @@
 package taxi.hierarchies.tasks.bringon.state;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import burlap.mdp.core.oo.state.MutableOOState;
 import burlap.mdp.core.oo.state.OOStateUtilities;
 import burlap.mdp.core.oo.state.OOVariableKey;
 import burlap.mdp.core.oo.state.ObjectInstance;
 import burlap.mdp.core.state.MutableState;
+import taxi.hierarchies.interfaces.PassengerParameterizable;
 import taxi.hierarchies.tasks.bringon.TaxiBringonDomain;
 
-public class TaxiBringonState implements MutableOOState{
+import java.util.*;
+
+public class TaxiBringonState implements MutableOOState, PassengerParameterizable{
 
 	/**
 	 * contain one taxi, and any number of depots and passengers  
@@ -146,7 +143,23 @@ public class TaxiBringonState implements MutableOOState{
 			ret[i++] = name;
 		return ret;
 	}
-	
+
+	@Override
+	public String getPassengerLocation(String pname) {
+		return (String) passengers.get(pname).get(TaxiBringonDomain.ATT_LOCATION);
+	}
+
+//
+//	@Override
+//	public String getPassengerLocation(String pname) {
+//		return null;
+//	}
+//
+//	@Override
+//	public String getTaxiLocation() {
+//		return (String) taxi.get(TaxiBringonDomain.ATT_LOCATION);
+//	}
+
 	public Object getTaxiAtt(String attName){
 		return taxi.get(attName);
 	}

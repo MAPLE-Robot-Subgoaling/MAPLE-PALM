@@ -15,6 +15,12 @@ public class HierGenTask7Completed extends PropositionalFunction {
 	public boolean isTrue(OOState s, String... params) {
 		//p.in taxi = true
 		TaxiHierGenTask7State st = (TaxiHierGenTask7State) s;
-		return (boolean) st.getTaxiAtt(Taxi.ATT_IN_TAXI);
+
+		for(String pname : st.getPassengers()){
+			boolean inTaxi = (boolean) st.getPassengerAtt(pname, Taxi.ATT_IN_TAXI);
+			if(inTaxi)
+				return true;
+		}
+		return false;
 	}
 }

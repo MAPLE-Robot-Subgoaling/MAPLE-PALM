@@ -19,22 +19,24 @@ import taxi.hierarchies.TaxiHierarchy;
 import taxi.state.TaxiState;
 import taxi.stateGenerator.RandonPassengerTaxiState;
 import taxi.stateGenerator.TaxiStateFactory;
-//import utilities.SimpleHashableStateFactory;
 import utilities.LearningAlgorithmExperimenter;
+
+//import utilities.SimpleHashableStateFactory;
 
 public class HierarchicalCharts {
 
-	public static void createCharts(final State s, OOSADomain domain, final Task RAMDPRoot, final Task RMEXQRoot,
+	public static void createCharts(final State s, OOSADomain domain, final Task RAMDPRoot, final Task RMEXQRoot, final Task HierGenRoot,
 									final double rmax, final int threshold, final double maxDelta, final double discount,
 									int numEpisode, int maxSteps, int numTrial){
 		final HashableStateFactory hs = new SimpleHashableStateFactory(true);
 		final GroundedTask RAMDPGroot = RAMDPRoot.getAllGroundedTasks(s).get(0); 
-		
+		final GroundedTask HierGenGroot = HierGenRoot.getAllGroundedTasks(s).get(0);
+
 		SimulatedEnvironment env = new SimulatedEnvironment(domain, s);
-		VisualActionObserver obs = new VisualActionObserver(domain, TaxiVisualizer.getVisualizer(5, 5));
-        obs.initGUI();
-        obs.setDefaultCloseOperation(obs.EXIT_ON_CLOSE);
-        env.addObservers(obs);
+//		VisualActionObserver obs = new VisualActionObserver(domain, TaxiVisualizer.getVisualizer(5, 5));
+//        obs.initGUI();
+//        obs.setDefaultCloseOperation(obs.EXIT_ON_CLOSE);
+//        env.addObservers(obs);
 		
 		LearningAgentFactory rmaxq = new LearningAgentFactory() {
 			
@@ -61,8 +63,21 @@ public class HierarchicalCharts {
 				return new RAMDPLearningAgent(RAMDPGroot, threshold, discount, rmax, hs, maxDelta);
 			}
 		};
-		
-		LearningAlgorithmExperimenter exp = new LearningAlgorithmExperimenter(env, numTrial, numEpisode, maxSteps, ramdp, rmaxq);
+
+		LearningAgentFactory HierGenRamdp = new LearningAgentFactory() {
+
+			@Override
+			public String getAgentName() {
+				return "HierGen R-AMDP";
+			}
+
+			@Override
+			public LearningAgent generateAgent() {
+				return new RAMDPLearningAgent(HierGenGroot, threshold, discount, rmax, hs, maxDelta);
+			}
+		};
+
+		LearningAlgorithmExperimenter exp = new LearningAlgorithmExperimenter(env, numTrial, numEpisode, maxSteps, HierGenRamdp, ramdp);
 		exp.setUpPlottingConfiguration(500, 300, 2, 1000,
 				TrialMode.MOST_RECENT_AND_AVERAGE,
 				PerformanceMetric.CUMULATIVE_REWARD_PER_EPISODE
@@ -113,7 +128,7 @@ public class HierarchicalCharts {
 	public static void main(String[] args) {
 		double correctMoveprob = 0.8;
 		double fickleProb = 0.225;
-		int numEpisodes = 30;
+		int numEpisodes = 50;
 		int maxSteps = 2000;
 		int rmaxThreshold = 5;
 		int numTrials = 20;
@@ -121,11 +136,12 @@ public class HierarchicalCharts {
 		double rmax = 20;
 		double maxDelta = 0.01;
 		
-		TaxiState s = TaxiStateFactory.createTinyState();
+		TaxiState s = TaxiStateFactory.createClassicState();
 		Task RAMDProot = TaxiHierarchy.createAMDPHierarchy(correctMoveprob, fickleProb, false);
 		OOSADomain base = TaxiHierarchy.getBaseDomain();
+		Task HierGenRoot = TaxiHierarchy.createHierGenHierarchy(correctMoveprob, fickleProb);
 		Task RMAXQroot = TaxiHierarchy.createRMAXQHierarchy(correctMoveprob, fickleProb);
-		createCharts(s, base, RAMDProot, RMAXQroot, rmax, rmaxThreshold, maxDelta, gamma,
+		createCharts(s, base, RAMDProot, RMAXQroot, HierGenRoot, rmax, rmaxThreshold, maxDelta, gamma,
 				numEpisodes, maxSteps, numTrials);
 //		createRandomCharts(base, RAMDProot, rmax, rmaxThreshold, maxDelta, gamma, numEpisodes, maxSteps, numTrials);
 	}
