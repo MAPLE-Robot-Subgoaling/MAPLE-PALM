@@ -10,7 +10,7 @@ public class CleanupRootFailPF extends PropositionalFunction {
     }
 
     @Override
-    public boolean isTrue(OOState ooState, String... strings) {
+    public boolean isTrue(OOState state, String[] params) {
         return false;
     }
 }

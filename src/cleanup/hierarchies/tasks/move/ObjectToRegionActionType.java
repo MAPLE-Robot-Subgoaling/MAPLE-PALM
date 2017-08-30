@@ -1,4 +1,4 @@
-package cleanup.hierarchies;
+package cleanup.hierarchies.tasks.move;
 
 import burlap.mdp.core.action.Action;
 import burlap.mdp.core.action.ActionType;

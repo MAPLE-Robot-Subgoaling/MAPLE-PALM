@@ -21,7 +21,14 @@ public class PickRoomAgentMapper implements StateMapping{
         int ax = (int) agent.get(ATT_X);
         int ay = (int) agent.get(ATT_Y);
         CleanupRoom agentInRoom = s.roomContainingPoint(ax, ay);
-        String agentInRegion = agentInRoom.name();
+        String agentInRegion = null;
+        if (agentInRoom == null) {
+            // special edge case, agent not in any room but in a door
+            CleanupDoor agentInDoor = s.doorContainingPoint(ax, ay);
+            agentInRegion = agentInDoor.name();
+        } else {
+            agentInRegion = agentInRoom.name();
+        }
         PickAgent pickAgent = new PickAgent(agent.name(), agentInRegion);
 
         List<CleanupRoom> rooms = new ArrayList<>(s.getRooms().values());

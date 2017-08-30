@@ -8,7 +8,7 @@ import burlap.mdp.singleagent.model.FactoredModel;
 import burlap.mdp.singleagent.model.RewardFunction;
 import burlap.mdp.singleagent.oo.OOSADomain;
 import cleanup.Cleanup;
-import cleanup.hierarchies.ObjectToRegionActionType;
+import cleanup.hierarchies.tasks.move.ObjectToRegionActionType;
 import cleanup.hierarchies.tasks.root.CleanupRootModel;
 import cleanup.state.CleanupAgent;
 import cleanup.state.CleanupBlock;

@@ -8,6 +8,7 @@ import burlap.behavior.policy.Policy;
 import burlap.behavior.singleagent.Episode;
 import burlap.behavior.singleagent.learning.LearningAgent;
 import burlap.mdp.core.action.Action;
+import burlap.mdp.core.oo.ObjectParameterizedAction;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.environment.Environment;
 import burlap.mdp.singleagent.environment.EnvironmentOutcome;
@@ -102,6 +103,8 @@ public class RAMDPLearningAgent implements LearningAgent{
 		return e;
 	}
 
+	public static String tabLevel = "";
+
 	/**
 	 * tries to solve a grounded task while creating a model of it
 	 * @param task the grounded task to solve
@@ -115,7 +118,10 @@ public class RAMDPLearningAgent implements LearningAgent{
 		State pastState = currentState;
 		RAMDPModel model = getModel(task);
 		int actionCount = 0;
-		
+
+		tabLevel += "\t";
+//		System.out.println(task.getAction() + " " + currentState);
+
 		while(!(task.isFailure(currentState) || task.isComplete(currentState)) && (steps < maxSteps || maxSteps == -1)){
 			actionCount++;
 			boolean subtaskCompleted = false;
@@ -123,10 +129,16 @@ public class RAMDPLearningAgent implements LearningAgent{
 			EnvironmentOutcome result;
 
 			Action a = nextAction(task, currentState);
-			GroundedTask action = this.taskNames.get(a.actionName());
+			String actionName = a.actionName();
+            if (a instanceof ObjectParameterizedAction) {
+                ObjectParameterizedAction opa = (ObjectParameterizedAction)a;
+                actionName = a.actionName() + "_" + String.join("_",opa.getObjectParameters());
+            }
+//            System.out.println(actionName + " " + currentState);
+			GroundedTask action = this.taskNames.get(actionName);
 			if(action == null){
 				addChildrenToMap(task, currentState);
-				action = this.taskNames.get(a.actionName());
+				action = this.taskNames.get(actionName);
 			}
 
 			if(action.isPrimitive()){
@@ -157,6 +169,7 @@ public class RAMDPLearningAgent implements LearningAgent{
 		}
 		
 //		System.out.println(task + " " + actionCount);
+        tabLevel = tabLevel.substring(0, (tabLevel.length() - 1));
 		return task.isComplete(currentState) || actionCount == 0;
 	}
 	

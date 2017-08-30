@@ -17,6 +17,10 @@ public class CleanupGoal implements StateConditionTest {
 
     }
 
+    public CleanupGoalDescription[] getGoals() {
+        return goals;
+    }
+
     public void setGoals(CleanupGoalDescription[] goals) {
         this.goals = goals;
     }
@@ -24,7 +28,7 @@ public class CleanupGoal implements StateConditionTest {
     @Override
     public boolean satisfies(State s) {
         for (int i = 0; i < goals.length; i++) {
-            GroundedProp gp = new GroundedProp(goals[i].pf, goals[i].objects);
+            GroundedProp gp = new GroundedProp(goals[i].getPf(), goals[i].getParams());
             if (!gp.isTrue((CleanupState) s)) {
                 return false;
             }

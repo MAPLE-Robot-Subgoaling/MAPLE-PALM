@@ -1,4 +1,4 @@
-package cleanup.hierarchies;
+package cleanup.hierarchies.tasks.move;
 
 import burlap.mdp.core.oo.propositional.PropositionalFunction;
 import burlap.mdp.core.oo.state.OOState;
@@ -10,7 +10,7 @@ public class AgentDoorFailPF extends PropositionalFunction {
     }
 
     @Override
-    public boolean isTrue(OOState ooState, String... strings) {
+    public boolean isTrue(OOState state, String[] params) {
         return false;
     }
 }

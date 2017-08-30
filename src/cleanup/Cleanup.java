@@ -18,6 +18,7 @@ import burlap.mdp.singleagent.common.UniformCostRF;
 import burlap.mdp.singleagent.model.FactoredModel;
 import burlap.mdp.singleagent.model.RewardFunction;
 import burlap.mdp.singleagent.oo.OOSADomain;
+import burlap.shell.visual.VisualExplorer;
 import burlap.statehashing.simple.SimpleHashableStateFactory;
 import burlap.visualizer.Visualizer;
 import cleanup.state.*;
@@ -78,6 +79,7 @@ public class Cleanup implements DomainGenerator {
     public static final String COLOR_GRAY = "gray";
 
     public static final String[] SHAPES = new String[]{"chair", "bag", "backpack", "basket"};
+    public static final String[] SHAPES_BLOCKS = new String[]{"chair", "bag", "backpack", "basket"};
 
     public static final String SHAPE_ROOM = "shapeRoom";
     public static final String SHAPE_DOOR = "shapeDoor";
@@ -276,6 +278,13 @@ public class Cleanup implements DomainGenerator {
             CleanupState cws = (CleanupState) s;
             ObjectInstance o = cws.object(params[0]);
             ObjectInstance region = cws.object(params[1]);
+
+            String abstractInRegion = (String) o.get(ATT_REGION);
+            if (abstractInRegion != null) {
+                // this object is abstract, as in the Cleanup AMDP
+                return abstractInRegion.equals(region.name());
+            }
+
             if (o == null || region == null) {
                 return false;
             }
@@ -428,8 +437,8 @@ public class Cleanup implements DomainGenerator {
         double discount = 0.99;
         // prop name if block -> block and room if
         CleanupGoal rfCondition = (CleanupGoal) ((CleanupRF) rf).getGoalCondition();
-        String PFName = rfCondition.goals[0].pf.getName();
-        String[] params = rfCondition.goals[0].objects;
+        String PFName = rfCondition.goals[0].getPf().getName();
+        String[] params = rfCondition.goals[0].getParams();
         if (PFName.equals(Cleanup.PF_AGENT_IN_ROOM)) {
             return new AgentToRegionHeuristic(params[1], discount, lockProb);
         } else if (PFName.equals(Cleanup.PF_AGENT_IN_DOOR)) {
@@ -597,40 +606,40 @@ public class Cleanup implements DomainGenerator {
         List<String> objectAttributes = new ArrayList<String>();
         Cleanup cleanup = new Cleanup();
         cleanup.setMinX(0);
-        cleanup.setMaxX(5);
+        cleanup.setMaxX(13);
         cleanup.setMinY(0);
-        cleanup.setMaxY(5);
+        cleanup.setMaxY(13);
         OOSADomain domain = (OOSADomain) cleanup.generateDomain();
         CleanupRandomStateGenerator gen = new CleanupRandomStateGenerator(cleanup);
 
         int numBlocks1 = 1;
-        int numBlocks2 = 2;
+        int numBlocks2 = 3;
         State state1 = gen.generateTwoRoomsWithFourDoors(numBlocks1); //gen.generateCentralRoomWithFourDoors(numBlocks1);
-        State state2 = gen.getStateFor("noRoomsOneDoor", numBlocks2);//gen.generateTwoRoomsWithFourDoors(numBlocks2); //gen.generateCentralRoomWithFourDoors(numBlocks2);
+        State state2 = gen.getStateFor("threeRooms", numBlocks2);//gen.generateTwoRoomsWithFourDoors(numBlocks2); //gen.generateCentralRoomWithFourDoors(numBlocks2);
 
-        List<State> states = StateReachability.getReachableStates(state2, domain, new SimpleHashableStateFactory(true));
+//        List<State> states = StateReachability.getReachableStates(state2, domain, new SimpleHashableStateFactory(true));
         List<Episode> episodes = new ArrayList<Episode>();
-        Episode e = new Episode();
-        for (State state : states) {
-//            Visualizer v = CleanupVisualizer.getVisualizer(cleanup.getWidth(), cleanup.getHeight());
-//            VisualExplorer exp = new VisualExplorer(domain, v, state);
-//            exp.addKeyAction("w", ACTION_NORTH, "");
-//            exp.addKeyAction("s", ACTION_SOUTH, "");
-//            exp.addKeyAction("d", ACTION_EAST, "");
-//            exp.addKeyAction("a", ACTION_WEST, "");
-//            exp.addKeyAction("r", ACTION_PULL, "");
-//            exp.initGUI();
-//            exp.requestFocus();
-//            exp.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            e.addState(state);
-            e.addAction(((UniversalActionType) domain.getAction("pull")).action);
-            e.addReward(0.0);
-        }
-        e.addState(state2);
-        episodes.add(e);
-        Visualizer v = CleanupVisualizer.getVisualizer(cleanup.getWidth(), cleanup.getHeight());
-        EpisodeSequenceVisualizer esv = new EpisodeSequenceVisualizer(v, domain, episodes);
-        esv.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//        Episode e = new Episode();
+//        for (State state : states) {
+            Visualizer v = CleanupVisualizer.getVisualizer(cleanup.getWidth(), cleanup.getHeight());
+            VisualExplorer exp = new VisualExplorer(domain, v, state2);
+            exp.addKeyAction("w", ACTION_NORTH, "");
+            exp.addKeyAction("s", ACTION_SOUTH, "");
+            exp.addKeyAction("d", ACTION_EAST, "");
+            exp.addKeyAction("a", ACTION_WEST, "");
+            exp.addKeyAction("r", ACTION_PULL, "");
+            exp.initGUI();
+            exp.requestFocus();
+            exp.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//            e.addState(state);
+//            e.addAction(((UniversalActionType) domain.getAction("pull")).action);
+//            e.addReward(0.0);
+//        }
+//        e.addState(state2);
+//        episodes.add(e);
+//        Visualizer v = CleanupVisualizer.getVisualizer(cleanup.getWidth(), cleanup.getHeight());
+//        EpisodeSequenceVisualizer esv = new EpisodeSequenceVisualizer(v, domain, episodes);
+//        esv.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 
 //        System.out.println(state1);

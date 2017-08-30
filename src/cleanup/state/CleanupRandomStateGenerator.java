@@ -700,6 +700,71 @@ public class CleanupRandomStateGenerator implements StateGenerator {
         return s;
     }
 
+    public OOState generateThreeRooms(int numBlocks) {
+
+        Random rng = RandomFactory.getMapped(DEFAULT_RNG_INDEX);
+
+        int numRooms = 3;
+        int numDoors = 3;
+
+        List<String> blockColors = new ArrayList<>(Arrays.asList(Cleanup.COLORS_BLOCKS));
+        List<String> blockShapes = new ArrayList<>(Arrays.asList(Cleanup.SHAPES_BLOCKS));
+        List<String> roomColors = new ArrayList<>(Arrays.asList(Cleanup.COLORS_ROOMS));
+
+        int bigRoomLeft = minX;
+        int bigRoomRight = maxX-1;
+        int bigRoomBottom = maxY/2;
+        int bigRoomTop = maxY-1;
+        String bigRoomColor = roomColors.get(rng.nextInt(roomColors.size()));
+        CleanupRoom bigRoom = new CleanupRoom("room0", bigRoomLeft, bigRoomRight, bigRoomBottom, bigRoomTop, bigRoomColor, Cleanup.SHAPE_ROOM);
+        String room1Color = roomColors.get(rng.nextInt(roomColors.size()));
+        String room2Color = roomColors.get(rng.nextInt(roomColors.size()));
+        CleanupRoom room1 = new CleanupRoom("room1", bigRoomLeft, bigRoomRight/2, minY, bigRoomBottom, room1Color, Cleanup.SHAPE_ROOM);
+        CleanupRoom room2 = new CleanupRoom("room2", bigRoomRight/2, bigRoomRight, minY, bigRoomBottom, room2Color, Cleanup.SHAPE_ROOM);
+        int dx0 = bigRoomRight/3;
+        int dx1 = 2*bigRoomRight/3;
+        int dx2 = bigRoomRight/2;
+        int dy0 = bigRoomBottom;
+        int dy1 = bigRoomBottom;
+        int dy2 = bigRoomBottom/2;
+        CleanupDoor door0 = new CleanupDoor("door0", dx0, dx0, dy0, dy0, Cleanup.LOCKABLE_STATES[0], Cleanup.SHAPE_DOOR, Cleanup.COLOR_GRAY);
+        CleanupDoor door1 = new CleanupDoor("door1", dx1, dx1, dy1, dy1, Cleanup.LOCKABLE_STATES[0], Cleanup.SHAPE_DOOR, Cleanup.COLOR_GRAY);
+        CleanupDoor door2 = new CleanupDoor("door2", dx2, dx2, dy2, dy2, Cleanup.LOCKABLE_STATES[0], Cleanup.SHAPE_DOOR, Cleanup.COLOR_GRAY);
+
+        // randomize agent's position
+        int ax = minX;
+        int ay = minY;
+        String agentDirection = Cleanup.directions[rng.nextInt(Cleanup.directions.length)];
+        CleanupState s = new CleanupState(getWidth(), getHeight(), ax, ay, agentDirection, numBlocks, numRooms, numDoors);
+        s.addObject(bigRoom);
+        s.addObject(room1);
+        s.addObject(room2);
+        s.addObject(door0);
+        s.addObject(door1);
+        s.addObject(door2);
+        do {
+            ax = minX + rng.nextInt(getWidth());
+            ay = minY + rng.nextInt(getHeight());
+        } while (!s.isOpen(ax, ay));
+        s.getAgent().set(Cleanup.ATT_X, ax);
+        s.getAgent().set(Cleanup.ATT_Y, ay);
+
+        int index = 0;
+        while (numBlocks > 0) {
+            int bx = minY + rng.nextInt(getWidth());
+            int by = minY + rng.nextInt(getHeight());
+            if (s.isOpen(bx, by) && !s.agentAt(bx, by)) {
+                String shape = blockShapes.get(rng.nextInt(blockShapes.size()));
+                String color = blockColors.get(rng.nextInt(numDoors - 1));
+                s.addObject(new CleanupBlock("block" + index, bx, by, shape, color));
+                numBlocks -= 1;
+                index += 1;
+            }
+        }
+
+        return s;
+    }
+
     public OOState generateOneRoomOneDoor() {
 
         Random rng = RandomFactory.getMapped(DEFAULT_RNG_INDEX);
@@ -818,6 +883,8 @@ public class CleanupRandomStateGenerator implements StateGenerator {
             state = generateCentralRoomWithFourDoors(numBlocks);
         } else if (stateType.equals("twoRoomsFourDoors")) {
             state = generateTwoRoomsWithFourDoors(numBlocks);
+        } else if (stateType.equals("threeRooms")){
+            state = generateThreeRooms(numBlocks);
         } else {
             throw new RuntimeException("Error: unknown name for generating a random Cleanup state");
         }

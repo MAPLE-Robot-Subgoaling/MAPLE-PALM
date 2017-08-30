@@ -1,4 +1,4 @@
-package cleanup.hierarchies;
+package cleanup.hierarchies.tasks.move;
 
 import burlap.mdp.auxiliary.StateMapping;
 import burlap.mdp.core.state.State;
@@ -37,21 +37,21 @@ public class AgentDoorMapper implements StateMapping{
 
         MoveAgent abstractAgent = new MoveAgent(agent.name(), inRegion);
 
-        List<CleanupRoom> rooms = (List<CleanupRoom>) s.getRooms().values();
+        List<CleanupRoom> rooms = new ArrayList<>(s.getRooms().values());
         List<MoveRoom> abstractRooms = new ArrayList<MoveRoom>();
         for(CleanupRoom r : rooms){
             MoveRoom rL1 = new MoveRoom(r.name(), (String) r.get(ATT_COLOR), new HashSet<String>());
             abstractRooms.add(rL1);
         }
 
-        List<CleanupDoor> doors = (List<CleanupDoor>) s.getDoors();
+        List<CleanupDoor> doors = new ArrayList<CleanupDoor>(s.getDoors().values());
         List<MoveDoor> abstractDoors = new ArrayList<MoveDoor>();
         for(CleanupDoor d : doors){
             MoveDoor ad = new MoveDoor(d.name(), (String) d.get(ATT_LOCKED), new HashSet<String>());
             abstractDoors.add(ad);
         }
 
-        List<CleanupBlock> blocks = (List<CleanupBlock>) s.getBlocks().values();
+        List<CleanupBlock> blocks = new ArrayList<>(s.getBlocks().values());
         List<MoveBlock> abstractBlocks = new ArrayList<MoveBlock>();
         for(CleanupBlock b : blocks){
 

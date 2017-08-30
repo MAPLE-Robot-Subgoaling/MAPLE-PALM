@@ -3,6 +3,7 @@ package hierarchy.framework;
 import burlap.mdp.auxiliary.StateMapping;
 import burlap.mdp.core.action.Action;
 import burlap.mdp.core.action.ActionType;
+import burlap.mdp.core.oo.ObjectParameterizedAction;
 import burlap.mdp.core.oo.propositional.PropositionalFunction;
 import burlap.mdp.core.oo.state.OOState;
 import burlap.mdp.core.state.State;
@@ -45,7 +46,7 @@ public class NonprimitiveTask extends Task{
 	 * create a nunprimitive taks
 	 * @param children the subtasks
 	 * @param aType the set of actions this task represents in its parent task's domain
-	 * @param fail the failure PF 
+	 * @param term the failure PF
 	 * @param compl the completion PF
 	 */
 	public NonprimitiveTask(Task[] children, ActionType aType,
@@ -64,7 +65,7 @@ public class NonprimitiveTask extends Task{
 	 * @param abstractDomain the domain this task executes actions in
 	 * @param map the state abstraction function into the domain
 	 * @param taskrf the custom reward function for the task
-	 * @param fail the failure PF 
+	 * @param term the failure PF
 	 * @param compl the completion PF
 	 */
 	public NonprimitiveTask(Task[] children, ActionType aType, OOSADomain abstractDomain, StateMapping map,
@@ -109,6 +110,11 @@ public class NonprimitiveTask extends Task{
 	
 	@Override
 	public boolean isComplete(State s, Action a){
-		return completed.isTrue((OOState) s, a.actionName()); 
+//        return completed.isTrue((OOState) s, a.actionName());
+		if (a instanceof ObjectParameterizedAction) {
+			return completed.isTrue((OOState) s, ((ObjectParameterizedAction) a).getObjectParameters());
+		} else {
+			return completed.isTrue((OOState) s, a.actionName());
+		}
 	}
 }
