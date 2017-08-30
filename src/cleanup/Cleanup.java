@@ -615,7 +615,7 @@ public class Cleanup implements DomainGenerator {
         int numBlocks1 = 1;
         int numBlocks2 = 3;
         State state1 = gen.generateTwoRoomsWithFourDoors(numBlocks1); //gen.generateCentralRoomWithFourDoors(numBlocks1);
-        State state2 = gen.getStateFor("threeRooms", numBlocks2);//gen.generateTwoRoomsWithFourDoors(numBlocks2); //gen.generateCentralRoomWithFourDoors(numBlocks2);
+        State state2 = gen.getStateFor("twoRooms", numBlocks2);//gen.generateTwoRoomsWithFourDoors(numBlocks2); //gen.generateCentralRoomWithFourDoors(numBlocks2);
 
 //        List<State> states = StateReachability.getReachableStates(state2, domain, new SimpleHashableStateFactory(true));
         List<Episode> episodes = new ArrayList<Episode>();

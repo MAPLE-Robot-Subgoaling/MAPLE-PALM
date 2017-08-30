@@ -2,10 +2,13 @@ package cleanup.hierarchies.tasks.move;
 
 import burlap.mdp.core.oo.propositional.PropositionalFunction;
 import burlap.mdp.core.oo.state.OOState;
+import burlap.mdp.core.oo.state.ObjectInstance;
 
-public class AgentDoorFailPF extends PropositionalFunction {
+import static cleanup.Cleanup.ATT_REGION;
 
-    public AgentDoorFailPF(String name, String[] parameterClasses) {
+public class ObjectInRegionFailPF extends PropositionalFunction {
+
+    public ObjectInRegionFailPF(String name, String[] parameterClasses) {
         super(name, parameterClasses);
     }
 

@@ -19,7 +19,7 @@ public class PickObjectRoomGoalPF extends PropositionalFunction {
         ObjectInstance object = state.object(objectName);
         ObjectInstance region = state.object(regionName);
         // if the region is false, most likely because the object is not in any region
-        if (region == null) { return false; }
+//        if (region == null) { return false; }
         return object.get(ATT_REGION).equals(region.name());
     }
 }

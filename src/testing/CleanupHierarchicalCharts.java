@@ -61,34 +61,34 @@ public class CleanupHierarchicalCharts {
         );
 
         exp.startExperiment();
+        System.out.println("writing episode data...");
         exp.writeEpisodeDataToCSV("./ramdp-cleanup.csv");
     }
 
     public static void main(String[] args) {
-        int maxSteps = 100;
-        int rmaxThreshold = 5;
-        int numTrials = 20;
-        double rmax = 20;
 
-        RandomFactory.seedMapped(0, 2320942930L);
+        RandomFactory.seedMapped(0, 25554440L);
 
         int minX = 0;
         int minY = 0;
-        int maxX = 9;
-        int maxY = 9;
+        int maxX = 5;
+        int maxY = 5;
         CleanupRandomStateGenerator sg = new CleanupRandomStateGenerator(minX, minY, maxX, maxY);
 
-        String stateType = "threeRooms";
-        int numBlocks = 2;
+        String stateType = "twoRooms";//"threeRooms";
+        int numBlocks = 1;
         CleanupState s = (CleanupState) sg.getStateFor(stateType, numBlocks);
         Task ramdpRoot = CleanupHierarchy.createAMDPHierarchy(minX, minY, maxX, maxY);
         OOSADomain base = CleanupHierarchy.getBaseDomain();
         HashableStateFactory hs = new SimpleHashableStateFactory(true);
 
+        int maxSteps = 1000;
+        int rmaxThreshold = 1;
+        int numTrials = 4;
+        double rmax = 1000;
         double gamma = 0.95;
-        double maxDelta = 0.01;
-        int maxRollouts = 1000;
-        int numEpisodes = 2;
+        double maxDelta = 0.001;
+        int numEpisodes = 10;
         int width = maxX - minX;
         int height = maxY - minY;
         createCharts(s, base, ramdpRoot, rmax, rmaxThreshold, maxDelta, gamma, numEpisodes, maxSteps, numTrials, width, height);

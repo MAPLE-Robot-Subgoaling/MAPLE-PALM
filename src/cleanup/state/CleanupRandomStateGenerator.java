@@ -755,7 +755,61 @@ public class CleanupRandomStateGenerator implements StateGenerator {
             int by = minY + rng.nextInt(getHeight());
             if (s.isOpen(bx, by) && !s.agentAt(bx, by)) {
                 String shape = blockShapes.get(rng.nextInt(blockShapes.size()));
-                String color = blockColors.get(rng.nextInt(numDoors - 1));
+                String color = blockColors.get(rng.nextInt(blockColors.size()));
+                s.addObject(new CleanupBlock("block" + index, bx, by, shape, color));
+                numBlocks -= 1;
+                index += 1;
+            }
+        }
+
+        return s;
+    }
+
+    public OOState generateTwoRooms(int numBlocks) {
+
+        Random rng = RandomFactory.getMapped(DEFAULT_RNG_INDEX);
+
+        int numRooms = 2;
+        int numDoors = 1;
+
+        List<String> blockColors = new ArrayList<>(Arrays.asList(Cleanup.COLORS_BLOCKS));
+        List<String> blockShapes = new ArrayList<>(Arrays.asList(Cleanup.SHAPES_BLOCKS));
+        List<String> roomColors = new ArrayList<>(Arrays.asList(Cleanup.COLORS_ROOMS));
+
+        int bigRoomLeft = minX;
+        int bigRoomRight = maxX-1;
+        int bigRoomBottom = minY;
+        int bigRoomTop = maxY-1;
+        String room1Color = roomColors.get(rng.nextInt(roomColors.size()));
+        String room2Color = roomColors.get(rng.nextInt(roomColors.size()));
+        CleanupRoom room1 = new CleanupRoom("room0", bigRoomLeft, bigRoomRight/2, bigRoomBottom, bigRoomTop, room1Color, Cleanup.SHAPE_ROOM);
+        CleanupRoom room2 = new CleanupRoom("room1", bigRoomRight/2, bigRoomRight, bigRoomBottom, bigRoomTop, room2Color, Cleanup.SHAPE_ROOM);
+        int dx2 = bigRoomRight/2;
+        int dy2 = bigRoomTop/2;
+        CleanupDoor door2 = new CleanupDoor("door0", dx2, dx2, dy2, dy2, Cleanup.LOCKABLE_STATES[0], Cleanup.SHAPE_DOOR, Cleanup.COLOR_GRAY);
+
+        // randomize agent's position
+        int ax = minX;
+        int ay = minY;
+        String agentDirection = Cleanup.directions[rng.nextInt(Cleanup.directions.length)];
+        CleanupState s = new CleanupState(getWidth(), getHeight(), ax, ay, agentDirection, numBlocks, numRooms, numDoors);
+        s.addObject(room1);
+        s.addObject(room2);
+        s.addObject(door2);
+        do {
+            ax = minX + rng.nextInt(getWidth());
+            ay = minY + rng.nextInt(getHeight());
+        } while (!s.isOpen(ax, ay));
+        s.getAgent().set(Cleanup.ATT_X, ax);
+        s.getAgent().set(Cleanup.ATT_Y, ay);
+
+        int index = 0;
+        while (numBlocks > 0) {
+            int bx = minY + rng.nextInt(getWidth());
+            int by = minY + rng.nextInt(getHeight());
+            if (s.isOpen(bx, by) && !s.agentAt(bx, by)) {
+                String shape = blockShapes.get(rng.nextInt(blockShapes.size()));
+                String color = blockColors.get(rng.nextInt(blockColors.size()));
                 s.addObject(new CleanupBlock("block" + index, bx, by, shape, color));
                 numBlocks -= 1;
                 index += 1;
@@ -796,7 +850,7 @@ public class CleanupRandomStateGenerator implements StateGenerator {
             int bx = ax + (rng.nextBoolean() ? -1 : 1);
             int by = ay + (rng.nextBoolean() ? -1 : 1);
             if (!s.blockAt(bx, by)) {
-                s.addObject(new CleanupBlock("block" + index, bx, by, "backpack", blockColors.get(rng.nextInt(numDoors - 1))));
+                s.addObject(new CleanupBlock("block" + index, bx, by, "backpack", blockColors.get(rng.nextInt(blockColors.size()))));
                 numBlocks -= 1;
                 index += 1;
             }
@@ -885,6 +939,8 @@ public class CleanupRandomStateGenerator implements StateGenerator {
             state = generateTwoRoomsWithFourDoors(numBlocks);
         } else if (stateType.equals("threeRooms")){
             state = generateThreeRooms(numBlocks);
+        } else if (stateType.equals("twoRooms")){
+            state = generateTwoRooms(numBlocks);
         } else {
             throw new RuntimeException("Error: unknown name for generating a random Cleanup state");
         }

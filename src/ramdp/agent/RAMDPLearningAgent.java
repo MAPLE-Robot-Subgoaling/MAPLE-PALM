@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import burlap.behavior.policy.Policy;
+import burlap.behavior.policy.PolicyUtils;
 import burlap.behavior.singleagent.Episode;
 import burlap.behavior.singleagent.learning.LearningAgent;
 import burlap.mdp.core.action.Action;
@@ -120,7 +121,6 @@ public class RAMDPLearningAgent implements LearningAgent{
 		int actionCount = 0;
 
 		tabLevel += "\t";
-//		System.out.println(task.getAction() + " " + currentState);
 
 		while(!(task.isFailure(currentState) || task.isComplete(currentState)) && (steps < maxSteps || maxSteps == -1)){
 			actionCount++;
@@ -128,18 +128,21 @@ public class RAMDPLearningAgent implements LearningAgent{
 			pastState = currentState;
 			EnvironmentOutcome result;
 
+            System.out.println(tabLevel + task.getAction() + " " + actionCount);
+            System.out.println(currentState);
 			Action a = nextAction(task, currentState);
 			String actionName = a.actionName();
             if (a instanceof ObjectParameterizedAction) {
                 ObjectParameterizedAction opa = (ObjectParameterizedAction)a;
                 actionName = a.actionName() + "_" + String.join("_",opa.getObjectParameters());
             }
-//            System.out.println(actionName + " " + currentState);
 			GroundedTask action = this.taskNames.get(actionName);
 			if(action == null){
 				addChildrenToMap(task, currentState);
 				action = this.taskNames.get(actionName);
 			}
+
+//			System.out.println(tabLevel + task.getAction() + " " + actionCount + " " +  actionName);
 
 			if(action.isPrimitive()){
 				subtaskCompleted = true;
@@ -167,8 +170,8 @@ public class RAMDPLearningAgent implements LearningAgent{
 				model.updateModel(result);
 			}
 		}
-		
-//		System.out.println(task + " " + actionCount);
+
+//		System.out.println(tabLevel + task.getAction() + " " + actionCount);
         tabLevel = tabLevel.substring(0, (tabLevel.length() - 1));
 		return task.isComplete(currentState) || actionCount == 0;
 	}
@@ -197,8 +200,14 @@ public class RAMDPLearningAgent implements LearningAgent{
 		ValueIteration plan = new ValueIteration(domain, gamma, hashingFactory, maxDelta, 1000);
 		Policy viPolicy = plan.planFromState(s);
 		Policy rmaxPolicy = new RMAXPolicy(model, viPolicy, domain.getActionTypes(), hashingFactory);
-		
-		return rmaxPolicy.action(s);
+		Action action = rmaxPolicy.action(s);
+		try {
+            Episode e = PolicyUtils.rollout(rmaxPolicy, s, model, 100);
+            System.out.println(tabLevel + e.actionSequence);
+        } catch (Exception e) {
+		    // ignore, temp debug to assess ramdp
+        }
+		return action;
 	}
 
 	/**
