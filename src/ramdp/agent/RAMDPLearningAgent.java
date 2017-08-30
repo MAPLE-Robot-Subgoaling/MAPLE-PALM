@@ -123,14 +123,18 @@ public class RAMDPLearningAgent implements LearningAgent{
 		tabLevel += "\t";
         System.out.println(tabLevel + ">>> " + task.getAction() + " " + actionCount);
 
-		while(!(task.isFailure(currentState) || task.isComplete(currentState)) && (steps < maxSteps || maxSteps == -1)){
+		while(
+		        !(task.isFailure(currentState) || task.isComplete(currentState)) // while task still valid
+                && (steps < maxSteps || maxSteps == -1)  // and still have steps it can take
+                && !(root.isComplete(root.mapState(baseState))) // and it hasn't solved the root goal, keep planning
+        ){
 			actionCount++;
 			boolean subtaskCompleted = false;
 			pastState = currentState;
 			EnvironmentOutcome result;
 
-            System.out.println(tabLevel + "--- " + task.getAction() + " " + actionCount);
-//            System.out.println(currentState);
+            System.out.println(tabLevel + "+++ " + task.getAction() + " " + actionCount);
+			System.out.println(tabLevel + "    " + task.getGroundedChildTasks(currentState));
 			Action a = nextAction(task, currentState);
 			String actionName = a.actionName();
             if (a instanceof ObjectParameterizedAction) {
@@ -143,7 +147,7 @@ public class RAMDPLearningAgent implements LearningAgent{
 				action = this.taskNames.get(actionName);
 			}
 
-//			System.out.println(tabLevel + task.getAction() + " " + actionCount + " " +  actionName);
+            System.out.println(tabLevel + "    " + actionName);
 
 			if(action.isPrimitive()){
 				subtaskCompleted = true;
