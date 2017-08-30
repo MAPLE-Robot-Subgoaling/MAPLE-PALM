@@ -121,7 +121,7 @@ public class RAMDPLearningAgent implements LearningAgent{
 		int actionCount = 0;
 
 		tabLevel += "\t";
-        System.out.println(tabLevel + task.getAction() + " " + actionCount);
+        System.out.println(tabLevel + ">>> " + task.getAction() + " " + actionCount);
 
 		while(!(task.isFailure(currentState) || task.isComplete(currentState)) && (steps < maxSteps || maxSteps == -1)){
 			actionCount++;
@@ -129,7 +129,7 @@ public class RAMDPLearningAgent implements LearningAgent{
 			pastState = currentState;
 			EnvironmentOutcome result;
 
-//            System.out.println(tabLevel + task.getAction() + " " + actionCount);
+            System.out.println(tabLevel + "--- " + task.getAction() + " " + actionCount);
 //            System.out.println(currentState);
 			Action a = nextAction(task, currentState);
 			String actionName = a.actionName();
@@ -164,7 +164,7 @@ public class RAMDPLearningAgent implements LearningAgent{
 				result = new EnvironmentOutcome(pastState, a, currentState,
 						task.getReward(pastState, a, currentState), task.isFailure
 						(currentState));
-                System.out.println(tabLevel + " " + a + " " + result.r);
+//                System.out.println(tabLevel + " " + a + " " + result.r);
 			}
 			
 			//update task model if the subtask completed correctly
@@ -173,7 +173,7 @@ public class RAMDPLearningAgent implements LearningAgent{
 			}
 		}
 
-		System.out.println(tabLevel + task.getAction() + " " + actionCount);
+		System.out.println(tabLevel + "<<< " +task.getAction() + " " + actionCount);
         tabLevel = tabLevel.substring(0, (tabLevel.length() - 1));
 		return task.isComplete(currentState) || actionCount == 0;
 	}

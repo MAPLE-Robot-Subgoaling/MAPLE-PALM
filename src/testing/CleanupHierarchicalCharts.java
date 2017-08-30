@@ -79,7 +79,7 @@ public class CleanupHierarchicalCharts {
         CleanupRandomStateGenerator sg = new CleanupRandomStateGenerator(minX, minY, maxX, maxY);
 
         String stateType = "threeRooms";//"threeRooms";
-        int numBlocks = 1;
+        int numBlocks = 2;
         CleanupState s = (CleanupState) sg.getStateFor(stateType, numBlocks);
         Task ramdpRoot = CleanupHierarchy.createAMDPHierarchy(minX, minY, maxX, maxY);
         OOSADomain base = CleanupHierarchy.getBaseDomain();
