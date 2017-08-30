@@ -121,6 +121,7 @@ public class RAMDPLearningAgent implements LearningAgent{
 		int actionCount = 0;
 
 		tabLevel += "\t";
+        System.out.println(tabLevel + task.getAction() + " " + actionCount);
 
 		while(!(task.isFailure(currentState) || task.isComplete(currentState)) && (steps < maxSteps || maxSteps == -1)){
 			actionCount++;
@@ -128,8 +129,8 @@ public class RAMDPLearningAgent implements LearningAgent{
 			pastState = currentState;
 			EnvironmentOutcome result;
 
-            System.out.println(tabLevel + task.getAction() + " " + actionCount);
-            System.out.println(currentState);
+//            System.out.println(tabLevel + task.getAction() + " " + actionCount);
+//            System.out.println(currentState);
 			Action a = nextAction(task, currentState);
 			String actionName = a.actionName();
             if (a instanceof ObjectParameterizedAction) {

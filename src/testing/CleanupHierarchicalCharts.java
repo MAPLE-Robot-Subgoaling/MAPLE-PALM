@@ -57,6 +57,7 @@ public class CleanupHierarchicalCharts {
         LearningAlgorithmExperimenter exp = new LearningAlgorithmExperimenter(env, numTrial, numEpisode, maxSteps, ramdp);
         exp.setUpPlottingConfiguration(500, 300, 2, 1000,
                 TrialMode.MOST_RECENT_AND_AVERAGE,
+                PerformanceMetric.STEPS_PER_EPISODE,
                 PerformanceMetric.CUMULATIVE_REWARD_PER_EPISODE
         );
 
@@ -88,7 +89,7 @@ public class CleanupHierarchicalCharts {
         double rmax = 1000;
         double gamma = 0.95;
         double maxDelta = 0.001;
-        int numEpisodes = 10;
+        int numEpisodes = 100;
         int width = maxX - minX;
         int height = maxY - minY;
         createCharts(s, base, ramdpRoot, rmax, rmaxThreshold, maxDelta, gamma, numEpisodes, maxSteps, numTrials, width, height);
