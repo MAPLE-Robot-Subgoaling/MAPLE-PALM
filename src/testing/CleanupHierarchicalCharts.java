@@ -70,16 +70,16 @@ public class CleanupHierarchicalCharts {
 
     public static void main(String[] args) {
 
-        RandomFactory.seedMapped(0, 32525322L);
+        RandomFactory.seedMapped(0, 3255322L);
 
         int minX = 0;
         int minY = 0;
         int maxX = 7;
-        int maxY = 7;
+        int maxY = 5;
         CleanupRandomStateGenerator sg = new CleanupRandomStateGenerator(minX, minY, maxX, maxY);
 
-        String stateType = "threeRooms";//"threeRooms";
-        int numBlocks = 2;
+        String stateType = "twoRooms";//"threeRooms";
+        int numBlocks = 1;
         CleanupState s = (CleanupState) sg.getStateFor(stateType, numBlocks);
         Task ramdpRoot = CleanupHierarchy.createAMDPHierarchy(minX, minY, maxX, maxY);
         OOSADomain base = CleanupHierarchy.getBaseDomain();

@@ -204,12 +204,12 @@ public class RAMDPLearningAgent implements LearningAgent{
 		Policy viPolicy = plan.planFromState(s);
 		Policy rmaxPolicy = new RMAXPolicy(model, viPolicy, domain.getActionTypes(), hashingFactory);
 		Action action = rmaxPolicy.action(s);
-//		try {
-//            Episode e = PolicyUtils.rollout(rmaxPolicy, s, model, 100);
-//            System.out.println(tabLevel + e.actionSequence);
-//        } catch (Exception e) {
-//		    // ignore, temp debug to assess ramdp
-//        }
+		try {
+            Episode e = PolicyUtils.rollout(rmaxPolicy, s, model, 100);
+            System.out.println(tabLevel + e.actionSequence);
+        } catch (Exception e) {
+		    // ignore, temp debug to assess ramdp
+        }
 		return action;
 	}
 

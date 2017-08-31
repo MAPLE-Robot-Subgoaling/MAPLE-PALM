@@ -121,14 +121,17 @@ public class GroundedTask {
 	 * @return the grounded task's reward of a transition to s
 	 */
 	public double getReward(State s, Action a, State sPrime) {
-//		if (!a.equals(action)) {
+		if (!a.equals(action)) {
 //			System.out.println("a: " + a);
 //			System.out.println("action: " + action);
 //			throw new RuntimeException("a not equal to action in groundedtask");
-//		}
-		if(!t.isPrimitive()) {
+			// if a is primitive, pass this current task "action" instead of primitive a
 			NonprimitiveTask npt = (NonprimitiveTask) t;
 			return npt.reward(s, action, sPrime);
+		}
+		if(!t.isPrimitive()) {
+			NonprimitiveTask npt = (NonprimitiveTask) t;
+			return npt.reward(s, a, sPrime);
 		} else {
 			throw new RuntimeException("should not give a primitive task for getReward");
 //			return ((FactoredModel)getDomain().getModel()).getRf().reward(s, a, sPrime);

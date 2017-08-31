@@ -11,6 +11,8 @@ import burlap.mdp.singleagent.model.RewardFunction;
 import burlap.mdp.singleagent.oo.OOSADomain;
 import ramdp.agent.RAMDPModel;
 
+import java.util.Arrays;
+
 public class NonprimitiveTask extends Task{
 	//tasks which are not at the base of the hierarchy
 	
@@ -114,6 +116,7 @@ public class NonprimitiveTask extends Task{
 	public boolean isComplete(State s, Action a){
 //        return completed.isTrue((OOState) s, a.actionName());
 		if (a instanceof ObjectParameterizedAction) {
+			System.out.println(Arrays.toString(((ObjectParameterizedAction)a).getObjectParameters()));
 			return completed.isTrue((OOState) s, ((ObjectParameterizedAction) a).getObjectParameters());
 		} else {
 			return completed.isTrue((OOState) s, RAMDPModel.getActionNameSafe(a));
