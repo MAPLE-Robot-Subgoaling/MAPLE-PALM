@@ -178,8 +178,8 @@ public class Taxi implements DomainGenerator{
                 new UniversalActionType(ACTION_SOUTH),
                 new UniversalActionType(ACTION_EAST),
                 new UniversalActionType(ACTION_WEST),
-                new PutdownActionType(),
-                new PickupActionType());
+                new PutdownActionType(ACTION_PUTDOWN, new String[]{CLASS_PASSENGER}),
+                new PickupActionType(ACTION_PICKUP, new String[]{CLASS_PASSENGER}));
 		
 		return domain;
 	}
@@ -189,7 +189,7 @@ public class Taxi implements DomainGenerator{
 	public OOSADomain generateBringOnDomain(){
 		OOSADomain d = generateDomain();
 		d.clearActionTypes();
-		d.addActionType(new PickupActionType());
+		d.addActionType(new PickupActionType(ACTION_PICKUP, new String[]{CLASS_PASSENGER}));
 		return d;
 	}
 	
@@ -208,7 +208,7 @@ public class Taxi implements DomainGenerator{
 	public OOSADomain generateDropOffDomain(){
 		OOSADomain d = generateDomain();
 		d.clearActionTypes();
-		d.addActionType(new PutdownActionType());
+		d.addActionType(new PutdownActionType(ACTION_PUTDOWN, new String[]{CLASS_PASSENGER}));
 		return d;
 	}
 				

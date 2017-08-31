@@ -67,8 +67,8 @@ public class TaxiRootDomain implements DomainGenerator {
 		domain.setModel(model);
 		
 		domain.addActionTypes(
-				new GetActionType(TaxiRootDomain.ACTION_GET, new String[]{CLASS_PASSENGER}),
-				new PutActionType(TaxiRootDomain.ACTION_PUT, new String[]{CLASS_PASSENGER})
+				new GetActionType(ACTION_GET, new String[]{CLASS_PASSENGER}),
+				new PutActionType(ACTION_PUT, new String[]{CLASS_PASSENGER})
 		);
 		
 		return domain;

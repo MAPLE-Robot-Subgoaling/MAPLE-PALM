@@ -15,7 +15,6 @@ import burlap.mdp.singleagent.model.RewardFunction;
 import burlap.mdp.singleagent.oo.OOSADomain;
 import burlap.statehashing.HashableStateFactory;
 import burlap.statehashing.simple.SimpleHashableStateFactory;
-import taxi.Taxi;
 import taxi.hierarchies.tasks.nav.state.NavStateMapper;
 import taxi.hierarchies.tasks.nav.state.TaxiNavAgent;
 import taxi.hierarchies.tasks.nav.state.TaxiNavLocation;
@@ -42,6 +41,10 @@ public class TaxiNavDomain implements DomainGenerator {
 
 	//  action
 	public static final String ACTION_NAVIGATE =			"navigate";
+	public static final String ACTION_NORTH =				"north";
+	public static final String ACTION_SOUTH =				"south";
+	public static final String ACTION_EAST =				"east";
+	public static final String ACTION_WEST =				"west";
 
 	private RewardFunction rf;
 	private TerminalFunction tf;
@@ -74,10 +77,10 @@ public class TaxiNavDomain implements DomainGenerator {
 		domain.setModel(model);
 		
 		domain.addActionTypes(
-				new UniversalActionType(Taxi.ACTION_NORTH),
-				new UniversalActionType(Taxi.ACTION_SOUTH),
-				new UniversalActionType(Taxi.ACTION_EAST),
-				new UniversalActionType(Taxi.ACTION_WEST)
+				new UniversalActionType(ACTION_NORTH),
+				new UniversalActionType(ACTION_SOUTH),
+				new UniversalActionType(ACTION_EAST),
+				new UniversalActionType(ACTION_WEST)
             );
 
 		return domain;

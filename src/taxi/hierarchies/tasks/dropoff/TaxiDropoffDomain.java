@@ -14,7 +14,6 @@ import burlap.mdp.singleagent.model.RewardFunction;
 import burlap.mdp.singleagent.oo.OOSADomain;
 import burlap.statehashing.HashableStateFactory;
 import burlap.statehashing.simple.SimpleHashableStateFactory;
-import taxi.PutdownActionType;
 import taxi.hierarchies.tasks.dropoff.state.DropoffStateMapper;
 import taxi.hierarchies.tasks.dropoff.state.TaxiDropoffPassenger;
 import taxi.stateGenerator.TaxiStateFactory;
@@ -30,7 +29,8 @@ public class TaxiDropoffDomain implements DomainGenerator {
 	// attributes
 	public static final String ATT_LOCATION = 				"currentLocation";
 
-	public static final String ACTIN_DROPOFF =				"dropoff";
+	// actions
+	public static final String ACTION_PUTDOWN =				"putdown";
 
 	private RewardFunction rf;
 	private TerminalFunction tf;
@@ -62,7 +62,7 @@ public class TaxiDropoffDomain implements DomainGenerator {
 		FactoredModel model = new FactoredModel(taxiModel, rf, tf);
 		domain.setModel(model);
 		
-		domain.addActionTypes( new PutdownActionType() );
+		domain.addActionTypes( new PutdownActionType(ACTION_PUTDOWN, new String[]{CLASS_PASSENGER}) );
 		
 		return domain;
 	}

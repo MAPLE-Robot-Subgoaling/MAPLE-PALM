@@ -29,6 +29,9 @@ public class TaxiBringonDomain implements DomainGenerator {
 	// attributes
 	public static final String ATT_LOCATION = 				"location";
 
+	// actions
+	public static final String ACTION_PICKUP =				"pickup";
+
 	private RewardFunction rf;
 	private TerminalFunction tf;
 
@@ -59,7 +62,7 @@ public class TaxiBringonDomain implements DomainGenerator {
 		FactoredModel model = new FactoredModel(taxiModel, rf, tf);
 		domain.setModel(model);
 		
-		domain.addActionTypes( new PickupActionType() );
+		domain.addActionTypes( new PickupActionType(ACTION_PICKUP, new String[]{CLASS_PASSENGER}) );
 		
 		return domain;
 	}

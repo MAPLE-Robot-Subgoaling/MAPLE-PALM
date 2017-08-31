@@ -1,86 +1,42 @@
 package taxi;
 
-import burlap.mdp.core.action.Action;
-import burlap.mdp.core.action.ActionType;
+import burlap.mdp.core.oo.ObjectParameterizedAction;
+import burlap.mdp.core.oo.state.OOState;
+import burlap.mdp.core.oo.state.ObjectInstance;
 import burlap.mdp.core.state.State;
-import taxi.hierarchies.tasks.dropoff.TaxiDropoffDomain;
-import taxi.hierarchies.tasks.dropoff.state.TaxiDropoffState;
+import burlap.mdp.singleagent.oo.ObjectParameterizedActionType;
 import taxi.state.TaxiState;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class PutdownActionType implements ActionType {
-
-    public String typeName() {
-        return Taxi.ACTION_PUTDOWN;
+public class PutdownActionType extends ObjectParameterizedActionType {
+    public PutdownActionType(String name, String[] parameterClasses) {
+        super(name, parameterClasses);
     }
 
     @Override
-    public PutdownAction associatedAction(String strRep) {
-        String pass = strRep.split("_")[1];
-        return new PutdownAction(pass);
-    }
+    protected boolean applicableInState(State s, ObjectParameterizedAction objectParameterizedAction) {
+        TaxiState state = (TaxiState) s;
+        String[] params = objectParameterizedAction.getObjectParameters();
+        String passengerName = params[0];
+        ObjectInstance passenger = state.object(passengerName);
 
-    @Override
-    public List<Action> allApplicableActions(State s) {
-        TaxiDropoffState state = (TaxiDropoffState) s;
-        List<Action> acts = new ArrayList<>();
+        // Must be in Taxi
+        if (!(boolean)passenger.get(Taxi.ATT_IN_TAXI)) {
+            return false;
+        }
 
-        for (String pass : state.getPassengers()) {
-            String pass_loc = (String)state.getPassengerAtt(pass, TaxiDropoffDomain.ATT_LOCATION);
-            boolean notInTaxi = pass_loc.equals(TaxiDropoffDomain.NOT_IN_TAXI);
-            if (!notInTaxi) {
-                acts.add(new PutdownAction(pass));
+        // Must be at a depot
+        int px = (int)state.getPassengerAtt(passengerName, Taxi.ATT_X);
+        int py = (int)state.getPassengerAtt(passengerName, Taxi.ATT_Y);
+        for(String loc : state.getLocations()) {
+            int lx = (int)state.getLocationAtt(loc, Taxi.ATT_X);
+            int ly = (int)state.getLocationAtt(loc, Taxi.ATT_Y);
+
+            if(lx == px && ly == py) {
+                return true;
             }
         }
 
-        return acts;
+        return false;
     }
-
-    //each navigate action is given a goal
-    public class PutdownAction implements Action {
-
-        private String passenger;
-
-        public PutdownAction(String passenger) {
-            this.passenger = passenger;
-        }
-
-        public String getPassenger(){
-            return passenger;
-        }
-
-        @Override
-        public String actionName() {
-            return Taxi.ACTION_PUTDOWN + "_" + passenger;
-        }
-
-        @Override
-        public Action copy() {
-            return new PutdownAction(passenger);
-        }
-
-        @Override
-        public String toString(){
-            return actionName();
-        }
-
-        @Override
-        public boolean equals(Object other){
-            if(this == other) return true;
-            if(other == null || getClass() != other.getClass()) return false;
-
-            PutdownAction a = (PutdownAction) other;
-
-            return a.passenger.equals(passenger);
-        }
-
-        @Override
-        public int hashCode(){
-            return actionName().hashCode();
-        }
-    }
-
-
 }
+

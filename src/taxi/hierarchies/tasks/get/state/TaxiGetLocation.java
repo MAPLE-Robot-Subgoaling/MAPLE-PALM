@@ -12,7 +12,7 @@ public class TaxiGetLocation extends MutableObject{
 	private final static List<Object> keys = Arrays.<Object>asList( );
 
 	public TaxiGetLocation(String name) {
-		this.setName(name);;
+		this.setName(name);
 	}
 
 	@Override
