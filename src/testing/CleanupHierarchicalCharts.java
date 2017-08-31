@@ -70,7 +70,7 @@ public class CleanupHierarchicalCharts {
 
     public static void main(String[] args) {
 
-        RandomFactory.seedMapped(0, 3255322L);
+        RandomFactory.seedMapped(0, 32552L); //3255322L
 
         int minX = 0;
         int minY = 0;
@@ -85,9 +85,9 @@ public class CleanupHierarchicalCharts {
         OOSADomain base = CleanupHierarchy.getBaseDomain();
         HashableStateFactory hs = new SimpleHashableStateFactory(true);
 
-        int maxSteps = 100;
+        int maxSteps = 1000;
         int rmaxThreshold = 1;
-        int numTrials = 4;
+        int numTrials = 2;
         double rmax = 1000;
         double gamma = 0.95;
         double maxDelta = 0.001;
