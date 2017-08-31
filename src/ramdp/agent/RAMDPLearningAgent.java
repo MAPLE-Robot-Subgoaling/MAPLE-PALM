@@ -134,7 +134,7 @@ public class RAMDPLearningAgent implements LearningAgent{
 			EnvironmentOutcome result;
 
             System.out.println(tabLevel + "+++ " + task.getAction() + " " + actionCount);
-			System.out.println(tabLevel + "    " + task.getGroundedChildTasks(currentState));
+			System.out.println(tabLevel + "    Possible Actions: " + task.getGroundedChildTasks(currentState));
 			Action a = nextAction(task, currentState);
 			String actionName = RAMDPModel.getActionNameSafe(a);
 			GroundedTask action = this.taskNames.get(actionName);
@@ -207,7 +207,7 @@ public class RAMDPLearningAgent implements LearningAgent{
 		Action action = rmaxPolicy.action(s);
 		try {
             Episode e = PolicyUtils.rollout(rmaxPolicy, s, model, 100);
-            System.out.println(tabLevel + "\t" + e.actionSequence);
+            System.out.println(tabLevel + "    Debug rollout: " + e.actionSequence);
         } catch (Exception e) {
 		    // ignore, temp debug to assess ramdp
         }
