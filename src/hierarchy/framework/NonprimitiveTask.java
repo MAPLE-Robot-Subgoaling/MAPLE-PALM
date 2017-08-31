@@ -9,6 +9,7 @@ import burlap.mdp.core.oo.state.OOState;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.model.RewardFunction;
 import burlap.mdp.singleagent.oo.OOSADomain;
+import ramdp.agent.RAMDPModel;
 
 public class NonprimitiveTask extends Task{
 	//tasks which are not at the base of the hierarchy
@@ -106,7 +107,7 @@ public class NonprimitiveTask extends Task{
 	//task's action give by a
 	@Override
 	public boolean isFailure(State s, Action a) {
-		return failure.isTrue((OOState) s, a.actionName());
+		return failure.isTrue((OOState) s, RAMDPModel.getActionNameSafe(a));
 	}
 	
 	@Override
@@ -115,7 +116,7 @@ public class NonprimitiveTask extends Task{
 		if (a instanceof ObjectParameterizedAction) {
 			return completed.isTrue((OOState) s, ((ObjectParameterizedAction) a).getObjectParameters());
 		} else {
-			return completed.isTrue((OOState) s, a.actionName());
+			return completed.isTrue((OOState) s, RAMDPModel.getActionNameSafe(a));
 		}
 	}
 }

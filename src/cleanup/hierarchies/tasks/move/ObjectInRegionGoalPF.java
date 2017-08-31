@@ -18,6 +18,7 @@ public class ObjectInRegionGoalPF extends PropositionalFunction {
 
 //        CleanupState s = (CleanupState) state;
         String objectName = params[0];
+//        if (params.length < 2) { return true; }
         String regionName = params[1];
         ObjectInstance object = state.object(objectName);
         ObjectInstance region = state.object(regionName);

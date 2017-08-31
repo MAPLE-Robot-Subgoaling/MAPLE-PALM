@@ -11,6 +11,7 @@ import burlap.mdp.core.action.Action;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.model.FullModel;
 import burlap.mdp.singleagent.oo.OOSADomain;
+import ramdp.agent.RAMDPModel;
 
 public class GroundedTask {
 
@@ -127,9 +128,11 @@ public class GroundedTask {
 //		}
 		if(!t.isPrimitive()) {
 			NonprimitiveTask npt = (NonprimitiveTask) t;
-			return npt.reward(s, a, sPrime);
+			return npt.reward(s, action, sPrime);
 		} else {
-			return ((FactoredModel)getDomain().getModel()).getRf().reward(s, a, sPrime);
+			throw new RuntimeException("should not give a primitive task for getReward");
+//			return ((FactoredModel)getDomain().getModel()).getRf().reward(s, a, sPrime);
+//			return 1.0;
 		}
 	}
 
@@ -163,7 +166,7 @@ public class GroundedTask {
         }
 
         GroundedTask o = (GroundedTask) other;
-        if(!this.action.actionName().equals(o.action.actionName())){
+        if(!RAMDPModel.getActionNameSafe(this.action).equals(RAMDPModel.getActionNameSafe(o.action))){
             return false; 
         }
         
@@ -173,7 +176,7 @@ public class GroundedTask {
     @Override
     public int hashCode() {
         HashCodeBuilder hashCodeBuilder = new HashCodeBuilder(31, 7);
-        hashCodeBuilder.append(action.actionName());
+        hashCodeBuilder.append(RAMDPModel.getActionNameSafe(this.action));
         return hashCodeBuilder.toHashCode();
     }
 }

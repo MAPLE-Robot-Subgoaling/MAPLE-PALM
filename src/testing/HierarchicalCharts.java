@@ -4,6 +4,7 @@ import burlap.behavior.singleagent.auxiliary.performance.PerformanceMetric;
 import burlap.behavior.singleagent.auxiliary.performance.TrialMode;
 import burlap.behavior.singleagent.learning.LearningAgent;
 import burlap.behavior.singleagent.learning.LearningAgentFactory;
+import burlap.debugtools.RandomFactory;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.common.VisualActionObserver;
 import burlap.mdp.singleagent.environment.SimulatedEnvironment;
@@ -111,6 +112,10 @@ public class HierarchicalCharts {
 	}
 	
 	public static void main(String[] args) {
+
+
+		RandomFactory.seedMapped(0, 32525322L);
+
 		double correctMoveprob = 0.8;
 		double fickleProb = 0.225;
 		int numEpisodes = 30;

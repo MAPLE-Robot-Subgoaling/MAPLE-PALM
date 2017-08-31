@@ -136,11 +136,7 @@ public class RAMDPLearningAgent implements LearningAgent{
             System.out.println(tabLevel + "+++ " + task.getAction() + " " + actionCount);
 			System.out.println(tabLevel + "    " + task.getGroundedChildTasks(currentState));
 			Action a = nextAction(task, currentState);
-			String actionName = a.actionName();
-            if (a instanceof ObjectParameterizedAction) {
-                ObjectParameterizedAction opa = (ObjectParameterizedAction)a;
-                actionName = a.actionName() + "_" + String.join("_",opa.getObjectParameters());
-            }
+			String actionName = RAMDPModel.getActionNameSafe(a);
 			GroundedTask action = this.taskNames.get(actionName);
 			if(action == null){
 				addChildrenToMap(task, currentState);
@@ -158,7 +154,8 @@ public class RAMDPLearningAgent implements LearningAgent{
 				result.o = pastState;
 				result.op = currentState;
 				result.a = a;
-				result.r = action.getReward(pastState, a, currentState);
+				result.r = task.getReward(pastState, a, currentState);
+//				result.r = action.getReward(pastState, a, currentState);
 				steps++;
 			}else{
 				subtaskCompleted = solveTask(action, baseEnv, maxSteps);
