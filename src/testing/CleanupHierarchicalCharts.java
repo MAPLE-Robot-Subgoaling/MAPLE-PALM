@@ -37,7 +37,7 @@ public class CleanupHierarchicalCharts {
         final GroundedTask RAMDPGroot = RAMDPRoot.getAllGroundedTasks(s).get(0);
 
         SimulatedEnvironment env = new SimulatedEnvironment(domain, s);
-        VisualActionObserver obs = new VisualActionObserver(domain, CleanupVisualizer.getVisualizer(width, height), 500, 500);
+        VisualActionObserver obs = new VisualActionObserver(domain, CleanupVisualizer.getVisualizer(width, height), 700, 500);
         obs.initGUI();
         obs.setDefaultCloseOperation(obs.EXIT_ON_CLOSE);
         env.addObservers(obs);
@@ -70,7 +70,7 @@ public class CleanupHierarchicalCharts {
 
     public static void main(String[] args) {
 
-        RandomFactory.seedMapped(0, 32552L);
+        RandomFactory.seedMapped(0, 3255322L);
 
         int minX = 0;
         int minY = 0;
@@ -79,7 +79,7 @@ public class CleanupHierarchicalCharts {
         CleanupRandomStateGenerator sg = new CleanupRandomStateGenerator(minX, minY, maxX, maxY);
 
         String stateType = "twoRooms";//"threeRooms";
-        int numBlocks = 2;
+        int numBlocks = 1;
         CleanupState s = (CleanupState) sg.getStateFor(stateType, numBlocks);
         Task ramdpRoot = CleanupHierarchy.createAMDPHierarchy(minX, minY, maxX, maxY);
         OOSADomain base = CleanupHierarchy.getBaseDomain();
