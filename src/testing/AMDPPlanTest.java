@@ -1,5 +1,6 @@
 package testing;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,6 +12,7 @@ import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.oo.OOSADomain;
 import burlap.statehashing.HashableStateFactory;
 import burlap.statehashing.simple.SimpleHashableStateFactory;
+import config.taxi.TaxiConfig;
 import hierarchy.framework.Task;
 import taxi.TaxiVisualizer;
 import taxi.hierarchies.TaxiHierarchy;
@@ -19,37 +21,44 @@ import taxi.stateGenerator.TaxiStateFactory;
 
 public class AMDPPlanTest {
 	
-	public static void plan(Task root, State init, HashableStateFactory hs, OOSADomain baseDomain,
-			double gamma, double maxDelta, int maxRollouts, int numEpisodes){
+	public static void plan(TaxiConfig conf, Task root, State init, HashableStateFactory hs, OOSADomain baseDomain) {
 		
-		AMDPPlanner amdp = new AMDPPlanner(root, gamma, hs, maxDelta, maxRollouts);
+		AMDPPlanner amdp = new AMDPPlanner(root, conf.gamma, hs, conf.rmax.max_delta, conf.planning.rollouts);
 		List<Episode> eps = new ArrayList<Episode>();
 
-		for(int i = 0; i < numEpisodes; i++){
+		for(int i = 0; i < conf.episodes; i++){
 			eps.add(amdp.planFromState(init));
 		}
-		
+
 		EpisodeSequenceVisualizer ev = new EpisodeSequenceVisualizer
-				(TaxiVisualizer.getVisualizer(5, 5), baseDomain, eps);;
+				(TaxiVisualizer.getVisualizer(conf.output.visualizer.width, conf.output.visualizer.height), baseDomain, eps);;
 		ev.setDefaultCloseOperation(ev.EXIT_ON_CLOSE);
 		ev.initGUI();
 	}
 	
 	public static void main(String[] args) {
-		double correctMoveprob = 1;
+		String conffile = "config/taxi/classic.yaml";
+		if(args.length > 0) {
+			conffile = args[0];
+		}
 
+		TaxiConfig conf = new TaxiConfig();
+		try {
+			System.out.println("Using configuration: " + conffile);
+			conf = TaxiConfig.load(conffile);
+		} catch (FileNotFoundException ex) {
+			System.err.println("Could not find configuration file");
+			System.exit(404);
+		}
 
-		double fickleProb = 0;
-		double gamma = 0.9;
-		double maxDelta = 0.01;
-		int maxRollouts = 1000;
-		int numEpisodes = 100;
-		
-		RandomFactory.seedMapped(0, 2320942930L);
-				
-		TaxiState s = TaxiStateFactory.createClassicState();
-		Task RAMDProot = TaxiHierarchy.createAMDPHierarchy(correctMoveprob, fickleProb, true);
+		if(conf.stochastic.seed > 0) {
+			RandomFactory.seedMapped(0, conf.stochastic.seed);
+			System.out.println("Using seed: " + conf.stochastic.seed);
+		}
+
+		TaxiState s = conf.generateState();
+		Task RAMDProot = TaxiHierarchy.createAMDPHierarchy(conf.stochastic.correct_move, conf.stochastic.fickle, true);
 		OOSADomain base = TaxiHierarchy.getBaseDomain();
-		plan(RAMDProot, s, new SimpleHashableStateFactory(), base, gamma, maxDelta, maxRollouts, numEpisodes);
+		plan(conf, RAMDProot, s, new SimpleHashableStateFactory(), base);
 	}
 }
