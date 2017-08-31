@@ -33,7 +33,7 @@ public class CleanupHierarchy {
 
         CleanupGoal goalCondition = new CleanupGoal();
 
-        double rewardGoal = 100;
+        double rewardGoal = 500;
         double rewardBase = -1;
         double rewardNoop = -1;
         double rewardPull = 0;

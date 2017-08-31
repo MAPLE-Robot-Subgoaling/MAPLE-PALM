@@ -168,9 +168,9 @@ public class RAMDPLearningAgent implements LearningAgent{
 				result = new EnvironmentOutcome(pastState, a, currentState,
 						task.getReward(pastState, a, currentState), task.isFailure
 						(currentState));
-//                System.out.println(tabLevel + " " + a + " " + result.r);
 			}
-			
+            System.out.println(tabLevel + "\treward: " + result.r);
+
 			//update task model if the subtask completed correctly
 			if(subtaskCompleted){
 				model.updateModel(result);
