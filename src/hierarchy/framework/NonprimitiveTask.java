@@ -109,7 +109,11 @@ public class NonprimitiveTask extends Task{
 	//task's action give by a
 	@Override
 	public boolean isFailure(State s, Action a) {
-		return failure.isTrue((OOState) s, RAMDPModel.getActionNameSafe(a));
+		if (a instanceof ObjectParameterizedAction) {
+			return failure.isTrue((OOState) s, ((ObjectParameterizedAction) a).getObjectParameters());
+		} else {
+			return failure.isTrue((OOState) s, RAMDPModel.getActionNameSafe(a));
+		}
 	}
 	
 	@Override

@@ -38,6 +38,8 @@ import taxi.hierarchies.tasks.root.PutActionType;
 import taxi.hierarchies.tasks.root.TaxiRootDomain;
 import taxi.hierarchies.tasks.root.state.RootStateMapper;
 
+import static taxi.hierarchies.tasks.root.TaxiRootDomain.CLASS_PASSENGER;
+
 public class TaxiHierarchy {
 
 	/**
@@ -77,8 +79,8 @@ public class TaxiHierarchy {
 		ActionType aBringon = new BringonActionType();
 		ActionType aDropoff = new DropoffActionType();
 		ActionType aNavigate = new NavigateActionType();
-		ActionType aGet = new GetActionType();
-		ActionType aPut = new PutActionType();
+		ActionType aGet = new GetActionType(TaxiRootDomain.ACTION_GET, new String[]{CLASS_PASSENGER});
+		ActionType aPut = new PutActionType(TaxiRootDomain.ACTION_PUT, new String[]{CLASS_PASSENGER});
 		ActionType aSolve = new SolveActionType();
 		
 		//tasks

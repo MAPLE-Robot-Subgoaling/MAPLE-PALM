@@ -6,6 +6,7 @@ import burlap.behavior.singleagent.Episode;
 import burlap.behavior.singleagent.planning.stochastic.valueiteration.ValueIteration;
 import burlap.mdp.auxiliary.DomainGenerator;
 import burlap.mdp.core.TerminalFunction;
+import burlap.mdp.core.action.ActionType;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.common.GoalBasedRF;
 import burlap.mdp.singleagent.environment.SimulatedEnvironment;
@@ -66,8 +67,8 @@ public class TaxiRootDomain implements DomainGenerator {
 		domain.setModel(model);
 		
 		domain.addActionTypes(
-            new GetActionType(),
-            new PutActionType()
+				new GetActionType(TaxiRootDomain.ACTION_GET, new String[]{CLASS_PASSENGER}),
+				new PutActionType(TaxiRootDomain.ACTION_PUT, new String[]{CLASS_PASSENGER})
 		);
 		
 		return domain;
