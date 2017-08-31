@@ -159,6 +159,7 @@ public class RAMDPLearningAgent implements LearningAgent{
 				steps++;
 			}else{
 				subtaskCompleted = solveTask(action, baseEnv, maxSteps);
+				System.out.println(tabLevel + "+++ " + task.getAction() + " " + actionCount);
 				baseState = e.stateSequence.get(e.stateSequence.size() - 1);
 				currentState = task.mapState(baseState);
 
@@ -206,7 +207,7 @@ public class RAMDPLearningAgent implements LearningAgent{
 		Action action = rmaxPolicy.action(s);
 		try {
             Episode e = PolicyUtils.rollout(rmaxPolicy, s, model, 100);
-            System.out.println(tabLevel + e.actionSequence);
+            System.out.println(tabLevel + "\t" + e.actionSequence);
         } catch (Exception e) {
 		    // ignore, temp debug to assess ramdp
         }
