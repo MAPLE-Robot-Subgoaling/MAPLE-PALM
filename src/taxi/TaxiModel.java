@@ -145,13 +145,12 @@ public class TaxiModel implements FullStateModel{
 				boolean passengerChanged = false;
 				for(String passengerName : s.getPassengers()){
 					boolean inTaxi = (boolean) s.getPassengerAtt(passengerName, Taxi.ATT_IN_TAXI);
-					boolean justPickedUp = (boolean) s.getPassengerAtt(passengerName, Taxi.ATT_JUST_PICKED_UP);
-					String passGoal = (String) s.getPassengerAtt(passengerName, 
+					String passGoal = (String) s.getPassengerAtt(passengerName,
 							Taxi.ATT_GOAL_LOCATION);					
-					if(inTaxi && justPickedUp){
+					if(inTaxi){
 						passengerChanged = true;
-						TaxiPassenger np = ns.touchPassenger(passengerName);
-						np.set(Taxi.ATT_JUST_PICKED_UP, false);
+						//TaxiPassenger np = ns.touchPassenger(passengerName);
+						//np.set(Taxi.ATT_JUST_PICKED_UP, false);
 						// may change goal
 						for(String locName : s.getLocations()){
 							TaxiState nfickles = ns.copy();
@@ -199,9 +198,6 @@ public class TaxiModel implements FullStateModel{
 		if (tx == px && ty == py && !inTaxi) {
 			TaxiPassenger np = ns.touchPassenger(p);
 			np.set(Taxi.ATT_IN_TAXI, true);
-			if (fickle) {
-				np.set(Taxi.ATT_JUST_PICKED_UP, true);
-			}
 
 			TaxiAgent ntaxi = ns.touchTaxi();
 			ntaxi.set(Taxi.ATT_TAXI_OCCUPIED, true);
