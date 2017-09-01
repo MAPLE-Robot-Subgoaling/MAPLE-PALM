@@ -10,6 +10,7 @@ import burlap.mdp.core.oo.state.MutableOOState;
 import burlap.mdp.core.oo.state.OOStateUtilities;
 import burlap.mdp.core.oo.state.ObjectInstance;
 import burlap.mdp.core.state.MutableState;
+import taxi.Taxi;
 import taxi.hierarchies.tasks.nav.TaxiNavDomain;
 
 public class TaxiNavState implements MutableOOState{
@@ -74,11 +75,11 @@ public class TaxiNavState implements MutableOOState{
 
 	@Override
 	public List<ObjectInstance> objectsOfClass(String oclass) {
-		if(oclass.equals(TaxiNavDomain.CLASS_TAXI))
+		if(oclass.equals(Taxi.CLASS_TAXI))
 			return Arrays.<ObjectInstance>asList(taxi);
-		else if(oclass.equals(TaxiNavDomain.CLASS_LOCATION))
+		else if(oclass.equals(Taxi.CLASS_LOCATION))
 			return new ArrayList<ObjectInstance>(locations.values());
-		else if(oclass.equals(TaxiNavDomain.CLASS_WALL))
+		else if(oclass.equals(Taxi.CLASS_WALL))
 			return new ArrayList<ObjectInstance>(walls.values());
 		throw new RuntimeException("No object class " + oclass);
 	}

@@ -15,18 +15,13 @@ import burlap.mdp.singleagent.model.RewardFunction;
 import burlap.mdp.singleagent.oo.OOSADomain;
 import burlap.statehashing.HashableStateFactory;
 import burlap.statehashing.simple.SimpleHashableStateFactory;
+import taxi.Taxi;
 import taxi.hierarchies.tasks.nav.state.NavStateMapper;
 import taxi.hierarchies.tasks.nav.state.TaxiNavAgent;
 import taxi.hierarchies.tasks.nav.state.TaxiNavLocation;
 import taxi.stateGenerator.TaxiStateFactory;
 
 public class TaxiNavDomain implements DomainGenerator {
-
-	//public constants for general use
-	//object classes
-	public static final String CLASS_TAXI = 				"NavTaxi";
-	public static final String CLASS_LOCATION = 			"NavLocation";
-	public static final String CLASS_WALL =					"NavWall";
 
 	//attributes
 	public static final String ATT_X =						"x";
@@ -70,7 +65,7 @@ public class TaxiNavDomain implements DomainGenerator {
 	public OOSADomain generateDomain() {
 		OOSADomain domain = new OOSADomain();
 		
-		domain.addStateClass(CLASS_TAXI, TaxiNavAgent.class).addStateClass(CLASS_LOCATION, TaxiNavLocation.class);
+		domain.addStateClass(Taxi.CLASS_TAXI, TaxiNavAgent.class).addStateClass(Taxi.CLASS_LOCATION, TaxiNavLocation.class);
 		
 		TaxiNavModel taxiModel = new TaxiNavModel();
 		FactoredModel model = new FactoredModel(taxiModel, rf, tf);

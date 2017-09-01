@@ -7,6 +7,7 @@ import burlap.mdp.core.oo.state.OOStateUtilities;
 import burlap.mdp.core.oo.state.OOVariableKey;
 import burlap.mdp.core.oo.state.ObjectInstance;
 import burlap.mdp.core.state.MutableState;
+import taxi.Taxi;
 import taxi.hierarchies.tasks.get.TaxiGetDomain;
 
 public class TaxiGetState implements MutableOOState {
@@ -69,11 +70,11 @@ public class TaxiGetState implements MutableOOState {
 
 	@Override
 	public List<ObjectInstance> objectsOfClass(String oclass) {
-	    if(oclass.equals(TaxiGetDomain.CLASS_TAXI))
+	    if(oclass.equals(Taxi.CLASS_TAXI))
 	        return Arrays.<ObjectInstance>asList(taxi);
-		if(oclass.equals(TaxiGetDomain.CLASS_PASSENGER))
+		if(oclass.equals(Taxi.CLASS_PASSENGER))
 			return new ArrayList<ObjectInstance>(passengers.values());
-		if(oclass.equals(TaxiGetDomain.CLASS_LOCATION))
+		if(oclass.equals(Taxi.CLASS_LOCATION))
 			return new ArrayList<ObjectInstance>(locations.values());
 		throw new RuntimeException("No object class " + oclass);
 	}
@@ -111,11 +112,11 @@ public class TaxiGetState implements MutableOOState {
 
 	@Override
 	public MutableOOState addObject(ObjectInstance o) {
-	    if(o instanceof TaxiGetAgent || o.className().equals(TaxiGetDomain.CLASS_TAXI)) {
+	    if(o instanceof TaxiGetAgent || o.className().equals(Taxi.CLASS_TAXI)) {
 	    	taxi = (TaxiGetAgent)o;
-		} else if(o instanceof TaxiGetPassenger || o.className().equals(TaxiGetDomain.CLASS_PASSENGER)){
+		} else if(o instanceof TaxiGetPassenger || o.className().equals(Taxi.CLASS_PASSENGER)){
 			touchPassengers().put(o.name(), (TaxiGetPassenger) o);
-		} else if(o instanceof TaxiGetLocation || o.className().equals(TaxiGetDomain.CLASS_LOCATION)){
+		} else if(o instanceof TaxiGetLocation || o.className().equals(Taxi.CLASS_LOCATION)){
 			touchLocations().put(o.name(), (TaxiGetLocation) o);
 		} else {
 			throw new RuntimeException("Can only add certain objects to state.");

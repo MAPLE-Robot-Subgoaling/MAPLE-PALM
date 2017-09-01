@@ -2,6 +2,7 @@ package taxi.functions.amdp;
 
 import burlap.mdp.core.oo.propositional.PropositionalFunction;
 
+import taxi.Taxi;
 import taxi.hierarchies.tasks.root.TaxiRootDomain;
 import burlap.mdp.core.oo.state.OOState;
 import taxi.hierarchies.tasks.root.state.TaxiRootState;
@@ -10,7 +11,7 @@ import taxi.hierarchies.tasks.root.state.TaxiRootState;
 public class RootPF extends PropositionalFunction {
 
 	public RootPF() {
-		super("root", new String[]{TaxiRootDomain.CLASS_LOCATION});
+		super("root", new String[]{Taxi.CLASS_LOCATION});
 	}
 	
 	@Override

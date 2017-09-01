@@ -16,12 +16,9 @@ import burlap.statehashing.HashableStateFactory;
 import burlap.statehashing.simple.SimpleHashableStateFactory;
 import taxi.hierarchies.tasks.bringon.state.*;
 import taxi.stateGenerator.TaxiStateFactory;
+import taxi.Taxi;
 
 public class TaxiBringonDomain implements DomainGenerator {
-
-	//object classes
-	public static final String CLASS_TAXI = 				"BringonTaxi";
-	public static final String CLASS_PASSENGER =			"BringonPassenger";
 
 	public static final String ON_ROAD =					"onRoad";
 	public static final String IN_TAXI =					"inTaxi";
@@ -56,13 +53,13 @@ public class TaxiBringonDomain implements DomainGenerator {
 	public OOSADomain generateDomain() {
 		OOSADomain domain = new OOSADomain();
 		
-		domain.addStateClass(CLASS_TAXI, TaxiBringonAgent.class).addStateClass(CLASS_PASSENGER, TaxiBringonPassenger.class);
+		domain.addStateClass(Taxi.CLASS_TAXI, TaxiBringonAgent.class).addStateClass(Taxi.CLASS_PASSENGER, TaxiBringonPassenger.class);
 
 		TaxiBringonModel taxiModel = new TaxiBringonModel();
 		FactoredModel model = new FactoredModel(taxiModel, rf, tf);
 		domain.setModel(model);
 		
-		domain.addActionTypes( new PickupActionType(ACTION_PICKUP, new String[]{CLASS_PASSENGER}) );
+		domain.addActionTypes( new PickupActionType(ACTION_PICKUP, new String[]{Taxi.CLASS_PASSENGER}) );
 		
 		return domain;
 	}

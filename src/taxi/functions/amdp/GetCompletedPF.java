@@ -2,6 +2,7 @@ package taxi.functions.amdp;
 
 import burlap.mdp.core.oo.propositional.PropositionalFunction;
 import burlap.mdp.core.oo.state.OOState;
+import taxi.Taxi;
 import taxi.hierarchies.tasks.get.TaxiGetDomain;
 import utilities.MutableObject;
 
@@ -9,7 +10,7 @@ public class GetCompletedPF extends PropositionalFunction{
 	// get is complete when desired passenger is in the taxi
 	
 	public GetCompletedPF() {
-		super("get", new String[]{TaxiGetDomain.CLASS_PASSENGER});
+		super("get", new String[]{Taxi.CLASS_PASSENGER});
 	}
 	
 	@Override

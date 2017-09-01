@@ -2,6 +2,7 @@ package taxi.functions.amdp;
 
 import burlap.mdp.core.oo.propositional.PropositionalFunction;
 import burlap.mdp.core.oo.state.OOState;
+import taxi.Taxi;
 import taxi.hierarchies.tasks.nav.TaxiNavDomain;
 import taxi.hierarchies.tasks.nav.state.TaxiNavState;
 
@@ -9,7 +10,7 @@ public class NavigateAbstractPF extends PropositionalFunction {
 	//nav is terminal when the taxi is at the desired location
 	
 	public NavigateAbstractPF() {
-		super("Nav to depot", new String[]{TaxiNavDomain.CLASS_LOCATION});
+		super("Nav to depot", new String[]{Taxi.CLASS_LOCATION});
 	}
 	
 	@Override
