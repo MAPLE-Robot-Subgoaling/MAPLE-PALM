@@ -2,6 +2,7 @@ package taxi.functions.amdp;
 
 import burlap.mdp.core.oo.propositional.PropositionalFunction;
 import burlap.mdp.core.oo.state.OOState;
+import taxi.Taxi;
 import taxi.hierarchies.tasks.put.TaxiPutDomain;
 import taxi.hierarchies.tasks.root.TaxiRootDomain;
 import utilities.MutableObject;
@@ -12,7 +13,7 @@ public class PutFailurePF extends PropositionalFunction{
 	//put fail if taxi is empty 
 	
 	public PutFailurePF() {
-		super("put", new String[]{TaxiRootDomain.CLASS_PASSENGER});
+		super("put", new String[]{Taxi.CLASS_PASSENGER});
 	}
 
 	@Override

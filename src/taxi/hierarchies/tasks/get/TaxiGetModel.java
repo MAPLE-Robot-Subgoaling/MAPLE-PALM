@@ -6,13 +6,12 @@ import java.util.List;
 import burlap.debugtools.RandomFactory;
 import burlap.mdp.core.StateTransitionProb;
 import burlap.mdp.core.action.Action;
+import burlap.mdp.core.oo.ObjectParameterizedAction;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.model.statemodel.FullStateModel;
 import taxi.hierarchies.tasks.get.state.TaxiGetAgent;
 import taxi.hierarchies.tasks.get.state.TaxiGetPassenger;
 import taxi.hierarchies.tasks.get.state.TaxiGetState;
-import taxi.hierarchies.tasks.nav.NavigateActionType.NavigateAction;
-import taxi.hierarchies.tasks.get.BringonActionType.BringonAction;
 
 public class TaxiGetModel implements FullStateModel {
 
@@ -36,9 +35,9 @@ public class TaxiGetModel implements FullStateModel {
 		TaxiGetState state = (TaxiGetState) s;
 	
 		if(a.actionName().startsWith(TaxiGetDomain.ACTION_BRINGON)) {
-			bringon(state, (BringonAction) a, tps);
+			bringon(state, (ObjectParameterizedAction) a, tps);
 		} else if(a.actionName().startsWith(TaxiGetDomain.ACTION_NAV)) {
-			navigate(state, (NavigateAction)a, tps);
+			navigate(state, (ObjectParameterizedAction)a, tps);
 		}
 		return tps;
 	}
@@ -49,9 +48,9 @@ public class TaxiGetModel implements FullStateModel {
 	 * @param a the get action type
 	 * @param tps the list of transition probabilities
 	 */
-	public void bringon(TaxiGetState s, BringonAction a, List<StateTransitionProb> tps){
+	public void bringon(TaxiGetState s, ObjectParameterizedAction a, List<StateTransitionProb> tps){
 		TaxiGetState ns = s.copy();
-		String passenger = a.getPassenger();
+		String passenger = a.getObjectParameters()[0];
 
 		TaxiGetPassenger np = s.touchPassenger(passenger);
 		np.set(TaxiGetDomain.ATT_LOCATION, TaxiGetDomain.IN_TAXI);
@@ -65,9 +64,9 @@ public class TaxiGetModel implements FullStateModel {
 	 * @param a the get action type
 	 * @param tps the list of transition probabilities
 	 */
-	public void navigate(TaxiGetState s, NavigateAction a, List<StateTransitionProb> tps){
+	public void navigate(TaxiGetState s, ObjectParameterizedAction a, List<StateTransitionProb> tps){
 		TaxiGetState ns = s.copy();
-		String goal = a.getGoalLocation();
+		String goal = a.getObjectParameters()[0];
 
 		TaxiGetAgent nt = s.touchTaxi();
 		nt.set(TaxiGetDomain.ATT_LOCATION, goal);

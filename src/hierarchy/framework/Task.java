@@ -1,8 +1,5 @@
 package hierarchy.framework;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import burlap.mdp.auxiliary.StateMapping;
 import burlap.mdp.core.action.Action;
 import burlap.mdp.core.action.ActionType;
@@ -10,8 +7,10 @@ import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.oo.OOSADomain;
 import taxi.hierarchies.interfaces.ParameterizedStateMapping;
 
-public abstract class Task {
+import java.util.ArrayList;
+import java.util.List;
 
+public abstract class Task {
 
 	/**
 	 * domain - the MDP representing the level of abstraction
@@ -116,6 +115,12 @@ public abstract class Task {
 	 * primitive (true) or composite (false)
 	 */
 	public abstract boolean isPrimitive();
-	
+
+	/**
+	 * tests a state to determine if task is complete
+	 * @param s state to test
+	 * @param a the grounded task
+	 * @return wether a is complete in s
+	 */
 	public abstract boolean isComplete(State s, Action a);
 }

@@ -3,10 +3,9 @@ package taxi.hierarchies.tasks.put;
 import burlap.debugtools.RandomFactory;
 import burlap.mdp.core.StateTransitionProb;
 import burlap.mdp.core.action.Action;
+import burlap.mdp.core.oo.ObjectParameterizedAction;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.model.statemodel.FullStateModel;
-import taxi.hierarchies.tasks.put.DropoffActionType.DropoffAction;
-import taxi.hierarchies.tasks.nav.NavigateActionType.NavigateAction;
 import taxi.hierarchies.tasks.put.state.TaxiPutAgent;
 import taxi.hierarchies.tasks.put.state.TaxiPutPassenger;
 import taxi.hierarchies.tasks.put.state.TaxiPutState;
@@ -36,9 +35,9 @@ public class TaxiPutModel implements FullStateModel {
 		TaxiPutState state = (TaxiPutState) s;
 
 		if(a.actionName().startsWith(TaxiPutDomain.ACTION_DROPOFF)) {
-			dropoff(state, (DropoffAction)a, tps);
+			dropoff(state, (ObjectParameterizedAction)a, tps);
 		} else if(a.actionName().startsWith(TaxiPutDomain.ACTION_NAV)) {
-			navigate(state, (NavigateAction) a, tps);
+			navigate(state, (ObjectParameterizedAction)a, tps);
 		}
 		return tps;
 	}
@@ -49,9 +48,9 @@ public class TaxiPutModel implements FullStateModel {
 	 * @param a the get action type
 	 * @param tps the list of transition probabilities
 	 */
-	public void dropoff(TaxiPutState s, DropoffAction a, List<StateTransitionProb> tps) {
+	public void dropoff(TaxiPutState s, ObjectParameterizedAction a, List<StateTransitionProb> tps) {
 		TaxiPutState ns = s.copy();
-		String passenger = a.getPassenger();
+		String passenger = a.getObjectParameters()[0];
 
         TaxiPutPassenger np = s.touchPassenger(passenger);
         np.set(TaxiPutDomain.ATT_IN_TAXI, false);
@@ -65,9 +64,9 @@ public class TaxiPutModel implements FullStateModel {
 	 * @param a the get action type
 	 * @param tps the list of transition probabilities
 	 */
-	public void navigate(TaxiPutState s, NavigateAction a, List<StateTransitionProb> tps){
+	public void navigate(TaxiPutState s, ObjectParameterizedAction a, List<StateTransitionProb> tps){
 		TaxiPutState ns = s.copy();
-		String goal = a.getGoalLocation();
+		String goal = a.getObjectParameters()[0];
 
 		TaxiPutAgent nt = s.touchTaxi();
 		nt.set(TaxiPutDomain.ATT_TAXI_LOCATION, goal);

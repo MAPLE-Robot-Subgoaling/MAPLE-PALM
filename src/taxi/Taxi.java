@@ -1,8 +1,5 @@
 package taxi;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import burlap.behavior.singleagent.Episode;
 import burlap.behavior.singleagent.auxiliary.EpisodeSequenceVisualizer;
 import burlap.behavior.singleagent.learning.tdmethods.QLearning;
@@ -16,12 +13,14 @@ import burlap.mdp.singleagent.model.RewardFunction;
 import burlap.mdp.singleagent.oo.OOSADomain;
 import burlap.statehashing.HashableStateFactory;
 import burlap.statehashing.simple.SimpleHashableStateFactory;
-import taxi.hierarchies.tasks.bringon.PickupActionType;
 import taxi.state.TaxiAgent;
 import taxi.state.TaxiLocation;
 import taxi.state.TaxiPassenger;
 import taxi.state.TaxiWall;
 import taxi.stateGenerator.TaxiStateFactory;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Taxi implements DomainGenerator{
 
@@ -42,8 +41,9 @@ public class Taxi implements DomainGenerator{
 	//passenger attributes
 	public static final String ATT_GOAL_LOCATION = 			"goalLocation";
 	public static final String ATT_IN_TAXI = 				"inTaxi";
+	public static final String ATT_PICKED_UP_AT_LEAST_ONCE ="pickedUpAtLeastOnce";
 	public static final String ATT_JUST_PICKED_UP =			"justPickedUp";
-
+	public static final String ON_ROAD =				"onRoad";
 	//location attributes 
 	public static final String ATT_COLOR =					"color";
 	
@@ -179,8 +179,8 @@ public class Taxi implements DomainGenerator{
                 new UniversalActionType(ACTION_SOUTH),
                 new UniversalActionType(ACTION_EAST),
                 new UniversalActionType(ACTION_WEST),
-                new PutdownActionType(),
-                new PickupActionType());
+                new PutdownActionType(ACTION_PUTDOWN, new String[]{CLASS_PASSENGER}),
+                new PickupActionType(ACTION_PICKUP, new String[]{CLASS_PASSENGER}));
 		
 		return domain;
 	}
@@ -190,7 +190,7 @@ public class Taxi implements DomainGenerator{
 	public OOSADomain generateBringOnDomain(){
 		OOSADomain d = generateDomain();
 		d.clearActionTypes();
-		d.addActionType(new PickupActionType());
+		d.addActionType(new PickupActionType(ACTION_PICKUP, new String[]{CLASS_PASSENGER}));
 		return d;
 	}
 	
@@ -209,7 +209,7 @@ public class Taxi implements DomainGenerator{
 	public OOSADomain generateDropOffDomain(){
 		OOSADomain d = generateDomain();
 		d.clearActionTypes();
-		d.addActionType(new PutdownActionType());
+		d.addActionType(new PutdownActionType(ACTION_PUTDOWN, new String[]{CLASS_PASSENGER}));
 		return d;
 	}
 				

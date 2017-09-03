@@ -18,6 +18,7 @@ import cleanup.hierarchies.tasks.root.CleanupRoot;
 import cleanup.hierarchies.tasks.root.CleanupRootGoalPF;
 import cleanup.hierarchies.tasks.root.CleanupRootMapper;
 import cleanup.hierarchies.tasks.root.CleanupRootFailPF;
+import config.cleanup.CleanupConfig;
 import hierarchy.framework.NonprimitiveTask;
 import hierarchy.framework.PrimitiveTask;
 import hierarchy.framework.SolveActionType;
@@ -29,14 +30,19 @@ public class CleanupHierarchy {
 
     private static OOSADomain baseDomain;
 
-    public static Task createAMDPHierarchy(int minX, int minY, int maxX, int maxY){
+    public static Task createAMDPHierarchy(CleanupConfig config){
+
+        int minX = config.minX;
+        int minY = config.minY;
+        int maxX = config.maxX;
+        int maxY = config.maxY;
+        double rewardGoal = config.rewardGoal; // 500;
+        double rewardBase = config.rewardBase; // -1;
+        double rewardNoop = config.rewardNoop; // -1;
+        double rewardPull = config.rewardPull; // 0;
 
         CleanupGoal goalCondition = new CleanupGoal();
 
-        double rewardGoal = 500;
-        double rewardBase = -1;
-        double rewardNoop = -1;
-        double rewardPull = 0;
         RewardFunction rootRF = new PickRF();//new CleanupRF(goalCondition, rewardGoal, rewardBase, rewardNoop, rewardPull);
         TerminalFunction rootTF = new PickTF();//new GoalConditionTF(goalCondition);
         RewardFunction pickRF = new PickRF();

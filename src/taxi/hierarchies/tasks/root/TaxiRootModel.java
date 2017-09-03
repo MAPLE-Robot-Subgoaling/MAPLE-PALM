@@ -4,12 +4,10 @@ import burlap.debugtools.RandomFactory;
 import burlap.mdp.core.StateTransitionProb;
 import burlap.mdp.core.action.Action;
 import burlap.mdp.core.oo.ObjectParameterizedAction;
-import burlap.mdp.core.oo.state.ObjectInstance;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.model.statemodel.FullStateModel;
 import taxi.hierarchies.tasks.root.state.TaxiRootPassenger;
 import taxi.hierarchies.tasks.root.state.TaxiRootState;
-import utilities.MutableObject;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,6 +1,7 @@
 package taxi.hierarchies.tasks.get.state;
 
 import burlap.mdp.core.oo.state.ObjectInstance;
+import taxi.Taxi;
 import taxi.hierarchies.tasks.get.TaxiGetDomain;
 import utilities.MutableObject;
 
@@ -12,12 +13,12 @@ public class TaxiGetLocation extends MutableObject{
 	private final static List<Object> keys = Arrays.<Object>asList( );
 
 	public TaxiGetLocation(String name) {
-		this.setName(name);;
+		this.setName(name);
 	}
 
 	@Override
 	public String className() {
-		return TaxiGetDomain.CLASS_LOCATION;
+		return Taxi.CLASS_LOCATION;
 	}
 
 	@Override

@@ -23,12 +23,6 @@ import taxi.stateGenerator.TaxiStateFactory;
 
 public class TaxiNavDomain implements DomainGenerator {
 
-	//public constants for general use
-	//object classes
-	public static final String CLASS_TAXI = 				"NavTaxi";
-	public static final String CLASS_LOCATION = 			"NavLocation";
-	public static final String CLASS_WALL =					"NavWall";
-
 	//attributes
 	public static final String ATT_X =						"x";
 	public static final String ATT_Y =						"y";
@@ -42,6 +36,10 @@ public class TaxiNavDomain implements DomainGenerator {
 
 	//  action
 	public static final String ACTION_NAVIGATE =			"navigate";
+	public static final String ACTION_NORTH =				"north";
+	public static final String ACTION_SOUTH =				"south";
+	public static final String ACTION_EAST =				"east";
+	public static final String ACTION_WEST =				"west";
 
 	private RewardFunction rf;
 	private TerminalFunction tf;
@@ -67,17 +65,17 @@ public class TaxiNavDomain implements DomainGenerator {
 	public OOSADomain generateDomain() {
 		OOSADomain domain = new OOSADomain();
 		
-		domain.addStateClass(CLASS_TAXI, TaxiNavAgent.class).addStateClass(CLASS_LOCATION, TaxiNavLocation.class);
+		domain.addStateClass(Taxi.CLASS_TAXI, TaxiNavAgent.class).addStateClass(Taxi.CLASS_LOCATION, TaxiNavLocation.class);
 		
 		TaxiNavModel taxiModel = new TaxiNavModel();
 		FactoredModel model = new FactoredModel(taxiModel, rf, tf);
 		domain.setModel(model);
 		
 		domain.addActionTypes(
-				new UniversalActionType(Taxi.ACTION_NORTH),
-				new UniversalActionType(Taxi.ACTION_SOUTH),
-				new UniversalActionType(Taxi.ACTION_EAST),
-				new UniversalActionType(Taxi.ACTION_WEST)
+				new UniversalActionType(ACTION_NORTH),
+				new UniversalActionType(ACTION_SOUTH),
+				new UniversalActionType(ACTION_EAST),
+				new UniversalActionType(ACTION_WEST)
             );
 
 		return domain;

@@ -28,7 +28,7 @@ public class NonprimitiveTask extends Task{
 	
 	//used for hierarchies with abstractions
 	/**
-	 * create a nunprimitive taks
+	 * create a nunprimitive task
 	 * @param children the subtasks
 	 * @param aType the set of actions this task represents in its parent task's domain
 	 * @param abstractDomain the domain this task executes actions in
@@ -44,6 +44,21 @@ public class NonprimitiveTask extends Task{
 		this.completed = compl; 
 	}
 
+	/**
+	 * create a nunprimitive taks
+	 * @param children the subtasks
+	 * @param aType the set of actions this task represents in its parent task's domain
+	 * @param map the state abstraction function into the domain
+	 * @param fail the failure PF
+	 * @param compl the completion PF
+	 */
+	public NonprimitiveTask(Task[] children, ActionType aType, StateMapping map,
+							PropositionalFunction fail, PropositionalFunction compl) {
+		super(children, aType, null, map);
+		this.rf = new NonprimitiveRewardFunction(this);
+		this.failure = fail;
+		this.completed = compl;
+	}
 	//used for hierarchies with no abstraction
 	/**
 	 * create a nunprimitive taks
@@ -53,10 +68,10 @@ public class NonprimitiveTask extends Task{
 	 * @param compl the completion PF
 	 */
 	public NonprimitiveTask(Task[] children, ActionType aType,
-			PropositionalFunction term, PropositionalFunction compl) {
+			PropositionalFunction fail, PropositionalFunction compl) {
 		super(children, aType,  null, null);
 		this.rf = new NonprimitiveRewardFunction(this);
-		this.failure = term;
+		this.failure = fail;
 		this.completed = compl;
 	}
 	
@@ -72,10 +87,10 @@ public class NonprimitiveTask extends Task{
 	 * @param compl the completion PF
 	 */
 	public NonprimitiveTask(Task[] children, ActionType aType, OOSADomain abstractDomain, StateMapping map,
-			 RewardFunction taskrf, PropositionalFunction term, PropositionalFunction compl) {
+			 RewardFunction taskrf, PropositionalFunction fail, PropositionalFunction compl) {
 		super(children, aType, abstractDomain, map);
 		this.rf = taskrf;
-		this.failure = term;
+		this.failure = fail;
 		this.completed = compl;
 	}
 	
