@@ -3,8 +3,7 @@ package taxi.functions.amdp;
 import burlap.mdp.core.oo.propositional.PropositionalFunction;
 import burlap.mdp.core.oo.state.OOState;
 import taxi.Taxi;
-import taxi.hierarchies.tasks.nav.NavigateActionType;
-import taxi.hierarchies.tasks.nav.NavigateActionType.NavigateAction;
+import taxi.hierarchies.tasks.nav.TaxiNavDomain;
 import taxi.hierarchies.tasks.nav.state.TaxiNavState;
 
 public class NavigateAbstractPF extends PropositionalFunction {
@@ -16,16 +15,11 @@ public class NavigateAbstractPF extends PropositionalFunction {
 	
 	@Override
 	public boolean isTrue(OOState s, String... params) {
-		String action = params[0];
-		NavigateActionType nav = new NavigateActionType();
-		NavigateAction a = nav.associatedAction(action);
 		TaxiNavState st = (TaxiNavState) s;
-		
-		int tx = (int) st.getTaxiAtt(Taxi.ATT_X);
-		int ty = (int) st.getTaxiAtt(Taxi.ATT_Y);
-		int lx = (int) st.getLocationAtt(a.getGoalLocation(), Taxi.ATT_X);
-		int ly = (int) st.getLocationAtt(a.getGoalLocation(), Taxi.ATT_Y);
-		
+		int tx = (int) st.getTaxiAtt(TaxiNavDomain.ATT_X);
+		int ty = (int) st.getTaxiAtt(TaxiNavDomain.ATT_Y);
+		int lx = (int) st.getLocationAtt(params[0], TaxiNavDomain.ATT_X);
+		int ly = (int) st.getLocationAtt(params[0], TaxiNavDomain.ATT_Y);
 		return tx == lx && ty == ly;
 	}
 

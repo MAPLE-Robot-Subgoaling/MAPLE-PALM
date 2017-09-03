@@ -1,88 +1,26 @@
 package taxi.hierarchies.tasks.root;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import burlap.mdp.core.action.Action;
-import burlap.mdp.core.action.ActionType;
 import burlap.mdp.core.oo.ObjectParameterizedAction;
+import burlap.mdp.core.oo.state.OOState;
+import burlap.mdp.core.oo.state.ObjectInstance;
 import burlap.mdp.core.state.State;
-import taxi.hierarchies.tasks.root.state.TaxiRootState;
+import burlap.mdp.singleagent.oo.ObjectParameterizedActionType;
 
-public class GetActionType implements ActionType {
-	//the get action type which puts the passenger with given name in taxi
-	
-	@Override
-	public String typeName() {
-		return TaxiRootDomain.ACTION_GET;
-	}
+import static taxi.hierarchies.tasks.root.TaxiRootDomain.ATT_CURRENT_LOCATION;
+import static taxi.hierarchies.tasks.root.TaxiRootDomain.IN_TAXI;
 
-	@Override
-	public GetAction associatedAction(String strRep) {
-		String passenger = strRep.split("_")[1];
-		return new GetAction(passenger);
-	}
+public class GetActionType extends ObjectParameterizedActionType {
 
-	@Override
-	public List<Action> allApplicableActions(State s) {
-		TaxiRootState state = (TaxiRootState) s;
-		List<Action> acts = new ArrayList<Action>();
-		
-		for(String passengerName : state.getPassengers()){
-			acts.add(new GetAction(passengerName));
-		}
-		
-		return acts;
-	}
+    public GetActionType(String name, String[] parameterClasses) {
+        super(name, parameterClasses);
+    }
 
-	public class GetAction implements ObjectParameterizedAction{
-
-		private String passenger;
-		
-		public GetAction(String passengerName) {
-			this.passenger = passengerName;
-		}
-
-		public String getPassenger(){
-			return passenger;
-		}
-		@Override
-		public String actionName() {
-			return TaxiRootDomain.ACTION_GET + "_" + passenger;
-		}
-
-		@Override
-		public Action copy() {
-			return new GetAction(passenger);
-		}
-		
-		@Override
-		public String toString(){
-			return actionName();
-		}
-
-		@Override
-		public boolean equals(Object other){
-			if(this == other) return true;
-			if(other == null || getClass() != other.getClass()) return false;
-			
-			GetAction a = (GetAction) other;
-			
-			return a.passenger.equals(passenger);
-		}
-		
-		@Override
-		public int hashCode(){
-			return actionName().hashCode();
-		}
-
-		@Override
-		public String[] getObjectParameters() {
-			return new String[]{passenger};
-		}
-		@Override
-		public void setObjectParameters(String[] strings) {
-			passenger = strings[0];
-		}
+    @Override
+	protected boolean applicableInState(State s, ObjectParameterizedAction objectParameterizedAction) {
+		OOState state = (OOState) s;
+		String[] params = objectParameterizedAction.getObjectParameters();
+		String passengerName = params[0];
+		ObjectInstance passenger = state.object(passengerName);
+		return !passenger.get(ATT_CURRENT_LOCATION).equals(IN_TAXI);
 	}
 }

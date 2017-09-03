@@ -62,7 +62,7 @@ public class AMDPModel implements FullModel {
  		
  		//adjust the reward and terminal values to be relevant for the task
 		for(TransitionProb tp : tps){
-			tp.eo.r = task.getReward(tp.eo.op);
+			tp.eo.r = task.getReward(tp.eo.o, tp.eo.a, tp.eo.op);
 			tp.eo.terminated = terminal(tp.eo.op);
 		}
 		return tps;

@@ -1,16 +1,18 @@
 package taxi;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import burlap.debugtools.RandomFactory;
 import burlap.mdp.core.StateTransitionProb;
 import burlap.mdp.core.action.Action;
+import burlap.mdp.core.oo.ObjectParameterizedAction;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.model.statemodel.FullStateModel;
+import taxi.hierarchies.tasks.bringon.PickupActionType;
 import taxi.state.TaxiAgent;
 import taxi.state.TaxiPassenger;
 import taxi.state.TaxiState;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class TaxiModel implements FullStateModel{
 
@@ -74,9 +76,9 @@ public class TaxiModel implements FullStateModel{
 		if(action <= Taxi.IND_WEST){
 			movement(taxiS, action, tps);
 		}else if(action == Taxi.IND_PUTDOWN){
-			putdown(taxiS, ((PutdownAction)a).getPassenger(), tps);
+			putdown(taxiS, (ObjectParameterizedAction)a, tps);
 		}else if(action == Taxi.IND_PICKUP){
-			pickup(taxiS, ((PickupActionType.PickupAction)a).getPassenger(), tps);
+			pickup(taxiS, (ObjectParameterizedAction)a, tps);
 		}
 		
 		return tps;
@@ -144,13 +146,12 @@ public class TaxiModel implements FullStateModel{
 				boolean passengerChanged = false;
 				for(String passengerName : s.getPassengers()){
 					boolean inTaxi = (boolean) s.getPassengerAtt(passengerName, Taxi.ATT_IN_TAXI);
-					boolean justPickedUp = (boolean) s.getPassengerAtt(passengerName, Taxi.ATT_JUST_PICKED_UP);
-					String passGoal = (String) s.getPassengerAtt(passengerName, 
+					String passGoal = (String) s.getPassengerAtt(passengerName,
 							Taxi.ATT_GOAL_LOCATION);					
-					if(inTaxi && justPickedUp){
+					if(inTaxi){
 						passengerChanged = true;
-						TaxiPassenger np = ns.touchPassenger(passengerName);
-						np.set(Taxi.ATT_JUST_PICKED_UP, false);
+						//TaxiPassenger np = ns.touchPassenger(passengerName);
+						//np.set(Taxi.ATT_JUST_PICKED_UP, false);
 						// may change goal
 						for(String locName : s.getLocations()){
 							TaxiState nfickles = ns.copy();
@@ -182,10 +183,11 @@ public class TaxiModel implements FullStateModel{
 	/**
 	 * put passenger at the taxi inside if no one else is inside
 	 * @param s the current state
-	 * @param p the name of the passenger to pickup
+	 * @param a the passenger parameterized pickup action
 	 * @param tps a list of state transition probabilities to add to
 	 */
-	public void pickup(TaxiState s, String p, List<StateTransitionProb> tps) {
+	public void pickup(TaxiState s, ObjectParameterizedAction a, List<StateTransitionProb> tps) {
+	    String p = a.getObjectParameters()[0];
 		TaxiState ns = s.copy();
 
 		int tx = (int) s.getTaxiAtt(Taxi.ATT_X);
@@ -198,9 +200,6 @@ public class TaxiModel implements FullStateModel{
 		if (tx == px && ty == py && !inTaxi) {
 			TaxiPassenger np = ns.touchPassenger(p);
 			np.set(Taxi.ATT_IN_TAXI, true);
-			if (fickle) {
-				np.set(Taxi.ATT_JUST_PICKED_UP, true);
-			}
 
 			TaxiAgent ntaxi = ns.touchTaxi();
 			ntaxi.set(Taxi.ATT_TAXI_OCCUPIED, true);
@@ -211,10 +210,11 @@ public class TaxiModel implements FullStateModel{
 	/**
 	 * put passenger down if the taxi is occupied and at a depot
 	 * @param s the current state
-	 * @param p the name of the passenger to putdown
+	 * @param a the passenger parameterized putdown action
 	 * @param tps a list of state transition probabilities to add to
 	 */
-	public void putdown(TaxiState s, String p, List<StateTransitionProb> tps){
+	public void putdown(TaxiState s, ObjectParameterizedAction a, List<StateTransitionProb> tps){
+	    String p = a.getObjectParameters()[0];
 		TaxiState ns = s.copy();
 		int tx = (int) s.getTaxiAtt(Taxi.ATT_X);
 		int ty = (int) s.getTaxiAtt(Taxi.ATT_Y);

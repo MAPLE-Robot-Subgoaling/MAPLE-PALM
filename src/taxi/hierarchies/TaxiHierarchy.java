@@ -71,12 +71,12 @@ public class TaxiHierarchy {
 		ActionType aSouth = baseDomain.getAction(Taxi.ACTION_SOUTH);
 		ActionType aWest = baseDomain.getAction(Taxi.ACTION_WEST);
 		ActionType aPickup = baseDomain.getAction(Taxi.ACTION_PICKUP);
-		ActionType aPutdown = new PutdownActionType();
-		ActionType aBringon = new BringonActionType();
-		ActionType aDropoff = new DropoffActionType();
-		ActionType aNavigate = new NavigateActionType();
-		ActionType aGet = new GetActionType();
-		ActionType aPut = new PutActionType();
+		ActionType aPutdown = baseDomain.getAction(Taxi.ACTION_PUTDOWN);
+		ActionType aBringon = getDomain.getAction(TaxiGetDomain.ACTION_BRINGON);
+		ActionType aDropoff = putDomain.getAction(TaxiPutDomain.ACTION_DROPOFF);
+		ActionType aNavigate = new NavigateActionType(TaxiNavDomain.ACTION_NAVIGATE, new String[]{Taxi.CLASS_LOCATION});
+		ActionType aGet = rootDomain.getAction(TaxiRootDomain.ACTION_GET);
+		ActionType aPut = rootDomain.getAction(TaxiRootDomain.ACTION_PUT);
 		ActionType aSolve = new SolveActionType();
 		
 		//tasks
@@ -161,7 +161,7 @@ public class TaxiHierarchy {
 		Task[] bringonTasks = new Task[]{pickup};
 		Task[] dropoffTasks = new Task[]{dropoff};
 
-		PropositionalFunction navPF =/* new NavigateAbstractPF()*/ new NavigatePF();
+		PropositionalFunction navPF = new NavigatePF();
 		NonprimitiveTask navigate = new NonprimitiveTask(navTasks, aNavigate, taxiDomain.generateNavigateDomain(),
 				new IdentityMap(), navPF, navPF);
 		

@@ -5,15 +5,12 @@ import burlap.mdp.core.oo.state.OOStateUtilities;
 import burlap.mdp.core.oo.state.OOVariableKey;
 import burlap.mdp.core.oo.state.ObjectInstance;
 import burlap.mdp.core.state.MutableState;
-import taxi.hierarchies.interfaces.PassengerParameterizable;
+import taxi.Taxi;
 import taxi.hierarchies.tasks.dropoff.TaxiDropoffDomain;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-public class TaxiDropoffState implements MutableOOState, PassengerParameterizable{
+public class TaxiDropoffState implements MutableOOState{
 
 	/**
 	 * contain one taxi, and any number of depots and passengers  
@@ -38,10 +35,7 @@ public class TaxiDropoffState implements MutableOOState, PassengerParameterizabl
 	@Override
 	public ObjectInstance object(String oname) {
 		ObjectInstance o = passengers.get(oname);
-		if(o != null)
-			return o;
-
-		return null;
+		return o;
 	}
 
 	@Override
@@ -53,7 +47,7 @@ public class TaxiDropoffState implements MutableOOState, PassengerParameterizabl
 
 	@Override
 	public List<ObjectInstance> objectsOfClass(String oclass) {
-		if(oclass.equals(TaxiDropoffDomain.CLASS_PASSENGER))
+		if(oclass.equals(Taxi.CLASS_PASSENGER))
 			return new ArrayList<ObjectInstance>(passengers.values());
 		throw new RuntimeException("No object class " + oclass);
 	}
@@ -87,7 +81,7 @@ public class TaxiDropoffState implements MutableOOState, PassengerParameterizabl
 
 	@Override
 	public MutableOOState addObject(ObjectInstance o) {
-		if(o instanceof TaxiDropoffPassenger || o.className().equals(TaxiDropoffDomain.CLASS_PASSENGER)){
+		if(o instanceof TaxiDropoffPassenger || o.className().equals(Taxi.CLASS_PASSENGER)){
 			touchPassengers().put(o.name(), (TaxiDropoffPassenger) o);
 		}else{
 			throw new RuntimeException("Can only add certain objects to state.");
@@ -126,22 +120,6 @@ public class TaxiDropoffState implements MutableOOState, PassengerParameterizabl
 			ret[i++] = name;
 		return ret;
 	}
-
-	@Override
-	public String getPassengerLocation(String pname) {
-		return (String) passengers.get(pname).get(TaxiDropoffDomain.ATT_LOCATION);
-	}
-
-//
-//	@Override
-//	public String getPassengerLocation(String pname) {
-//		return (String) passengers.get(pname).get(TaxiDropoffDomain.ATT_LOCATION);
-//	}
-//
-//	@Override
-//	public String getTaxiLocation() {
-//		return null;
-//	}
 
 	public Object getPassengerAtt(String passname, String attName){
 		return passengers.get(passname).get(attName);

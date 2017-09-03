@@ -6,6 +6,7 @@ import burlap.behavior.singleagent.Episode;
 import burlap.behavior.singleagent.planning.stochastic.valueiteration.ValueIteration;
 import burlap.mdp.auxiliary.DomainGenerator;
 import burlap.mdp.core.TerminalFunction;
+import burlap.mdp.core.action.ActionType;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.common.GoalBasedRF;
 import burlap.mdp.singleagent.environment.SimulatedEnvironment;
@@ -14,15 +15,12 @@ import burlap.mdp.singleagent.model.RewardFunction;
 import burlap.mdp.singleagent.oo.OOSADomain;
 import burlap.statehashing.HashableStateFactory;
 import burlap.statehashing.simple.SimpleHashableStateFactory;
+import taxi.Taxi;
 import taxi.hierarchies.tasks.root.state.RootStateMapper;
 import taxi.hierarchies.tasks.root.state.TaxiRootPassenger;
 import taxi.stateGenerator.TaxiStateFactory;
 
 public class TaxiRootDomain implements DomainGenerator {
-
-	public static final String CLASS_TAXI =					"RootTaxi";
-	public static final String CLASS_PASSENGER =			"RootPassenger";
-	public static final String CLASS_LOCATION = 			"RootLocation";
 
 	//passenger attributes
 	public static final String ATT_GOAL_LOCATION =			"goalLocation";
@@ -59,15 +57,15 @@ public class TaxiRootDomain implements DomainGenerator {
 	public OOSADomain generateDomain() {
 		OOSADomain domain = new OOSADomain();
 		
-		domain.addStateClass(CLASS_PASSENGER, TaxiRootPassenger.class);
+		domain.addStateClass(Taxi.CLASS_PASSENGER, TaxiRootPassenger.class);
 
 		TaxiRootModel tmodel = new TaxiRootModel();
 		FactoredModel model = new FactoredModel(tmodel, rf, tf);
 		domain.setModel(model);
 		
 		domain.addActionTypes(
-            new GetActionType(),
-            new PutActionType()
+				new GetActionType(ACTION_GET, new String[]{Taxi.CLASS_PASSENGER}),
+				new PutActionType(ACTION_PUT, new String[]{Taxi.CLASS_PASSENGER})
 		);
 		
 		return domain;

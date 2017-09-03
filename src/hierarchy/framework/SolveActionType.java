@@ -44,5 +44,11 @@ public class SolveActionType implements ActionType{
 			if(this == other) return true;
 			return other == null || getClass() != other.getClass();
 		}
+
+		@Override
+		public String toString() {
+			return actionName();
+		}
+
 	}
 }

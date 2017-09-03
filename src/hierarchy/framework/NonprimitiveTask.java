@@ -3,11 +3,15 @@ package hierarchy.framework;
 import burlap.mdp.auxiliary.StateMapping;
 import burlap.mdp.core.action.Action;
 import burlap.mdp.core.action.ActionType;
+import burlap.mdp.core.oo.ObjectParameterizedAction;
 import burlap.mdp.core.oo.propositional.PropositionalFunction;
 import burlap.mdp.core.oo.state.OOState;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.model.RewardFunction;
 import burlap.mdp.singleagent.oo.OOSADomain;
+import ramdp.agent.RAMDPModel;
+
+import java.util.Arrays;
 
 public class NonprimitiveTask extends Task{
 	//tasks which are not at the base of the hierarchy
@@ -60,7 +64,7 @@ public class NonprimitiveTask extends Task{
 	 * create a nunprimitive taks
 	 * @param children the subtasks
 	 * @param aType the set of actions this task represents in its parent task's domain
-	 * @param fail the failure PF 
+	 * @param term the failure PF
 	 * @param compl the completion PF
 	 */
 	public NonprimitiveTask(Task[] children, ActionType aType,
@@ -79,7 +83,7 @@ public class NonprimitiveTask extends Task{
 	 * @param abstractDomain the domain this task executes actions in
 	 * @param map the state abstraction function into the domain
 	 * @param taskrf the custom reward function for the task
-	 * @param fail the failure PF 
+	 * @param term the failure PF
 	 * @param compl the completion PF
 	 */
 	public NonprimitiveTask(Task[] children, ActionType aType, OOSADomain abstractDomain, StateMapping map,
@@ -97,12 +101,13 @@ public class NonprimitiveTask extends Task{
 	
 	/**
 	 * uses the defined reward function to assign reward to states
-	 * @param s the state that is being transitioned into
+	 * @param s the original state that is being transitioned from
 	 * @param a the action associated with the grounded version of this task
+	 * @param sPrime the next state that is being transitioned into
 	 * @return the reward assigned to s by the reward function
 	 */
-	public double reward(State s, Action a){
-		return rf.reward(s, a, s);
+	public double reward(State s, Action a, State sPrime){
+		return rf.reward(s, a, sPrime);
 	}
 	
 	/**
@@ -119,11 +124,20 @@ public class NonprimitiveTask extends Task{
 	//task's action give by a
 	@Override
 	public boolean isFailure(State s, Action a) {
-		return failure.isTrue((OOState) s, a.actionName());
+		if (a instanceof ObjectParameterizedAction) {
+			return failure.isTrue((OOState) s, ((ObjectParameterizedAction) a).getObjectParameters());
+		} else {
+			return failure.isTrue((OOState) s, RAMDPModel.getActionNameSafe(a));
+		}
 	}
 	
 	@Override
 	public boolean isComplete(State s, Action a){
-		return completed.isTrue((OOState) s, a.actionName()); 
+//        return completed.isTrue((OOState) s, a.actionName());
+		if (a instanceof ObjectParameterizedAction) {
+			return completed.isTrue((OOState) s, ((ObjectParameterizedAction) a).getObjectParameters());
+		} else {
+			return completed.isTrue((OOState) s, RAMDPModel.getActionNameSafe(a));
+		}
 	}
 }

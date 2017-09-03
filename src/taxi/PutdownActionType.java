@@ -1,38 +1,40 @@
 package taxi;
 
-import burlap.mdp.core.action.Action;
-import burlap.mdp.core.action.ActionType;
+import burlap.mdp.core.oo.ObjectParameterizedAction;
+import burlap.mdp.core.oo.state.ObjectInstance;
 import burlap.mdp.core.state.State;
-import taxi.hierarchies.interfaces.PassengerParameterizable;
+import burlap.mdp.singleagent.oo.ObjectParameterizedActionType;
 import taxi.hierarchies.tasks.dropoff.TaxiDropoffDomain;
+import taxi.hierarchies.tasks.dropoff.state.TaxiDropoffState;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class PutdownActionType implements ActionType {
-
-    public String typeName() {
-        return Taxi.ACTION_PUTDOWN;
+public class PutdownActionType extends ObjectParameterizedActionType {
+    public PutdownActionType(String name, String[] parameterClasses) {
+        super(name, parameterClasses);
     }
 
     @Override
-    public PutdownAction associatedAction(String strRep) {
-        String pass = strRep.split("_")[1];
-        return new PutdownAction(pass);
-    }
+    protected boolean applicableInState(State s, ObjectParameterizedAction objectParameterizedAction) {
+        TaxiDropoffState state = (TaxiDropoffState) s;
+        String[] params = objectParameterizedAction.getObjectParameters();
+        String passengerName = params[0];
+        ObjectInstance passenger = state.object(passengerName);
 
-    @Override
-    public List<Action> allApplicableActions(State s) {
-        PassengerParameterizable state = (PassengerParameterizable) s;
-        List<Action> acts = new ArrayList<>();
+        // Must be at a depot
+        String location =  (String) passenger.get(TaxiDropoffDomain.ATT_LOCATION);
+        if(location.equals(TaxiDropoffDomain.NOT_IN_TAXI))
+            return false;
+//        int px = (int)state.getPassengerAtt(passengerName, Taxi.ATT_X);
+//        int py = (int)state.getPassengerAtt(passengerName, Taxi.ATT_Y);
+//        for(String loc : state.getLocations()) {
+//            int lx = (int)state.getLocationAtt(loc, Taxi.ATT_X);
+//            int ly = (int)state.getLocationAtt(loc, Taxi.ATT_Y);
+//
+//            if(lx == px && ly == py) {
+//                return true;
+//            }
+//        }
 
-        for (String pass : state.getPassengers()) {
-            String location = state.getPassengerLocation(pass);
-            if(! (location.equals(Taxi.ON_ROAD) || location.equals(TaxiDropoffDomain.NOT_IN_TAXI))) {
-                acts.add(new PutdownAction(pass));
-            }
-        }
-
-        return acts;
+        return true;
     }
 }
+

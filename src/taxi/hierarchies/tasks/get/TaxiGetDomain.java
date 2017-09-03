@@ -16,15 +16,13 @@ import burlap.statehashing.HashableStateFactory;
 import burlap.statehashing.simple.SimpleHashableStateFactory;
 import taxi.hierarchies.tasks.get.state.GetStateMapper;
 import taxi.hierarchies.tasks.get.state.TaxiGetAgent;
+import taxi.hierarchies.tasks.get.state.TaxiGetLocation;
 import taxi.hierarchies.tasks.get.state.TaxiGetPassenger;
 import taxi.hierarchies.tasks.nav.NavigateActionType;
 import taxi.stateGenerator.TaxiStateFactory;
+import taxi.Taxi;
 
 public class TaxiGetDomain implements DomainGenerator {
-
-    public static final String CLASS_TAXI =					"GetTaxi";
-	public static final String CLASS_PASSENGER =			"GetPassenger";
-	public static final String CLASS_LOCATION =				"GetLocation";
 
 	public static final String IN_TAXI =					"inTaxi";
 	public static final String ON_ROAD =					"onRoad";
@@ -61,16 +59,17 @@ public class TaxiGetDomain implements DomainGenerator {
 	public OOSADomain generateDomain() {
 		OOSADomain domain = new OOSADomain();
 		
-		domain.addStateClass(CLASS_PASSENGER, TaxiGetPassenger.class)
-			.addStateClass(CLASS_TAXI, TaxiGetAgent.class);
+		domain.addStateClass(Taxi.CLASS_PASSENGER, TaxiGetPassenger.class)
+			.addStateClass(Taxi.CLASS_TAXI, TaxiGetAgent.class)
+			.addStateClass(Taxi.CLASS_LOCATION, TaxiGetLocation.class);
 
 		TaxiGetModel tmodel = new TaxiGetModel();
 		FactoredModel model = new FactoredModel(tmodel, rf, tf);
 		domain.setModel(model);
 		
 		domain.addActionTypes(
-				new NavigateActionType(),
-				new BringonActionType()
+				new NavigateActionType(ACTION_NAV, new String[]{Taxi.CLASS_LOCATION}),
+				new BringonActionType(ACTION_BRINGON, new String[]{Taxi.CLASS_PASSENGER})
 		);
 		
 		return domain;

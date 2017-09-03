@@ -1,17 +1,17 @@
 package taxi.hierarchies.tasks.dropoff;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import burlap.debugtools.RandomFactory;
 import burlap.mdp.core.StateTransitionProb;
 import burlap.mdp.core.action.Action;
+import burlap.mdp.core.oo.ObjectParameterizedAction;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.model.statemodel.FullStateModel;
-import taxi.PutdownAction;
 import taxi.Taxi;
 import taxi.hierarchies.tasks.dropoff.state.TaxiDropoffPassenger;
 import taxi.hierarchies.tasks.dropoff.state.TaxiDropoffState;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class TaxiDropoffModel implements FullStateModel {
 
@@ -35,7 +35,7 @@ public class TaxiDropoffModel implements FullStateModel {
 		TaxiDropoffState state = (TaxiDropoffState) s;
 		
 		if(a.actionName().startsWith(Taxi.ACTION_PUTDOWN)){
-			putdown(state, (PutdownAction)a, tps);
+			putdown(state, (ObjectParameterizedAction)a, tps);
 		}
 		return tps;
 	}
@@ -45,8 +45,8 @@ public class TaxiDropoffModel implements FullStateModel {
 	 * @param s
 	 * @param tps
 	 */
-	public void putdown(TaxiDropoffState s, PutdownAction a, List<StateTransitionProb> tps){
-		String passenger = (String)a.getPassenger();
+	public void putdown(TaxiDropoffState s, ObjectParameterizedAction a, List<StateTransitionProb> tps){
+		String passenger = (String)a.getObjectParameters()[0];
 		TaxiDropoffState ns = s.copy();
 
 		String pass_loc = (String)s.getPassengerAtt(passenger, TaxiDropoffDomain.ATT_LOCATION);

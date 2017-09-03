@@ -21,10 +21,10 @@ public class NonprimitiveRewardFunction implements RewardFunction{
 	 * @return 1 if s prime completes the task, -1 if the task fails, 0 otherwise
 	 */
 	@Override
-	public double reward(State s, Action a, State sprime) {
-		if(t.isComplete(sprime, a))
+	public double reward(State s, Action a, State sPrime) {
+		if(t.isComplete(sPrime, a))
 			return 1;
-		else if (t.isFailure(sprime, a))
+		else if (t.isFailure(sPrime, a))
 			return -1;
 		return 0;
 	}

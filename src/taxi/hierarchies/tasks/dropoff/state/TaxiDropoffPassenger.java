@@ -1,6 +1,7 @@
 package taxi.hierarchies.tasks.dropoff.state;
 
 import burlap.mdp.core.oo.state.ObjectInstance;
+import taxi.Taxi;
 import taxi.hierarchies.tasks.dropoff.TaxiDropoffDomain;
 import utilities.MutableObject;
 
@@ -28,7 +29,7 @@ public class TaxiDropoffPassenger extends MutableObject {
 
 	@Override
 	public String className() {
-		return TaxiDropoffDomain.CLASS_PASSENGER;
+		return Taxi.CLASS_PASSENGER;
 	}
 
 	@Override
