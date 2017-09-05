@@ -4,21 +4,23 @@ import burlap.behavior.singleagent.auxiliary.performance.PerformanceMetric;
 import burlap.behavior.singleagent.auxiliary.performance.TrialMode;
 import burlap.behavior.singleagent.learning.LearningAgent;
 import burlap.behavior.singleagent.learning.LearningAgentFactory;
+import burlap.debugtools.DPrint;
 import burlap.debugtools.RandomFactory;
 import burlap.mdp.core.state.State;
+import burlap.mdp.singleagent.common.VisualActionObserver;
 import burlap.mdp.singleagent.environment.SimulatedEnvironment;
 import burlap.mdp.singleagent.oo.OOSADomain;
 import burlap.statehashing.HashableStateFactory;
 import burlap.statehashing.simple.SimpleHashableStateFactory;
+import cleanup.CleanupVisualizer;
 import cleanup.hierarchies.CleanupHierarchy;
 import cleanup.state.CleanupRandomStateGenerator;
 import cleanup.state.CleanupState;
 import hierarchy.framework.GroundedTask;
 import hierarchy.framework.Task;
 import ramdp.agent.RAMDPLearningAgent;
-import utilities.LearningAlgorithmExperimenter;
-
 //import utilities.SimpleHashableStateFactory;
+import utilities.LearningAlgorithmExperimenter;
 
 public class CleanupHierarchicalCharts {
 
@@ -29,10 +31,10 @@ public class CleanupHierarchicalCharts {
         final GroundedTask RAMDPGroot = RAMDPRoot.getAllGroundedTasks(s).get(0);
 
         SimulatedEnvironment env = new SimulatedEnvironment(domain, s);
-//        VisualActionObserver obs = new VisualActionObserver(domain, CleanupVisualizer.getVisualizer(width, height), 500, 500);
-//        obs.initGUI();
-//        obs.setDefaultCloseOperation(obs.EXIT_ON_CLOSE);
-//        env.addObservers(obs);
+        VisualActionObserver obs = new VisualActionObserver(domain, CleanupVisualizer.getVisualizer(width, height), 500, 500);
+        obs.initGUI();
+        obs.setDefaultCloseOperation(obs.EXIT_ON_CLOSE);
+        env.addObservers(obs);
 
         LearningAgentFactory ramdp = new LearningAgentFactory() {
 

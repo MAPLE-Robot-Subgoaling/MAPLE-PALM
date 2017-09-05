@@ -2,16 +2,18 @@ state: classic
 
 agents:
   - ramdp
+  - hiergen
 
-episodes: 50
+
+episodes: 30
 max_steps: 2000
 trials: 20
 gamma: 0.9
 
 stochastic:
   seed: 2320942930
-  correct_move: 0.8
-  fickle: 0.05
+  correct_move: 1
+  fickle: 0
   random_start: false
 
 planning:
