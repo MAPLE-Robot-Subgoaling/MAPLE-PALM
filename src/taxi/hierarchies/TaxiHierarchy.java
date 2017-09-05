@@ -34,6 +34,7 @@ import taxi.hierarchies.tasks.put.TaxiPutDomain;
 import taxi.hierarchies.tasks.put.state.PutStateMapper;
 import taxi.hierarchies.tasks.root.TaxiRootDomain;
 import taxi.hierarchies.tasks.root.state.RootStateMapper;
+import taxi.rmaxq.functions.BaseRootPF;
 
 public class TaxiHierarchy {
 
@@ -142,11 +143,12 @@ public class TaxiHierarchy {
 		ActionType aEast = baseDomain.getAction(Taxi.ACTION_EAST);
 		ActionType aSouth = baseDomain.getAction(Taxi.ACTION_SOUTH);
 		ActionType aWest = baseDomain.getAction(Taxi.ACTION_WEST);
-		ActionType aPickup = baseDomain.getAction(Taxi.ACTION_PICKUP);
-		ActionType aPutdown = baseDomain.getAction(Taxi.ACTION_PUTDOWN);
+		ActionType aPickup = new BasePickupActionType(Taxi.ACTION_PICKUP, new String[]{Taxi.CLASS_PASSENGER});
+		ActionType aPutdown = new BaseDropoffActionType(Taxi.ACTION_PUTDOWN, new String[]{Taxi.CLASS_PASSENGER});
 		ActionType aNavigate = new BaseNavigateActionType();
 		ActionType aGet = new BaseGetActionType();
 		ActionType aPut = new BasePutActionType();
+		ActionType aSolve = new SolveActionType();
 
 		//tasks
 		PrimitiveTask north = new PrimitiveTask(aNorth, baseDomain);
@@ -160,16 +162,16 @@ public class TaxiHierarchy {
 		Task[] bringonTasks = new Task[]{pickup};
 		Task[] dropoffTasks = new Task[]{dropoff};
 
-		PropositionalFunction navPF = new NavigatePF();
+		PropositionalFunction navPF = new BaseNavigatePF();
 		NonprimitiveTask navigate = new NonprimitiveTask(navTasks, aNavigate, taxiDomain.generateNavigateDomain(),
 				new IdentityMap(), navPF, navPF);
 		
-		PropositionalFunction pickupFailPF = new BringonFailurePF();
-		PropositionalFunction pickupCompPF = new BringonCompletedPF();
+		PropositionalFunction pickupFailPF = new BasePickupFailurePF();
+		PropositionalFunction pickupCompPF = new BasePickupCompletedPF();
 		NonprimitiveTask pickupL1 = new NonprimitiveTask(bringonTasks, aPickup, pickupFailPF, pickupCompPF);
 		
-		PropositionalFunction dropoffFailPF = new DropoffFailurePF();
-		PropositionalFunction dropoffCompPF = new DropoffCompletedPF();
+		PropositionalFunction dropoffFailPF = new BaseDropoffFailurePF();
+		PropositionalFunction dropoffCompPF = new BaseDropoffCompletedPF();
 		NonprimitiveTask dropoffL1 = new NonprimitiveTask(dropoffTasks, aPutdown, dropoffFailPF, dropoffCompPF);
 		
 		Task[] getTasks = new Task[]{pickupL1, navigate};
@@ -184,9 +186,20 @@ public class TaxiHierarchy {
 		NonprimitiveTask put = new NonprimitiveTask(putTasks, aPut, putFailPF, putCompPF);
 		
 		Task[] rootTasks = {get, put};
-//		Task root = new RootTask(rootTasks, baseDomain, new IdentityMap());
+		PropositionalFunction rootPF = new BaseRootPF();
+		OOSADomain baseActual = taxiDomain.generateDomain();
+		baseActual.clearActionTypes();
+		baseActual.addActionTypes(
+				aNorth,
+				aEast,
+				aSouth,
+				aWest,
+				aPickup,
+				aPutdown
+		);
+		Task root = new NonprimitiveTask(rootTasks, aSolve, baseActual, new IdentityMap(), rootPF, rootPF);
 
-		return null;
+		return root;
 		
 	}
 	

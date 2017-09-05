@@ -1,15 +1,14 @@
-package taxi.rmaxq.functions;
+package taxi.functions.rmaxq;
 
 import burlap.mdp.core.oo.propositional.PropositionalFunction;
 import burlap.mdp.core.oo.state.OOState;
 import taxi.Taxi;
 import taxi.state.TaxiState;
 
-public class BaseRootPF  extends PropositionalFunction{
-	//root is complet when all pasengers are at their goal and not in taxi
+public class BaseRootCompletedPF extends PropositionalFunction {
 
-	public BaseRootPF (){
-		super("root", new String[]{});
+	public BaseRootCompletedPF(String name, String[] parameterClasses) {
+		super(name, parameterClasses);
 	}
 
 	@Override
@@ -18,9 +17,7 @@ public class BaseRootPF  extends PropositionalFunction{
 
 		for(String passengerName : state.getPassengers()) {
 			boolean inTaxi = (boolean) state.getPassengerAtt(passengerName, Taxi.ATT_IN_TAXI);
-//			boolean pickedUpOnce = (boolean) state.getPassengerAtt(passengerName,
-//					Taxi.ATT_PICKED_UP_AT_LEAST_ONCE);
-			if (inTaxi )
+			if (inTaxi)
 				return false;
 
 			String passengerGoal = (String) state.getPassengerAtt(passengerName, Taxi.ATT_GOAL_LOCATION);
