@@ -63,6 +63,8 @@ public class RmaxQLearningAgent implements LearningAgent {
 	private List<HashableState> reachableStates = new ArrayList<HashableState>();
 	private long time = 0;
 	private int timestep;
+	private boolean computePolicy = true;
+	private List<Double> prevEpisodeRewards;
 
 	public RmaxQLearningAgent(Task root, HashableStateFactory hs, State initState, double vmax, int threshold, double maxDelta){
 		this.root = root;
@@ -82,6 +84,7 @@ public class RmaxQLearningAgent implements LearningAgent {
 		this.threshold = threshold;
 		this.initialState = initState;
 		this.actionTimestaps = new HashMap<GroundedTask, Integer>();
+		this.prevEpisodeRewards = new ArrayList<Double>();
 		reachableStates = StateReachability.getReachableStates(initialState, root.getDomain(), hashingFactory);
 	}
 
@@ -99,12 +102,33 @@ public class RmaxQLearningAgent implements LearningAgent {
 		GroundedTask rootSolve = root.getAllGroundedTasks(env.currentObservation()).get(0);
 		timestep = 0;
 		actionTimestaps.clear();
-		
+
 		time = System.currentTimeMillis();
 		HashableState hs = hashingFactory.hashState(env.currentObservation());
 		e = R_MaxQ(hs, rootSolve, e, maxSteps);
 		time = System.currentTimeMillis() - time;
+
+		checkConvergence(e, maxSteps);
+
 		return e;
+	}
+
+	protected void checkConvergence(Episode e, int maxSteps){
+		double cumulativeReward = 0;
+		for(double epRew : e.rewardSequence){
+			cumulativeReward += epRew;
+		}
+		prevEpisodeRewards.add(cumulativeReward);
+		int size = prevEpisodeRewards.size();
+		if( size > 2 && Math.abs(prevEpisodeRewards.get(size - 1) - prevEpisodeRewards.get(size - 2)) <= 1
+				&& Math.abs(prevEpisodeRewards.get(size - 2) - prevEpisodeRewards.get(size - 3)) <= 1
+				&& Math.abs(prevEpisodeRewards.get(size - 1) - prevEpisodeRewards.get(size - 3)) <= 1
+				&& e.actionSequence.size() < maxSteps){
+			computePolicy = false;
+			System.out.println("Stopping compute");
+		}else{
+			computePolicy = true;
+		}
 	}
 
 	/**
@@ -116,6 +140,7 @@ public class RmaxQLearningAgent implements LearningAgent {
 	 * @return the episode
 	 */
 	protected Episode R_MaxQ(HashableState hs, GroundedTask task, Episode e, int maxSteps){
+//		System.out.println(task);
 		if(task.isPrimitive()){
 			Action a = task.getAction();
 			EnvironmentOutcome outcome = env.executeAction(a);
@@ -200,7 +225,9 @@ public class RmaxQLearningAgent implements LearningAgent {
 			taskFromPolicy.setSolver(qvalues);
 
 			do{
-				computePolicy(hs, task);
+				if(computePolicy)
+					computePolicy(hs, task);
+
 				Action maxqAction = taskFromPolicy.action(hs.s());
 				GroundedTask childFromPolicy = groundedTaskMap.get(maxqAction.actionName());
 				if(childFromPolicy == null){
