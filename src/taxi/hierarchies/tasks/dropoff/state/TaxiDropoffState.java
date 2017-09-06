@@ -5,6 +5,7 @@ import burlap.mdp.core.oo.state.OOStateUtilities;
 import burlap.mdp.core.oo.state.OOVariableKey;
 import burlap.mdp.core.oo.state.ObjectInstance;
 import burlap.mdp.core.state.MutableState;
+import taxi.Taxi;
 import taxi.hierarchies.tasks.dropoff.TaxiDropoffDomain;
 
 import java.util.*;
@@ -34,10 +35,7 @@ public class TaxiDropoffState implements MutableOOState{
 	@Override
 	public ObjectInstance object(String oname) {
 		ObjectInstance o = passengers.get(oname);
-		if(o != null)
-			return o;
-
-		return null;
+		return o;
 	}
 
 	@Override
@@ -49,7 +47,7 @@ public class TaxiDropoffState implements MutableOOState{
 
 	@Override
 	public List<ObjectInstance> objectsOfClass(String oclass) {
-		if(oclass.equals(TaxiDropoffDomain.CLASS_PASSENGER))
+		if(oclass.equals(Taxi.CLASS_PASSENGER))
 			return new ArrayList<ObjectInstance>(passengers.values());
 		throw new RuntimeException("No object class " + oclass);
 	}
@@ -83,7 +81,7 @@ public class TaxiDropoffState implements MutableOOState{
 
 	@Override
 	public MutableOOState addObject(ObjectInstance o) {
-		if(o instanceof TaxiDropoffPassenger || o.className().equals(TaxiDropoffDomain.CLASS_PASSENGER)){
+		if(o instanceof TaxiDropoffPassenger || o.className().equals(Taxi.CLASS_PASSENGER)){
 			touchPassengers().put(o.name(), (TaxiDropoffPassenger) o);
 		}else{
 			throw new RuntimeException("Can only add certain objects to state.");

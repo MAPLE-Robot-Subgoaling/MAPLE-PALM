@@ -1,7 +1,5 @@
 package amdp.planning;
 
-import java.util.List;
-
 import burlap.debugtools.RandomFactory;
 import burlap.mdp.core.action.Action;
 import burlap.mdp.core.state.State;
@@ -9,6 +7,8 @@ import burlap.mdp.singleagent.environment.EnvironmentOutcome;
 import burlap.mdp.singleagent.model.FullModel;
 import burlap.mdp.singleagent.model.TransitionProb;
 import hierarchy.framework.GroundedTask;
+
+import java.util.List;
 
 public class AMDPModel implements FullModel {
 

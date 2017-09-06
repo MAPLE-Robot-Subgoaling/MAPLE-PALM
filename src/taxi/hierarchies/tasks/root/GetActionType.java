@@ -1,16 +1,10 @@
 package taxi.hierarchies.tasks.root;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import burlap.mdp.core.action.Action;
-import burlap.mdp.core.action.ActionType;
 import burlap.mdp.core.oo.ObjectParameterizedAction;
 import burlap.mdp.core.oo.state.OOState;
 import burlap.mdp.core.oo.state.ObjectInstance;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.oo.ObjectParameterizedActionType;
-import taxi.hierarchies.tasks.root.state.TaxiRootState;
 
 import static taxi.hierarchies.tasks.root.TaxiRootDomain.ATT_CURRENT_LOCATION;
 import static taxi.hierarchies.tasks.root.TaxiRootDomain.IN_TAXI;
@@ -29,6 +23,4 @@ public class GetActionType extends ObjectParameterizedActionType {
 		ObjectInstance passenger = state.object(passengerName);
 		return !passenger.get(ATT_CURRENT_LOCATION).equals(IN_TAXI);
 	}
-	//the get action type which puts the passenger with given name in taxi
-
 }

@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import burlap.mdp.core.oo.state.ObjectInstance;
+import taxi.Taxi;
 import taxi.hierarchies.tasks.nav.TaxiNavDomain;
 import utilities.MutableObject;
 
@@ -25,7 +26,7 @@ public class TaxiNavLocation extends MutableObject{
 	}
 	@Override
 	public String className() {
-		return TaxiNavDomain.CLASS_LOCATION;
+		return Taxi.CLASS_LOCATION;
 	}
 
 	@Override

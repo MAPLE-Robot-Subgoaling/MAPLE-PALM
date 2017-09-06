@@ -2,17 +2,16 @@ package taxi.functions.amdp;
 
 import burlap.mdp.core.oo.propositional.PropositionalFunction;
 import burlap.mdp.core.oo.state.OOState;
-import taxi.hierarchies.tasks.get.TaxiGetDomain;
+import taxi.Taxi;
 import taxi.hierarchies.tasks.put.TaxiPutDomain;
 import taxi.hierarchies.tasks.put.state.TaxiPutState;
-import taxi.hierarchies.tasks.root.PutActionType;
 import utilities.MutableObject;
 
 public class PutCompletedPF extends PropositionalFunction{
 	//put is complete when the passenger at the put actions goal 
 	
 	public PutCompletedPF() {
-		super("put", new String[]{TaxiPutDomain.CLASS_PASSENGER});
+		super("put", new String[]{Taxi.CLASS_PASSENGER});
 	}
 
 	@Override

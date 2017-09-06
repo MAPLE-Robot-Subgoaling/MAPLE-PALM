@@ -3,7 +3,6 @@ package taxi.hierarchies.tasks.get.state;
 import java.util.ArrayList;
 import java.util.List;
 
-import burlap.mdp.auxiliary.StateMapping;
 import burlap.mdp.core.state.State;
 import taxi.hierarchies.interfaces.ParameterizedStateMapping;
 import taxi.hierarchies.tasks.get.TaxiGetDomain;
@@ -32,7 +31,7 @@ public class GetStateMapper implements ParameterizedStateMapping {
 				taxiLocation = locName;
 			}
 		}
-		TaxiGetAgent taxi = new TaxiGetAgent(TaxiGetDomain.CLASS_TAXI, taxiLocation);
+		TaxiGetAgent taxi = new TaxiGetAgent(Taxi.CLASS_TAXI, taxiLocation);
 
 		// Get Passengers
 		for(String passengerName : params){

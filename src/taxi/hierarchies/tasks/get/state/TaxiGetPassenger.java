@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import burlap.mdp.core.oo.state.ObjectInstance;
+import taxi.Taxi;
 import taxi.hierarchies.tasks.get.TaxiGetDomain;
 import utilities.MutableObject;
 
@@ -26,7 +27,7 @@ public class TaxiGetPassenger extends MutableObject {
 	
 	@Override
 	public String className() {
-		return TaxiGetDomain.CLASS_PASSENGER;
+		return Taxi.CLASS_PASSENGER;
 	}
 
 	@Override

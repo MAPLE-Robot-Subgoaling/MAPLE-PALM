@@ -6,9 +6,9 @@ import java.util.List;
 import burlap.debugtools.RandomFactory;
 import burlap.mdp.core.StateTransitionProb;
 import burlap.mdp.core.action.Action;
+import burlap.mdp.core.oo.ObjectParameterizedAction;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.model.statemodel.FullStateModel;
-import taxi.hierarchies.tasks.nav.NavigateActionType.NavigateAction;
 import taxi.hierarchies.tasks.nav.state.TaxiNavAgent;
 import taxi.hierarchies.tasks.nav.state.TaxiNavState;
 
@@ -39,7 +39,7 @@ public class TaxiNavModel implements FullStateModel {
 		TaxiNavState state = (TaxiNavState) s;
 		
 		if(a.actionName().startsWith(TaxiNavDomain.ACTION_NAVIGATE)){
-			navigate(state, (NavigateAction) a, tps);
+			navigate(state, (ObjectParameterizedAction)a, tps);
 		}
 		return tps;
 	}
@@ -50,8 +50,8 @@ public class TaxiNavModel implements FullStateModel {
 	 * @param a the nav action
 	 * @param tps the list of outcomes to add to
 	 */
-	public void navigate(TaxiNavState s, NavigateAction a, List<StateTransitionProb> tps){
-		String goal = a.getGoalLocation();
+	public void navigate(TaxiNavState s, ObjectParameterizedAction a, List<StateTransitionProb> tps){
+		String goal = a.getObjectParameters()[0];
 		
 		TaxiNavState ns = s.copy();
 		TaxiNavAgent taxi = ns.touchTaxi();

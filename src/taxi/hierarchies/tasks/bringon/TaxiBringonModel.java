@@ -6,9 +6,9 @@ import java.util.List;
 import burlap.debugtools.RandomFactory;
 import burlap.mdp.core.StateTransitionProb;
 import burlap.mdp.core.action.Action;
+import burlap.mdp.core.oo.ObjectParameterizedAction;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.model.statemodel.FullStateModel;
-import taxi.hierarchies.tasks.bringon.PickupActionType.PickupAction;
 import taxi.Taxi;
 import taxi.hierarchies.tasks.bringon.state.TaxiBringonPassenger;
 import taxi.hierarchies.tasks.bringon.state.TaxiBringonState;
@@ -35,7 +35,7 @@ public class TaxiBringonModel implements FullStateModel {
 		TaxiBringonState state = (TaxiBringonState) s;
 		
 		if(a.actionName().startsWith(Taxi.ACTION_PICKUP)){
-            pickup(state, (PickupAction)a, tps);
+            pickup(state, (ObjectParameterizedAction)a, tps);
 		}
 		return tps;
 	}
@@ -46,9 +46,9 @@ public class TaxiBringonModel implements FullStateModel {
 	 * @param s the current state
 	 * @param tps the list of outcomes to add to
 	 */
-	public void pickup(TaxiBringonState s, PickupAction a, List<StateTransitionProb> tps){
+	public void pickup(TaxiBringonState s, ObjectParameterizedAction a, List<StateTransitionProb> tps){
 		String taxiLocation = (String) s.getTaxiAtt(TaxiBringonDomain.ATT_LOCATION);
-		String passenger = a.getPassenger();
+		String passenger = a.getObjectParameters()[0];
 		String passengerLocation = (String) s.getPassengerAtt(passenger, TaxiBringonDomain.ATT_LOCATION);
 		TaxiBringonState ns = s.copy();
 

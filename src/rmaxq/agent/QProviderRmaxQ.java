@@ -1,10 +1,5 @@
 package rmaxq.agent;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import burlap.behavior.singleagent.MDPSolverInterface;
 import burlap.behavior.valuefunction.QProvider;
 import burlap.behavior.valuefunction.QValue;
@@ -17,6 +12,11 @@ import burlap.mdp.singleagent.model.SampleModel;
 import burlap.statehashing.HashableState;
 import burlap.statehashing.HashableStateFactory;
 import hierarchy.framework.GroundedTask;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class QProviderRmaxQ implements QProvider, MDPSolverInterface{
 
@@ -60,6 +60,7 @@ public class QProviderRmaxQ implements QProvider, MDPSolverInterface{
 		return 0;
 	}
 
+	//RmaxQ eqn 2
 	@Override
 	public double value(State s) {
 		if(!task.isPrimitive() && (task.isComplete(s) || task.isFailure(s))){

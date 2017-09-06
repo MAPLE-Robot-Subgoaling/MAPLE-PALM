@@ -1,6 +1,7 @@
 package taxi.hierarchies.tasks.root.state;
 
 import burlap.mdp.core.oo.state.ObjectInstance;
+import taxi.Taxi;
 import taxi.hierarchies.tasks.root.TaxiRootDomain;
 import utilities.MutableObject;
 
@@ -33,7 +34,7 @@ public class TaxiRootPassenger extends MutableObject {
 	
 	@Override
 	public String className() {
-		return TaxiRootDomain.CLASS_PASSENGER;
+		return Taxi.CLASS_PASSENGER;
 	}
 
 	@Override
