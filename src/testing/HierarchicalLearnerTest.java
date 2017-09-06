@@ -5,6 +5,7 @@ import java.util.List;
 
 import burlap.behavior.singleagent.Episode;
 import burlap.behavior.singleagent.auxiliary.EpisodeSequenceVisualizer;
+import burlap.debugtools.RandomFactory;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.common.VisualActionObserver;
 import burlap.mdp.singleagent.environment.SimulatedEnvironment;
@@ -37,10 +38,10 @@ public class HierarchicalLearnerTest {
 		else
 			env= new SimulatedEnvironment(groundDomain, initial);
 
-		VisualActionObserver obs = new VisualActionObserver(groundDomain, TaxiVisualizer.getVisualizer(5, 5));
-        obs.initGUI();
-        obs.setDefaultCloseOperation(obs.EXIT_ON_CLOSE);
-        env.addObservers(obs);
+//		VisualActionObserver obs = new VisualActionObserver(groundDomain, TaxiVisualizer.getVisualizer(5, 5));
+//        obs.initGUI();
+//        obs.setDefaultCloseOperation(obs.EXIT_ON_CLOSE);
+//        env.addObservers(obs);
 		
 		for(int i = 1; i <= numEpisode; i++){
 			long time = System.currentTimeMillis();
@@ -84,21 +85,29 @@ public class HierarchicalLearnerTest {
 	}
 	
 	public static void main(String[] args) {
-		double correctMoveprob = 1;
-		double fickleProb = 0.5;
-		int numEpisodes = 200;
-		int maxSteps = 1000;
-		int rmaxThreshold = 3;
-		double gamma = 0.9;
-		double rmax = 20;
-		double maxDelta = 0.01;
-		boolean randomStart = true;
-		TaxiState s = TaxiStateFactory.createClassicState();
-		Task RAMDProot = TaxiHierarchy.createAMDPHierarchy(correctMoveprob, fickleProb, false);
-		OOSADomain base = TaxiHierarchy.getBaseDomain();
-//		Task RMAXQroot = TaxiHierarchy.createRMAXQHierarchy(correctMoveprob, fickleProb);
-		
-		runRAMDPEpisodes(numEpisodes, maxSteps, RAMDProot, s, base, rmaxThreshold, gamma, rmax, maxDelta, randomStart);
+		RandomFactory.seedMapped(0, 3434112L);
+		int numTrials = 5;
+		for (int i = 0; i < numTrials; i++) {
+			long seed = 4227081679327707389L;//RandomFactory.getMapped(0).nextLong();
+			RandomFactory.seedMapped(0, seed);
+			System.out.println(seed);
+			double correctMoveprob = 1;
+			double fickleProb = 0.05;
+			int numEpisodes = 200;
+			int maxSteps = 1000;
+			int rmaxThreshold = 3;
+			double gamma = 0.95;
+			double rmax = 20;
+			double maxDelta = 0.0001;
+			boolean randomStart = true;
+			TaxiState s = TaxiStateFactory.createClassicState();
+			Task RAMDProot = TaxiHierarchy.createAMDPHierarchy(correctMoveprob, fickleProb, false);
+			OOSADomain base = TaxiHierarchy.getBaseDomain();
+	//		Task RMAXQroot = TaxiHierarchy.createRMAXQHierarchy(correctMoveprob, fickleProb);
+
+			runRAMDPEpisodes(numEpisodes, maxSteps, RAMDProot, s, base, rmaxThreshold, gamma, rmax, maxDelta, randomStart);
+		}
+
 //		runRMAXQEpsodes(numEpisodes, maxSteps, RMAXQroot, s, rmax, rmaxThreshold, maxDelta, base);
 	}
 }
