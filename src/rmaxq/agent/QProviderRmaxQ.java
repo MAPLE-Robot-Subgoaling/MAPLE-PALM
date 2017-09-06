@@ -64,8 +64,8 @@ public class QProviderRmaxQ implements QProvider, MDPSolverInterface{
 	@Override
 	public double value(State s) {
 		if(!task.isPrimitive() && (task.isComplete(s) || task.isFailure(s))){
-			throw new RuntimeException("not implemented");
-//			return task.getReward(s);
+//			throw new RuntimeException("not implemented");
+			return task.getReward(s, task.getAction(), s);
 		}
 				
 		return QProvider.Helper.maxQ(this, s);

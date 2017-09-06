@@ -1,9 +1,16 @@
 state: classic
 
 agents:
+<<<<<<< HEAD
   - ramdp
 
 episodes: 50
+=======
+  - rmaxq
+
+
+episodes: 60
+>>>>>>> origin/HierGen-Hierarchy
 max_steps: 2000
 trials: 20
 gamma: 0.9
@@ -25,7 +32,11 @@ rmax:
 output:
   csv:
     enabled: true
+<<<<<<< HEAD
     output: results/ramdp-classic.csv
+=======
+    output: results/ramdpVrmaxqn-classic.csv
+>>>>>>> origin/HierGen-Hierarchy
 
   chart:
     enabled: true

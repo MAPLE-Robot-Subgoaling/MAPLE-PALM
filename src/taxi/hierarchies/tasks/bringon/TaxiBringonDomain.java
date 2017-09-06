@@ -20,6 +20,7 @@ import taxi.hierarchies.tasks.bringon.state.BringonStateMapper;
 import taxi.hierarchies.tasks.bringon.state.TaxiBringonAgent;
 import taxi.hierarchies.tasks.bringon.state.TaxiBringonPassenger;
 import taxi.stateGenerator.TaxiStateFactory;
+import taxi.Taxi;
 
 public class TaxiBringonDomain implements DomainGenerator {
 

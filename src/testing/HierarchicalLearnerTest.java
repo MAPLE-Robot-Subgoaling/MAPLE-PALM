@@ -97,7 +97,6 @@ public class HierarchicalLearnerTest {
 	}
 	
 	public static void main(String[] args) {
-
 		String conffile = "config/taxi/classic.yaml";
 		if(args.length > 0) {
 			conffile = args[0];
@@ -123,6 +122,5 @@ public class HierarchicalLearnerTest {
 			OOSADomain base = TaxiHierarchy.getBaseDomain();
 			runRMAXQEpsodes(conf, RMAXQroot, s, base);
 		}
-        
 	}
 }
