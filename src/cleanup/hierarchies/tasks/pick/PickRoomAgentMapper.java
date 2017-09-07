@@ -121,7 +121,7 @@ public class PickRoomAgentMapper implements StateMapping {
         return new MoveState(abstractAgent, abstractBlocks, abstractDoors, abstractRooms);
     }
 
-    protected static boolean rectanglesIntersect(int t1, int l1, int b1, int r1, int t2, int l2, int b2, int r2){
+    public static boolean rectanglesIntersect(int t1, int l1, int b1, int r1, int t2, int l2, int b2, int r2){
 
         return t2 >= b1 && b2 <= t1 && r2 >= l1 && l2 <= r1;
 

@@ -31,14 +31,14 @@ import java.io.FileNotFoundException;
 
 public class CleanupHierarchicalCharts {
 
-    public static void createCharts(final CleanupConfig conf, final State s, OOSADomain domain, final Task RAMDPRoot){ //}, final Task RMEXQRoot ){
+    public static void createCharts(final CleanupConfig conf, final State s, OOSADomain domain, final Task RAMDPRoot, final Task rmaxqRoot ){
         SimulatedEnvironment env;
         final HashableStateFactory hs;
-        final GroundedTask RAMDPGroot;
+        final GroundedTask ramdpRoot;
 
 
         env = new SimulatedEnvironment(domain, s);
-        RAMDPGroot = RAMDPRoot.getAllGroundedTasks(s).get(0);
+        ramdpRoot = RAMDPRoot.getAllGroundedTasks(s).get(0);
 
         hs = new SimpleHashableStateFactory(true);
 
@@ -66,25 +66,25 @@ public class CleanupHierarchicalCharts {
 
                     @Override
                     public LearningAgent generateAgent() {
-                        return new RAMDPLearningAgent(RAMDPGroot, conf.rmax.threshold, conf.gamma, conf.rmax.vmax, hs, conf.rmax.max_delta);
+                        return new RAMDPLearningAgent(ramdpRoot, conf.rmax.threshold, conf.gamma, conf.rmax.vmax, hs, conf.rmax.max_delta);
                     }
                 };
             }
 
             // RMAX
-//            if(agent.equals("rmaxq")) {
-//                agents[i] = new LearningAgentFactory() {
-//                    @Override
-//                    public String getAgentName() {
-//                        return "R-MAXQ";
-//                    }
-//
-//                    @Override
-//                    public LearningAgent generateAgent() {
-//                        return new RmaxQLearningAgent(RMEXQRoot, hs, s, conf.rmax.vmax, conf.rmax.threshold, conf.rmax.max_delta);
-//                    }
-//                };
-//            }
+            if(agent.equals("rmaxq")) {
+                agents[i] = new LearningAgentFactory() {
+                    @Override
+                    public String getAgentName() {
+                        return "R-MAXQ";
+                    }
+
+                    @Override
+                    public LearningAgent generateAgent() {
+                        return new RmaxQLearningAgent(rmaxqRoot, hs, s, conf.rmax.vmax, conf.rmax.threshold, conf.rmax.max_delta);
+                    }
+                };
+            }
         }
 
         LearningAlgorithmExperimenter exp = new LearningAlgorithmExperimenter(env, conf.trials, conf.episodes, conf.max_steps, agents);
@@ -109,7 +109,7 @@ public class CleanupHierarchicalCharts {
 
     public static void main(String[] args) {
 
-        String conffile = "config/cleanup/3rooms2blocks.yaml";
+        String conffile = "config/cleanup/rmaxqTest.yaml";
         if(args.length > 0) {
             conffile = args[0];
         }
@@ -125,33 +125,9 @@ public class CleanupHierarchicalCharts {
 
         CleanupState initialState = config.generateState();
         Task ramdpRoot = CleanupHierarchy.createAMDPHierarchy(config);
+        Task rmaxqRoot = CleanupHierarchy.createRMAXQHierarchy(config);
         OOSADomain baseDomain = CleanupHierarchy.getBaseDomain();
-        createCharts(config, initialState, baseDomain, ramdpRoot);
-//
-//        int minX = 0;
-//        int minY = 0;
-//        int maxX = 5;
-//        int maxY = 5;
-//        CleanupRandomStateGenerator sg = new CleanupRandomStateGenerator(minX, minY, maxX, maxY);
-//
-//        String stateType = "threeRooms";//"threeRooms";
-//        int numBlocks = 2;
-//        CleanupState s = (CleanupState) sg.getStateFor(stateType, numBlocks);
-//        Task ramdpRoot = CleanupHierarchy.createAMDPHierarchy(minX, minY, maxX, maxY);
-//        OOSADomain base = CleanupHierarchy.getBaseDomain();
-//        HashableStateFactory hs = new SimpleHashableStateFactory(true);
-//
-//        int maxSteps = 1000;
-//        int rmaxThreshold = 1;
-//        int numTrials = 2;
-//        double rmax = 1000;
-//        double gamma = 0.95;
-//        double maxDelta = 0.001;
-//        int numEpisodes = 100;
-//        int width = maxX - minX;
-//        int height = maxY - minY;
-//        createCharts(s, base, ramdpRoot, rmax, rmaxThreshold, maxDelta, gamma, numEpisodes, maxSteps, numTrials, width, height);
-//		createRandomCharts(base, RAMDProot, rmax, rmaxThreshold, maxDelta, gamma, numEpisodes, maxSteps, numTrials);
+        createCharts(config, initialState, baseDomain, ramdpRoot, rmaxqRoot);
 
 
 

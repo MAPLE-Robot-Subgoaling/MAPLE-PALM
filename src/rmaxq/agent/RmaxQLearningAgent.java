@@ -13,10 +13,7 @@ import burlap.statehashing.HashableStateFactory;
 import hierarchy.framework.GroundedTask;
 import hierarchy.framework.Task;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class RmaxQLearningAgent implements LearningAgent {
 
@@ -45,8 +42,8 @@ public class RmaxQLearningAgent implements LearningAgent {
 	//policies
 	private Map<GroundedTask, SolverDerivedPolicy> qPolicy;
 
-	//envolope(a)
-	private Map<GroundedTask, List<HashableState>> envolope;
+	//taskToEnvelope(a)
+	private Map<GroundedTask, List<HashableState>> taskToEnvelope;
 
 	//ta 
 	private Map<GroundedTask, List<HashableState>> terminal;
@@ -73,7 +70,7 @@ public class RmaxQLearningAgent implements LearningAgent {
 		this.totalReward = new HashMap<HashableState, Map<GroundedTask,Double>>();
 		this.actionCount = new HashMap<HashableState, Map<GroundedTask,Integer>>();
 		this.qProvider = new HashMap<GroundedTask, QProviderRmaxQ>();
-		this.envolope = new HashMap<GroundedTask, List<HashableState>>();
+		this.taskToEnvelope = new HashMap<GroundedTask, List<HashableState>>();
 		this.resultingStateCount = new HashMap<HashableState, Map<GroundedTask,Map<HashableState,Integer>>>();
 		this.terminal = new HashMap<GroundedTask, List<HashableState>>();
 		this.qPolicy = new HashMap<GroundedTask, SolverDerivedPolicy>();
@@ -260,10 +257,10 @@ public class RmaxQLearningAgent implements LearningAgent {
 			actionTimestaps.put(task, aTime);
 		}
 		
-		List<HashableState> envolopA = envolope.get(task);
+		List<HashableState> envolopA = taskToEnvelope.get(task);
 		if(envolopA == null){
 			envolopA = new ArrayList<HashableState>();
-			envolope.put(task, envolopA);
+			taskToEnvelope.put(task, envolopA);
 		}
 
 		if(aTime < timestep){
@@ -305,7 +302,7 @@ public class RmaxQLearningAgent implements LearningAgent {
 	 * @param task the task
 	 */
 	public void prepareEnvolope(HashableState hs, GroundedTask task){
-		List<HashableState> envelope = envolope.get(task);
+		List<HashableState> envelope = taskToEnvelope.get(task);
 		if(!envelope.contains(hs)){
 			envelope.add(hs);
 			List<GroundedTask> ActionIns = task.getGroundedChildTasks(hs.s());
@@ -313,20 +310,22 @@ public class RmaxQLearningAgent implements LearningAgent {
 				compute_model(hs, a); 
 
 				//get function forPa'(s, .)
-				Map<HashableState, Map<HashableState,Double>> Pa = transition.get(a);
-				if(Pa == null){
-					Pa = new HashMap<HashableState, Map<HashableState,Double>>();
-					transition.put(a, Pa);
+				Map<HashableState, Map<HashableState,Double>> sToSPrimeToProbability = transition.get(a);
+				if(sToSPrimeToProbability == null){
+					sToSPrimeToProbability = new HashMap<HashableState, Map<HashableState,Double>>();
+					transition.put(a, sToSPrimeToProbability);
 				}
-				Map<HashableState, Double> psa = Pa.get(hs);
-				if(psa == null){
-					psa = new HashMap<HashableState, Double>();
-					Pa.put(hs, psa);
+				Map<HashableState, Double> sPrimeToProbability = sToSPrimeToProbability.get(hs);
+				if(sPrimeToProbability == null){
+					sPrimeToProbability = new HashMap<HashableState, Double>();
+					sToSPrimeToProbability.put(hs, sPrimeToProbability);
 				}
 
-				for(HashableState hsp : psa.keySet()){
-					if(psa.get(hsp) > 0)
+				Collection<HashableState> nextStates = sPrimeToProbability.keySet();
+				for(HashableState hsp : nextStates){
+					if(sPrimeToProbability.get(hsp) > 0) {
 						prepareEnvolope(hsp, task);
+					}
 				}
 			}
 		}
@@ -430,17 +429,17 @@ public class RmaxQLearningAgent implements LearningAgent {
 				reward.put(task, rewtask);
 			}
 			
-			List<HashableState> envelopeA = envolope.get(task);
-			if(envelopeA == null){
-				envelopeA = new ArrayList<HashableState>();
-				envolope.put(task, envelopeA);
+			List<HashableState> envelope = taskToEnvelope.get(task);
+			if(envelope == null){
+				envelope = new ArrayList<HashableState>();
+				taskToEnvelope.put(task, envelope);
 			}
 			
 			boolean converged = false;
 			while(!converged){
 				double maxChange = 0;
 				//temporary holders for batch updates
-				for(HashableState hsprime : envelopeA){
+				for(HashableState hsprime : envelope){
 					Action maxqAction = taskFromPolicy.action(hsprime.s());
 					GroundedTask childFromPolicy = groundedTaskMap.get(maxqAction.actionName());
 					if(childFromPolicy == null){

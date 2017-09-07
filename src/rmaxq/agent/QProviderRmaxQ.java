@@ -105,81 +105,81 @@ public class QProviderRmaxQ implements QProvider, MDPSolverInterface{
 	//the rest of this class is only needed because of mdpsolver but they are unused
 	@Override
 	public void solverInit(SADomain domain, double gamma, HashableStateFactory hashingFactory) {
-		
+		throw new RuntimeException("not implemented");
 	}
 
 	@Override
 	public void resetSolver() {
-		
+		throw new RuntimeException("not implemented");
 	}
 
 	@Override
 	public void setDomain(SADomain domain) {
-		
+		throw new RuntimeException("not implemented");
 	}
 
 	@Override
 	public void setModel(SampleModel model) {
-		
+		throw new RuntimeException("not implemented");
 	}
 
 	@Override
 	public SampleModel getModel() {
-		return null;
+		throw new RuntimeException("not implemented");
 	}
 
 	@Override
 	public Domain getDomain() {
-		return null;
+		throw new RuntimeException("not implemented");
 	}
 
 	@Override
 	public void addActionType(ActionType a) {
-	
+		throw new RuntimeException("not implemented");
 	}
 
 	@Override
 	public void setActionTypes(List<ActionType> actionTypes) {
-		
+		throw new RuntimeException("not implemented");
 	}
 
 	@Override
 	public List<ActionType> getActionTypes() {
-		return null;
+		throw new RuntimeException("not implemented");
 	}
 
 	@Override
 	public void setHashingFactory(HashableStateFactory hashingFactory) {
-		
+		throw new RuntimeException("not implemented");
 	}
 
 	@Override
 	public HashableStateFactory getHashingFactory() {
-		return null;
+		throw new RuntimeException("not implemented");
 	}
 
 	@Override
 	public double getGamma() {
-		return 0;
+		throw new RuntimeException("not implemented");
 	}
 
 	@Override
 	public void setGamma(double gamma) {
-		
+		throw new RuntimeException("not implemented");
 	}
 
 	@Override
 	public void setDebugCode(int code) {
-		
+		throw new RuntimeException("not implemented");
 	}
 
 	@Override
 	public int getDebugCode() {
-		return 0;
+		throw new RuntimeException("not implemented");
 	}
 
 	@Override
 	public void toggleDebugPrinting(boolean toggle) {
-		
+		throw new RuntimeException("not implemented");
 	}
 }
