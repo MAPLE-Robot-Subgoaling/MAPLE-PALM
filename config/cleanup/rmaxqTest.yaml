@@ -1,8 +1,8 @@
 seed: 32552
 
-state: twoRooms
+state: threeRooms
 
-numBlocks: 1
+numBlocks: 2
 
 minX: 0
 minY: 0
@@ -15,11 +15,12 @@ rewardNoop: -1.0
 rewardPull: 0.0
 
 agents:
+  - ramdp
   - rmaxq
 
-episodes: 100
+episodes: 60
 max_steps: 1000
-trials: 2
+trials: 20
 gamma: 0.95
 
 planning:
@@ -50,6 +51,6 @@ output:
       - CUMULATIVE_REWARD_PER_EPISODE
 
   visualizer:
-    enabled: true
+    enabled: false
     width: 300
     height: 300
