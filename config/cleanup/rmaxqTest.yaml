@@ -1,8 +1,8 @@
 seed: 32552
 
-state: threeRooms
+state: twoRooms
 
-numBlocks: 2
+numBlocks: 1
 
 minX: 0
 minY: 0

@@ -53,6 +53,7 @@ public class RmaxQLearningAgent implements LearningAgent {
 	private double dynamicPrgEpsilon;
 	private int threshold;
 	private Task root;
+	private GroundedTask rootSolve;
 	private HashableStateFactory hashingFactory;
 	private double Vmax;
 	private Environment env;
@@ -96,7 +97,7 @@ public class RmaxQLearningAgent implements LearningAgent {
 	public Episode runLearningEpisode(Environment env, int maxSteps) {
 		this.env = env;
 		Episode e = new Episode(initialState);
-		GroundedTask rootSolve = root.getAllGroundedTasks(env.currentObservation()).get(0);
+		rootSolve = root.getAllGroundedTasks(env.currentObservation()).get(0);
 		timestep = 0;
 		actionTimestaps.clear();
 
@@ -236,7 +237,9 @@ public class RmaxQLearningAgent implements LearningAgent {
 				State s = e.stateSequence.get(e.stateSequence.size() - 1);
 				hs = hashingFactory.hashState(s);
 
-				terminal = task.isComplete(s) || task.isFailure(s);
+				terminal = task.isComplete(s)
+						|| task.isFailure(s)
+						|| rootSolve.isComplete(s);
 			}while(!terminal && (timestep < maxSteps || maxSteps == -1));
 
 			return e;
