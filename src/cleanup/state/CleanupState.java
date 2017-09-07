@@ -9,6 +9,7 @@ import burlap.mdp.core.state.annotations.ShallowCopyState;
 import cleanup.Cleanup;
 
 import java.util.*;
+import java.util.stream.Stream;
 
 import static cleanup.Cleanup.ATT_X;
 import static cleanup.Cleanup.ATT_Y;
@@ -107,9 +108,18 @@ public class CleanupState implements MutableOOState {
     public List<ObjectInstance> objects() {
         ArrayList<ObjectInstance> obs = new ArrayList<ObjectInstance>();
         if (agent != null) obs.add(agent);
-        obs.addAll(blocks.values());
-        obs.addAll(rooms.values());
-        obs.addAll(doors.values());
+        Collection<CleanupBlock> blockList = blocks.values();
+        Collection<CleanupRoom> roomList = rooms.values();
+        Collection<CleanupDoor> doorList = doors.values();
+        for (CleanupBlock item : blockList) {
+            obs.add(item);
+        }
+        for (CleanupRoom item : roomList) {
+            obs.add(item);
+        }
+        for (CleanupDoor item : doorList) {
+            obs.add(item);
+        }
         return obs;
     }
 

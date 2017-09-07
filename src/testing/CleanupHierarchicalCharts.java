@@ -22,6 +22,7 @@ import hierarchy.framework.GroundedTask;
 import hierarchy.framework.Task;
 import ramdp.agent.RAMDPLearningAgent;
 import rmaxq.agent.RmaxQLearningAgent;
+import state.hashing.simple.CachedHashableStateFactory;
 import taxi.stateGenerator.RandomPassengerTaxiState;
 import utilities.LearningAlgorithmExperimenter;
 
@@ -40,7 +41,8 @@ public class CleanupHierarchicalCharts {
         env = new SimulatedEnvironment(domain, s);
         ramdpRoot = RAMDPRoot.getAllGroundedTasks(s).get(0);
 
-        hs = new SimpleHashableStateFactory(true);
+//        hs = new SimpleHashableStateFactory(true);
+        hs = new CachedHashableStateFactory(true);
 
         if(conf.output.visualizer.enabled) {
             int width = conf.maxX - conf.minX;

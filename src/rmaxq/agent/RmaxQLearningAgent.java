@@ -492,14 +492,17 @@ public class RmaxQLearningAgent implements LearningAgent {
 
 						double newProb = equation_5(task, probtask, childProbabilities, hx);
 
-						if(Math.abs(newProb - oldPrabability) > maxChange)
-							maxChange = Math.abs(newProb - oldPrabability);
+						double delta = Math.abs(newProb - oldPrabability);
+						if(delta > maxChange) {
+							maxChange = delta;
+						}
 
 						//set pa(s',x)
 						Pstosp.put(hx, newProb);
 					}
-					if(maxChange < dynamicPrgEpsilon)
+					if(maxChange < dynamicPrgEpsilon) {
 						converged = true;
+					}
 				}
 			}	
 		}
@@ -596,39 +599,40 @@ public class RmaxQLearningAgent implements LearningAgent {
 	/**
 	 * runs eqn 5 from RMAXQ paper on inputs
 	 * @param task the current task
-	 * @param probtask the transition function for the task
+	 * @param taskTransitionProbabilities the transition function for the task
 	 * @param childProbabilities transitions for subtask
-	 * @param hx the terminal state to transition into
+	 * @param hashedTerminalState the terminal state to transition into
 	 * @return the result of eqn 5
 	 */
-	private double equation_5(GroundedTask task, Map<HashableState, Map<HashableState, Double>> probtask,
-			Map<HashableState, Double> childProbabilities, HashableState hx) {
-		Double childProbability = childProbabilities.get(hx);
+	private double equation_5(GroundedTask task, Map<HashableState, Map<HashableState, Double>> taskTransitionProbabilities,
+			Map<HashableState, Double> childProbabilities, HashableState hashedTerminalState) {
+		Double childProbability = childProbabilities.get(hashedTerminalState);
 		if(childProbability == null){
 			childProbability = 0.;
-			childProbabilities.put(hx, childProbability);
+			childProbabilities.put(hashedTerminalState, childProbability);
 		}
 
 		double weightedTransition = 0;
 		//sum over all p pia(s) (s',.)
-		for(HashableState hnext: childProbabilities.keySet()){
-			if(task.isComplete(hnext.s()) || task.isFailure(initialState))
+		for(HashableState hashedSPrime: childProbabilities.keySet()){
+			if(task.isComplete(hashedSPrime.s()) || task.isFailure(initialState) || task.isFailure(hashedSPrime.s())) {
 				continue;
+			}
 
-			double psprimeTospprime = childProbabilities.get(hnext);
+			double childProbStateToSPrime = childProbabilities.get(hashedSPrime);
 			//pa (s'',x)
-			Map<HashableState, Double> tohnext = probtask.get(hnext);
-			if(tohnext == null){
-				tohnext = new HashMap<HashableState, Double>();
-				probtask.put(hnext, tohnext);
+			Map<HashableState, Double> sPrimeToTerminalStateProbability = taskTransitionProbabilities.get(hashedSPrime);
+			if(sPrimeToTerminalStateProbability == null){
+				sPrimeToTerminalStateProbability = new HashMap<HashableState, Double>();
+				taskTransitionProbabilities.put(hashedSPrime, sPrimeToTerminalStateProbability);
 			}
-			Double pspptohx = tohnext.get(hx);
-			if(pspptohx == null){
-				pspptohx = 0.;
-				tohnext.put(hx, pspptohx);
+			Double probSPrimeToTerminalState = sPrimeToTerminalStateProbability.get(hashedTerminalState);
+			if(probSPrimeToTerminalState == null){
+				probSPrimeToTerminalState = 0.;
+				sPrimeToTerminalStateProbability.put(hashedTerminalState, probSPrimeToTerminalState);
 			}
 
-			weightedTransition += psprimeTospprime * pspptohx;
+			weightedTransition += childProbStateToSPrime * probSPrimeToTerminalState;
 		}
 		double newProb = childProbability + weightedTransition;
 		return newProb;
