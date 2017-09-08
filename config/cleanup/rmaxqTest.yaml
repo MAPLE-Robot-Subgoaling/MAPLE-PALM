@@ -29,7 +29,7 @@ planning:
 rmax:
   vmax: 999
   threshold: 3
-  max_delta: 0.0001
+  max_delta: 0.001
 
 output:
   csv:

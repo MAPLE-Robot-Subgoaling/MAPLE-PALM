@@ -1,11 +1,9 @@
 package rmaxq.agent;
 
 import burlap.behavior.policy.GreedyQPolicy;
-import burlap.behavior.policy.Policy;
 import burlap.behavior.policy.SolverDerivedPolicy;
 import burlap.behavior.singleagent.Episode;
 import burlap.behavior.singleagent.learning.LearningAgent;
-import burlap.behavior.valuefunction.QValue;
 import burlap.mdp.core.action.Action;
 import burlap.mdp.core.oo.ObjectParameterizedAction;
 import burlap.mdp.core.state.State;
@@ -53,7 +51,7 @@ public class RmaxQLearningAgent implements LearningAgent {
 
 	private Map<GroundedTask, Integer> actionTimesteps;
 	
-	private double dynamicPrgEpsilon;
+	private double maxDeltaModelChange;
 	private int threshold;
 	private Task root;
 	private GroundedTask rootSolve;
@@ -79,7 +77,7 @@ public class RmaxQLearningAgent implements LearningAgent {
 		this.terminalStatesByTask = new HashMap<GroundedTask, List<HashableState>>();
 		this.qPolicy = new HashMap<GroundedTask, SolverDerivedPolicy>();
 		this.groundedTaskMap = new HashMap<String, GroundedTask>();
-		this.dynamicPrgEpsilon = maxDelta;
+		this.maxDeltaModelChange = maxDelta;
 		this.hashingFactory = hs;
 		this.Vmax = vmax;
 		this.threshold = threshold;
@@ -173,15 +171,9 @@ public class RmaxQLearningAgent implements LearningAgent {
 			SolverDerivedPolicy policySetByTask = initializePolicyAndSolver(task);
 			while(!isTerminal(task, hs) && (timestep < maxSteps || maxSteps == -1)) {
 //				if (computePolicy) {
-				computePolicy(hs, task);
+				computePolicy(task, hs);
 //				}
 
-//				QProviderRmaxQ qProviderRmaxQ = qProvider.get(task);
-//				List<QValue> qvs = qProviderRmaxQ.qValues(hs.s());
-//				if (qvs.size() < 1) {
-//					qProviderRmaxQ.qValues(hs.s());
-//				}
-//				Policy qP = qPolicy.get(task);
 				Action maxqAction = policySetByTask.action(hs.s());
 				String taskName = getActionNameSafe(maxqAction);
 				GroundedTask childTaskFromPolicy = groundedTaskMap.get(taskName);
@@ -296,31 +288,23 @@ public class RmaxQLearningAgent implements LearningAgent {
 		return e;
 	}
 
-
-	/**
-	 * computes and updates action values for the state in the task
-	 * @param hs current state
-	 * @param task the current task
-	 */
-	public void computePolicy(HashableState hs, GroundedTask task){
-		
+	private List<HashableState> initializeEnvelopeForTask(GroundedTask task) {
 		Integer aTime = actionTimesteps.get(task);
 		if(aTime == null){
 			aTime = 0;
 			actionTimesteps.put(task, aTime);
 		}
-		
-		List<HashableState> envolopA = taskToEnvelope.get(task);
-		if(envolopA == null){
-			envolopA = new ArrayList<HashableState>();
-			taskToEnvelope.put(task, envolopA);
+
+		List<HashableState> taskEnvelope = taskToEnvelope.get(task);
+		if(taskEnvelope == null){
+			taskEnvelope = new ArrayList<HashableState>();
+			taskToEnvelope.put(task, taskEnvelope);
 		}
 
 		if(aTime < timestep){
 			actionTimesteps.put(task, timestep);
-			envolopA.clear();
+			taskEnvelope.clear();
 		}
-		prepareEnvolope(hs, task);
 
 		QProviderRmaxQ qp = qProvider.get(task);
 		if(qp == null){
@@ -328,45 +312,62 @@ public class RmaxQLearningAgent implements LearningAgent {
 			qProvider.put(task, qp);
 		}
 
+		return taskEnvelope;
+	}
+
+	/**
+	 * computes and updates action values for the state in the task
+	 * @param task the current task
+	 * @param hs current state
+	 */
+	public void computePolicy(GroundedTask task, HashableState hs){
+		
+		List<HashableState> taskEnvelope = initializeEnvelopeForTask(task);
+		QProviderRmaxQ qp = qProvider.get(task);
+
+		prepareEnvelope(task, hs);
+
 		boolean converged = false;
 		while(!converged){   
 			double maxDelta = 0;
-			for(HashableState hsprime : envolopA){
+			for(HashableState hsprime : taskEnvelope){
 
 				List<GroundedTask> ActionIns = task.getGroundedChildTasks(hsprime.s());
 				for(GroundedTask a : ActionIns){
 					double oldQ = qp.qValue(hsprime.s(), a.getAction());
 
-					double newQ = epuation_1(qp, hsprime, a);
+					double newQ = equation_1(qp, hsprime, a);
 					qp.update(hsprime.s(), a.getAction(), newQ);
 
 					if(Math.abs(oldQ - newQ) > maxDelta)
 						maxDelta = Math.abs(oldQ - newQ);
 				}
 			}
-			if(maxDelta < dynamicPrgEpsilon)
+			if(maxDelta < maxDeltaModelChange) {
 				converged = true;
+			}
 		}
 	}
 
 	/**
 	 * calculates and stores the possible states that can be reached from the current state 
-	 * @param hs the state
 	 * @param task the task
+	 * @param hs the state
 	 */
-	public void prepareEnvolope(HashableState hs, GroundedTask task){
+	public void prepareEnvelope(GroundedTask task, HashableState hs){
 		List<HashableState> envelope = taskToEnvelope.get(task);
 		if(!envelope.contains(hs)){
 			envelope.add(hs);
-			List<GroundedTask> ActionIns = task.getGroundedChildTasks(hs.s());
-			for(GroundedTask a : ActionIns){
-				compute_model(hs, a); 
+			List<GroundedTask> childTasks = task.getGroundedChildTasks(hs.s());
+			for(GroundedTask childTask : childTasks){
+
+				computeModel(childTask, hs);
 
 				//get function forPa'(s, .)
-				Map<HashableState, Map<HashableState,Double>> sToSPrimeToProbability = transition.get(a);
+				Map<HashableState, Map<HashableState,Double>> sToSPrimeToProbability = transition.get(childTask);
 				if(sToSPrimeToProbability == null){
 					sToSPrimeToProbability = new HashMap<HashableState, Map<HashableState,Double>>();
-					transition.put(a, sToSPrimeToProbability);
+					transition.put(childTask, sToSPrimeToProbability);
 				}
 				Map<HashableState, Double> sPrimeToProbability = sToSPrimeToProbability.get(hs);
 				if(sPrimeToProbability == null){
@@ -375,125 +376,136 @@ public class RmaxQLearningAgent implements LearningAgent {
 				}
 
 				Collection<HashableState> nextStates = sPrimeToProbability.keySet();
-				for(HashableState hsp : nextStates){
-					if(sPrimeToProbability.get(hsp) > 0) {
-						prepareEnvolope(hsp, task);
+				for(HashableState hsPrime : nextStates){
+					if(sPrimeToProbability.get(hsPrime) > 0) {
+						prepareEnvelope(task, hsPrime);
 					}
 				}
 			}
 		}
 	}
 
+	private void computeModelPrimitive(GroundedTask task, HashableState hs) {
+		//n(s, a)
+		Map<GroundedTask, Integer> scount = actionCount.get(hs);
+		if(scount == null){
+			scount = new HashMap<GroundedTask, Integer>();
+			actionCount.put(hs, scount);
+		}
+		Integer n_sa = scount.get(task);
+		if(n_sa == null){
+			n_sa = 0;
+			scount.put(task, 0);
+		}
+		if(n_sa >= threshold){
+			//r(s, a)
+			Map<GroundedTask, Double> rewards = totalReward.get(hs);
+			if(rewards == null){
+				rewards = new HashMap<GroundedTask, Double>();
+				totalReward.put(hs, rewards);
+			}
+			Double r_sa = rewards.get(task);
+			if(r_sa == null){
+				r_sa = 0.;
+				rewards.put(task, r_sa);
+			}
+
+			//set Ra(s) to r(s,a) / n(s,a)
+			Map<HashableState, Double> Ra = reward.get(task);
+			if(Ra == null){
+				Ra = new HashMap<HashableState, Double>();
+				reward.put(task, Ra);
+			}
+			double newR = (double)r_sa / n_sa;
+			Ra.put(hs, newR);
+
+			//get Pa(s, .)
+			Map<HashableState, Map<HashableState,Double>> Ptask = transition.get(task);
+			if(Ptask == null){
+				Ptask = new HashMap<HashableState, Map<HashableState,Double>>();
+				transition.put(task, Ptask);
+			}
+			Map<HashableState, Double> pas = Ptask.get(hs);
+			if(pas == null){
+				pas = new HashMap<HashableState, Double>();
+				Ptask.put(hs, pas);
+			}
+
+			Map<GroundedTask, Map<HashableState,Integer>> nS = resultingStateCount.get(hs);
+			if(nS == null){
+				nS = new HashMap<GroundedTask, Map<HashableState,Integer>>();
+				resultingStateCount.put(hs, nS);
+			}
+			Map<HashableState, Integer> nSA = nS.get(task);
+			if(nSA == null){
+				nSA = new HashMap<HashableState, Integer>();
+				nS.put(task, nSA);
+			}
+			for(HashableState hsprime : pas.keySet()){
+				//get n(s, a, s')
+				Integer n_sasp = nSA.get(hsprime);
+				if(n_sasp == null){
+					n_sasp = 0;
+					nSA.put(hsprime, n_sasp);
+				}
+
+				//set Pa(s, s') = n(s,a,s') / n(s, a)
+				double p_assp = (double)n_sasp / n_sa;
+				pas.put(hsprime, p_assp);
+			}
+		}
+	}
+
+	private void initializeModelNonprimitive(GroundedTask task) {
+		QProviderRmaxQ qvalues = qProvider.get(task);
+		SolverDerivedPolicy taskPolicy = qPolicy.get(task);
+		if(taskPolicy == null){
+			taskPolicy = new GreedyQPolicy();
+			qPolicy.put(task, taskPolicy);
+		}
+		taskPolicy.setSolver(qvalues);
+
+		Map<HashableState, Map<HashableState,Double>> taskTransitions = transition.get(task);
+		if(taskTransitions == null){
+			taskTransitions = new HashMap<HashableState, Map<HashableState,Double>>();
+			transition.put(task, taskTransitions);
+		}
+
+		Map<HashableState, Double> taskRewards = reward.get(task);
+		if(taskRewards == null){
+			taskRewards = new HashMap<HashableState, Double>();
+			reward.put(task, taskRewards);
+		}
+
+		List<HashableState> taskEnvelope = taskToEnvelope.get(task);
+		if(taskEnvelope == null){
+			taskEnvelope = new ArrayList<HashableState>();
+			taskToEnvelope.put(task, taskEnvelope);
+		}
+	}
+
 	/**
 	 * computes and stores reward and transition values for the task 
-	 * @param hs the current state
 	 * @param task the current task
+	 * @param hs the current state
 	 */
-	private void compute_model(HashableState hs, GroundedTask task){
+	private void computeModel(GroundedTask task, HashableState hs){
 		if(task.isPrimitive()){
-			//n(s, a)
-			Map<GroundedTask, Integer> scount = actionCount.get(hs);
-			if(scount == null){
-				scount = new HashMap<GroundedTask, Integer>();
-				actionCount.put(hs, scount);
-			}
-			Integer n_sa = scount.get(task);
-			if(n_sa == null){
-				n_sa = 0;
-				scount.put(task, 0);
-			}			
-			if(n_sa >= threshold){
-				//r(s, a)
-				Map<GroundedTask, Double> rewards = totalReward.get(hs);
-				if(rewards == null){
-					rewards = new HashMap<GroundedTask, Double>();
-					totalReward.put(hs, rewards);
-				}
-				Double r_sa = rewards.get(task);
-				if(r_sa == null){
-					r_sa = 0.;
-					rewards.put(task, r_sa);
-				}			
-
-				//set Ra(s) to r(s,a) / n(s,a)
-				Map<HashableState, Double> Ra = reward.get(task);
-				if(Ra == null){
-					Ra = new HashMap<HashableState, Double>();
-					reward.put(task, Ra);
-				}
-				double newR = (double)r_sa / n_sa;
-				Ra.put(hs, newR);
-
-				//get Pa(s, .)
-				Map<HashableState, Map<HashableState,Double>> Ptask = transition.get(task);
-				if(Ptask == null){
-					Ptask = new HashMap<HashableState, Map<HashableState,Double>>();
-					transition.put(task, Ptask);
-				}
-				Map<HashableState, Double> pas = Ptask.get(hs); 
-				if(pas == null){
-					pas = new HashMap<HashableState, Double>();
-					Ptask.put(hs, pas);
-				}
-
-				Map<GroundedTask, Map<HashableState,Integer>> nS = resultingStateCount.get(hs);
-				if(nS == null){
-					nS = new HashMap<GroundedTask, Map<HashableState,Integer>>();
-					resultingStateCount.put(hs, nS);
-				}
-				Map<HashableState, Integer> nSA = nS.get(task);
-				if(nSA == null){
-					nSA = new HashMap<HashableState, Integer>();
-					nS.put(task, nSA);
-				}
-				for(HashableState hsprime : pas.keySet()){
-					//get n(s, a, s')
-					Integer n_sasp = nSA.get(hsprime);
-					if(n_sasp == null){
-						n_sasp = 0;
-						nSA.put(hsprime, n_sasp);
-					}
-
-					//set Pa(s, s') = n(s,a,s') / n(s, a)
-					double p_assp = (double)n_sasp / n_sa;
-					pas.put(hsprime, p_assp);
-				}
-			}
+			computeModelPrimitive(task, hs);
 		}else{
-			computePolicy(hs, task);
-			
-			QProviderRmaxQ qvalues = qProvider.get(task);
-			SolverDerivedPolicy taskFromPolicy = qPolicy.get(task);
-			if(taskFromPolicy == null){
-				taskFromPolicy = new GreedyQPolicy();
-				qPolicy.put(task, taskFromPolicy);
-			}
-			taskFromPolicy.setSolver(qvalues);
 
-			Map<HashableState, Map<HashableState,Double>> probtask = transition.get(task);
-			if(probtask == null){
-				probtask = new HashMap<HashableState, Map<HashableState,Double>>();
-				transition.put(task, probtask);
-			}					
+			computePolicy(task, hs);
+			
+			initializeModelNonprimitive(task);
 
-			Map<HashableState, Double> rewtask = reward.get(task);
-			if(rewtask == null){
-				rewtask = new HashMap<HashableState, Double>();
-				reward.put(task, rewtask);
-			}
-			
-			List<HashableState> envelope = taskToEnvelope.get(task);
-			if(envelope == null){
-				envelope = new ArrayList<HashableState>();
-				taskToEnvelope.put(task, envelope);
-			}
-			
 			boolean converged = false;
 			while(!converged){
+				List<HashableState> taskEnvelope = taskToEnvelope.get(task);
 				double maxChange = 0;
 				//temporary holders for batch updates
-				for(HashableState hsprime : envelope){
-					Action maxqAction = taskFromPolicy.action(hsprime.s());
+				for(HashableState hsprime : taskEnvelope){
+					SolverDerivedPolicy taskPolicy = qPolicy.get(task);
+					Action maxqAction = taskPolicy.action(hsprime.s());
 					String taskName = getActionNameSafe(maxqAction);
 					GroundedTask childFromPolicy = groundedTaskMap.get(taskName);
 					if(childFromPolicy == null){
@@ -512,22 +524,24 @@ public class RmaxQLearningAgent implements LearningAgent {
 						childProbabilities = new HashMap<HashableState, Double>();
 						pfrompia.put(hsprime, childProbabilities);
 					}
-					
-					Double prevReward = rewtask.get(hsprime);
+
+					Map<HashableState, Double> taskRewards = reward.get(task);
+					Double prevReward = taskRewards.get(hsprime);
 					if(prevReward == null){
 						prevReward = Vmax;
-						rewtask.put(hsprime, prevReward);
+						taskRewards.put(hsprime, prevReward);
 					}					
-					double newReward = equation_4(task, taskFromPolicy, rewtask, hsprime, childProbabilities);
+					double newReward = equation_4(task, taskPolicy, taskRewards, hsprime, childProbabilities);
 
 					//find max change for value iteration
 					if(Math.abs(newReward - prevReward) > maxChange)
 						maxChange = Math.abs(newReward - prevReward);
 
-					Map<HashableState, Double> Pstosp = probtask.get(hsprime);
+					Map<HashableState, Map<HashableState,Double>> taskTransitions = transition.get(task);
+					Map<HashableState, Double> Pstosp = taskTransitions.get(hsprime);
 					if(Pstosp == null){
 						Pstosp = new HashMap<HashableState, Double>();
-						probtask.put(hsprime, Pstosp);
+						taskTransitions.put(hsprime, Pstosp);
 					}
 
 					//for all s in ta
@@ -535,15 +549,16 @@ public class RmaxQLearningAgent implements LearningAgent {
 					List<HashableState> terminal = getTerminalStates(task);
 					for(HashableState hx :terminal){
 						//get current pa(s',x)
-						Double oldPrabability = Pstosp.get(hx);
-						if(oldPrabability == null){
-							oldPrabability = 0.;
-							Pstosp.put(hx, oldPrabability);
+						Double oldProb = Pstosp.get(hx);
+						if(oldProb == null){
+							oldProb = 0.;
+							Pstosp.put(hx, oldProb);
 						}
 
-						double newProb = equation_5(task, probtask, childProbabilities, hx);
+						double newProb = equation_5(task, taskTransitions, childProbabilities, hx);
 
-						double delta = Math.abs(newProb - oldPrabability);
+						double delta = Math.abs(newProb - oldProb);
+						System.out.println(newProb + " " + oldProb + " " + delta);
 						if(delta > maxChange) {
 							maxChange = delta;
 						}
@@ -551,7 +566,8 @@ public class RmaxQLearningAgent implements LearningAgent {
 						//set pa(s',x)
 						Pstosp.put(hx, newProb);
 					}
-					if(maxChange < dynamicPrgEpsilon) {
+					System.out.println(maxChange);
+					if(maxChange < maxDeltaModelChange) {
 						converged = true;
 					}
 				}
@@ -566,7 +582,7 @@ public class RmaxQLearningAgent implements LearningAgent {
 	 * @param a the action
 	 * @return the new q value
 	 */
-	private double epuation_1(QProviderRmaxQ qp, HashableState hsprime, GroundedTask a) {
+	private double equation_1(QProviderRmaxQ qp, HashableState hsprime, GroundedTask a) {
 		//Ra'(s')
 		Map<HashableState, Double> actionAR = reward.get(a);
 		if(actionAR == null){
@@ -658,6 +674,7 @@ public class RmaxQLearningAgent implements LearningAgent {
 	 */
 	private double equation_5(GroundedTask task, Map<HashableState, Map<HashableState, Double>> taskTransitionProbabilities,
 			Map<HashableState, Double> childProbabilities, HashableState hashedTerminalState) {
+
 		Double childProbability = childProbabilities.get(hashedTerminalState);
 		if(childProbability == null){
 			childProbability = 0.;
