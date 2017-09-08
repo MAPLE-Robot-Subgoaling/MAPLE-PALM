@@ -32,6 +32,11 @@ public class IICachedHashableState extends WrappedHashableState {
     }
 
     @Override
+    public String toString() {
+        return s == null ? "null state" : s.toString();
+    }
+
+    @Override
     public int hashCode() {
         if (dirty) {
             int code = computeHashCode(this.s);
