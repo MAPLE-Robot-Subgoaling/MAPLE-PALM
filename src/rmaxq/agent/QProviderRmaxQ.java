@@ -94,6 +94,10 @@ public class QProviderRmaxQ implements QProvider, MDPSolverInterface{
 		if(!qvals.containsKey(hs)){
 			List<QValue> qs = new ArrayList<QValue>();
 			List<GroundedTask> gts = task.getGroundedChildTasks(s);
+			if (gts.size() < 1) {
+				task.getGroundedChildTasks(s);
+				throw new RuntimeException("error/debug: no grounded tasks were found!");
+			}
 			for(GroundedTask a : gts){
 				qs.add(new QValue(s, a.getAction(), 0));
 			}

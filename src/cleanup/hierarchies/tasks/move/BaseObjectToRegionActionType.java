@@ -52,6 +52,9 @@ public class BaseObjectToRegionActionType extends ObjectParameterizedActionType 
 
                     if(rectanglesIntersect(rt, rl, rb, rr, dt, dl, db, dr)){
                         connected.add(d.name());
+                        // also "connect" rooms to rooms through the door (for the PickRoom->Room amdp)
+                        HashSet<String> doorConnections = getConnectedRegions(state, d.name());
+                        connected.addAll(doorConnections);
                     }
 
                 }
@@ -101,7 +104,7 @@ public class BaseObjectToRegionActionType extends ObjectParameterizedActionType 
         // not applicable if object already in the region
         if (alreadyInRegion) { return false; }
 
-        // determine what rooms or doors this connects to (only goes room->door or door->room)
+        // determine what rooms or doors this connects to (only goes room->door->room or door->room)
         HashSet<String> connectedRegions = getConnectedRegions((CleanupState) state, regionName);
         // current region must be connected to next door/room
         for (String connectedRegionName : connectedRegions) {

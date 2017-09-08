@@ -1,9 +1,11 @@
 package rmaxq.agent;
 
 import burlap.behavior.policy.GreedyQPolicy;
+import burlap.behavior.policy.Policy;
 import burlap.behavior.policy.SolverDerivedPolicy;
 import burlap.behavior.singleagent.Episode;
 import burlap.behavior.singleagent.learning.LearningAgent;
+import burlap.behavior.valuefunction.QValue;
 import burlap.mdp.core.action.Action;
 import burlap.mdp.core.oo.ObjectParameterizedAction;
 import burlap.mdp.core.state.State;
@@ -173,9 +175,13 @@ public class RmaxQLearningAgent implements LearningAgent {
 //				if (computePolicy) {
 				computePolicy(hs, task);
 //				}
-				if (rootSolve.isComplete(hs.s())) {
-					return e;
+
+				QProviderRmaxQ qProviderRmaxQ = qProvider.get(task);
+				List<QValue> qvs = qProviderRmaxQ.qValues(hs.s());
+				if (qvs.size() < 1) {
+					qProviderRmaxQ.qValues(hs.s());
 				}
+				Policy qP = qPolicy.get(task);
 				Action maxqAction = policySetByTask.action(hs.s());
 				String taskName = getActionNameSafe(maxqAction);
 				GroundedTask childTaskFromPolicy = groundedTaskMap.get(taskName);
