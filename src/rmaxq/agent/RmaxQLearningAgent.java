@@ -50,8 +50,9 @@ public class RmaxQLearningAgent implements LearningAgent {
 	private Map<GroundedTask, List<HashableState>> terminalStatesByTask;
 
 	private Map<GroundedTask, Integer> actionTimesteps;
-	
-	private double maxDeltaModelChange;
+
+	private double maxDeltaInPolicy;
+	private double maxDeltaInModel;
 	private int threshold;
 	private Task root;
 	private GroundedTask rootSolve;
@@ -65,7 +66,7 @@ public class RmaxQLearningAgent implements LearningAgent {
 //	private boolean computePolicy = true;
 //	private List<Double> prevEpisodeRewards;
 
-	public RmaxQLearningAgent(Task root, HashableStateFactory hs, State initState, double vmax, int threshold, double maxDelta){
+	public RmaxQLearningAgent(Task root, HashableStateFactory hs, State initState, double vmax, int threshold, double maxDeltaInPolicy, double maxDeltaInModel){
 		this.root = root;
 		this.reward = new HashMap<GroundedTask, Map<HashableState,Double>>();
 		this.transition = new HashMap<GroundedTask, Map<HashableState, Map<HashableState, Double>>>();
@@ -77,7 +78,8 @@ public class RmaxQLearningAgent implements LearningAgent {
 		this.terminalStatesByTask = new HashMap<GroundedTask, List<HashableState>>();
 		this.qPolicy = new HashMap<GroundedTask, SolverDerivedPolicy>();
 		this.groundedTaskMap = new HashMap<String, GroundedTask>();
-		this.maxDeltaModelChange = maxDelta;
+		this.maxDeltaInPolicy = maxDeltaInPolicy;
+		this.maxDeltaInModel = maxDeltaInModel;
 		this.hashingFactory = hs;
 		this.Vmax = vmax;
 		this.threshold = threshold;
@@ -343,7 +345,7 @@ public class RmaxQLearningAgent implements LearningAgent {
 						maxDelta = Math.abs(oldQ - newQ);
 				}
 			}
-			if(maxDelta < maxDeltaModelChange) {
+			if(maxDelta < maxDeltaInPolicy) {
 				converged = true;
 			}
 		}
@@ -557,8 +559,8 @@ public class RmaxQLearningAgent implements LearningAgent {
 
 						double newProb = equation_5(task, taskTransitions, childProbabilities, hx);
 
+						System.out.println(newProb + " " + oldProb);
 						double delta = Math.abs(newProb - oldProb);
-						System.out.println(newProb + " " + oldProb + " " + delta);
 						if(delta > maxChange) {
 							maxChange = delta;
 						}
@@ -566,8 +568,8 @@ public class RmaxQLearningAgent implements LearningAgent {
 						//set pa(s',x)
 						Pstosp.put(hx, newProb);
 					}
-					System.out.println(maxChange);
-					if(maxChange < maxDeltaModelChange) {
+					System.out.println("max change in model: " + maxChange);
+					if(maxChange < maxDeltaInModel) {
 						converged = true;
 					}
 				}
@@ -675,6 +677,7 @@ public class RmaxQLearningAgent implements LearningAgent {
 	private double equation_5(GroundedTask task, Map<HashableState, Map<HashableState, Double>> taskTransitionProbabilities,
 			Map<HashableState, Double> childProbabilities, HashableState hashedTerminalState) {
 
+		System.out.println(childProbabilities.keySet().size() + " child probs");
 		Double childProbability = childProbabilities.get(hashedTerminalState);
 		if(childProbability == null){
 			childProbability = 0.;

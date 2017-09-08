@@ -39,7 +39,8 @@ public class RuntimeTest {
 
 			@Override
 			public LearningAgent generateAgent() {
-				return new RmaxQLearningAgent(RMEXQRoot, hs, s, rmax, threshold, maxDelta);
+				throw new RuntimeException("not fixed on this branch");
+//				return new RmaxQLearningAgent(RMEXQRoot, hs, s, rmax, threshold, maxDelta);
 			}
 		};
 
