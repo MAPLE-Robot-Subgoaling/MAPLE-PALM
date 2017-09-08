@@ -176,12 +176,12 @@ public class RmaxQLearningAgent implements LearningAgent {
 				computePolicy(hs, task);
 //				}
 
-				QProviderRmaxQ qProviderRmaxQ = qProvider.get(task);
-				List<QValue> qvs = qProviderRmaxQ.qValues(hs.s());
-				if (qvs.size() < 1) {
-					qProviderRmaxQ.qValues(hs.s());
-				}
-				Policy qP = qPolicy.get(task);
+//				QProviderRmaxQ qProviderRmaxQ = qProvider.get(task);
+//				List<QValue> qvs = qProviderRmaxQ.qValues(hs.s());
+//				if (qvs.size() < 1) {
+//					qProviderRmaxQ.qValues(hs.s());
+//				}
+//				Policy qP = qPolicy.get(task);
 				Action maxqAction = policySetByTask.action(hs.s());
 				String taskName = getActionNameSafe(maxqAction);
 				GroundedTask childTaskFromPolicy = groundedTaskMap.get(taskName);
