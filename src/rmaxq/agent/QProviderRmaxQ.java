@@ -20,6 +20,11 @@ import java.util.Map;
 
 public class QProviderRmaxQ implements QProvider, MDPSolverInterface{
 
+
+	private static final double INITIAL_Q_VALUE = 0.0;
+
+	private double qInit = INITIAL_Q_VALUE;
+
 	/**
 	 * a list of action values for each state
 	 */
@@ -49,22 +54,25 @@ public class QProviderRmaxQ implements QProvider, MDPSolverInterface{
 	@Override
 	public double qValue(State s, Action a) {
 		HashableState hs = hashingFactory.hashState(s);
-		if(!qvals.containsKey(hs))
+		if(!qvals.containsKey(hs)) {
 			qvals.put(hs, new ArrayList<QValue>());
-		List<QValue> qval = qvals.get(hs);
-		
-		for(QValue q : qval){
-			if(q.a.equals(a))
-				return q.q;
 		}
-		return 0;
+		List<QValue> qval = qvals.get(hs);
+
+		String taskNameNew = RmaxQLearningAgent.getActionNameSafe(a);
+		for(QValue q : qval){
+			String taskNameThis = RmaxQLearningAgent.getActionNameSafe(q.a);
+			if(taskNameNew.equals(taskNameThis)) {
+				return q.q;
+			}
+		}
+		return qInit;
 	}
 
 	//RmaxQ eqn 2
 	@Override
 	public double value(State s) {
 		if(!task.isPrimitive() && (task.isComplete(s) || task.isFailure(s))){
-//			throw new RuntimeException("not implemented");
 			return task.getReward(s, task.getAction(), s);
 		}
 				
@@ -79,13 +87,15 @@ public class QProviderRmaxQ implements QProvider, MDPSolverInterface{
 	 */
 	public void update(State s, Action a, double val){
 		List<QValue> qvalsins = qvals.get(hashingFactory.hashState(s));
+		String taskNameNew = RmaxQLearningAgent.getActionNameSafe(a);
 		for(QValue q : qvalsins){
-			if(q.a.equals(a)){
+			String taskNameThis = RmaxQLearningAgent.getActionNameSafe(q.a);
+			if(taskNameNew.equals(taskNameThis)) {
 				q.q = val;
 				return;
 			}
 		}
-		qvalsins.add(new QValue(s, a, 0));
+		qvalsins.add(new QValue(s, a, qInit));
 	}
 	
 	@Override
