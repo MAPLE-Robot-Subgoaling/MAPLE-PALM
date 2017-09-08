@@ -1,6 +1,7 @@
 package rmaxq.agent;
 
 import burlap.behavior.policy.GreedyQPolicy;
+import burlap.behavior.policy.PolicyUtils;
 import burlap.behavior.policy.SolverDerivedPolicy;
 import burlap.behavior.singleagent.Episode;
 import burlap.behavior.singleagent.learning.LearningAgent;
@@ -177,6 +178,14 @@ public class RmaxQLearningAgent implements LearningAgent {
 //				}
 
 				Action maxqAction = policySetByTask.action(hs.s());
+
+//				try {
+//					Episode debugEp = PolicyUtils.rollout(policySetByTask, hs.s(), model, 100);
+//					System.out.println(tabLevel + "    Debug rollout: " + e.actionSequence);
+//				} catch (Exception ex) {
+//					// ignore, temp debug to assess ramdp
+//				}
+
 				String taskName = getActionNameSafe(maxqAction);
 				GroundedTask childTaskFromPolicy = groundedTaskMap.get(taskName);
 				if (childTaskFromPolicy == null) {
@@ -559,7 +568,6 @@ public class RmaxQLearningAgent implements LearningAgent {
 
 						double newProb = equation_5(task, taskTransitions, childProbabilities, hx);
 
-						System.out.println(newProb + " " + oldProb);
 						double delta = Math.abs(newProb - oldProb);
 						if(delta > maxChange) {
 							maxChange = delta;
@@ -568,7 +576,6 @@ public class RmaxQLearningAgent implements LearningAgent {
 						//set pa(s',x)
 						Pstosp.put(hx, newProb);
 					}
-					System.out.println("max change in model: " + maxChange);
 					if(maxChange < maxDeltaInModel) {
 						converged = true;
 					}
@@ -677,7 +684,6 @@ public class RmaxQLearningAgent implements LearningAgent {
 	private double equation_5(GroundedTask task, Map<HashableState, Map<HashableState, Double>> taskTransitionProbabilities,
 			Map<HashableState, Double> childProbabilities, HashableState hashedTerminalState) {
 
-		System.out.println(childProbabilities.keySet().size() + " child probs");
 		Double childProbability = childProbabilities.get(hashedTerminalState);
 		if(childProbability == null){
 			childProbability = 0.;

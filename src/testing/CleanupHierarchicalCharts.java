@@ -48,6 +48,7 @@ public class CleanupHierarchicalCharts {
             int width = conf.maxX - conf.minX;
             int height = conf.maxY - conf.minY;
             VisualActionObserver obs = new VisualActionObserver(domain, CleanupVisualizer.getVisualizer(width, height), conf.output.visualizer.width, conf.output.visualizer.height);
+            obs.setFrameDelay(1L);
             obs.initGUI();
             obs.setDefaultCloseOperation(obs.EXIT_ON_CLOSE);
             env.addObservers(obs);
