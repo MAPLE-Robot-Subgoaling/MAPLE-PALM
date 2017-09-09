@@ -380,11 +380,14 @@ public class RmaxQLearningAgent implements LearningAgent {
 		List<HashableState> taskEnvelope = envelopesByTask.get(task);
 		double maxDelta = 0.0;
 		for(HashableState hsPrime : taskEnvelope) {
-			double oldValue = V(task, hsPrime);
+//			double oldValue = V(task, hsPrime);
 			// get the action (child / subtask) that would be selected by policy
 			GroundedTask childTask = pi(task, hsPrime);
 			// update rewards
-			setR_eq4(task, hsPrime, childTask);
+			double deltaR = setR_eq4(task, hsPrime, childTask);
+			if (deltaR > maxDelta) {
+				maxDelta = deltaR;
+			}
 			List<HashableState> taskTerminalStates = terminalStatesByTask.get(task);
 			if (taskTerminalStates == null) {
 				taskTerminalStates = getTerminalStates(task);
@@ -392,17 +395,11 @@ public class RmaxQLearningAgent implements LearningAgent {
 			}
 			for (HashableState taskTerminalState : taskTerminalStates) {
 				// update transitions
-				setT_eq5(task, hsPrime, childTask, taskTerminalState);
+				double deltaP = setT_eq5(task, hsPrime, childTask, taskTerminalState);
+				if (deltaP > maxDelta) {
+					maxDelta = deltaP;
+				}
 			}
-//			double newValue;
-//			if (isTerminal(task, hsPrime)) {
-//				newValue = 0.0;
-//			} else {
-//				List<GroundedTask> childTasks = task.getGroundedChildTasks(hsPrime.s());
-//				for (GroundedTask childTask : childTasks) {
-//
-//				}
-//			}
 		}
 		boolean converged = maxDelta < maxDeltaInModel;
 		return converged;
