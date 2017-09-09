@@ -103,6 +103,8 @@ public class RmaxQLearningAgent implements LearningAgent {
 
 		return e;
 	}
+
+	public static String tabLevel = "";
 	/**
 	 * main loop of the algorithm that recurses down to primitive actions then updates counts
 	 * @param task the task to solve
@@ -112,6 +114,9 @@ public class RmaxQLearningAgent implements LearningAgent {
 	 * @return the episode
 	 */
 	protected Episode R_MaxQ(GroundedTask task, HashableState hs, Episode e, int maxSteps){
+
+		System.out.println(tabLevel + ">>> " + task.getAction());
+
 		if(task.isPrimitive()){
 			e = executePrimitive(e, task, hs);
 			return e;
@@ -121,11 +126,17 @@ public class RmaxQLearningAgent implements LearningAgent {
 				computePolicy(task, hs);
 
 				GroundedTask childTask = pi(task, hs);
+
+				tabLevel += "\t";
+
 				e = R_MaxQ(childTask, hs, e, maxSteps);
+
+				tabLevel = tabLevel.substring(0, (tabLevel.length() - 1));
+
 				State s = e.stateSequence.get(e.stateSequence.size() - 1);
 				hs = hashingFactory.hashState(s);
 			}
-			System.out.println("\n");
+			System.out.println(tabLevel + "<<< " + task.getAction());
 			return e;
 		}
 	}
@@ -267,9 +278,6 @@ public class RmaxQLearningAgent implements LearningAgent {
 		storedQValuesByTask.get(task).get(hs).put(childTask, newQ);
 
 		double delta = Math.abs(newQ - oldQ);
-		if (delta != 0.0) {
-			System.out.println(newQ + " " + oldQ + " " + delta + " for " + task);
-		}
 		return delta;
 	}
 
@@ -295,9 +303,6 @@ public class RmaxQLearningAgent implements LearningAgent {
 		storedValueByTask.get(task).put(hs, newV);
 
 		double delta = Math.abs(newV - oldV);
-		if (delta != 0.0) {
-			System.out.println(newV + " " + oldV + " " + delta + " for " + task);
-		}
 		return delta;
 	}
 
@@ -332,9 +337,9 @@ public class RmaxQLearningAgent implements LearningAgent {
 	 */
 	public void prepareEnvelope(GroundedTask task, HashableState hs){
 		List<HashableState> envelope = envelopesByTask.get(task);
-//		if (isTerminal(task, hs)) {
-//			return; // skip terminal states since we can't "plan" beyond the terminal point of this task
-//		}
+		if (isTerminal(task, hs)) {
+			return; // skip terminal states since we can't "plan" beyond the terminal point of this task
+		}
 		if(!envelope.contains(hs)){
 			envelope.add(hs);
 			List<GroundedTask> childTasks = task.getGroundedChildTasks(hs.s());
