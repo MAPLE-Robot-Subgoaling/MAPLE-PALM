@@ -131,6 +131,6 @@ public class CleanupHierarchicalCharts {
         Task rmaxqRoot = CleanupHierarchy.createRMAXQHierarchy(config);
         OOSADomain baseDomain = CleanupHierarchy.getBaseDomain();
         createCharts(config, initialState, baseDomain, ramdpRoot, rmaxqRoot);
-        
+
     }
 }

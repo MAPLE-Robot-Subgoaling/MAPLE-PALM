@@ -1,12 +1,12 @@
-seed: 325520348934
+seed: 32552
 
-state: twoRooms
+state: threeRooms
 
-numBlocks: 1
+numBlocks: 2
 
 minX: 0
 minY: 0
-maxX: 7
+maxX: 5
 maxY: 5
 
 rewardGoal: 1.0
@@ -17,8 +17,8 @@ rewardPull: 0.0
 agents:
   - ramdp
 
-episodes: 50
-max_steps: 300
+episodes: 100
+max_steps: 1000
 trials: 10
 gamma: 0.95
 
@@ -34,7 +34,7 @@ rmax:
 output:
   csv:
     enabled: true
-    output: results/ramdp-cleanup-2rooms-1block.csv
+    output: results/ramdp-cleanup-3rooms-2block.csv
 
   chart:
     enabled: true
