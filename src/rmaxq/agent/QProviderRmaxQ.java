@@ -1,8 +1,10 @@
 package rmaxq.agent;
 
 import burlap.behavior.singleagent.MDPSolverInterface;
+import burlap.behavior.singleagent.planning.stochastic.DynamicProgramming;
 import burlap.behavior.valuefunction.QProvider;
 import burlap.behavior.valuefunction.QValue;
+import burlap.behavior.valuefunction.ValueFunction;
 import burlap.mdp.core.Domain;
 import burlap.mdp.core.action.Action;
 import burlap.mdp.core.action.ActionType;
@@ -20,7 +22,6 @@ import java.util.Map;
 
 public class QProviderRmaxQ implements QProvider, MDPSolverInterface{
 
-
 	private static final double INITIAL_Q_VALUE = 0.0;
 
 	private double qInit = INITIAL_Q_VALUE;
@@ -28,18 +29,18 @@ public class QProviderRmaxQ implements QProvider, MDPSolverInterface{
 	/**
 	 * a list of action values for each state
 	 */
-	private Map<HashableState, List<QValue>> qvals;
-	
+	private Map<HashableState, List<QValue>> stateToQValues;
+
 	/**
 	 * a provided state hashing factory
 	 */
 	private HashableStateFactory hashingFactory;
-	
+
 	/**
 	 * the task
 	 */
 	private GroundedTask task;
-	
+
 	/**
 	 * create a q provider for the task
 	 * @param hsf a state hashing factory
@@ -48,19 +49,37 @@ public class QProviderRmaxQ implements QProvider, MDPSolverInterface{
 	public QProviderRmaxQ(HashableStateFactory hsf, GroundedTask t){
 		this.hashingFactory = hsf;
 		this.task = t;
-		this.qvals = new HashMap<HashableState, List<QValue>>();
+		this.stateToQValues = new HashMap<HashableState, List<QValue>>();
 	}
-	
+
+	@Override
+	public List<QValue> qValues(State s) {
+		HashableState hs = hashingFactory.hashState(s);
+		if(!stateToQValues.containsKey(hs)){
+			List<QValue> qs = new ArrayList<QValue>();
+			List<GroundedTask> gts = task.getGroundedChildTasks(s);
+			if (gts.size() < 1) {
+				task.getGroundedChildTasks(s);
+				throw new RuntimeException("error/debug: no grounded tasks were found!");
+			}
+			for(GroundedTask a : gts){
+				qs.add(new QValue(s, a.getAction(), 0));
+			}
+			stateToQValues.put(hs, qs);
+		}
+		return stateToQValues.get(hs);
+	}
+
 	@Override
 	public double qValue(State s, Action a) {
 		HashableState hs = hashingFactory.hashState(s);
-		if(!qvals.containsKey(hs)) {
-			qvals.put(hs, new ArrayList<QValue>());
+		if(!stateToQValues.containsKey(hs)) {
+			stateToQValues.put(hs, new ArrayList<QValue>());
 		}
-		List<QValue> qval = qvals.get(hs);
+		List<QValue> qValues = stateToQValues.get(hs);
 
 		String taskNameNew = RmaxQLearningAgent.getActionNameSafe(a);
-		for(QValue q : qval){
+		for(QValue q : qValues){
 			String taskNameThis = RmaxQLearningAgent.getActionNameSafe(q.a);
 			if(taskNameNew.equals(taskNameThis)) {
 				return q.q;
@@ -75,7 +94,6 @@ public class QProviderRmaxQ implements QProvider, MDPSolverInterface{
 		if(!task.isPrimitive() && (task.isComplete(s) || task.isFailure(s))){
 			return task.getReward(s, task.getAction(), s);
 		}
-				
 		return QProvider.Helper.maxQ(this, s);
 	}
 
@@ -86,7 +104,7 @@ public class QProviderRmaxQ implements QProvider, MDPSolverInterface{
 	 * @param val the new q value
 	 */
 	public void update(State s, Action a, double val){
-		List<QValue> qvalsins = qvals.get(hashingFactory.hashState(s));
+		List<QValue> qvalsins = stateToQValues.get(hashingFactory.hashState(s));
 		String taskNameNew = RmaxQLearningAgent.getActionNameSafe(a);
 		for(QValue q : qvalsins){
 			String taskNameThis = RmaxQLearningAgent.getActionNameSafe(q.a);
@@ -97,25 +115,9 @@ public class QProviderRmaxQ implements QProvider, MDPSolverInterface{
 		}
 		qvalsins.add(new QValue(s, a, qInit));
 	}
-	
-	@Override
-	public List<QValue> qValues(State s) {
-		HashableState hs = hashingFactory.hashState(s);
-		if(!qvals.containsKey(hs)){
-			List<QValue> qs = new ArrayList<QValue>();
-			List<GroundedTask> gts = task.getGroundedChildTasks(s);
-			if (gts.size() < 1) {
-				task.getGroundedChildTasks(s);
-				throw new RuntimeException("error/debug: no grounded tasks were found!");
-			}
-			for(GroundedTask a : gts){
-				qs.add(new QValue(s, a.getAction(), 0));
-			}
-			qvals.put(hs, qs);
-		}
-		return qvals.get(hs);
-	}
-	
+
+
+
 	//the rest of this class is only needed because of mdpsolver but they are unused
 	@Override
 	public void solverInit(SADomain domain, double gamma, HashableStateFactory hashingFactory) {

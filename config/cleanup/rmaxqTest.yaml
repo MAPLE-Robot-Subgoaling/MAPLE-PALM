@@ -1,4 +1,4 @@
-seed: 325521
+seed: 32552111
 
 state: twoRooms
 
@@ -7,9 +7,9 @@ numBlocks: 1
 minX: 0
 minY: 0
 maxX: 7
-maxY: 5
+maxY: 3
 
-rewardGoal: 10.0
+rewardGoal: 1.1
 rewardBase: 0.0
 rewardNoop: 0.0
 rewardPull: 0.0
@@ -27,7 +27,7 @@ planning:
   rollouts: 1000
 
 rmax:
-  vmax: 12.34
+  vmax: 1.2
   threshold: 2
   max_delta: 0.001
   max_delta_in_model: 0.001
