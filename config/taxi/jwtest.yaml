@@ -1,4 +1,4 @@
-state: tiny
+state: small
 
 agents:
   - rmaxq
@@ -26,7 +26,7 @@ rmax:
 output:
   csv:
     enabled: true
-    output: results/ramdp-jwtest-tiny.csv
+    output: results/ramdp-jwtest.csv
 
   chart:
     enabled: true

@@ -121,7 +121,7 @@ public class RmaxQLearningAgent implements LearningAgent {
 			e = executePrimitive(e, task, hs);
 			return e;
 		} else {
-			while(!isTerminal(task, hs) && (numberPrimitivesExecuted < maxSteps || maxSteps == -1)) {
+			do {
 
 				computePolicy(task, hs);
 
@@ -135,7 +135,7 @@ public class RmaxQLearningAgent implements LearningAgent {
 
 				State s = e.stateSequence.get(e.stateSequence.size() - 1);
 				hs = hashingFactory.hashState(s);
-			}
+			} while(!isTerminal(task, hs) && (numberPrimitivesExecuted < maxSteps || maxSteps == -1));
 			System.out.println(tabLevel + "<<< " + task.getAction());
 			return e;
 		}
@@ -380,10 +380,11 @@ public class RmaxQLearningAgent implements LearningAgent {
 		List<HashableState> taskEnvelope = envelopesByTask.get(task);
 		double maxDelta = 0.0;
 		for(HashableState hsPrime : taskEnvelope) {
+			double oldValue = V(task, hsPrime);
 			// get the action (child / subtask) that would be selected by policy
 			GroundedTask childTask = pi(task, hsPrime);
 			// update rewards
-			double deltaR = setR_eq4(task, hsPrime, childTask);
+			setR_eq4(task, hsPrime, childTask);
 			List<HashableState> taskTerminalStates = terminalStatesByTask.get(task);
 			if (taskTerminalStates == null) {
 				taskTerminalStates = getTerminalStates(task);
@@ -393,9 +394,15 @@ public class RmaxQLearningAgent implements LearningAgent {
 				// update transitions
 				setT_eq5(task, hsPrime, childTask, taskTerminalState);
 			}
-			if (deltaR > maxDelta) {
-				maxDelta = deltaR;
-			}
+//			double newValue;
+//			if (isTerminal(task, hsPrime)) {
+//				newValue = 0.0;
+//			} else {
+//				List<GroundedTask> childTasks = task.getGroundedChildTasks(hsPrime.s());
+//				for (GroundedTask childTask : childTasks) {
+//
+//				}
+//			}
 		}
 		boolean converged = maxDelta < maxDeltaInModel;
 		return converged;

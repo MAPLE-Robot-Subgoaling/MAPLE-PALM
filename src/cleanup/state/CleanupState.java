@@ -287,6 +287,15 @@ public class CleanupState implements MutableOOState {
         return (CleanupRoom) regionContainingPoint(rooms, x, y, false);
     }
 
+    public ObjectInstance getContainingDoorOrRoom(ObjectInstance object) {
+        CleanupDoor door = doorContainingPoint((int) object.get(ATT_X), (int) object.get(ATT_Y));
+        if (door != null) {
+            return door;
+        }
+        CleanupRoom room = roomContainingPoint((int) object.get(ATT_X), (int) object.get(ATT_Y));
+        return room;
+    }
+
     public CleanupRoom roomContainingPointIncludingBorder(int x, int y) {
         List<ObjectInstance> rooms = objectsOfClass(Cleanup.CLASS_ROOM);
         return (CleanupRoom) regionContainingPoint(rooms, x, y, true);

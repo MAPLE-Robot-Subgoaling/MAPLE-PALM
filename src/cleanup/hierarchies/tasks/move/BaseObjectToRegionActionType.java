@@ -28,7 +28,7 @@ public class BaseObjectToRegionActionType extends ObjectParameterizedActionType 
         inRegionPF = new ObjectInRegionGoalPF("internalPF_"+name, parameterClasses);
     }
 
-    private HashSet<String> getConnectedRegions(CleanupState state, String regionName) {
+    public static HashSet<String> getConnectedRegions(CleanupState state, String regionName) {
 
         HashSet<String> connected = new HashSet<>();
         Collection<CleanupRoom> rooms = state.getRooms().values();

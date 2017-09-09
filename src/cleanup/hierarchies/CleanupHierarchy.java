@@ -212,45 +212,49 @@ public class CleanupHierarchy {
 
         StateMapping agentDoorMapper = new IdentityMap();
         PropositionalFunction agentDoorGoal = new ObjectInRegionGoalPF("AgentDoorPF", new String[]{CLASS_AGENT, CLASS_DOOR});
+        PropositionalFunction agentDoorFail = new ObjectInRegionFailPF("AgentDoorFailPF", new String[]{CLASS_AGENT, CLASS_DOOR});
         NonprimitiveTask agentToDoor = new NonprimitiveTask(
                 subTasks,
                 aMoveAgentToDoor,
                 moveAgentDoorDomain,
                 agentDoorMapper,
-                agentDoorGoal,
+                agentDoorFail,
                 agentDoorGoal
         );
 
         StateMapping agentRoomMapper = new IdentityMap();
         PropositionalFunction agentRoomGoal = new ObjectInRegionGoalPF("AgentRoomPF", new String[]{CLASS_AGENT, CLASS_ROOM});
+        PropositionalFunction agentRoomFail = new ObjectInRegionFailPF("AgentRoomFailPF", new String[]{CLASS_AGENT, CLASS_ROOM});
         NonprimitiveTask agentToRoom = new NonprimitiveTask(
                 subTasks,
                 aMoveAgentToRoom,
                 moveAgentRoomDomain,
                 agentRoomMapper,
-                agentRoomGoal,
+                agentRoomFail,
                 agentRoomGoal
         );
 
         StateMapping blockDoorMapper = new IdentityMap();
         PropositionalFunction blockDoorGoal = new ObjectInRegionGoalPF("BlockDoorPF", new String[]{CLASS_BLOCK, CLASS_DOOR});
+        PropositionalFunction blockDoorFail = new ObjectInRegionFailPF("BlockDoorFailPF", new String[]{CLASS_BLOCK, CLASS_DOOR});
         NonprimitiveTask blockToDoor = new NonprimitiveTask(
                 subTasks,
                 aMoveBlockToDoor,
                 moveBlockDoorDomain,
                 blockDoorMapper,
-                blockDoorGoal,
+                blockDoorFail,
                 blockDoorGoal
         );
 
         StateMapping blockRoomMapper = new IdentityMap();
         PropositionalFunction blockRoomGoal = new ObjectInRegionGoalPF("BlockRoomPF", new String[]{CLASS_BLOCK, CLASS_ROOM});
+        PropositionalFunction blockRoomFail = new ObjectInRegionFailPF("BlockRoomFailPF", new String[]{CLASS_BLOCK, CLASS_ROOM});
         NonprimitiveTask blockToRoom = new NonprimitiveTask(
                 subTasks,
                 aMoveBlockToRoom,
                 moveBlockRoomDomain,
                 blockRoomMapper,
-                blockRoomGoal,
+                blockRoomFail,
                 blockRoomGoal
         );
 
