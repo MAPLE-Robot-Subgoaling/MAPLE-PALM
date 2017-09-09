@@ -15,12 +15,11 @@ rewardNoop: -0.001
 rewardPull: 0.0
 
 agents:
-  - rmaxq
   - ramdp
 
-episodes: 100
+episodes: 50
 max_steps: 300
-trials: 2
+trials: 10
 gamma: 0.95
 
 planning:
@@ -35,7 +34,7 @@ rmax:
 output:
   csv:
     enabled: true
-    output: results/ramdp-cleanup-3rooms2blocks.csv
+    output: results/ramdp-cleanup-2rooms-1block.csv
 
   chart:
     enabled: true
