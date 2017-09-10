@@ -112,7 +112,7 @@ public class CleanupHierarchicalCharts {
 
     public static void main(String[] args) {
 
-        String conffile = "config/cleanup/ramdpTest.yaml";
+        String conffile = "config/cleanup/rmaxqTest2r1b.yaml";
         if(args.length > 0) {
             conffile = args[0];
         }

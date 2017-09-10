@@ -13,6 +13,7 @@ import burlap.statehashing.HashableStateFactory;
 import hierarchy.framework.GroundedTask;
 import hierarchy.framework.Task;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class RmaxQLearningAgent implements LearningAgent {
@@ -97,6 +98,9 @@ public class RmaxQLearningAgent implements LearningAgent {
 		timestepsByTask.clear();
 
 		time = System.currentTimeMillis();
+		SimpleDateFormat sdf = new SimpleDateFormat("MMM dd,yyyy HH:mm:ss");
+		Date resultdate = new Date(time);
+		System.out.println(sdf.format(resultdate));
 		HashableState hs = hashingFactory.hashState(env.currentObservation());
 		e = R_MaxQ(rootSolve, hs, e, maxSteps);
 		time = System.currentTimeMillis() - time;
@@ -266,8 +270,10 @@ public class RmaxQLearningAgent implements LearningAgent {
 
 		double childReward = R(childTask, hs);
 
+		HashMap<HashableState, Double> childTransitions = getStoredTransitions(childTask, hs);
+
 		double expectedValue = 0.0;
-		for (HashableState hsPrime : reachableStates) {
+		for (HashableState hsPrime : childTransitions.keySet()) {
 			double childTransitionProbability = P(childTask, hs, hsPrime);
 			double parentValueAtStatePrime = V(task, hsPrime);
 			expectedValue += childTransitionProbability * parentValueAtStatePrime;
@@ -410,9 +416,10 @@ public class RmaxQLearningAgent implements LearningAgent {
 
 		double childReward = R(childTask, hs);
 
-		double expectedReward = 0.0;
+		HashMap<HashableState, Double> transitions = getStoredTransitions(task, hs);
 
-		for (HashableState hsPrime : reachableStates) {
+		double expectedReward = 0.0;
+		for (HashableState hsPrime : transitions.keySet()) {
 			if (isTerminal(task, hsPrime)) {
 				continue;
 			}
@@ -435,9 +442,10 @@ public class RmaxQLearningAgent implements LearningAgent {
 
 		double childTerminalTransitionProbability = P(childTask, hs, hsX);
 
-		double expectedTransitionProbability = 0.0;
+		HashMap<HashableState, Double> transitions = getStoredTransitions(task, hs);
 
-		for (HashableState hsPrime : reachableStates) {
+		double expectedTransitionProbability = 0.0;
+		for (HashableState hsPrime : transitions.keySet()) {
 			if (isTerminal(task, hsPrime)) {
 				continue;
 			}
@@ -617,7 +625,7 @@ public class RmaxQLearningAgent implements LearningAgent {
 		return reward;
 	}
 
-	private double getStoredTransitionProbability(GroundedTask task, HashableState hs, HashableState hsPrime) {
+	private HashMap<HashableState, Double> getStoredTransitions(GroundedTask task, HashableState hs) {
 		HashMap<HashableState,HashMap<HashableState, Double>> storedTransitions = storedTransitionsByTask.get(task);
 		if (storedTransitions == null) {
 			storedTransitions = new HashMap<>();
@@ -628,6 +636,11 @@ public class RmaxQLearningAgent implements LearningAgent {
 			transitionsFromState = new HashMap<>();
 			storedTransitions.put(hs, transitionsFromState);
 		}
+		return transitionsFromState;
+	}
+
+	private double getStoredTransitionProbability(GroundedTask task, HashableState hs, HashableState hsPrime) {
+		HashMap<HashableState, Double>  transitionsFromState = getStoredTransitions(task, hs);
 		Double transitionProbability = transitionsFromState.get(hsPrime);
 		if (transitionProbability == null) {
 			transitionProbability = 0.0;
