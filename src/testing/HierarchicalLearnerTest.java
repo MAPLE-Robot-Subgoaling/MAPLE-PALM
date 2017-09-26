@@ -9,6 +9,7 @@ import java.util.List;
 
 import burlap.behavior.singleagent.Episode;
 import burlap.behavior.singleagent.auxiliary.EpisodeSequenceVisualizer;
+import burlap.debugtools.RandomFactory;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.common.VisualActionObserver;
 import burlap.mdp.singleagent.environment.SimulatedEnvironment;
@@ -80,7 +81,7 @@ public class HierarchicalLearnerTest {
 		}
 
 		List<Episode> episodes = new ArrayList<Episode>();
-		RmaxQLearningAgent rmaxq = new RmaxQLearningAgent(root, hs, initState, conf.rmax.vmax, conf.rmax.threshold, conf.rmax.max_delta);
+		RmaxQLearningAgent rmaxq = new RmaxQLearningAgent(root, hs, initState, conf.rmax.vmax, conf.rmax.threshold, conf.rmax.max_delta, conf.rmax.max_delta_in_model);
 		
 		for(int i = 1; i <= conf.episodes; i++){
 			Episode e = rmaxq.runLearningEpisode(env, conf.max_steps);

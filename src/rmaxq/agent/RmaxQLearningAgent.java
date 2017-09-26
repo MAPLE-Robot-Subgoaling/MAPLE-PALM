@@ -1,10 +1,10 @@
 package rmaxq.agent;
 
-import burlap.behavior.policy.GreedyQPolicy;
-import burlap.behavior.policy.SolverDerivedPolicy;
 import burlap.behavior.singleagent.Episode;
 import burlap.behavior.singleagent.learning.LearningAgent;
+import burlap.debugtools.RandomFactory;
 import burlap.mdp.core.action.Action;
+import burlap.mdp.core.oo.ObjectParameterizedAction;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.environment.Environment;
 import burlap.mdp.singleagent.environment.EnvironmentOutcome;
@@ -13,78 +13,72 @@ import burlap.statehashing.HashableStateFactory;
 import hierarchy.framework.GroundedTask;
 import hierarchy.framework.Task;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 public class RmaxQLearningAgent implements LearningAgent {
 
-	//Pa(s', x)
-	private Map<GroundedTask, Map<HashableState, Map<HashableState, Double>>> transition;
+	//R^a(s) for non-primitive tasks
+	private HashMap<GroundedTask, HashMap< HashableState, Double>> storedRewardsByTask;
 
-	//Ra(s) 
-	private Map<GroundedTask, Map<HashableState, Double>> reward;
-	//pi a
+	//P^a(s, s') for non-primitive tasks
+	private HashMap<GroundedTask, HashMap< HashableState, HashMap< HashableState, Double>>> storedTransitionsByTask;
 
-	//r(s,a)
-	private Map<HashableState, Map< GroundedTask, Double>> totalReward;
+	private HashMap<GroundedTask, HashMap< HashableState, Double>> storedValueByTask;
+
+	private HashMap<GroundedTask, HashMap< HashableState, HashMap <GroundedTask, Double>>> storedQValuesByTask;
+
+	private HashMap<GroundedTask, HashMap< HashableState, GroundedTask>> storedPoliciesByTask;
 
 	//n(s,a)
-	private Map<HashableState, Map< GroundedTask, Integer>> actionCount;
+	private HashMap<GroundedTask, HashMap< HashableState, Integer>> stateActionCountsByTask;
 
 	//n(s,a,s')
-	private Map<HashableState, Map< GroundedTask, Map<HashableState, Integer>>> resultingStateCount;
+	private HashMap<GroundedTask, HashMap< HashableState, HashMap<HashableState, Integer>>> totalTransitionsByTask;
 
-	//grounded task map
-	private Map<String, GroundedTask> groundedTaskMap;
+	//r(s,a)
+	private HashMap<GroundedTask, HashMap< HashableState, Double>> totalRewardsByTask;
 
-	//QProviders for each grounded task
-	private Map<GroundedTask, QProviderRmaxQ> qProvider;
-
-	//policies
-	private Map<GroundedTask, SolverDerivedPolicy> qPolicy;
-
-	//envolope(a)
-	private Map<GroundedTask, List<HashableState>> envolope;
+	//envelopesByTask(a)
+	private HashMap<GroundedTask, List<HashableState>> envelopesByTask;
 
 	//ta 
-	private Map<GroundedTask, List<HashableState>> terminal;
+	private HashMap<GroundedTask, List<HashableState>> terminalStatesByTask;
 
-	private Map<GroundedTask, Integer> actionTimestaps;
-	
-	private double dynamicPrgEpsilon;
+	private HashMap<GroundedTask, Integer> timestepsByTask;
+
+	private double maxDeltaInPolicy;
+	private double maxDeltaInModel;
 	private int threshold;
 	private Task root;
+	private GroundedTask rootSolve;
 	private HashableStateFactory hashingFactory;
 	private double Vmax;
 	private Environment env;
 	private State initialState;	
 	private List<HashableState> reachableStates = new ArrayList<HashableState>();
 	private long time = 0;
-	private int timestep;
-	private boolean computePolicy = true;
-	private List<Double> prevEpisodeRewards;
+	private int numberPrimitivesExecuted;
 
-	public RmaxQLearningAgent(Task root, HashableStateFactory hs, State initState, double vmax, int threshold, double maxDelta){
+	public RmaxQLearningAgent(Task root, HashableStateFactory hs, State initState, double vmax, int threshold, double maxDeltaInPolicy, double maxDeltaInModel){
 		this.root = root;
-		this.reward = new HashMap<GroundedTask, Map<HashableState,Double>>();
-		this.transition = new HashMap<GroundedTask, Map<HashableState, Map<HashableState, Double>>>();
-		this.totalReward = new HashMap<HashableState, Map<GroundedTask,Double>>();
-		this.actionCount = new HashMap<HashableState, Map<GroundedTask,Integer>>();
-		this.qProvider = new HashMap<GroundedTask, QProviderRmaxQ>();
-		this.envolope = new HashMap<GroundedTask, List<HashableState>>();
-		this.resultingStateCount = new HashMap<HashableState, Map<GroundedTask,Map<HashableState,Integer>>>();
-		this.terminal = new HashMap<GroundedTask, List<HashableState>>();
-		this.qPolicy = new HashMap<GroundedTask, SolverDerivedPolicy>();
-		this.groundedTaskMap = new HashMap<String, GroundedTask>();
-		this.dynamicPrgEpsilon = maxDelta;
 		this.hashingFactory = hs;
+		this.initialState = initState;
 		this.Vmax = vmax;
 		this.threshold = threshold;
-		this.initialState = initState;
-		this.actionTimestaps = new HashMap<GroundedTask, Integer>();
-		this.prevEpisodeRewards = new ArrayList<Double>();
+		this.maxDeltaInPolicy = maxDeltaInPolicy;
+		this.maxDeltaInModel = maxDeltaInModel;
+		this.totalRewardsByTask = new HashMap<GroundedTask, HashMap<HashableState,Double>>();
+		this.storedRewardsByTask = new HashMap<GroundedTask, HashMap<HashableState,Double>>();
+		this.storedValueByTask = new HashMap<GroundedTask, HashMap<HashableState,Double>>();
+		this.storedQValuesByTask = new HashMap<>();
+		this.storedPoliciesByTask = new HashMap<>();
+		this.storedTransitionsByTask = new HashMap<GroundedTask, HashMap<HashableState, HashMap<HashableState, Double>>>();
+		this.stateActionCountsByTask = new HashMap<GroundedTask, HashMap<HashableState, Integer>>();
+		this.envelopesByTask = new HashMap<GroundedTask, List<HashableState>>();
+		this.totalTransitionsByTask = new HashMap<GroundedTask, HashMap<HashableState,HashMap<HashableState,Integer>>>();
+		this.terminalStatesByTask = new HashMap<GroundedTask, List<HashableState>>();
+		this.timestepsByTask = new HashMap<GroundedTask, Integer>();
 		reachableStates = StateReachability.getReachableStates(initialState, root.getDomain(), hashingFactory);
 	}
 
@@ -99,572 +93,622 @@ public class RmaxQLearningAgent implements LearningAgent {
 	public Episode runLearningEpisode(Environment env, int maxSteps) {
 		this.env = env;
 		Episode e = new Episode(initialState);
-		GroundedTask rootSolve = root.getAllGroundedTasks(env.currentObservation()).get(0);
-		timestep = 0;
-		actionTimestaps.clear();
+		rootSolve = root.getAllGroundedTasks(env.currentObservation()).get(0);
+		numberPrimitivesExecuted = 0;
+		timestepsByTask.clear();
 
 		time = System.currentTimeMillis();
+		SimpleDateFormat sdf = new SimpleDateFormat("MMM dd,yyyy HH:mm:ss");
+		Date resultdate = new Date(time);
+		System.out.println(sdf.format(resultdate));
 		HashableState hs = hashingFactory.hashState(env.currentObservation());
-		e = R_MaxQ(hs, rootSolve, e, maxSteps);
+		e = R_MaxQ(rootSolve, hs, e, maxSteps);
 		time = System.currentTimeMillis() - time;
-
-		checkConvergence(e, maxSteps);
 
 		return e;
 	}
 
-	protected void checkConvergence(Episode e, int maxSteps){
-		double cumulativeReward = 0;
-		for(double epRew : e.rewardSequence){
-			cumulativeReward += epRew;
-		}
-		prevEpisodeRewards.add(cumulativeReward);
-		int size = prevEpisodeRewards.size();
-		if( size > 2 && Math.abs(prevEpisodeRewards.get(size - 1) - prevEpisodeRewards.get(size - 2)) <= 1
-				&& Math.abs(prevEpisodeRewards.get(size - 2) - prevEpisodeRewards.get(size - 3)) <= 1
-				&& Math.abs(prevEpisodeRewards.get(size - 1) - prevEpisodeRewards.get(size - 3)) <= 1
-				&& e.actionSequence.size() < maxSteps){
-			computePolicy = false;
-			System.out.println("Stopping compute");
-		}else{
-			computePolicy = true;
-		}
-	}
-
+	public static String tabLevel = "";
 	/**
 	 * main loop of the algorithm that recurses down to primitive actions then updates counts
-	 * @param hs the current state
 	 * @param task the task to solve
+	 * @param hs the current state
 	 * @param e current episode
 	 * @param maxSteps the max number of primitive actions allowed
 	 * @return the episode
 	 */
-	protected Episode R_MaxQ(HashableState hs, GroundedTask task, Episode e, int maxSteps){
-//		System.out.println(task);
+	protected Episode R_MaxQ(GroundedTask task, HashableState hs, Episode e, int maxSteps){
+
+		System.out.println(tabLevel + ">>> " + task.getAction());
+
 		if(task.isPrimitive()){
-			Action a = task.getAction();
-			EnvironmentOutcome outcome = env.executeAction(a);
-			e.transition(outcome);
-			State sprime = outcome.op;
-			HashableState hsprime = hashingFactory.hashState(sprime);
-
-			//r(s,a) += r
-			Map<GroundedTask, Double> rewrd = totalReward.get(hs);
-			if(rewrd == null){
-				rewrd = new HashMap<GroundedTask, Double>();
-				totalReward.put(hs, rewrd);
-			}
-			Double totR = rewrd.get(task);
-			if(totR == null){
-				totR = 0.;
-			}			
-			totR = totR + outcome.r;
-			rewrd.put(task, totR);
-
-			//n(s,a) ++
-			Map<GroundedTask, Integer> count = actionCount.get(hs);
-			if(count == null){
-				count = new HashMap<GroundedTask, Integer>();
-				actionCount.put(hs, count);
-			}
-			Integer sum = count.get(task);
-			if(sum == null){
-				sum = 0;
-			}
-			sum = sum + 1;
-			count.put(task, sum);
-
-			//n(s,a,s')++
-			Map<GroundedTask, Map<HashableState,Integer>> stateCount = resultingStateCount.get(hs);
-			if(stateCount == null){
-				stateCount = new HashMap<GroundedTask, Map<HashableState,Integer>>();
-				resultingStateCount.put(hs, stateCount);
-			}
-			Map<HashableState, Integer> Scount = stateCount.get(task);
-			if(Scount == null){
-				Scount = new HashMap<HashableState, Integer>();
-				stateCount.put(task, Scount);
-			}
-			Integer resCount = Scount.get(hsprime);
-			if(resCount == null){
-				resCount = 0;
-			}
-			resCount = resCount + 1;
-			Scount.put(hsprime, resCount);
-
-			//add pa(s, sprime) =0 in order to perform the update in compute model
-			Map<HashableState, Map<HashableState,Double>> actionTSA = transition.get(task); 
-			if(actionTSA == null){
-				actionTSA = new HashMap<HashableState, Map<HashableState,Double>>();
-				transition.put(task, actionTSA);
-			}
-			Map<HashableState, Double> endProb = actionTSA.get(hs);
-			if(endProb == null){
-				endProb = new HashMap<HashableState, Double>();
-				actionTSA.put(hs, endProb);
-			}
-			Double prob = endProb.get(hsprime);
-			if(prob == null)
-				endProb.put(hsprime, 0.);
-
-			timestep++;
+			e = executePrimitive(e, task, hs);
 			return e;
-		}else{ //task is composute
-			boolean terminal = false;
-			QProviderRmaxQ qvalues = qProvider.get(task);
-			if(qvalues == null){
-				qvalues = new QProviderRmaxQ(hashingFactory, task);
-				qProvider.put(task, qvalues);
-			}			
+		} else {
+			do {
 
-			SolverDerivedPolicy taskFromPolicy = qPolicy.get(task);
-			if(taskFromPolicy == null){
-				taskFromPolicy = new GreedyQPolicy();
-				qPolicy.put(task, taskFromPolicy);
-			}			
-			taskFromPolicy.setSolver(qvalues);
+				computePolicy(task, hs);
 
-			do{
-				if(computePolicy)
-					computePolicy(hs, task);
+				GroundedTask childTask = pi(task, hs);
 
-				Action maxqAction = taskFromPolicy.action(hs.s());
-				GroundedTask childFromPolicy = groundedTaskMap.get(maxqAction.actionName());
-				if(childFromPolicy == null){
-					addChildTasks(task, hs.s());
-					childFromPolicy = groundedTaskMap.get(maxqAction.actionName());
-				}
-				//R pia(s') (s')
-				e = R_MaxQ(hs, childFromPolicy, e, maxSteps);
+				tabLevel += "\t";
+
+				e = R_MaxQ(childTask, hs, e, maxSteps);
+
+				tabLevel = tabLevel.substring(0, (tabLevel.length() - 1));
+
 				State s = e.stateSequence.get(e.stateSequence.size() - 1);
 				hs = hashingFactory.hashState(s);
-
-				terminal = task.isComplete(s) || task.isFailure(s);
-			}while(!terminal && (timestep < maxSteps || maxSteps == -1));
-
+			} while(!isTerminal(task, hs) && (numberPrimitivesExecuted < maxSteps || maxSteps == -1));
+			System.out.println(tabLevel + "<<< " + task.getAction());
 			return e;
 		}
+	}
 
+	private Episode executePrimitive(Episode e, GroundedTask task, HashableState hs) {
+		Action a = task.getAction();
+		EnvironmentOutcome outcome = env.executeAction(a);
+		e.transition(outcome);
+		State sPrime = outcome.op;
+		HashableState hsPrime = hashingFactory.hashState(sPrime);
+		double newReward = outcome.r;
+
+		//r(s,a) += r
+		updateTotalReward(task, hs, newReward);
+
+		//n(s,a) ++
+		incrementStateActionCount(task, hs);
+
+		//n(s,a,s')++
+		incrementTotalTransitionCount(task, hs, hsPrime);
+
+		numberPrimitivesExecuted++;
+		return e;
+	}
+
+	private void updateTotalReward(GroundedTask task, HashableState hs, double reward) {
+		if (reward == 0.0) {
+			// skip zero rewards, don't need to store or update
+			return;
+		}
+		HashMap<HashableState, Double> taskTotalRewards = totalRewardsByTask.get(task);
+		if (taskTotalRewards == null) {
+			taskTotalRewards = new HashMap<>();
+			totalRewardsByTask.put(task, taskTotalRewards);
+		}
+		Double totalReward = taskTotalRewards.get(hs);
+		if (totalReward == null) {
+			totalReward = 0.0;
+		}
+		totalReward = totalReward + reward;
+		taskTotalRewards.put(hs, totalReward);
+		totalRewardsByTask.put(task, taskTotalRewards);
+	}
+
+	private void incrementStateActionCount(GroundedTask task, HashableState hs) {
+		int count = n(task, hs);
+		count = count + 1;
+		stateActionCountsByTask.get(task).put(hs, count);
+	}
+
+	private void incrementTotalTransitionCount(GroundedTask task, HashableState hs, HashableState hsPrime) {
+		HashMap<HashableState, HashMap<HashableState, Integer>> totalTransitions = totalTransitionsByTask.get(task);
+		if (totalTransitions == null) {
+			totalTransitions = new HashMap<>();
+			totalTransitionsByTask.put(task, totalTransitions);
+		}
+		HashMap<HashableState, Integer> transitionsFromState = totalTransitions.get(hs);
+		if (transitionsFromState == null) {
+			transitionsFromState = new HashMap<>();
+			totalTransitions.put(hs, transitionsFromState);
+		}
+		Integer transitionCount = transitionsFromState.get(hsPrime);
+		if (transitionCount == null) {
+			transitionCount = 0;
+		}
+		transitionCount = transitionCount + 1;
+		transitionsFromState.put(hsPrime, transitionCount);
+		totalTransitions.put(hs, transitionsFromState);
+		totalTransitionsByTask.put(task, totalTransitions);
 	}
 
 	/**
 	 * computes and updates action values for the state in the task
-	 * @param hs current state
 	 * @param task the current task
+	 * @param hs current state
 	 */
-	public void computePolicy(HashableState hs, GroundedTask task){
-		
-		Integer aTime = actionTimestaps.get(task);
-		if(aTime == null){
-			aTime = 0;
-			actionTimestaps.put(task, aTime);
-		}
-		
-		List<HashableState> envolopA = envolope.get(task);
-		if(envolopA == null){
-			envolopA = new ArrayList<HashableState>();
-			envolope.put(task, envolopA);
+	public void computePolicy(GroundedTask task, HashableState hs){
+
+		// initialize timesteps
+		Integer timesteps = timestepsByTask.get(task);
+		if(timesteps == null){
+			timesteps = 0;
+			timestepsByTask.put(task, timesteps);
 		}
 
-		if(aTime < timestep){
-			actionTimestaps.put(task, timestep);
-			envolopA.clear();
+		// initialize taskEnvelope
+		List<HashableState> taskEnvelope = envelopesByTask.get(task);
+		if(taskEnvelope == null){
+			taskEnvelope = new ArrayList<HashableState>();
+			envelopesByTask.put(task, taskEnvelope);
 		}
-		prepareEnvolope(hs, task);
 
-		QProviderRmaxQ qp = qProvider.get(task);
-		if(qp == null){
-			qp = new QProviderRmaxQ(hashingFactory, task);
-			qProvider.put(task, qp);
+		// clear task envelope if timestampForTask < total actual timesteps
+		if (timestepsByTask.get(task) < numberPrimitivesExecuted) {
+			timestepsByTask.put(task, numberPrimitivesExecuted);
+			taskEnvelope.clear();
 		}
+
+		prepareEnvelope(task, hs);
 
 		boolean converged = false;
-		while(!converged){   
-			double maxDelta = 0;
-			for(HashableState hsprime : envolopA){
+		while(!converged){
+			converged = doValueIteration(task, taskEnvelope);
+		}
+		setPi(task, hs);
+	}
 
-				List<GroundedTask> ActionIns = task.getGroundedChildTasks(hsprime.s());
-				for(GroundedTask a : ActionIns){
-					double oldQ = qp.qValue(hsprime.s(), a.getAction());
+	private boolean doValueIteration(GroundedTask task, List<HashableState> taskEnvelope) {
+		double maxDelta = 0.0;
+		for(HashableState hsPrime : taskEnvelope){
+			List<GroundedTask> childTasks = task.getGroundedChildTasks(hsPrime.s());
+			for(GroundedTask childTask : childTasks){
+				setQ_eq1(task, hsPrime, childTask);
+			}
+			double deltaV = setV_eq2(task, hsPrime);
+			if(deltaV > maxDelta) {
+				maxDelta = deltaV;
+			}
+		}
+		boolean converged = maxDelta < maxDeltaInPolicy;
+		return converged;
+	}
 
-					double newQ = epuation_1(qp, hsprime, a);
-					qp.update(hsprime.s(), a.getAction(), newQ);
+	private double setQ_eq1(GroundedTask task, HashableState hs, GroundedTask childTask) {
 
-					if(Math.abs(oldQ - newQ) > maxDelta)
-						maxDelta = Math.abs(oldQ - newQ);
+		double oldQ = Q(task, hs, childTask);
+
+		double childReward = R(childTask, hs);
+
+		HashMap<HashableState, Double> childTransitions = getStoredTransitions(childTask, hs);
+
+		double expectedValue = 0.0;
+		for (HashableState hsPrime : childTransitions.keySet()) {
+			double childTransitionProbability = P(childTask, hs, hsPrime);
+			double parentValueAtStatePrime = V(task, hsPrime);
+			expectedValue += childTransitionProbability * parentValueAtStatePrime;
+		}
+
+		double newQ = childReward + expectedValue;
+
+		storedQValuesByTask.get(task).get(hs).put(childTask, newQ);
+
+		double delta = Math.abs(newQ - oldQ);
+		return delta;
+	}
+
+	private double setV_eq2(GroundedTask task, HashableState hs) {
+
+		double oldV = V(task, hs);
+
+		double newV;
+		if(!task.isPrimitive() && isTerminal(task, hs)) {
+			newV = task.getReward(hs.s(), task.getAction(), hs.s());
+		} else {
+			List<GroundedTask> childTasks = task.getGroundedChildTasks(hs.s());
+			double maxQ = Integer.MIN_VALUE;
+			for (GroundedTask childTask : childTasks) {
+				double qValue = Q(task, hs, childTask);
+				if (qValue > maxQ) {
+					maxQ = qValue;
 				}
 			}
-			if(maxDelta < dynamicPrgEpsilon)
-				converged = true;
+			newV = maxQ;
 		}
+
+		storedValueByTask.get(task).put(hs, newV);
+
+		double delta = Math.abs(newV - oldV);
+		return delta;
+	}
+
+	private void setPi(GroundedTask task, HashableState hs) {
+		List<GroundedTask> childTasks = task.getGroundedChildTasks(hs.s());
+		double maxQ = Integer.MIN_VALUE;
+		List<GroundedTask> maxChildTasks = new ArrayList<>();
+		for (GroundedTask childTask : childTasks) {
+			double qValue = Q(task, hs, childTask);
+			if (qValue > maxQ) {
+				maxQ = qValue;
+				maxChildTasks.clear();
+				maxChildTasks.add(childTask);
+			} else if (qValue == maxQ) {
+				maxChildTasks.add(childTask);
+			}
+		}
+		// get a random child task among the equally good actions
+		GroundedTask maxChildTask = maxChildTasks.get(RandomFactory.getMapped(0).nextInt(maxChildTasks.size()));
+		HashMap<HashableState, GroundedTask> storedPolicies = storedPoliciesByTask.get(task);
+		if (storedPolicies == null) {
+			storedPolicies = new HashMap<>();
+			storedPoliciesByTask.put(task, storedPolicies);
+		}
+		storedPolicies.put(hs, maxChildTask);
 	}
 
 	/**
-	 * calculates and stores the possible states that can be reached from the current state 
-	 * @param hs the state
+	 * calculates and stores the possible states that can be reached from the current state
 	 * @param task the task
+	 * @param hs the state
 	 */
-	public void prepareEnvolope(HashableState hs, GroundedTask task){
-		List<HashableState> envelope = envolope.get(task);
+	public void prepareEnvelope(GroundedTask task, HashableState hs){
+		List<HashableState> envelope = envelopesByTask.get(task);
+		if (isTerminal(task, hs)) {
+			return; // skip terminal states since we can't "plan" beyond the terminal point of this task
+		}
 		if(!envelope.contains(hs)){
 			envelope.add(hs);
-			List<GroundedTask> ActionIns = task.getGroundedChildTasks(hs.s());
-			for(GroundedTask a : ActionIns){
-				compute_model(hs, a); 
+			List<GroundedTask> childTasks = task.getGroundedChildTasks(hs.s());
+			for(GroundedTask childTask : childTasks){
 
-				//get function forPa'(s, .)
-				Map<HashableState, Map<HashableState,Double>> Pa = transition.get(a);
-				if(Pa == null){
-					Pa = new HashMap<HashableState, Map<HashableState,Double>>();
-					transition.put(a, Pa);
-				}
-				Map<HashableState, Double> psa = Pa.get(hs);
-				if(psa == null){
-					psa = new HashMap<HashableState, Double>();
-					Pa.put(hs, psa);
-				}
+				computeModel(childTask, hs);
 
-				for(HashableState hsp : psa.keySet()){
-					if(psa.get(hsp) > 0)
-						prepareEnvolope(hsp, task);
+				Set<HashableState> possibleStates = getPossibleSuccessorStates(childTask, hs);
+				if (possibleStates == null) { continue; }
+				for (HashableState hsPrime : possibleStates) {
+					double transitionProbability = P(childTask, hs, hsPrime);
+					if (transitionProbability > 0) {
+						prepareEnvelope(task, hsPrime);
+					}
 				}
 			}
 		}
 	}
 
 	/**
-	 * computes and stores reward and transition values for the task 
-	 * @param hs the current state
+	 * computes and stores totalRewardsByTask and transitionsByTask values for the task
 	 * @param task the current task
+	 * @param hs the current state
 	 */
-	private void compute_model(HashableState hs, GroundedTask task){
+	private void computeModel(GroundedTask task, HashableState hs){
 		if(task.isPrimitive()){
-			//n(s, a)
-			Map<GroundedTask, Integer> scount = actionCount.get(hs);
-			if(scount == null){
-				scount = new HashMap<GroundedTask, Integer>();
-				actionCount.put(hs, scount);
-			}
-			Integer n_sa = scount.get(task);
-			if(n_sa == null){
-				n_sa = 0;
-				scount.put(task, 0);
-			}			
-			if(n_sa >= threshold){
-				//r(s, a)
-				Map<GroundedTask, Double> rewards = totalReward.get(hs);
-				if(rewards == null){
-					rewards = new HashMap<GroundedTask, Double>();
-					totalReward.put(hs, rewards);
-				}
-				Double r_sa = rewards.get(task);
-				if(r_sa == null){
-					r_sa = 0.;
-					rewards.put(task, r_sa);
-				}			
-
-				//set Ra(s) to r(s,a) / n(s,a)
-				Map<HashableState, Double> Ra = reward.get(task);
-				if(Ra == null){
-					Ra = new HashMap<HashableState, Double>();
-					reward.put(task, Ra);
-				}
-				double newR = (double)r_sa / n_sa;
-				Ra.put(hs, newR);
-
-				//get Pa(s, .)
-				Map<HashableState, Map<HashableState,Double>> Ptask = transition.get(task);
-				if(Ptask == null){
-					Ptask = new HashMap<HashableState, Map<HashableState,Double>>();
-					transition.put(task, Ptask);
-				}
-				Map<HashableState, Double> pas = Ptask.get(hs); 
-				if(pas == null){
-					pas = new HashMap<HashableState, Double>();
-					Ptask.put(hs, pas);
-				}
-
-				Map<GroundedTask, Map<HashableState,Integer>> nS = resultingStateCount.get(hs);
-				if(nS == null){
-					nS = new HashMap<GroundedTask, Map<HashableState,Integer>>();
-					resultingStateCount.put(hs, nS);
-				}
-				Map<HashableState, Integer> nSA = nS.get(task);
-				if(nSA == null){
-					nSA = new HashMap<HashableState, Integer>();
-					nS.put(task, nSA);
-				}
-				for(HashableState hsprime : pas.keySet()){
-					//get n(s, a, s')
-					Integer n_sasp = nSA.get(hsprime);
-					if(n_sasp == null){
-						n_sasp = 0;
-						nSA.put(hsprime, n_sasp);
-					}
-
-					//set Pa(s, s') = n(s,a,s') / n(s, a)
-					double p_assp = (double)n_sasp / n_sa;
-					pas.put(hsprime, p_assp);
-				}
-			}
+			computeModelPrimitive(task, hs);
 		}else{
-			computePolicy(hs, task);
-			
-			QProviderRmaxQ qvalues = qProvider.get(task);
-			SolverDerivedPolicy taskFromPolicy = qPolicy.get(task);
-			if(taskFromPolicy == null){
-				taskFromPolicy = new GreedyQPolicy();
-				qPolicy.put(task, taskFromPolicy);
-			}
-			taskFromPolicy.setSolver(qvalues);
-
-			Map<HashableState, Map<HashableState,Double>> probtask = transition.get(task);
-			if(probtask == null){
-				probtask = new HashMap<HashableState, Map<HashableState,Double>>();
-				transition.put(task, probtask);
-			}					
-
-			Map<HashableState, Double> rewtask = reward.get(task);
-			if(rewtask == null){
-				rewtask = new HashMap<HashableState, Double>();
-				reward.put(task, rewtask);
-			}
-			
-			List<HashableState> envelopeA = envolope.get(task);
-			if(envelopeA == null){
-				envelopeA = new ArrayList<HashableState>();
-				envolope.put(task, envelopeA);
-			}
-			
+			computePolicy(task, hs);
 			boolean converged = false;
 			while(!converged){
-				double maxChange = 0;
-				//temporary holders for batch updates
-				for(HashableState hsprime : envelopeA){
-					Action maxqAction = taskFromPolicy.action(hsprime.s());
-					GroundedTask childFromPolicy = groundedTaskMap.get(maxqAction.actionName());
-					if(childFromPolicy == null){
-						addChildTasks(task, hsprime.s());
-						childFromPolicy = groundedTaskMap.get(maxqAction.actionName());
-					}
-					
-					//p pia(s') (s',.)
-					Map<HashableState, Map<HashableState,Double>> pfrompia = transition.get(childFromPolicy);
-					if(pfrompia == null){
-						pfrompia = new HashMap<HashableState, Map<HashableState,Double>>();
-						transition.put(childFromPolicy, pfrompia);
-					}
-					Map<HashableState, Double> childProbabilities = pfrompia.get(hsprime);
-					if(childProbabilities == null){
-						childProbabilities = new HashMap<HashableState, Double>();
-						pfrompia.put(hsprime, childProbabilities);
-					}
-					
-					Double prevReward = rewtask.get(hsprime);
-					if(prevReward == null){
-						prevReward = Vmax;
-						rewtask.put(hsprime, prevReward);
-					}					
-					double newReward = equation_4(task, taskFromPolicy, rewtask, hsprime, childProbabilities);
+				converged = doDynamicProgramming(task);
+			}
+		}
+	}
 
-					//find max change for value iteration
-					if(Math.abs(newReward - prevReward) > maxChange)
-						maxChange = Math.abs(newReward - prevReward);
-
-					Map<HashableState, Double> Pstosp = probtask.get(hsprime);
-					if(Pstosp == null){
-						Pstosp = new HashMap<HashableState, Double>();
-						probtask.put(hsprime, Pstosp);
-					}
-
-					//for all s in ta
-					// equation 7
-					List<HashableState> terminal = getTerminalStates(task);
-					for(HashableState hx :terminal){
-						//get current pa(s',x)
-						Double oldPrabability = Pstosp.get(hx);
-						if(oldPrabability == null){
-							oldPrabability = 0.;
-							Pstosp.put(hx, oldPrabability);
-						}
-
-						double newProb = equation_5(task, probtask, childProbabilities, hx);
-
-						if(Math.abs(newProb - oldPrabability) > maxChange)
-							maxChange = Math.abs(newProb - oldPrabability);
-
-						//set pa(s',x)
-						Pstosp.put(hx, newProb);
-					}
-					if(maxChange < dynamicPrgEpsilon)
-						converged = true;
+	private boolean doDynamicProgramming(GroundedTask task) {
+		List<HashableState> taskEnvelope = envelopesByTask.get(task);
+		double maxDelta = 0.0;
+		for(HashableState hsPrime : taskEnvelope) {
+//			double oldValue = V(task, hsPrime);
+			// get the action (child / subtask) that would be selected by policy
+			GroundedTask childTask = pi(task, hsPrime);
+			// update rewards
+			double deltaR = setR_eq4(task, hsPrime, childTask);
+			if (deltaR > maxDelta) {
+				maxDelta = deltaR;
+			}
+			List<HashableState> taskTerminalStates = terminalStatesByTask.get(task);
+			if (taskTerminalStates == null) {
+				taskTerminalStates = getTerminalStates(task);
+				terminalStatesByTask.put(task, taskTerminalStates);
+			}
+			for (HashableState taskTerminalState : taskTerminalStates) {
+				// update transitions
+				double deltaP = setT_eq5(task, hsPrime, childTask, taskTerminalState);
+				if (deltaP > maxDelta) {
+					maxDelta = deltaP;
 				}
-			}	
+			}
 		}
+		boolean converged = maxDelta < maxDeltaInModel;
+		return converged;
 	}
+	private double setR_eq4(GroundedTask task, HashableState hs, GroundedTask childTask) {
 
-	/**
-	 * runs eqn 1 from RMAXQ paper on inputs
-	 * @param qp action values
-	 * @param hsprime the starting state
-	 * @param a the action
-	 * @return the new q value
-	 */
-	private double epuation_1(QProviderRmaxQ qp, HashableState hsprime, GroundedTask a) {
-		//Ra'(s')
-		Map<HashableState, Double> actionAR = reward.get(a);
-		if(actionAR == null){
-			actionAR = new HashMap<HashableState, Double>();
-			reward.put(a, actionAR);
-		}
-		Double actionReward = actionAR.get(hsprime);
-		if(actionReward == null){
-			actionReward = Vmax;
-			actionAR.put(hsprime, actionReward);
-		}
+		double oldR = R(task, hs);
 
-		Map<HashableState, Map<HashableState,Double>> Pchildaction = transition.get(a);
-		if(Pchildaction == null){
-			Pchildaction = new HashMap<HashableState, Map<HashableState,Double>>();
-			transition.put(a, Pchildaction);
-		}
-		Map<HashableState, Double> fromsp = Pchildaction.get(hsprime);
-		if(fromsp == null){
-			fromsp = new HashMap<HashableState, Double>();
-			Pchildaction.put(hsprime, fromsp);
-		}
+		double childReward = R(childTask, hs);
 
-		double weightedQ = 0;
-		for(HashableState hspprime : fromsp.keySet()){
-			double value = qp.value(hspprime.s());
-			weightedQ += fromsp.get(hspprime) * value;
-		}
-		double newQ = actionReward + weightedQ;
-		return newQ;
-	}
+		HashMap<HashableState, Double> transitions = getStoredTransitions(task, hs);
 
-	/**
-	 * runs eqn 4 from RMAXQ paper on inputs
-	 * @param task current task
-	 * @param taskFromPolicy the policy based on q values
-	 * @param rewtask rewards for the task
-	 * @param hsprime the start state
-	 * @param childProbabilities transitions of the task
-	 * @return the result of eqn 4
-	 */
-	private double equation_4(GroundedTask task, SolverDerivedPolicy taskFromPolicy, Map<HashableState, Double> rewtask,
-			HashableState hsprime, Map<HashableState, Double> childProbabilities) {
-		Action maxqAction = taskFromPolicy.action(hsprime.s());
-		GroundedTask childFromPolicy = groundedTaskMap.get(maxqAction.actionName());
-		if(childFromPolicy == null){
-			addChildTasks(task, hsprime.s());
-			childFromPolicy = groundedTaskMap.get(maxqAction.actionName());
-		}
-
-		//R pia(s') (s')
-		Map<HashableState, Double> childrew = reward.get(childFromPolicy);
-		if(childrew == null){
-			childrew = new HashMap<HashableState, Double>();
-			reward.put(childFromPolicy, childrew);
-		}
-		Double actionReward = childrew.get(hsprime);
-		if(actionReward == null){
-			actionReward = Vmax;
-			childrew.put(hsprime, actionReward);
-		}
-
-		double weightedReward = 0;
-		for(HashableState hnext : childProbabilities.keySet()){
-			//get Ra(nextstate)
-			if(task.isComplete(hnext.s()) || task.isFailure(hnext.s()))
+		double expectedReward = 0.0;
+		for (HashableState hsPrime : transitions.keySet()) {
+			if (isTerminal(task, hsPrime)) {
 				continue;
-
-			Double nextReward = rewtask.get(hnext);
-			if(nextReward == null){
-				nextReward = Vmax;
-				rewtask.put(hnext, nextReward);
 			}
-			weightedReward += childProbabilities.get(hnext) * nextReward;
+			double childTransitionProbability = P(childTask, hs, hsPrime);
+			double parentReward = R(task, hsPrime);
+			expectedReward += childTransitionProbability * parentReward;
 		}
-		double newReward = actionReward + weightedReward;
-		rewtask.put(hsprime, newReward);
-		return newReward;
+
+		double newR = childReward + expectedReward;
+
+		storeReward(task, hs, newR);
+
+		double delta = Math.abs(newR - oldR);
+		return delta;
 	}
 
-	/**
-	 * runs eqn 5 from RMAXQ paper on inputs
-	 * @param task the current task
-	 * @param probtask the transition function for the task
-	 * @param childProbabilities transitions for subtask
-	 * @param hx the terminal state to transition into
-	 * @return the result of eqn 5
-	 */
-	private double equation_5(GroundedTask task, Map<HashableState, Map<HashableState, Double>> probtask,
-			Map<HashableState, Double> childProbabilities, HashableState hx) {
-		Double childProbability = childProbabilities.get(hx);
-		if(childProbability == null){
-			childProbability = 0.;
-			childProbabilities.put(hx, childProbability);
-		}
+	private double setT_eq5(GroundedTask task, HashableState hs, GroundedTask childTask, HashableState hsX) {
 
-		double weightedTransition = 0;
-		//sum over all p pia(s) (s',.)
-		for(HashableState hnext: childProbabilities.keySet()){
-			if(task.isComplete(hnext.s()) || task.isFailure(initialState))
+		double oldP = P(task, hs, hsX);
+
+		double childTerminalTransitionProbability = P(childTask, hs, hsX);
+
+		HashMap<HashableState, Double> transitions = getStoredTransitions(task, hs);
+
+		double expectedTransitionProbability = 0.0;
+		for (HashableState hsPrime : transitions.keySet()) {
+			if (isTerminal(task, hsPrime)) {
 				continue;
-
-			double psprimeTospprime = childProbabilities.get(hnext);
-			//pa (s'',x)
-			Map<HashableState, Double> tohnext = probtask.get(hnext);
-			if(tohnext == null){
-				tohnext = new HashMap<HashableState, Double>();
-				probtask.put(hnext, tohnext);
 			}
-			Double pspptohx = tohnext.get(hx);
-			if(pspptohx == null){
-				pspptohx = 0.;
-				tohnext.put(hx, pspptohx);
-			}
-
-			weightedTransition += psprimeTospprime * pspptohx;
+			double childTransitionProbability = P(childTask, hs, hsPrime);
+			double parentTerminalTransitionProbability = P(task, hsPrime, hsX);
+			expectedTransitionProbability += childTransitionProbability * parentTerminalTransitionProbability;
 		}
-		double newProb = childProbability + weightedTransition;
-		return newProb;
+
+		double newP = childTerminalTransitionProbability + expectedTransitionProbability;
+
+		storeTransitionProbability(task, hs, hsX, newP);
+
+		double delta = Math.abs(newP - oldP);
+		return delta;
 	}
-		
+
+	private void computeModelPrimitive(GroundedTask task, HashableState hs) {
+		double stateActionCount = n(task, hs);
+		if (stateActionCount >= threshold) {
+			setReward_eq6(task, hs);
+			for (HashableState hsPrime : reachableStates) {
+				setTransitionProbability_eq7(task, hs, hsPrime);
+			}
+		}
+	}
+
+	private void setReward_eq6(GroundedTask task, HashableState hs) {
+		if (!task.isPrimitive()) {
+			throw new RuntimeException("Error: tried to approximate reward (equation 6) on non-primitive task");
+		}
+		// only primitive tasks are allowed to be computed this way
+		double reward;
+		double stateActionCount = n(task, hs);
+		if (stateActionCount >= threshold) {
+			HashMap<HashableState, Double> taskRewards = totalRewardsByTask.get(task);
+			if (taskRewards == null) {
+				reward = 0.0;
+			} else {
+				Double totalReward = taskRewards.get(hs);
+				if (totalReward == null) { totalReward = 0.0; }
+				double approximateReward = totalReward / (1.0 * stateActionCount);
+				reward = approximateReward;
+			}
+		}  else {
+			reward = Vmax; // never reached ?
+		}
+		storeReward(task, hs, reward);
+	}
+
+	private void setTransitionProbability_eq7(GroundedTask task, HashableState hs, HashableState hsPrime) {
+		double transitionProbability;
+		double stateActionCount = n(task, hs);
+		if (stateActionCount >= threshold) {
+			HashMap<HashableState, HashMap<HashableState, Integer>> totalTransitions = totalTransitionsByTask.get(task);
+			HashMap<HashableState, Integer> totalTransitionsFromState = totalTransitions.get(hs);
+			Integer countForThisTransition = totalTransitionsFromState.get(hsPrime);
+			if (countForThisTransition == null) { countForThisTransition = 0; }
+			double approximateTransitionProbability = countForThisTransition / (1.0 * stateActionCount);
+			transitionProbability = approximateTransitionProbability;
+		} else {
+			transitionProbability = 0.0; // never reached?
+		}
+		storeTransitionProbability(task, hs, hsPrime, transitionProbability);
+	}
+
+	private void storeReward(GroundedTask task, HashableState hs, double newReward) {
+		HashMap<HashableState, Double> storedRewards = storedRewardsByTask.get(task);
+		if (storedRewards == null) {
+			storedRewards = new HashMap<>();
+			storedRewardsByTask.put(task, storedRewards);
+		}
+		storedRewardsByTask.get(task).put(hs, newReward);
+	}
+
+	private void storeTransitionProbability(GroundedTask task, HashableState hs, HashableState hsPrime, double transitionProbability) {
+		HashMap<HashableState,HashMap<HashableState, Double>> storedTransitions = storedTransitionsByTask.get(task);
+		if (storedTransitions == null) {
+			storedTransitions = new HashMap<>();
+			storedTransitionsByTask.put(task, storedTransitions);
+		}
+		HashMap<HashableState, Double> transitionsFromState = storedTransitions.get(hs);
+		if (transitionsFromState == null) {
+			transitionsFromState = new HashMap<>();
+			storedTransitions.put(hs, transitionsFromState);
+		}
+		transitionsFromState.put(hsPrime, transitionProbability);
+	}
+
+	private int n(GroundedTask task, HashableState hs) {
+		HashMap<HashableState, Integer> stateCounts = stateActionCountsByTask.get(task);
+		if (stateCounts == null) {
+			stateCounts = new HashMap<>();
+			stateActionCountsByTask.put(task, stateCounts);
+		}
+		Integer count = stateCounts.get(hs);
+		if (count == null) {
+			count = 0;
+			stateCounts.put(hs, count);
+		}
+		return count;
+	}
+
+	private GroundedTask pi(GroundedTask task, HashableState hs) {
+		return getStoredPolicy(task, hs);
+	}
+
+	private double Q(GroundedTask task, HashableState hs, GroundedTask childTask) {
+		return getStoredQ(task, hs, childTask);
+	}
+
+	private double V(GroundedTask task, HashableState hs) {
+		return getStoredValue(task, hs);
+	}
+
+	private double R(GroundedTask task, HashableState hs) {
+		return getStoredReward(task, hs);
+	}
+
+	private double P(GroundedTask task, HashableState hs, HashableState hsPrime) {
+		return getStoredTransitionProbability(task, hs, hsPrime);
+	}
+
+	private GroundedTask getStoredPolicy(GroundedTask task, HashableState hs) {
+		HashMap<HashableState, GroundedTask> storedPolicies = storedPoliciesByTask.get(task);
+		if (storedPolicies == null) {
+			storedPolicies = new HashMap<>();
+			storedPoliciesByTask.put(task, storedPolicies);
+		}
+		GroundedTask childTask = storedPolicies.get(hs);
+		return childTask;
+	}
+
+	private double getStoredQ(GroundedTask task, HashableState hs, GroundedTask childTask) {
+		HashMap<HashableState, HashMap<GroundedTask, Double>> storedQs = storedQValuesByTask.get(task);
+		if (storedQs == null) {
+			storedQs = new HashMap<>();
+			storedQValuesByTask.put(task, storedQs);
+		}
+		HashMap<GroundedTask, Double> childTaskToQValue = storedQs.get(hs);
+		if (childTaskToQValue == null) {
+			childTaskToQValue = new HashMap<>();
+			storedQs.put(hs, childTaskToQValue);
+		}
+		Double qValue = childTaskToQValue.get(childTask);
+		if (qValue == null) {
+			qValue = 0.0;
+			childTaskToQValue.put(childTask, qValue);
+		}
+		return qValue;
+	}
+
+	private double getStoredValue(GroundedTask task, HashableState hs) {
+		HashMap<HashableState, Double> storedValue = storedValueByTask.get(task);
+		if (storedValue == null) {
+			storedValue = new HashMap<>();
+			storedValueByTask.put(task, storedValue);
+		}
+		Double value = storedValue.get(hs);
+		if (value == null) {
+			value = 0.0;
+			storedValue.put(hs, value);
+		}
+		return value;
+	}
+
+	private double getStoredReward(GroundedTask task, HashableState hs) {
+		HashMap<HashableState, Double> storedRewards = storedRewardsByTask.get(task);
+		if (storedRewards == null) {
+			storedRewards = new HashMap<>();
+			storedRewardsByTask.put(task, storedRewards);
+		}
+		Double reward = storedRewards.get(hs);
+		if (reward == null) {
+			reward = Vmax;//0.0;
+			storedRewards.put(hs, reward);
+		}
+		return reward;
+	}
+
+	private HashMap<HashableState, Double> getStoredTransitions(GroundedTask task, HashableState hs) {
+		HashMap<HashableState,HashMap<HashableState, Double>> storedTransitions = storedTransitionsByTask.get(task);
+		if (storedTransitions == null) {
+			storedTransitions = new HashMap<>();
+			storedTransitionsByTask.put(task, storedTransitions);
+		}
+		HashMap<HashableState, Double> transitionsFromState = storedTransitions.get(hs);
+		if (transitionsFromState == null) {
+			transitionsFromState = new HashMap<>();
+			storedTransitions.put(hs, transitionsFromState);
+		}
+		return transitionsFromState;
+	}
+
+	private double getStoredTransitionProbability(GroundedTask task, HashableState hs, HashableState hsPrime) {
+		HashMap<HashableState, Double>  transitionsFromState = getStoredTransitions(task, hs);
+		Double transitionProbability = transitionsFromState.get(hsPrime);
+		if (transitionProbability == null) {
+			transitionProbability = 0.0;
+			transitionsFromState.put(hsPrime, transitionProbability);
+		}
+		return transitionProbability;
+	}
+
+	private Set<HashableState> getPossibleSuccessorStates(GroundedTask task, HashableState hs) {
+
+		HashMap<HashableState, HashMap<HashableState, Double>> transitions = storedTransitionsByTask.get(task);
+		if (transitions == null) {
+			return null;
+		}
+		HashMap<HashableState, Double> transitionsFromState = transitions.get(hs);
+		if (transitionsFromState == null) {
+			return null;
+		}
+
+		return  transitionsFromState.keySet();
+	}
+
 	/**
-	 * add child task to action lookup
-	 * @param task the current task
-	 * @param s the current state
+	 * use reachability analysis to get a list of terminalStatesByTask states
+	 * @param task the task
+	 * @return the terminalStatesByTask states
 	 */
-	protected void addChildTasks(GroundedTask task, State s){
-		if(!task.isPrimitive()){
-			List<GroundedTask> childGroundedTasks =  task.getGroundedChildTasks(s);
-
-			for(GroundedTask gt : childGroundedTasks){
-				if(!groundedTaskMap.containsKey(gt.getAction().actionName()))
-					groundedTaskMap.put(gt.getAction().actionName(), gt);
+	protected List<HashableState> getTerminalStates(GroundedTask task){
+		if (terminalStatesByTask.containsKey(task)) {
+			return terminalStatesByTask.get(task);
+		}
+		List<HashableState> terminalStates = new ArrayList<>();
+		for (HashableState hs : reachableStates) {
+			if (isTerminal(task, hs)) {
+				terminalStates.add(hs);
 			}
 		}
-	}
-
-	/**
-	 * use reachability analysis to get a list of terminal states
-	 * @param t the task
-	 * @return the terminal states
-	 */
-	protected List<HashableState> getTerminalStates(GroundedTask t){
-		if(terminal.containsKey(t))
-			return terminal.get(t);
-		List<HashableState> terminals = new ArrayList<HashableState>();
-		for(HashableState s :reachableStates){
-			if(t.isComplete(s.s()) || t.isFailure(s.s()))
-				terminals.add(s);
+		terminalStatesByTask.put(task, terminalStates);
+		if (terminalStates.size() < 1) {
+			throw new RuntimeException("error: no terminal states for the given task");
 		}
-
-		terminal.put(t, terminals);
-		if(terminals.size() == 0)
-			throw new RuntimeException("no terminal");
-		return terminals;
+		return terminalStates;
 	}
+
+	private HashMap<GroundedTask, HashMap<HashableState, Boolean>> cachedTerminalCheck = new HashMap<>();
+	private boolean isTerminal(GroundedTask task, HashableState hs) {
+		HashMap<HashableState, Boolean> taskTerminalCheck = cachedTerminalCheck.get(task);
+		if (taskTerminalCheck == null) { taskTerminalCheck = new HashMap<>(); cachedTerminalCheck.put(task, taskTerminalCheck); }
+		Boolean terminal = taskTerminalCheck.get(hs);
+		if (terminal == null) {
+			State s = hs.s();
+			terminal = task.isComplete(s) || task.isFailure(s) || rootSolve.isComplete(s);
+			taskTerminalCheck.put(hs, terminal);
+		}
+		return terminal;
+	}
+
+	private static HashMap<String, String> cachedNames = new HashMap<>();
+	public static String getActionNameSafe(Action action) {
+		String name = cachedNames.get(action.toString());
+		if (name != null) { return name; }
+		name = action.actionName();
+		if (action instanceof ObjectParameterizedAction) {
+			ObjectParameterizedAction opa = (ObjectParameterizedAction) action;
+			name = action.actionName() + "_" + String.join("_",opa.getObjectParameters());
+		}
+		cachedNames.put(action.toString(), name);
+		return name;
+	}
+
 }

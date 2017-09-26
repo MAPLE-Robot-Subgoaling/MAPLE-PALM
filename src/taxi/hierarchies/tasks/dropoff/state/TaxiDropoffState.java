@@ -35,10 +35,7 @@ public class TaxiDropoffState implements MutableOOState{
 	@Override
 	public ObjectInstance object(String oname) {
 		ObjectInstance o = passengers.get(oname);
-		if(o != null)
-			return o;
-
-		return null;
+		return o;
 	}
 
 	@Override
