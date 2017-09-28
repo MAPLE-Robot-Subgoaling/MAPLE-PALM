@@ -17,9 +17,9 @@ rewardPull: 0.0
 agents:
   - ramdp
 
-episodes: 100
+episodes: 50
 max_steps: 1000
-trials: 10
+trials: 1
 gamma: 0.95
 
 planning:

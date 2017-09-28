@@ -13,11 +13,15 @@ import burlap.statehashing.HashableStateFactory;
 import hierarchy.framework.GroundedTask;
 import utilities.ValueIteration;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class RAMDPLearningAgent implements LearningAgent{
+
+    private List<String> actionSequence = new ArrayList<String>(); // just used in debug printing
+    private List<String> baseActionSequence = new ArrayList<String>(); // just used in debug printing
 
 	/**
 	 * The root of the task hierarchy
@@ -99,7 +103,11 @@ public class RAMDPLearningAgent implements LearningAgent{
 	public Episode runLearningEpisode(Environment env, int maxSteps) {
 		steps = 0;
 		e = new Episode(env.currentObservation());
+		actionSequence.clear();
+		baseActionSequence.clear();
 		solveTask(root, env, maxSteps);
+        System.out.println(actionSequence);
+        System.out.println(baseActionSequence);
 		return e;
 	}
 
@@ -144,8 +152,10 @@ public class RAMDPLearningAgent implements LearningAgent{
 			}
 
             System.out.println(tabLevel + "    " + actionName);
+            actionSequence.add(actionName);
 
 			if(action.isPrimitive()){
+			    baseActionSequence.add(actionName);
 				subtaskCompleted = true;
 				result = baseEnv.executeAction(a);
 				e.transition(result);
@@ -206,7 +216,7 @@ public class RAMDPLearningAgent implements LearningAgent{
 		Policy rmaxPolicy = new RMAXPolicy(model, viPolicy, domain.getActionTypes(), hashingFactory);
 		Action action = rmaxPolicy.action(s);
 		try {
-            Episode e = PolicyUtils.rollout(rmaxPolicy, s, model, 10);
+            Episode e = PolicyUtils.rollout(rmaxPolicy, s, model, 100);
             System.out.println(tabLevel + "    Debug rollout: " + e.actionSequence);
         } catch (Exception e) {
 		    // ignore, temp debug to assess ramdp

@@ -1,5 +1,6 @@
 package testing;
 
+import burlap.behavior.singleagent.auxiliary.EpisodeSequenceVisualizer;
 import burlap.behavior.singleagent.auxiliary.performance.PerformanceMetric;
 import burlap.behavior.singleagent.auxiliary.performance.TrialMode;
 import burlap.behavior.singleagent.learning.LearningAgent;
@@ -108,6 +109,11 @@ public class CleanupHierarchicalCharts {
         if(conf.output.csv.enabled) {
             exp.writeEpisodeDataToCSV(conf.output.csv.output);
         }
+
+        EpisodeSequenceVisualizer ev = new EpisodeSequenceVisualizer
+                (CleanupVisualizer.getVisualizer(conf.maxX-conf.minX, conf.maxY-conf.minY), domain, exp.getEpisodes());;
+        ev.setDefaultCloseOperation(ev.EXIT_ON_CLOSE);
+        ev.initGUI();
     }
 
     public static void main(String[] args) {
