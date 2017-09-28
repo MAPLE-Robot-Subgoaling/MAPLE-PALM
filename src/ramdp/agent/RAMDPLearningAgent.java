@@ -1,6 +1,7 @@
 package ramdp.agent;
 
 import burlap.behavior.policy.Policy;
+import burlap.behavior.policy.PolicyUtils;
 import burlap.behavior.singleagent.Episode;
 import burlap.behavior.singleagent.learning.LearningAgent;
 import burlap.mdp.core.action.Action;
@@ -36,7 +37,7 @@ public class RAMDPLearningAgent implements LearningAgent{
 	/**
 	 * collection of models for each task
 	 */
-	private Map<GroundedTask, RAMDPModel> models;
+	private Map<String, RAMDPModel> models;
 	
 	/**
 	 * Steps currently taken
@@ -84,7 +85,7 @@ public class RAMDPLearningAgent implements LearningAgent{
 		this.gamma = discount;
 		this.hashingFactory = hs;
 		this.rmax = rmax;
-		this.models = new HashMap<GroundedTask, RAMDPModel>();
+		this.models = new HashMap<String, RAMDPModel>();
 		this.taskNames = new HashMap<String, GroundedTask>();
 		this.maxDelta = delta;
 	}
@@ -119,7 +120,7 @@ public class RAMDPLearningAgent implements LearningAgent{
 		int actionCount = 0;
 
 		tabLevel += "\t";
-//        System.out.println(tabLevel + ">>> " + task.getAction() + " " + actionCount);
+        System.out.println(tabLevel + ">>> " + task.getAction() + " " + actionCount);
 
 		while(
 		        !(task.isFailure(currentState) || task.isComplete(currentState)) // while task still valid
@@ -131,8 +132,7 @@ public class RAMDPLearningAgent implements LearningAgent{
 			pastState = currentState;
 			EnvironmentOutcome result;
 
-//            System.out.println(tabLevel + "+++ " + task.getAction() + " " + actionCount);
-//			System.out.println(tabLevel + "    Possible Actions: " + task.getGroundedChildTasks(currentState));
+            System.out.println(tabLevel + "+++ " + task.getAction() + " " + actionCount);
 			Action a = nextAction(task, currentState);
 			String actionName = RAMDPModel.getActionNameSafe(a);
 			GroundedTask action = this.taskNames.get(actionName);
@@ -141,7 +141,7 @@ public class RAMDPLearningAgent implements LearningAgent{
 				action = this.taskNames.get(actionName);
 			}
 
-//            System.out.println(tabLevel + "    " + actionName);
+            System.out.println(tabLevel + "    " + actionName);
 
 			if(action.isPrimitive()){
 				subtaskCompleted = true;
@@ -152,12 +152,11 @@ public class RAMDPLearningAgent implements LearningAgent{
 				result.o = pastState;
 				result.op = currentState;
 				result.a = a;
-				result.r = task.getReward(pastState, a, currentState);
-//				result.r = action.getReward(pastState, a, currentState);
+//				result.r = task.getReward(pastState, a, currentState);
 				steps++;
 			}else{
 				subtaskCompleted = solveTask(action, baseEnv, maxSteps);
-//				System.out.println(tabLevel + "+++ " + task.getAction() + " " + actionCount);
+				System.out.println(tabLevel + "+++ " + task.getAction() + " " + actionCount);
 				baseState = e.stateSequence.get(e.stateSequence.size() - 1);
 				currentState = task.mapState(baseState);
 
@@ -165,7 +164,7 @@ public class RAMDPLearningAgent implements LearningAgent{
 						task.getReward(pastState, a, currentState), task.isFailure
 						(currentState));
 			}
-//            System.out.println(tabLevel + "\treward: " + result.r);
+            System.out.println(tabLevel + "\treward: " + result.r);
 
 			//update task model if the subtask completed correctly
 			if(subtaskCompleted){
@@ -173,7 +172,7 @@ public class RAMDPLearningAgent implements LearningAgent{
 			}
 		}
 
-//		System.out.println(tabLevel + "<<< " +task.getAction() + " " + actionCount);
+		System.out.println(tabLevel + "<<< " +task.getAction() + " " + actionCount);
         tabLevel = tabLevel.substring(0, (tabLevel.length() - 1));
 		return task.isComplete(currentState) || actionCount == 0;
 	}
@@ -207,12 +206,12 @@ public class RAMDPLearningAgent implements LearningAgent{
 		Policy viPolicy = plan.planFromState(s);
 		Policy rmaxPolicy = new RMAXPolicy(model, viPolicy, domain.getActionTypes(), hashingFactory);
 		Action action = rmaxPolicy.action(s);
-//		try {
-//            Episode e = PolicyUtils.rollout(rmaxPolicy, s, model, 100);
-//            System.out.println(tabLevel + "    Debug rollout: " + e.actionSequence);
-//        } catch (Exception e) {
-//		    // ignore, temp debug to assess ramdp
-//        }
+		try {
+            Episode e = PolicyUtils.rollout(rmaxPolicy, s, model, 100);
+            System.out.println(tabLevel + "    Debug rollout: " + e.actionSequence);
+        } catch (Exception e) {
+		    // ignore, temp debug to assess ramdp
+        }
         model.setTask(null);
 		return action;
 	}
@@ -223,16 +222,17 @@ public class RAMDPLearningAgent implements LearningAgent{
 	 * @return the learned rmax model of the task
 	 */
 	protected RAMDPModel getModel(GroundedTask t){
-		// get SHARED models for the same task type
-
-        // IMPORTANT: we are indexing models only over their action TYPE
+		// IMPORTANT: we are indexing models only over their action TYPE
         // so all AMDPs of the same type will share the same model
         // but not the same
+        // get SHARED models for the same task type
+        String actionName = t.getAction().actionName();
+		RAMDPModel model = models.get(actionName);
 
-		RAMDPModel model = models.get(t);
-		if(model == null){
+
+        if(model == null){
 			model = new RAMDPModel(this.rmaxThreshold, this.rmax, this.hashingFactory);
-			this.models.put(t, model);
+			this.models.put(actionName, model);
 		}
 		return model;
 	}

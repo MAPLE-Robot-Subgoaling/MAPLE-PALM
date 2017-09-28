@@ -34,7 +34,7 @@ public class RAMDPModel implements FullModel {
 	/**
 	 * reward function, S x ActionName
 	 */
-	private Map<HashableState, Map<String, Double>> rewards;
+	private Map<GroundedTask, Map<HashableState, Map<String, Double>>> rewards;
 	
 	/**
 	 * transition function, S x Action name x S
@@ -44,7 +44,8 @@ public class RAMDPModel implements FullModel {
 	/**
 	 * n(s, a) - count of executing a in s
 	 */
-	private Map<HashableState, Map<String, Integer>> stateActionCount;
+    private Map<HashableState, Map<String, Integer>> stateActionCount;
+    private Map<GroundedTask, Map<HashableState, Map<String, Integer>>> stateActionCountByTask;
 	
 	/**
 	 * n(s, a, s') - count of executing a in s resulted in s'
@@ -54,7 +55,7 @@ public class RAMDPModel implements FullModel {
 	/**
 	 * r(s, a) - total sum of reward received after taking a in s 
 	 */
-	private Map<HashableState, Map<String, Double>> totalReward;
+	private Map<GroundedTask, Map<HashableState, Map<String, Double>>> totalReward;
 
 	
 	/**
@@ -71,11 +72,12 @@ public class RAMDPModel implements FullModel {
 	public RAMDPModel(int threshold, double rmax, HashableStateFactory hs) {
 		this.hashingFactory = hs;
 		this.mThreshold = threshold;
-		this.rewards = new HashMap<HashableState, Map<String, Double>>();
+		this.rewards = new HashMap<GroundedTask, Map<HashableState, Map<String, Double>>>();
 		this.transitions = new HashMap<HashableState, Map<String, Map<HashableState,Double>>>();
-		this.stateActionCount = new HashMap<HashableState, Map<String,Integer>>();
+        this.stateActionCount = new HashMap<HashableState, Map<String,Integer>>();
+        this.stateActionCountByTask = new HashMap<GroundedTask, Map<HashableState, Map<String,Integer>>>();
 		this.resultingStateCount = new HashMap<HashableState, Map<String, Map<HashableState, Integer>>>();
-		this.totalReward = new HashMap<HashableState, Map<String,Double>>();
+		this.totalReward = new HashMap<GroundedTask, Map<HashableState, Map<String,Double>>>();
 		this.rmax = rmax;
 	}
 
@@ -145,14 +147,15 @@ public class RAMDPModel implements FullModel {
 		int n_sasp = getResultingStateCount(hs, a, hsp) + 1;
 		
 		this.stateActionCount.get(hs).put(actionName, n_sa);
-		this.totalReward.get(hs).put(actionName, r_sa);
+		this.totalReward.get(task).get(hs).put(actionName, r_sa);
 		this.resultingStateCount.get(hs).get(actionName).put(hsp, n_sasp);
 		
 		//if the transition samples passes the threshold, record the true values 
 		//in the model
 		Map<HashableState, Integer> resultStates = this.resultingStateCount.get(hs).get(actionName);
 		if(n_sa >= mThreshold){
-			double newR = r_sa / n_sa;
+//			double newR = r_sa / n_sa;
+            double newR = r_sa / getStateActionCountByTask(task, hs, a);
 			setReward(hs, a, newR);
 			
 			for(HashableState hsprime : resultStates.keySet()){
@@ -192,10 +195,15 @@ public class RAMDPModel implements FullModel {
 	 * @return R(s, a)
 	 */
 	protected double getReward(HashableState hs, Action a){
-		Map<String, Double> rewards = this.rewards.get(hs);
+	    Map<HashableState, Map<String, Double>> taskRewards = this.rewards.get(task);
+	    if (taskRewards == null) {
+	        taskRewards = new HashMap<>();
+	        this.rewards.put(task, taskRewards);
+        }
+		Map<String, Double> rewards = taskRewards.get(hs);
 		if(rewards == null){
 			rewards = new HashMap<String, Double>();
-			this.rewards.put(hs, rewards);
+			this.rewards.get(task).put(hs, rewards);
 		}
 		
 		Double reward = rewards.get(getActionNameSafe(a));
@@ -226,6 +234,26 @@ public class RAMDPModel implements FullModel {
 		}
 		return SAcount;
 	}
+
+	public int getStateActionCountByTask(GroundedTask task, HashableState hs, Action a){
+        Map<HashableState, Map<String, Integer>> taskStateActionCounts = this.stateActionCountByTask.get(task);
+        if (taskStateActionCounts == null) {
+            taskStateActionCounts = new HashMap<>();
+            this.stateActionCountByTask.put(task, taskStateActionCounts);
+        }
+        Map<String, Integer> stateCount = taskStateActionCounts.get(hs);
+        if(stateCount == null){
+            stateCount = new HashMap<String, Integer>();
+            this.stateActionCountByTask.get(task).put(hs, stateCount);
+        }
+
+        Integer SAcount = stateCount.get(getActionNameSafe(a));
+        if(SAcount == null){
+            SAcount = 0;
+            stateCount.put(getActionNameSafe(a), SAcount);
+        }
+        return SAcount;
+    }
 	
 	/**
 	 * get the number of times sprime was reached after executing a in s
@@ -263,10 +291,15 @@ public class RAMDPModel implements FullModel {
 	 * @return r(s, a)
 	 */
 	protected double getTotalReward(HashableState hs, Action a){
-		Map<String, Double> Sreward = this.totalReward.get(hs);
+        Map<HashableState, Map<String, Double>> taskRewards = this.totalReward.get(task);
+        if (taskRewards == null) {
+            taskRewards = new HashMap<>();
+            this.totalReward.put(task, taskRewards);
+        }
+        Map<String, Double> Sreward = taskRewards.get(hs);
 		if(Sreward == null){
 			Sreward = new HashMap<String, Double>();
-			this.totalReward.put(hs, Sreward);
+			this.totalReward.get(task).put(hs, Sreward);
 		}
 		
 		Double rewards = Sreward.get(getActionNameSafe(a));
@@ -294,7 +327,7 @@ public class RAMDPModel implements FullModel {
 	 */
 	protected void setReward(HashableState hs, Action a, double reward){
 		getReward(hs, a);
-		this.rewards.get(hs).put(getActionNameSafe(a), reward);
+		this.rewards.get(task).get(hs).put(getActionNameSafe(a), reward);
 	}
 	
 	/**
