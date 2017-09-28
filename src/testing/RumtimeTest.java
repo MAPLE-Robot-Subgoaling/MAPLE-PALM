@@ -41,7 +41,8 @@ public class RumtimeTest {
 			
 			@Override
 			public LearningAgent generateAgent() {
-				return new RmaxQLearningAgent(RMEXQRoot, hs, s, rmax, threshold, maxDelta);
+				throw new RuntimeException("not implemented on this branch");
+//				return new RmaxQLearningAgent(RMEXQRoot, hs, s, rmax, threshold, maxDelta);
 			}
 		};
 		

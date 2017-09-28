@@ -722,7 +722,7 @@ public class CleanupRandomStateGenerator implements StateGenerator {
         CleanupRoom room1 = new CleanupRoom("room1", bigRoomLeft, bigRoomRight/2, minY, bigRoomBottom, room1Color, Cleanup.SHAPE_ROOM);
         CleanupRoom room2 = new CleanupRoom("room2", bigRoomRight/2, bigRoomRight, minY, bigRoomBottom, room2Color, Cleanup.SHAPE_ROOM);
         int dx0 = bigRoomRight/3;
-        int dx1 = 2*bigRoomRight/3;
+        int dx1 = 2*bigRoomRight/3 + 1;
         int dx2 = bigRoomRight/2;
         int dy0 = bigRoomBottom;
         int dy1 = bigRoomBottom;

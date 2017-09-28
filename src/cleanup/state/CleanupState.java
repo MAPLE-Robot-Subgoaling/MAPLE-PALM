@@ -9,6 +9,7 @@ import burlap.mdp.core.state.annotations.ShallowCopyState;
 import cleanup.Cleanup;
 
 import java.util.*;
+import java.util.stream.Stream;
 
 import static cleanup.Cleanup.ATT_X;
 import static cleanup.Cleanup.ATT_Y;
@@ -107,9 +108,18 @@ public class CleanupState implements MutableOOState {
     public List<ObjectInstance> objects() {
         ArrayList<ObjectInstance> obs = new ArrayList<ObjectInstance>();
         if (agent != null) obs.add(agent);
-        obs.addAll(blocks.values());
-        obs.addAll(rooms.values());
-        obs.addAll(doors.values());
+        Collection<CleanupBlock> blockList = blocks.values();
+        Collection<CleanupRoom> roomList = rooms.values();
+        Collection<CleanupDoor> doorList = doors.values();
+        for (CleanupBlock item : blockList) {
+            obs.add(item);
+        }
+        for (CleanupRoom item : roomList) {
+            obs.add(item);
+        }
+        for (CleanupDoor item : doorList) {
+            obs.add(item);
+        }
         return obs;
     }
 
@@ -275,6 +285,15 @@ public class CleanupState implements MutableOOState {
     public CleanupRoom roomContainingPoint(int x, int y) {
         List<ObjectInstance> rooms = objectsOfClass(Cleanup.CLASS_ROOM);
         return (CleanupRoom) regionContainingPoint(rooms, x, y, false);
+    }
+
+    public ObjectInstance getContainingDoorOrRoom(ObjectInstance object) {
+        CleanupDoor door = doorContainingPoint((int) object.get(ATT_X), (int) object.get(ATT_Y));
+        if (door != null) {
+            return door;
+        }
+        CleanupRoom room = roomContainingPoint((int) object.get(ATT_X), (int) object.get(ATT_Y));
+        return room;
     }
 
     public CleanupRoom roomContainingPointIncludingBorder(int x, int y) {

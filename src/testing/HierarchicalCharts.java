@@ -20,6 +20,7 @@ import taxi.TaxiVisualizer;
 import taxi.hierarchies.TaxiHierarchy;
 import taxi.state.TaxiState;
 import taxi.stateGenerator.RandomPassengerTaxiState;
+import taxi.stateGenerator.TaxiStateFactory;
 import utilities.LearningAlgorithmExperimenter;
 
 import java.io.FileNotFoundException;
@@ -97,7 +98,7 @@ public class HierarchicalCharts {
 
 					@Override
 					public LearningAgent generateAgent() {
-						return new RmaxQLearningAgent(RMEXQRoot, hs, s, conf.rmax.vmax, conf.rmax.threshold, conf.rmax.max_delta);
+						return new RmaxQLearningAgent(RMEXQRoot, hs, s, conf.rmax.vmax, conf.rmax.threshold, conf.rmax.max_delta, conf.rmax.max_delta_in_model);
 					}
 				};
 			}
@@ -124,7 +125,7 @@ public class HierarchicalCharts {
 	}
 
 	public static void main(String[] args) {
-		String conffile = "config/taxi/classic.yaml";
+		String conffile = "config/taxi/jwtest.yaml";
 		if(args.length > 0) {
 			conffile = args[0];
 		}
