@@ -1,4 +1,4 @@
-package cleanup.hierarchies.tasks.pick;
+package cleanup.hierarchies.tasks.root;
 
 import burlap.mdp.core.oo.ObjectParameterizedAction;
 import burlap.mdp.core.oo.state.OOState;

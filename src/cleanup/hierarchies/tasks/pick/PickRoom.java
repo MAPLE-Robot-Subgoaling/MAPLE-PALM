@@ -1,14 +1,17 @@
 package cleanup.hierarchies.tasks.pick;
 
+import cleanup.hierarchies.tasks.move.MoveRoom;
 import cleanup.state.CleanupRoom;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 import static cleanup.Cleanup.ATT_COLOR;
+import static cleanup.Cleanup.ATT_CONNECTED;
 import static cleanup.Cleanup.CLASS_ROOM;
 
-public class PickRoom extends CleanupRoom {
+public class PickRoom extends MoveRoom {
 
     private final static List<Object> keys = Arrays.<Object>asList(
             ATT_COLOR
@@ -33,5 +36,6 @@ public class PickRoom extends CleanupRoom {
     public List<Object> variableKeys() {
         return keys;
     }
+
 
 }

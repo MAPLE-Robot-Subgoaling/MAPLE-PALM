@@ -1,15 +1,7 @@
 package cleanup.hierarchies.tasks.move;
 
-import burlap.mdp.core.oo.propositional.PropositionalFunction;
 import burlap.mdp.core.oo.state.OOState;
-import burlap.mdp.core.oo.state.ObjectInstance;
-import cleanup.state.CleanupAgent;
-import cleanup.state.CleanupState;
-
-import java.util.HashSet;
-
-import static cleanup.Cleanup.ATT_REGION;
-import static cleanup.hierarchies.tasks.move.BaseObjectToRegionActionType.getConnectedRegions;
+import cleanup.hierarchies.tasks.pick.ObjectToRegionActionType;
 
 public class ObjectInRegionFailPF extends ObjectInRegionGoalPF {
 
@@ -19,63 +11,7 @@ public class ObjectInRegionFailPF extends ObjectInRegionGoalPF {
 
     @Override
     public boolean isTrue(OOState state, String[] params) {
-        return false;
+        return !ObjectToRegionActionType.canMoveObjectToRegion(state, params);
     }
-//        String objectName = params[0];
-//        String regionName = params[1];
-//        ObjectInstance object = state.object(objectName);
-//        boolean alreadyInRegion = super.isTrue(state, params);
-//
-//        // technically, this is the goal
-//        if (alreadyInRegion) {
-//            return false;
-//        }
-//
-        // determine what rooms or doors this connects to (only goes room->door->room or door->room)
-//        HashSet<String> connectedRegions = getConnectedRegions((CleanupState) state, regionName);
-//        CleanupState cs = ((CleanupState) state);
-//        if (!objectName.contains("agent")) {
-//            CleanupAgent agent = cs.getAgent();
-//            ObjectInstance agentRegion = cs.getContainingDoorOrRoom(agent);
-//            ObjectInstance objectRegion = cs.getContainingDoorOrRoom(object);
-//            String agentRegionName = agentRegion.name();
-//            String objectRegionName = objectRegion.name();
-//            HashSet<String> connectedRegions = getConnectedRegions((CleanupState) state, agentRegionName);
-//            if (!agentRegionName.equals(objectRegionName) && !connectedRegions.contains(objectRegionName)) {
-//                // fail if agent not in room or connected room to object
-//                return true;
-//            }
-//
-//        }
-//        return false;
-//        for (String connectedRegionName : connectedRegions) {
-//            if (super.isTrue(state, new String[]{objectName, connectedRegionName})) {
-//                // object is in a connected region, so this does not fail
-//                return false;
-//            }
-//        }
-//        // NOT in the current region, or in a connected region, then it fails
-//        return true;
-//    }
 
-//        for ()
-//        if (!inConnectedRegion) {
-//            return true;
-//        }
-//
-//        if (!objectName.contains("agent")) {
-//            String agentName = ((CleanupState)state).getAgent().name();
-//            if (super.isTrue(state, new String[]{agentName, regionName})) {
-//                // agent is in a connected region
-//                return false;
-//            }
-//            for (String connectedRegionName : connectedRegions) {
-//                if (super.isTrue(state, new String[]{agentName, connectedRegionName})) {
-//                    // agent is in a connected region
-//                    return false;
-//                }
-//            }
-//        }
-//
-//    }
 }

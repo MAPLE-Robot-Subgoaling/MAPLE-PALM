@@ -7,7 +7,6 @@ import burlap.mdp.singleagent.model.FactoredModel;
 import burlap.mdp.singleagent.model.RewardFunction;
 import burlap.mdp.singleagent.oo.OOSADomain;
 import cleanup.Cleanup;
-import cleanup.hierarchies.tasks.pick.PickRoomForObjectActionType;
 import cleanup.state.CleanupAgent;
 import cleanup.state.CleanupBlock;
 import cleanup.state.CleanupRoom;

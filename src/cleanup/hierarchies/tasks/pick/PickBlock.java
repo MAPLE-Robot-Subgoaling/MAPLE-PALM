@@ -1,14 +1,31 @@
 package cleanup.hierarchies.tasks.pick;
 
 import cleanup.hierarchies.tasks.move.MoveBlock;
+import cleanup.state.CleanupBlock;
 
-import static cleanup.Cleanup.ATT_COLOR;
-import static cleanup.Cleanup.ATT_REGION;
-import static cleanup.Cleanup.ATT_SHAPE;
+import java.util.Arrays;
+import java.util.List;
 
-public class PickBlock extends MoveBlock {
+import static cleanup.Cleanup.*;
+
+public class PickBlock extends CleanupBlock {
+
+    private final static List<Object> keys = Arrays.<Object>asList(
+            ATT_SHAPE,
+            ATT_COLOR,
+            ATT_REGION
+    );
+
     public PickBlock(String name, String shape, String color, String blockInRegion) {
-        super(name, shape, color, blockInRegion);
+        setName(name);
+        set(ATT_SHAPE, shape);
+        set(ATT_COLOR, color);
+        set(ATT_REGION, blockInRegion);
+    }
+
+    @Override
+    public String className() {
+        return CLASS_BLOCK;
     }
 
     @Override
@@ -18,4 +35,10 @@ public class PickBlock extends MoveBlock {
                 (String) get(ATT_COLOR),
                 (String) get(ATT_REGION));
     }
+
+    @Override
+    public List<Object> variableKeys() {
+        return keys;
+    }
+
 }
