@@ -16,7 +16,10 @@ import burlap.statehashing.HashableState;
 import burlap.statehashing.HashableStateFactory;
 import hierarchy.framework.GroundedTask;
 
-public class RAMDPModel implements FullModel{
+public class RAMDPModel implements FullModel {
+
+    // task should be set immediately prior to generating a plan or rolling out a policy
+	private GroundedTask task; // should ONLY be set when rolling out a specific domain
 
 	/**
 	 * the rmax sample parameter
@@ -52,11 +55,7 @@ public class RAMDPModel implements FullModel{
 	 * r(s, a) - total sum of reward received after taking a in s 
 	 */
 	private Map<HashableState, Map<String, Double>> totalReward;
-	
-	/**
-	 * the grounded task that is being modeled
-	 */
-	private GroundedTask task;
+
 	
 	/**
 	 * the max reward for the domain
@@ -65,12 +64,11 @@ public class RAMDPModel implements FullModel{
 	
 	/**
 	 * creates a rmax model
-	 * @param task the grounded task to model
 	 * @param threshold rmax sample threshold
 	 * @param rmax max reward in domain
 	 * @param hs provided hashing factory
 	 */
-	public RAMDPModel( GroundedTask task, int threshold, double rmax, HashableStateFactory hs) {
+	public RAMDPModel(int threshold, double rmax, HashableStateFactory hs) {
 		this.hashingFactory = hs;
 		this.mThreshold = threshold;
 		this.rewards = new HashMap<HashableState, Map<String, Double>>();
@@ -78,7 +76,6 @@ public class RAMDPModel implements FullModel{
 		this.stateActionCount = new HashMap<HashableState, Map<String,Integer>>();
 		this.resultingStateCount = new HashMap<HashableState, Map<String, Map<HashableState, Integer>>>();
 		this.totalReward = new HashMap<HashableState, Map<String,Double>>();
-		this.task = task;
 		this.rmax = rmax;
 	}
 
@@ -311,4 +308,9 @@ public class RAMDPModel implements FullModel{
 		getResultingStates(hs, a);
 		this.transitions.get(hs).get(getActionNameSafe(a)).put(hsp, probability);
 	}
+
+	public void setTask(GroundedTask task) {
+	    this.task = task;
+    }
+
 }
