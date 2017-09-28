@@ -133,7 +133,7 @@ public class RAMDPLearningAgent implements LearningAgent{
 			EnvironmentOutcome result;
 
             System.out.println(tabLevel + "+++ " + task.getAction() + " " + actionCount);
-            System.out.println(tabLevel + "    " + currentState);
+//            System.out.println(tabLevel + "    " + currentState);
             System.out.println(tabLevel + "    Possible Actions: " + task.getGroundedChildTasks(currentState));
 			Action a = nextAction(task, currentState);
 			String actionName = RAMDPModel.getActionNameSafe(a);
