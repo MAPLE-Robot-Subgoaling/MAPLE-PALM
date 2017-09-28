@@ -37,7 +37,7 @@ public class RAMDPLearningAgent implements LearningAgent{
 	/**
 	 * collection of models for each task
 	 */
-	private Map<String, RAMDPModel> models;
+	private Map<GroundedTask, RAMDPModel> models;
 	
 	/**
 	 * Steps currently taken
@@ -85,7 +85,7 @@ public class RAMDPLearningAgent implements LearningAgent{
 		this.gamma = discount;
 		this.hashingFactory = hs;
 		this.rmax = rmax;
-		this.models = new HashMap<String, RAMDPModel>();
+		this.models = new HashMap<GroundedTask, RAMDPModel>();
 		this.taskNames = new HashMap<String, GroundedTask>();
 		this.maxDelta = delta;
 	}
@@ -197,9 +197,6 @@ public class RAMDPLearningAgent implements LearningAgent{
 	 */
 	protected Action nextAction(GroundedTask task, State s){
 		RAMDPModel model = getModel(task);
-        // IMPORTANT: set the task for the model
-        // since we are sharing models across tasks, we need to specify the particular AMDP
-        // why? ONLY because it needs to know the terminal (goal and failure) conditions
 		model.setTask(task);
 		OOSADomain domain = task.getDomain(model);
 		ValueIteration plan = new ValueIteration(domain, gamma, hashingFactory, maxDelta, 1000);
@@ -222,17 +219,14 @@ public class RAMDPLearningAgent implements LearningAgent{
 	 * @return the learned rmax model of the task
 	 */
 	protected RAMDPModel getModel(GroundedTask t){
-		// IMPORTANT: we are indexing models only over their action TYPE
-        // so all AMDPs of the same type will share the same model
-        // but not the same
-        // get SHARED models for the same task type
-        String actionName = t.getAction().actionName();
-		RAMDPModel model = models.get(actionName);
+
+//        String actionName = t.getAction().actionName();
+		RAMDPModel model = models.get(t);
 
 
         if(model == null){
 			model = new RAMDPModel(this.rmaxThreshold, this.rmax, this.hashingFactory);
-			this.models.put(actionName, model);
+			this.models.put(t, model);
 		}
 		return model;
 	}
