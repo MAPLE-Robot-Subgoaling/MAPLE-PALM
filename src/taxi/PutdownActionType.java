@@ -6,6 +6,7 @@ import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.oo.ObjectParameterizedActionType;
 import taxi.hierarchies.tasks.dropoff.TaxiDropoffDomain;
 import taxi.hierarchies.tasks.dropoff.state.TaxiDropoffState;
+import taxi.state.TaxiState;
 
 public class PutdownActionType extends ObjectParameterizedActionType {
     public PutdownActionType(String name, String[] parameterClasses) {
@@ -14,25 +15,22 @@ public class PutdownActionType extends ObjectParameterizedActionType {
 
     @Override
     protected boolean applicableInState(State s, ObjectParameterizedAction objectParameterizedAction) {
-        TaxiDropoffState state = (TaxiDropoffState) s;
+        TaxiState state = (TaxiState) s;
         String[] params = objectParameterizedAction.getObjectParameters();
         String passengerName = params[0];
         ObjectInstance passenger = state.object(passengerName);
 
         // Must be at a depot
-        String location =  (String) passenger.get(TaxiDropoffDomain.ATT_LOCATION);
-        if(location.equals(TaxiDropoffDomain.NOT_IN_TAXI))
-            return false;
-//        int px = (int)state.getPassengerAtt(passengerName, Taxi.ATT_X);
-//        int py = (int)state.getPassengerAtt(passengerName, Taxi.ATT_Y);
-//        for(String loc : state.getLocations()) {
-//            int lx = (int)state.getLocationAtt(loc, Taxi.ATT_X);
-//            int ly = (int)state.getLocationAtt(loc, Taxi.ATT_Y);
-//
-//            if(lx == px && ly == py) {
-//                return true;
-//            }
-//        }
+        int px = (int)state.getPassengerAtt(passengerName, Taxi.ATT_X);
+        int py = (int)state.getPassengerAtt(passengerName, Taxi.ATT_Y);
+        for(String loc : state.getLocations()) {
+            int lx = (int)state.getLocationAtt(loc, Taxi.ATT_X);
+            int ly = (int)state.getLocationAtt(loc, Taxi.ATT_Y);
+
+            if(lx == px && ly == py) {
+                return true;
+            }
+        }
 
         return true;
     }
