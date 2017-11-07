@@ -3,6 +3,7 @@ package taxi.stateGenerator;
 import java.util.ArrayList;
 import java.util.List;
 
+import burlap.debugtools.RandomFactory;
 import burlap.mdp.auxiliary.StateGenerator;
 import burlap.mdp.core.state.State;
 import taxi.Taxi;
@@ -19,8 +20,8 @@ public class RandonPassengerTaxiState implements StateGenerator{
 		int width = 5;
 		int height = 5;
 		
-		int tx = (int) (Math.random() * width);
-		int ty = (int) (Math.random() * height);
+		int tx = (int) (RandomFactory.getMapped(0).nextDouble() * width);
+		int ty = (int) (RandomFactory.getMapped(0).nextDouble() * height);
 		TaxiAgent taxi = new TaxiAgent(Taxi.CLASS_TAXI + 0, tx, ty);
 		
 		List<TaxiLocation> locations = new ArrayList<TaxiLocation>();
@@ -31,10 +32,10 @@ public class RandonPassengerTaxiState implements StateGenerator{
 		
 		List<TaxiPassenger> passengers = new ArrayList<TaxiPassenger>();
 		
-		int start = (int)(Math.random() * 4);
+		int start = (int)(RandomFactory.getMapped(0).nextDouble() * 4);
 		int px = (int)(locations.get(start).get(Taxi.ATT_X));
 		int py = (int)(locations.get(start).get(Taxi.ATT_Y));
-		int goal = (int)(Math.random() * 4);
+		int goal = (int)(RandomFactory.getMapped(0).nextDouble() * 4);
 		String goalName =  locations.get(goal).name();
 		
 		passengers.add(new TaxiPassenger(Taxi.CLASS_PASSENGER + 0, px, py, goalName));

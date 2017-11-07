@@ -22,5 +22,6 @@ public class DropoffFailurePF extends PropositionalFunction {
 		TaxiState st = (TaxiState) s;
 
 		return !(boolean)st.getPassengerAtt(a.getPassenger(), Taxi.ATT_IN_TAXI);
+
 	}
 }

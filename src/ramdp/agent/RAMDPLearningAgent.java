@@ -190,7 +190,7 @@ public class RAMDPLearningAgent implements LearningAgent{
 			}
 		}
 		
-		System.out.println(task + " " + actionCount);
+//		System.out.println(task + " " + actionCount);
 		return task.isComplete(currentState) || actionCount == 0;
 	}
 	
