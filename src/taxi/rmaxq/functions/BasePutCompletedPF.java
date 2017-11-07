@@ -21,19 +21,20 @@ public class BasePutCompletedPF extends PropositionalFunction{
 		PutActionType actyp = new PutActionType();
 		PutAction a = actyp.associatedAction(action);
 		TaxiState st = (TaxiState) s;
-		
+
+		//is the passenger that is at goal not in the taxi
 		int lx = (int) st.getLocationAtt(a.getGoalLocation(), Taxi.ATT_X);
 		int ly = (int) st.getLocationAtt(a.getGoalLocation(), Taxi.ATT_Y);
-		//is the passenger that is at goal not in the taxi
-		for(String passengerName : st.getPassengers()){
-			int px = (int) st.getPassengerAtt(passengerName, Taxi.ATT_X);
-			int py = (int) st.getPassengerAtt(passengerName, Taxi.ATT_Y);
-			
-			if(lx == px && ly == py){
-				return !((boolean) st.getPassengerAtt(passengerName, Taxi.ATT_IN_TAXI));
-			}
+
+		String passengerName = a.getPassengerName();
+
+		int px = (int) st.getPassengerAtt(passengerName, Taxi.ATT_X);
+		int py = (int) st.getPassengerAtt(passengerName, Taxi.ATT_Y);
+
+		if(lx == px && ly == py){
+			return !((boolean) st.getPassengerAtt(passengerName, Taxi.ATT_IN_TAXI));
 		}
-		
+
 		return false;
 	}
 }

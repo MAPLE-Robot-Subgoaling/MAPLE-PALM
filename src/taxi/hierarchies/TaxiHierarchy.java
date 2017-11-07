@@ -145,7 +145,6 @@ public class TaxiHierarchy {
 	 */
 	public static Task createRMAXQHierarchy(double correctMoveprob, double fickleProbability){
 		Taxi l0Gen;
-		
 		if(fickleProbability == 0){
 			l0Gen = new Taxi(false, fickleProbability, correctMoveprob);
 		}else{
@@ -179,7 +178,7 @@ public class TaxiHierarchy {
 		Task[] pickupL1Tasks = new Task[]{pickup};
 		Task[] dropoffL1Tasks = new Task[]{dropoff};
 		
-		PropositionalFunction navPF = new NavigateAbstractPF();
+		PropositionalFunction navPF = new NavigatePF();
 		NonprimitiveTask navigate = new NonprimitiveTask(navTasks, aNavigate, l0Gen.generateNavigateDomain(),
 				map0, navPF, navPF);
 		

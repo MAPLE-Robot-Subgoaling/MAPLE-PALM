@@ -186,9 +186,7 @@ public class TaxiModel implements FullStateModel{
 	public void pickup(TaxiState s, String p, List<StateTransitionProb> tps) {
 		int tx = (int) s.getTaxiAtt(Taxi.ATT_X);
 		int ty = (int) s.getTaxiAtt(Taxi.ATT_Y);
-		boolean taxiOccupied = (boolean) s.getTaxiAtt(Taxi.ATT_TAXI_OCCUPIED);
 
-		//if (!taxiOccupied) {
 			int px = (int) s.getPassengerAtt(p, Taxi.ATT_X);
 			int py = (int) s.getPassengerAtt(p, Taxi.ATT_Y);
 			boolean inTaxi = (boolean) s.getPassengerAtt(p, Taxi.ATT_IN_TAXI);

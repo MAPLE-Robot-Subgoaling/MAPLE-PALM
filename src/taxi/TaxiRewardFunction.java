@@ -55,18 +55,19 @@ public class TaxiRewardFunction implements RewardFunction{
 	public double reward(State s, Action a, State sprime) {
 		TaxiState state = (TaxiState) s;
 		
-		if(tf.isTerminal(sprime))
+		if(tf.isTerminal(sprime)) {
+			System.out.println("REWARD: ");
+			System.out.println(goalReward + stepReward);
 			return goalReward + stepReward;
-		
+		}
+
+
 		boolean taxiOccupied = (boolean) state.getTaxiAtt(Taxi.ATT_TAXI_OCCUPIED);
 		int tx = (int) state.getTaxiAtt(Taxi.ATT_X);
 		int ty = (int) state.getTaxiAtt(Taxi.ATT_Y);
 		
-		//illegal pickup when no passenger at taxi's location or if taxi is occupied
+		//illegal pickup when no passenger at taxi's location
 		if(a.actionName().equals(Taxi.ACTION_PICKUP)){
-			//if(taxiOccupied)
-				//return stepReward + illegalActionReward;
-			
 			boolean passengerAtTaxi = false;
 			for(String passengerName : state.getPassengers()){
 				int px = (int) state.getPassengerAtt(passengerName, Taxi.ATT_X);

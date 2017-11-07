@@ -24,17 +24,12 @@ public class DropOffActionType implements ActionType {
     public List<Action> allApplicableActions(State s) {
         TaxiState state = (TaxiState) s;
         List<Action> acts = new ArrayList<>();
-        //int taxi_x = (int)state.getTaxiAtt(Taxi.ATT_X);
-        //int taxi_y = (int)state.getTaxiAtt(Taxi.ATT_Y);
         boolean taxiOccupied = (boolean) state.getTaxiAtt(Taxi.ATT_TAXI_OCCUPIED);
 
         if (taxiOccupied) {
 
             for (String pass : state.getPassengers()) {
                 boolean inTaxi = (boolean) state.getPassengerAtt(pass, Taxi.ATT_IN_TAXI);
-                //int pass_x = (int)state.getPassengerAtt(pass, Taxi.ATT_X);
-                //int pass_y = (int)state.getPassengerAtt(pass, Taxi.ATT_Y);
-                //if(pass_x == taxi_x && pass_y == taxi_y) {
                 if (inTaxi) {
                     acts.add(new DropOffAction(pass));
                 }

@@ -27,7 +27,7 @@ public class TaxiStateFactory {
 
 		List<TaxiPassenger> passengers = new ArrayList<TaxiPassenger>();
 		passengers.add(new TaxiPassenger(Taxi.CLASS_PASSENGER + 0, 3, 0, Taxi.CLASS_LOCATION + 0));
-		passengers.add(new TaxiPassenger(Taxi.CLASS_PASSENGER + 1, 0, 0, Taxi.CLASS_LOCATION + 3));
+		passengers.add(new TaxiPassenger(Taxi.CLASS_PASSENGER + 1, 3, 0, Taxi.CLASS_LOCATION + 0));
 
 		List<TaxiWall> walls = new ArrayList<TaxiWall>();
 		walls.add(new TaxiWall(Taxi.CLASS_WALL + 0, 0, 0, 5, false));
@@ -40,7 +40,27 @@ public class TaxiStateFactory {
 
 		return new TaxiState(taxi, passengers, locations, walls);
 	}
-	
+
+	public static TaxiState createMultiSmallState() {
+		TaxiAgent taxi = new TaxiAgent(Taxi.CLASS_TAXI + 0, 0, 3);
+
+		List<TaxiLocation> locations = new ArrayList<TaxiLocation>();
+		locations.add(new TaxiLocation(Taxi.CLASS_LOCATION + 0, 4, 0, Taxi.COLOR_RED));
+		locations.add(new TaxiLocation(Taxi.CLASS_LOCATION + 3, 0, 4, Taxi.COLOR_GREEN));;
+
+		List<TaxiPassenger> passengers = new ArrayList<TaxiPassenger>();
+		passengers.add(new TaxiPassenger(Taxi.CLASS_PASSENGER + 0, 0, 4, Taxi.CLASS_LOCATION + 0));
+		passengers.add(new TaxiPassenger(Taxi.CLASS_PASSENGER + 1, 0, 4, Taxi.CLASS_LOCATION + 0));
+
+		List<TaxiWall> walls = new ArrayList<TaxiWall>();
+		walls.add(new TaxiWall(Taxi.CLASS_WALL + 0, 0, 0, 5, false));
+		walls.add(new TaxiWall(Taxi.CLASS_WALL + 1, 5, 0, 5, false));
+		walls.add(new TaxiWall(Taxi.CLASS_WALL + 2, 0, 0, 5, true));
+		walls.add(new TaxiWall(Taxi.CLASS_WALL + 3, 0, 5, 5, true));
+
+		return new TaxiState(taxi, passengers, locations, walls);
+	}
+
 	public static TaxiState createClassicState(){
 		TaxiAgent taxi = new TaxiAgent(Taxi.CLASS_TAXI + 0, 0, 3);
 		

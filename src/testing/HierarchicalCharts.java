@@ -81,10 +81,10 @@ public class HierarchicalCharts {
 		final HashableStateFactory hs = new SimpleHashableStateFactory(true);
 		final GroundedTask RAMDPGroot = RAMDPRoot.getAllGroundedTasks(env.currentObservation()).get(0); 
 		
-		VisualActionObserver obs = new VisualActionObserver(domain, TaxiVisualizer.getVisualizer(5, 5));
-        obs.initGUI();
-        obs.setDefaultCloseOperation(obs.EXIT_ON_CLOSE);
-        env.addObservers(obs);
+		//VisualActionObserver obs = new VisualActionObserver(domain, TaxiVisualizer.getVisualizer(5, 5));
+        //obs.initGUI();
+        //obs.setDefaultCloseOperation(obs.EXIT_ON_CLOSE);
+        //env.addObservers(obs);
 		
 		
 		LearningAgentFactory ramdp = new LearningAgentFactory() {
@@ -112,14 +112,14 @@ public class HierarchicalCharts {
 	public static void main(String[] args) {
 		double correctMoveprob = 1;
 		double fickleProb = 0;
-		int numEpisodes = 200;
-		int maxSteps = 1000;
+		int numEpisodes = 300;
+		int maxSteps = 500;
 		int rmaxThreshold = 3;
 		int numTrials = 5;
 		double gamma = 0.9;
 		double rmax = 20;
 		double maxDelta = 0.01;
-		
+
 		TaxiState s = TaxiStateFactory.createMultiState();
 		Task RAMDProot = TaxiHierarchy.createAMDPHierarchy(correctMoveprob, fickleProb, false);
 		OOSADomain base = TaxiHierarchy.getBaseDomain();

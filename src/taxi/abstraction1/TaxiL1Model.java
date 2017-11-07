@@ -132,7 +132,7 @@ public class TaxiL1Model implements FullStateModel {
 		String passengerName = a.getPassenger();
 		String passengerLocation = (String) s.getPassengerAtt(passengerName, TaxiL1.ATT_CURRENT_LOCATION);
 		String taxiLocation = (String) s.getTaxiAtt(TaxiL1.ATT_CURRENT_LOCATION);
-		boolean taxiOccupied = (boolean) s.getTaxiAtt(TaxiL1.ATT_TAXI_OCCUPIED);
+		//boolean taxiOccupied = (boolean) s.getTaxiAtt(TaxiL1.ATT_TAXI_OCCUPIED);
 		TaxiL1State ns = s.copy();
 
 		//if taxi is at depot

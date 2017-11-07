@@ -267,8 +267,11 @@ public class RmaxQLearningAgent implements LearningAgent {
 						maxDelta = Math.abs(oldQ - newQ);
 				}
 			}
-			if(maxDelta < dynamicPrgEpsilon)
+			if(maxDelta < dynamicPrgEpsilon) {
 				converged = true;
+				System.err.println("WARNING: TEMPORARY HACK");
+				break; // PROBABLY NOT THE RIGHT FIX
+			}
 		}
 	}
 
@@ -311,6 +314,8 @@ public class RmaxQLearningAgent implements LearningAgent {
 	 * @param task the current task
 	 */
 	private void compute_model(HashableState hs, GroundedTask task){
+		System.out.println(task.getAction().actionName());
+
 		if(task.isPrimitive()){
 			//n(s, a)
 			Map<GroundedTask, Integer> scount = actionCount.get(hs);

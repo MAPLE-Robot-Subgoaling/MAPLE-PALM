@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+
 import burlap.behavior.policy.Policy;
 import burlap.behavior.singleagent.Episode;
 import burlap.behavior.singleagent.learning.LearningAgent;
@@ -15,6 +16,8 @@ import burlap.mdp.singleagent.oo.OOSADomain;
 import burlap.statehashing.HashableStateFactory;
 import hierarchy.framework.GroundedTask;
 import utilities.ValueIteration;
+
+import static java.lang.Math.pow;
 
 public class RAMDPLearningAgent implements LearningAgent{
 
@@ -67,6 +70,12 @@ public class RAMDPLearningAgent implements LearningAgent{
 	 * the current episode
 	 */
 	private Episode e;
+
+
+	private HashMap<State, Integer> stateToSteps;
+
+	private HashMap<GroundedTask, HashMap> taskToStateSteps;
+
 	
 	/**
 	 * create a RAMDP agent on a given task
@@ -87,6 +96,10 @@ public class RAMDPLearningAgent implements LearningAgent{
 		this.models = new HashMap<GroundedTask, RAMDPModel>();
 		this.taskNames = new HashMap<String, GroundedTask>();
 		this.maxDelta = delta;
+
+		// JOHN DID NOT GIVE EXPLICIT INSTRUCTIONS
+		this.stateToSteps = new HashMap<State, Integer>();
+		this.taskToStateSteps = new HashMap<GroundedTask, HashMap>();
 	}
 	
 	@Override
@@ -141,12 +154,33 @@ public class RAMDPLearningAgent implements LearningAgent{
 				result.r = task.getReward(currentState);
 				steps++;
 			}else{
+				double stepsBeforeAction = steps;
 				subtaskCompleted = solveTask(action, baseEnv, maxSteps);
+				double stepsAfterAction = steps;
+				double stepsTaken = stepsAfterAction - stepsBeforeAction;
 				baseState = e.stateSequence.get(e.stateSequence.size() - 1);
 				currentState = task.mapState(baseState);
+				//stateToSteps.put(currentState, stepsTaken);
+				//taskToStateSteps.put(task, stateToSteps);
+
+				// print action name and steps
+				System.out.print("Steps before action ");
+				System.out.print(task.getAction().actionName());
+				System.out.print(": ");
+				System.out.println(stepsBeforeAction);
+				System.out.print("Steps after action ");
+				System.out.print(task.getAction().actionName());
+				System.out.print(": ");
+				System.out.println(stepsAfterAction);
+
+
+				double discount = pow(0.99, stepsTaken);
+				double discountedReward = discount * task.getReward(currentState);
+				System.out.print("Discounted reward: ");
+				System.out.println(discountedReward);
 
 				result = new EnvironmentOutcome(pastState, a, currentState,
-						task.getReward(currentState), task.isFailure
+						discountedReward, task.isFailure
 						(currentState));
 			}
 			
