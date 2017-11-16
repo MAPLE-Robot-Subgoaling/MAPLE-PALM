@@ -14,7 +14,7 @@ import burlap.mdp.core.state.MutableState;
 import taxi.Taxi;
 import taxi.hierarchies.tasks.bringon.TaxiBringonDomain;
 
-public class TaxiBringonState implements MutableOOState{
+public class TaxiBringonState implements MutableOOState {
 
 	/**
 	 * contain one taxi, and any number of depots and passengers  
