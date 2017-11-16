@@ -125,7 +125,7 @@ public class HierarchicalCharts {
 	}
 
 	public static void main(String[] args) {
-		String conffile = "config/taxi/jwtest.yaml";
+		String conffile = "config/taxi/multipassenger.yaml";
 		if(args.length > 0) {
 			conffile = args[0];
 		}

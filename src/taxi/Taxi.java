@@ -13,6 +13,8 @@ import burlap.mdp.singleagent.model.RewardFunction;
 import burlap.mdp.singleagent.oo.OOSADomain;
 import burlap.statehashing.HashableStateFactory;
 import burlap.statehashing.simple.SimpleHashableStateFactory;
+import taxi.hierarchies.tasks.bringon.PickupActionType;
+import taxi.hierarchies.tasks.dropoff.PutdownActionType;
 import taxi.state.TaxiAgent;
 import taxi.state.TaxiLocation;
 import taxi.state.TaxiPassenger;
