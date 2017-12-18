@@ -143,7 +143,7 @@ public class GroundedTask {
 	public String toString(){
 		if (action instanceof ObjectParameterizedAction) {
 			ObjectParameterizedAction opa = (ObjectParameterizedAction)action;
-			return action.actionName() + "_" + String.join("_",opa.getObjectParameters());
+			return action.actionName() + " " + String.join(" ",opa.getObjectParameters());
 		}
 		return action.actionName();
 	}
