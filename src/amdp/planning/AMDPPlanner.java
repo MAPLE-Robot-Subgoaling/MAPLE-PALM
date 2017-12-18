@@ -193,14 +193,14 @@ public class AMDPPlanner {
 	 * @return the grounded task that wraps around a
 	 */
 	private GroundedTask getChildGT(GroundedTask t, Action a, State s){
-		String aMame = a.actionName();
+		String aMame = a.toString();
 		GroundedTask gt = this.actionMap.get(aMame);
 		if(gt == null){
 			List<GroundedTask> children = t.getGroundedChildTasks(s);
 			for(GroundedTask child : children){
 				this.actionMap.put(child.toString(), child);
 			}
-			gt = this.actionMap.get(a.actionName());
+			gt = this.actionMap.get(a.toString());
 		}
 		return gt;
 	}
