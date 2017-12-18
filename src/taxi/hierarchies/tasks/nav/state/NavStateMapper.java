@@ -12,7 +12,10 @@ import taxi.state.TaxiState;
 public class NavStateMapper implements StateMapping {
 
 	@Override
-	public State mapState(State s) {
+	public TaxiNavState mapState(State s) {
+		if(s instanceof TaxiNavState) {
+			return (TaxiNavState)s;
+		}
 		TaxiState st = (TaxiState) s;
 		
 		int tx = (int) st.getTaxiAtt(TaxiNavDomain.ATT_X);

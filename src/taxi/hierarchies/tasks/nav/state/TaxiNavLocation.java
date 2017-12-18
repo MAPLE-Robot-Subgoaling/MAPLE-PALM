@@ -22,7 +22,7 @@ public class TaxiNavLocation extends MutableObject{
 	private TaxiNavLocation(String name, Object x, Object y) {
 		this.set(TaxiNavDomain.ATT_X, x);
 		this.set(TaxiNavDomain.ATT_Y, y);
-		this.setName(name);;
+		this.setName(name);
 	}
 	@Override
 	public String className() {
