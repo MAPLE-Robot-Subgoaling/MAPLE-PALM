@@ -2,7 +2,6 @@ package taxi.hierarchies.tasks.nav;
 
 import burlap.mdp.core.TerminalFunction;
 import burlap.mdp.core.state.State;
-import taxi.Taxi;
 import taxi.hierarchies.tasks.nav.state.TaxiNavState;
 
 public class TaxiNavTerminalFunction implements TerminalFunction {
@@ -12,9 +11,13 @@ public class TaxiNavTerminalFunction implements TerminalFunction {
 	@Override
 	public boolean isTerminal(State s) {
 		TaxiNavState st = (TaxiNavState)s;
+		int tx = (int)st.getTaxiAtt(TaxiNavDomain.ATT_X);
+		int ty = (int)st.getTaxiAtt(TaxiNavDomain.ATT_Y);
 
 	    for(String loc : st.getLocations()) {
-	    	if(loc.equals(st.getTaxiAtt(Taxi.CLASS_LOCATION))) {
+	    	int lx = (int)st.getLocationAtt(loc, TaxiNavDomain.ATT_X);
+			int ly = (int)st.getLocationAtt(loc, TaxiNavDomain.ATT_Y);
+	    	if(lx == tx && ly == ty) {
 	    		return true;
 			}
 		}

@@ -35,7 +35,6 @@ public class TaxiNavDomain implements DomainGenerator {
 	public static final String ATT_LENGTH =					"length";
 
 	//  action
-	public static final String ACTION_NAVIGATE =			"navigate";
 	public static final String ACTION_NORTH =				"north";
 	public static final String ACTION_SOUTH =				"south";
 	public static final String ACTION_EAST =				"east";

@@ -6,11 +6,11 @@ import java.util.List;
 import burlap.debugtools.RandomFactory;
 import burlap.mdp.core.StateTransitionProb;
 import burlap.mdp.core.action.Action;
-import burlap.mdp.core.oo.ObjectParameterizedAction;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.model.statemodel.FullStateModel;
 import taxi.hierarchies.tasks.nav.state.TaxiNavAgent;
 import taxi.hierarchies.tasks.nav.state.TaxiNavState;
+import taxi.hierarchies.tasks.nav.state.NavStateMapper;
 
 public class TaxiNavModel implements FullStateModel {
 
@@ -36,25 +36,51 @@ public class TaxiNavModel implements FullStateModel {
 	@Override
 	public List<StateTransitionProb> stateTransitions(State s, Action a) {
 		List<StateTransitionProb> tps = new ArrayList<StateTransitionProb>();
-		TaxiNavState state = (TaxiNavState) s;
-		
-		if(a.actionName().startsWith(TaxiNavDomain.ACTION_NAVIGATE)){
-			navigate(state, (ObjectParameterizedAction)a, tps);
+		TaxiNavState state = new NavStateMapper().mapState(s);
+
+		int tx = (int)state.getTaxiAtt(TaxiNavDomain.ATT_X);
+		int ty = (int)state.getTaxiAtt(TaxiNavDomain.ATT_Y);
+
+		if(a.actionName().startsWith(TaxiNavDomain.ACTION_NORTH)){
+			move(state, tx, ty - 1, tps);
+		} else if(a.actionName().startsWith(TaxiNavDomain.ACTION_SOUTH)) {
+			move(state, tx, ty + 1, tps);
+		} else if(a.actionName().startsWith(TaxiNavDomain.ACTION_EAST)) {
+			move(state, tx + 1, ty, tps);
+		} else if(a.actionName().startsWith(TaxiNavDomain.ACTION_WEST)) {
+			move(state, tx - 1, ty, tps);
 		}
 		return tps;
 	}
 
 	/**
-	 * put the taxi at the goal location of the action
+	 * move the taxi in some direction
 	 * @param s the current state
-	 * @param a the nav action
+	 * @param x new x position
+	 * @param y new y position
 	 * @param tps the list of outcomes to add to
 	 */
-	public void navigate(TaxiNavState s, ObjectParameterizedAction a, List<StateTransitionProb> tps){
-		String goal = a.getObjectParameters()[0];
-		
+	public void move(TaxiNavState s, int x, int y, List<StateTransitionProb> tps){
 		TaxiNavState ns = s.copy();
-		TaxiNavAgent taxi = ns.touchTaxi();
+		TaxiNavAgent nt = ns.touchTaxi();
+
+		for(String wall : ns.getWalls()) {
+			int wx = (int)ns.getWallAtt(wall, TaxiNavDomain.ATT_START_X);
+			int wy = (int)ns.getWallAtt(wall, TaxiNavDomain.ATT_START_Y);
+			int wl = (int)ns.getWallAtt(wall, TaxiNavDomain.ATT_LENGTH);
+			boolean wh = (boolean)ns.getWallAtt(wall, TaxiNavDomain.ATT_IS_HORIZONTAL);
+
+			// Wall blocks us. Give up all hope
+			// Haha, eat your heart out, Java Golf
+			if((wh && y == wy && x >= wx && x <= wx + wl) || (!wh && x == wx && y >= wy && y <= y + wl)) {
+				tps.add(new StateTransitionProb(s, 1.));
+				return;
+			}
+		}
+
+        nt.set(TaxiNavDomain.ATT_X, x);
+        nt.set(TaxiNavDomain.ATT_X, y);
+
         tps.add(new StateTransitionProb(ns, 1.));
 	}
 }
