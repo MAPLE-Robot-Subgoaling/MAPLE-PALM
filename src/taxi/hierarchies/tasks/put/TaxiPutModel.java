@@ -52,7 +52,7 @@ public class TaxiPutModel implements FullStateModel {
 		TaxiPutState ns = s.copy();
 		String passenger = a.getObjectParameters()[0];
 
-        TaxiPutPassenger np = s.touchPassenger(passenger);
+        TaxiPutPassenger np = ns.touchPassenger(passenger);
         np.set(TaxiPutDomain.ATT_IN_TAXI, false);
 
 		tps.add(new StateTransitionProb(ns, 1));
@@ -68,7 +68,7 @@ public class TaxiPutModel implements FullStateModel {
 		TaxiPutState ns = s.copy();
 		String goal = a.getObjectParameters()[0];
 
-		TaxiPutAgent nt = s.touchTaxi();
+		TaxiPutAgent nt = ns.touchTaxi();
 		nt.set(TaxiPutDomain.ATT_TAXI_LOCATION, goal);
 
 		tps.add(new StateTransitionProb(ns, 1));
