@@ -6,8 +6,8 @@ import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.oo.ObjectParameterizedActionType;
 import taxi.hierarchies.tasks.dropoff.state.TaxiDropoffState;
 
-public class PutdownActionType extends ObjectParameterizedActionType {
-    public PutdownActionType(String name, String[] parameterClasses) {
+public class DropoffPutdownActionType extends ObjectParameterizedActionType {
+    public DropoffPutdownActionType(String name, String[] parameterClasses) {
         super(name, parameterClasses);
     }
 

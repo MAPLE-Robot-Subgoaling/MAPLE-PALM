@@ -6,8 +6,8 @@ import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.oo.ObjectParameterizedActionType;
 import taxi.hierarchies.tasks.bringon.state.TaxiBringonState;
 
-public class PickupActionType extends ObjectParameterizedActionType {
-    public PickupActionType(String name, String[] parameterClasses) {
+public class BringonPickupActionType extends ObjectParameterizedActionType {
+    public BringonPickupActionType(String name, String[] parameterClasses) {
         super(name, parameterClasses);
     }
 

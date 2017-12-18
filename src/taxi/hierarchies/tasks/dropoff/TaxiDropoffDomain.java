@@ -60,7 +60,7 @@ public class TaxiDropoffDomain implements DomainGenerator {
 		FactoredModel model = new FactoredModel(taxiModel, rf, tf);
 		domain.setModel(model);
 		
-		domain.addActionTypes( new PutdownActionType(ACTION_PUTDOWN, new String[]{Taxi.CLASS_PASSENGER}) );
+		domain.addActionTypes( new DropoffPutdownActionType(ACTION_PUTDOWN, new String[]{Taxi.CLASS_PASSENGER}) );
 		
 		return domain;
 	}

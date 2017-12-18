@@ -61,7 +61,7 @@ public class TaxiBringonDomain implements DomainGenerator {
 		FactoredModel model = new FactoredModel(taxiModel, rf, tf);
 		domain.setModel(model);
 		
-		domain.addActionTypes( new PickupActionType(ACTION_PICKUP, new String[]{Taxi.CLASS_PASSENGER}) );
+		domain.addActionTypes( new BringonPickupActionType(ACTION_PICKUP, new String[]{Taxi.CLASS_PASSENGER}) );
 		
 		return domain;
 	}
