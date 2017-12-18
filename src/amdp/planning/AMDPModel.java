@@ -68,4 +68,8 @@ public class AMDPModel implements FullModel {
 		return tps;
 	}
 
+	public String toString() {
+		return this.task.toString();
+	}
+
 }
