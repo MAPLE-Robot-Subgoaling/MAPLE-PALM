@@ -1,10 +1,6 @@
 package taxi.hierarchies.tasks.nav.state;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import burlap.mdp.core.oo.state.MutableOOState;
 import burlap.mdp.core.oo.state.OOStateUtilities;
@@ -96,7 +92,7 @@ public class TaxiNavState implements MutableOOState{
 
 	@Override
 	public TaxiNavState copy() {
-		return new TaxiNavState(taxi, locations, walls);
+		return new TaxiNavState(touchTaxi(), locations, walls);
 	}
 
 	@Override
@@ -134,6 +130,11 @@ public class TaxiNavState implements MutableOOState{
 			ret[i++] = name;
 		return ret;
 	}
+
+	public Collection<TaxiNavWall> getWallObjects() {
+	    return walls.values();
+    }
+
 
 	public Object getTaxiAtt(String attName){
 		return taxi.get(attName);

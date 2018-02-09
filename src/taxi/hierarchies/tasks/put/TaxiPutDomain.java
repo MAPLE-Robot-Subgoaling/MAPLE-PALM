@@ -24,11 +24,12 @@ import taxi.stateGenerator.TaxiStateFactory;
 public class TaxiPutDomain implements DomainGenerator {
 
 	public static final String ON_ROAD =					"onRoad";
+	public static final String IN_TAXI = 					"inTaxi";
 
 	// attributes
 	public static final String ATT_GOAL_LOCATION =			"goalLocation";
 	public static final String ATT_TAXI_LOCATION =			"taxiLocation";
-	public static final String ATT_IN_TAXI = 				"inTaxi";
+	public static final String ATT_LOCATION =				"location";
 
 	//actions
     public static final String ACTION_NAV =					"nav";
@@ -83,9 +84,9 @@ public class TaxiPutDomain implements DomainGenerator {
 		HashableStateFactory hs = new SimpleHashableStateFactory();
 		ValueIteration vi = new ValueIteration(domain, 0.5, hs, 0.01, 10);
 		
-		State base = TaxiStateFactory.createClassicState();
+		State base = TaxiStateFactory.createClassicStateHalfpoint();
 		PutStateMapper map = new PutStateMapper();
-		State L2s = map.mapState(base);
+		State L2s = map.mapState(base, "Passenger0");
 
 		SimulatedEnvironment env = new SimulatedEnvironment(domain, L2s);
 		Policy p = vi.planFromState(L2s);

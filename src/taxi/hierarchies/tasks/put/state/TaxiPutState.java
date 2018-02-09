@@ -6,11 +6,12 @@ import burlap.mdp.core.oo.state.OOVariableKey;
 import burlap.mdp.core.oo.state.ObjectInstance;
 import burlap.mdp.core.state.MutableState;
 import taxi.Taxi;
+import taxi.hierarchies.TaxiGetPutState;
 import taxi.hierarchies.tasks.put.TaxiPutDomain;
 
 import java.util.*;
 
-public class TaxiPutState implements MutableOOState {
+public class TaxiPutState extends TaxiGetPutState {
 
 	//this state has passengers and depots
     private TaxiPutAgent taxi;

@@ -28,6 +28,7 @@ public class AMDPPlanTest {
 
 		for(int i = 0; i < conf.episodes; i++){
 			eps.add(amdp.planFromState(init));
+			amdp.resetSolver();
 		}
 
 		EpisodeSequenceVisualizer ev = new EpisodeSequenceVisualizer
@@ -37,7 +38,7 @@ public class AMDPPlanTest {
 	}
 	
 	public static void main(String[] args) {
-		String conffile = "config/taxi/classic.yaml";
+		String conffile = "config/taxi/classic-jwtest.yaml";
 		if(args.length > 0) {
 			conffile = args[0];
 		}

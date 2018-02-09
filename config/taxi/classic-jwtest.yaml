@@ -1,9 +1,7 @@
 state: classic
 
 agents:
-  - rmaxq
   - ramdp
-
 
 episodes: 10
 max_steps: 2000
@@ -11,9 +9,9 @@ trials: 2
 gamma: 0.95
 
 stochastic:
-  seed: 89273911200
-  correct_move: 0.8
-  fickle: 0.05
+  seed: 4242419992
+  correct_move: 1.0
+  fickle: 0.0
   random_start: true
 
 planning:
@@ -21,8 +19,8 @@ planning:
 
 rmax:
   vmax: 20
-  threshold: 5
-  max_delta: 0.0001
+  threshold: 2
+  max_delta: 0.00001
 
 output:
   csv:

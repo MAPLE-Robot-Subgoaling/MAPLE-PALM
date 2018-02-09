@@ -16,20 +16,16 @@ public class TaxiPutPassenger extends MutableObject {
 	 */
 	private final static List<Object> keys = Arrays.<Object>asList(
 			TaxiPutDomain.ATT_GOAL_LOCATION,
-			TaxiPutDomain.ATT_IN_TAXI
+			TaxiPutDomain.ATT_LOCATION
 			);
 	
-	public TaxiPutPassenger(String name, String goalLocation) {
-		this(name, (Object) goalLocation, false);
-	}
-	
-	public TaxiPutPassenger(String name, String goalLocation, boolean inTaxi){
-		this(name, (Object) goalLocation, (Object) inTaxi);
+	public TaxiPutPassenger(String name, String goalLocation, String location){
+		this(name, (Object) goalLocation, (Object) location);
 	}
 
-	private TaxiPutPassenger(String name, Object goalLocation, Object inTaxi){
+	private TaxiPutPassenger(String name, Object goalLocation, Object location){
 		this.set(TaxiPutDomain.ATT_GOAL_LOCATION, goalLocation);
-		this.set(TaxiPutDomain.ATT_IN_TAXI, inTaxi);
+		this.set(TaxiPutDomain.ATT_LOCATION, location);
 		this.setName(name);
 	}
 	
@@ -48,8 +44,8 @@ public class TaxiPutPassenger extends MutableObject {
 		return new TaxiPutPassenger(
 				objectName,
 				get(TaxiPutDomain.ATT_GOAL_LOCATION),
-				get(TaxiPutDomain.ATT_IN_TAXI)
-				);
+				get(TaxiPutDomain.ATT_LOCATION)
+		);
 	}
 
 	@Override

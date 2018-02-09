@@ -13,8 +13,12 @@ public class TaxiPutTerminalFunction implements TerminalFunction {
 		TaxiPutState state = (TaxiPutState) s;
 		
 		for(String passengerName : state.getPassengers()){
-			boolean inTaxi = (boolean) state.getPassengerAtt(passengerName, TaxiPutDomain.ATT_IN_TAXI);
-			if(!inTaxi) return false;
+			String pLocation = (String) state.getPassengerAtt(passengerName, TaxiPutDomain.ATT_LOCATION);
+            String pGoal = (String) state.getPassengerAtt(passengerName, TaxiPutDomain.ATT_GOAL_LOCATION);
+            // if there is a passenger not at its goal, then it is false
+            if (!pLocation.equals(pGoal)) {
+                return false;
+            }
 		}
 		return true;
 	}

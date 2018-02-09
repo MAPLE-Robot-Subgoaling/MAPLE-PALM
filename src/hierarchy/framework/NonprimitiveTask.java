@@ -64,7 +64,7 @@ public class NonprimitiveTask extends Task{
 	 * create a nunprimitive taks
 	 * @param children the subtasks
 	 * @param aType the set of actions this task represents in its parent task's domain
-	 * @param term the failure PF
+	 * @param fail the failure PF
 	 * @param compl the completion PF
 	 */
 	public NonprimitiveTask(Task[] children, ActionType aType,
@@ -83,7 +83,7 @@ public class NonprimitiveTask extends Task{
 	 * @param abstractDomain the domain this task executes actions in
 	 * @param map the state abstraction function into the domain
 	 * @param taskrf the custom reward function for the task
-	 * @param term the failure PF
+	 * @param fail the failure PF
 	 * @param compl the completion PF
 	 */
 	public NonprimitiveTask(Task[] children, ActionType aType, OOSADomain abstractDomain, StateMapping map,

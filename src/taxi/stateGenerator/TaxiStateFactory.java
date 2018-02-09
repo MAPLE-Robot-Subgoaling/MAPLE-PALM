@@ -38,6 +38,18 @@ public class TaxiStateFactory {
 		
 		return new TaxiState(taxi, passengers, locations, walls);
 	}
+
+	public static TaxiState createClassicStateHalfpoint() {
+		TaxiState classic = createClassicState();
+		TaxiPassenger passenger = (TaxiPassenger) classic.objectsOfClass(Taxi.CLASS_PASSENGER).get(0);
+		TaxiAgent agent = (TaxiAgent) classic.objectsOfClass(Taxi.CLASS_TAXI).get(0);
+		agent.set(Taxi.ATT_X, passenger.get(Taxi.ATT_X));
+		agent.set(Taxi.ATT_Y, passenger.get(Taxi.ATT_Y));
+		agent.set(Taxi.ATT_TAXI_OCCUPIED, true);
+		passenger.set(Taxi.ATT_IN_TAXI, true);
+//		passenger.set(Taxi.ATT_JUST_PICKED_UP, true);
+		return classic;
+	}
 	
 	public static TaxiState createSmallState(){
 		TaxiAgent taxi = new TaxiAgent(Taxi.CLASS_TAXI + 0, 0, 4);

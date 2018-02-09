@@ -5,10 +5,16 @@ import burlap.behavior.policy.PolicyUtils;
 import burlap.behavior.singleagent.Episode;
 import burlap.behavior.singleagent.planning.stochastic.valueiteration.ValueIteration;
 import burlap.mdp.auxiliary.DomainGenerator;
+import burlap.mdp.auxiliary.common.GoalConditionTF;
+import burlap.mdp.auxiliary.common.NullTermination;
+import burlap.mdp.auxiliary.common.SinglePFTF;
+import burlap.mdp.auxiliary.stateconditiontest.StateConditionTest;
 import burlap.mdp.core.TerminalFunction;
 import burlap.mdp.core.action.UniversalActionType;
+import burlap.mdp.core.oo.state.OOState;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.common.GoalBasedRF;
+import burlap.mdp.singleagent.common.NullRewardFunction;
 import burlap.mdp.singleagent.environment.SimulatedEnvironment;
 import burlap.mdp.singleagent.model.FactoredModel;
 import burlap.mdp.singleagent.model.RewardFunction;
@@ -16,6 +22,7 @@ import burlap.mdp.singleagent.oo.OOSADomain;
 import burlap.statehashing.HashableStateFactory;
 import burlap.statehashing.simple.SimpleHashableStateFactory;
 import taxi.Taxi;
+import taxi.functions.amdp.NavCompletedPF;
 import taxi.hierarchies.tasks.nav.state.NavStateMapper;
 import taxi.hierarchies.tasks.nav.state.TaxiNavAgent;
 import taxi.hierarchies.tasks.nav.state.TaxiNavLocation;
@@ -26,7 +33,6 @@ public class TaxiNavDomain implements DomainGenerator {
 	//attributes
 	public static final String ATT_X =						"x";
 	public static final String ATT_Y =						"y";
-	public static final String ATT_GOAL_LOCATION =			"goalLocation";
 
 	// wall attributes
 	public static final String ATT_START_X = 				"startX";
@@ -57,16 +63,21 @@ public class TaxiNavDomain implements DomainGenerator {
 	 * create a non fickle taxi abstraction 1 domain
 	 */
 	public TaxiNavDomain() {
-		this.tf = new TaxiNavTerminalFunction();
-		this.rf = new GoalBasedRF(tf);
+
 	}
 	
 	public OOSADomain generateDomain() {
 		OOSADomain domain = new OOSADomain();
-		
+
 		domain.addStateClass(Taxi.CLASS_TAXI, TaxiNavAgent.class).addStateClass(Taxi.CLASS_LOCATION, TaxiNavLocation.class);
 		
 		TaxiNavModel taxiModel = new TaxiNavModel();
+		if (tf == null) {
+//			tf = new NullTermination();
+		}
+		if (rf == null) {
+//			rf = new GoalBasedRF(tf);
+		}
 		FactoredModel model = new FactoredModel(taxiModel, rf, tf);
 		domain.setModel(model);
 		
@@ -82,6 +93,15 @@ public class TaxiNavDomain implements DomainGenerator {
 
 	public static void main(String[] args) {
 		TaxiNavDomain taxiBuild = new TaxiNavDomain();
+		StateConditionTest goalCondition = new StateConditionTest() {
+			@Override
+			public boolean satisfies(State state) {
+				String debugGoalLocation = "Location0";
+				return new NavCompletedPF().isTrue((OOState) state, debugGoalLocation);
+			}
+		};
+		taxiBuild.tf = new GoalConditionTF(goalCondition);
+		taxiBuild.rf = new GoalBasedRF(taxiBuild.tf);
 		OOSADomain domain = taxiBuild.generateDomain();
 
 		HashableStateFactory hs = new SimpleHashableStateFactory();

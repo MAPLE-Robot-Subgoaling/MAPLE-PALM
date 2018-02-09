@@ -81,14 +81,9 @@ public class TaxiHierarchy {
 		PrimitiveTask west = new PrimitiveTask(aWest, baseDomain);
 		Task[] navTasks = {north, east, south, west};
 
-		// Put Nav (Task used by Put)
-		ActionType aPNavigate = putDomain.getAction(TaxiPutDomain.ACTION_NAV);
-		NonprimitiveTask pNavigate = new NonprimitiveTask(navTasks, aPNavigate, navDomain,
-				new NavStateMapper(), new NavFailurePF(), new NavCompletedPF());
-
-		// Get Nav (Task used by Get)
-		ActionType aGNavigate = getDomain.getAction(TaxiGetDomain.ACTION_NAV);
-		NonprimitiveTask gNavigate = new NonprimitiveTask(navTasks, aGNavigate, navDomain,
+		// Nav (Task used by Get and Put)
+		ActionType aNavigate = putDomain.getAction(TaxiPutDomain.ACTION_NAV);
+		NonprimitiveTask navigate = new NonprimitiveTask(navTasks, aNavigate, navDomain,
 				new NavStateMapper(), new NavFailurePF(), new NavCompletedPF());
 
 		// Pickup (Primitive used by Bringon)
@@ -103,7 +98,7 @@ public class TaxiHierarchy {
 
 		// Get (Task used by Root)
 		ActionType aGet = rootDomain.getAction(TaxiRootDomain.ACTION_GET);
-		Task[] getTasks = {bringon, gNavigate};
+		Task[] getTasks = {bringon, navigate};
 		NonprimitiveTask get = new NonprimitiveTask(getTasks, aGet, getDomain,
 				new GetStateMapper(), new GetFailurePF(), new GetCompletedPF());
 
@@ -119,7 +114,7 @@ public class TaxiHierarchy {
 
 		// Put (Task used by Root)
 		ActionType aPut = rootDomain.getAction(TaxiRootDomain.ACTION_PUT);
-		Task[] putTasks = {pNavigate, dropoff};
+		Task[] putTasks = {dropoff, navigate};
 		NonprimitiveTask put = new NonprimitiveTask(putTasks, aPut, putDomain,
 				new PutStateMapper(), new PutFailurePF(), new PutCompletedPF());
 

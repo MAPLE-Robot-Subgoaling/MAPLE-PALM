@@ -3,7 +3,10 @@ package hierarchy.framework;
 import java.util.ArrayList;
 import java.util.List;
 
+import burlap.mdp.auxiliary.common.GoalConditionTF;
+import burlap.mdp.auxiliary.stateconditiontest.StateConditionTest;
 import burlap.mdp.core.oo.ObjectParameterizedAction;
+import burlap.mdp.singleagent.common.GoalBasedRF;
 import burlap.mdp.singleagent.model.FactoredModel;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
@@ -42,13 +45,30 @@ public class GroundedTask {
 	public Action getAction(){
 		return action;
 	}
-	
+
+	protected void setupGroundedTF(OOSADomain domain) {
+        FactoredModel model = (FactoredModel) domain.getModel();
+        StateConditionTest localFailureOrCompletion = new StateConditionTest() {
+            @Override
+            public boolean satisfies(State state) {
+                return isComplete(state);// || isFailure(state);
+            }
+        };
+        GoalConditionTF groundedTerminalFunction = new GoalConditionTF(localFailureOrCompletion);
+        model.setTf(groundedTerminalFunction);
+        GoalBasedRF groundedRewardFunction = new GoalBasedRF(groundedTerminalFunction);
+        model.setRf(groundedRewardFunction);
+    }
+
+
 	/**
 	 * get the domain of the grounded task
 	 * @return the domain which this task defines
 	 */
 	public OOSADomain getDomain(){
-		return t.getDomain();
+		OOSADomain domain = t.getDomain();
+		setupGroundedTF(domain);
+		return domain;
 	}
 	
 	/**
@@ -57,14 +77,14 @@ public class GroundedTask {
 	 * @return a complete learned domain for the grounded task
 	 */
 	public OOSADomain getDomain(FullModel model){
-		OOSADomain d = new OOSADomain();
-		d.setModel(model);
-		
+		OOSADomain domain = new OOSADomain();
+		domain.setModel(model);
 		Task[] children = t.getChildren();
 		for(Task child : children){
-			d.addActionType(child.getActionType());
+			domain.addActionType(child.getActionType());
 		}
-		return d;
+        setupGroundedTF(domain);
+		return domain;
 	}
 	
 	/**

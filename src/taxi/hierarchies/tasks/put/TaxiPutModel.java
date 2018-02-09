@@ -53,7 +53,8 @@ public class TaxiPutModel implements FullStateModel {
 		String passenger = a.getObjectParameters()[0];
 
         TaxiPutPassenger np = ns.touchPassenger(passenger);
-        np.set(TaxiPutDomain.ATT_IN_TAXI, false);
+        String taxiLocation = (String) ns.getTaxiAtt(TaxiPutDomain.ATT_TAXI_LOCATION);
+        np.set(TaxiPutDomain.ATT_LOCATION, taxiLocation);
 
 		tps.add(new StateTransitionProb(ns, 1));
 	}
