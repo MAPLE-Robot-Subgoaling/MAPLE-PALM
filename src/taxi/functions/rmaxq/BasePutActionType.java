@@ -6,6 +6,7 @@ import java.util.List;
 import burlap.mdp.core.action.Action;
 import burlap.mdp.core.action.ActionType;
 import burlap.mdp.core.state.State;
+import hierarchy.framework.StringFormat;
 import taxi.hierarchies.tasks.root.TaxiRootDomain;
 import taxi.state.TaxiState;
 
@@ -19,7 +20,7 @@ public class BasePutActionType implements ActionType {
 
 	@Override
 	public PutAction associatedAction(String strRep) {
-		String goal = strRep.split("_")[1];
+		String goal = StringFormat.split(strRep)[1];
 		return new PutAction(goal);
 	}
 
@@ -49,7 +50,7 @@ public class BasePutActionType implements ActionType {
 		
 		@Override
 		public String actionName() {
-			return TaxiRootDomain.ACTION_PUT + "_" + passenger;
+			return StringFormat.join(TaxiRootDomain.ACTION_PUT, passenger);
 		}
 
 		@Override

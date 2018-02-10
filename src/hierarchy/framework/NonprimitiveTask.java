@@ -127,7 +127,7 @@ public class NonprimitiveTask extends Task{
 		if (a instanceof ObjectParameterizedAction) {
 			return failure.isTrue((OOState) s, ((ObjectParameterizedAction) a).getObjectParameters());
 		} else {
-			return failure.isTrue((OOState) s, RAMDPModel.getActionNameSafe(a));
+			return failure.isTrue((OOState) s, StringFormat.parameterizedActionName(a));
 		}
 	}
 	
@@ -137,7 +137,7 @@ public class NonprimitiveTask extends Task{
 		if (a instanceof ObjectParameterizedAction) {
 			return completed.isTrue((OOState) s, ((ObjectParameterizedAction) a).getObjectParameters());
 		} else {
-			return completed.isTrue((OOState) s, RAMDPModel.getActionNameSafe(a));
+			return completed.isTrue((OOState) s, StringFormat.parameterizedActionName(a));
 		}
 	}
 }

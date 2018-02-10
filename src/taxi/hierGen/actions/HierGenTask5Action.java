@@ -1,6 +1,7 @@
 package taxi.hierGen.actions;
 
 import burlap.mdp.core.action.Action;
+import hierarchy.framework.StringFormat;
 import taxi.hierGen.Task5.state.TaxiHierGenTask5State;
 
 public class HierGenTask5Action implements Action {
@@ -23,7 +24,7 @@ public class HierGenTask5Action implements Action {
 
 	@Override
 	public String actionName() {
-		return TaxiHierGenTask5State.ACTION_Task5_Action + "_" + goalX + "_" + goalY;
+		return StringFormat.join(TaxiHierGenTask5State.ACTION_Task5_Action, Integer.toString(goalX), Integer.toString(goalY));
 	}
 
 	@Override

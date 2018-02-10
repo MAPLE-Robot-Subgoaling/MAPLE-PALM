@@ -698,17 +698,17 @@ public class RmaxQLearningAgent implements LearningAgent {
 		return terminal;
 	}
 
-	private static HashMap<String, String> cachedNames = new HashMap<>();
-	public static String getActionNameSafe(Action action) {
-		String name = cachedNames.get(action.toString());
-		if (name != null) { return name; }
-		name = action.actionName();
-		if (action instanceof ObjectParameterizedAction) {
-			ObjectParameterizedAction opa = (ObjectParameterizedAction) action;
-			name = action.actionName() + "_" + String.join("_",opa.getObjectParameters());
-		}
-		cachedNames.put(action.toString(), name);
-		return name;
-	}
+//	private static HashMap<String, String> cachedNames = new HashMap<>();
+//	public static String getActionNameSafe(Action action) {
+//		String name = cachedNames.get(action.toString());
+//		if (name != null) { return name; }
+//		name = action.actionName();
+//		if (action instanceof ObjectParameterizedAction) {
+//			ObjectParameterizedAction opa = (ObjectParameterizedAction) action;
+//			name = action.actionName() + "_" + String.join("_",opa.getObjectParameters());
+//		}
+//		cachedNames.put(action.toString(), name);
+//		return name;
+//	}
 
 }

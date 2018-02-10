@@ -10,6 +10,7 @@ import burlap.mdp.singleagent.environment.EnvironmentOutcome;
 import burlap.mdp.singleagent.oo.OOSADomain;
 import burlap.statehashing.HashableStateFactory;
 import hierarchy.framework.GroundedTask;
+import hierarchy.framework.StringFormat;
 import utilities.ValueIteration;
 
 import java.util.HashMap;
@@ -122,9 +123,12 @@ public class RAMDPLearningAgent implements LearningAgent{
 //        System.out.println(tabLevel + ">>> " + task.getAction() + " " + actionCount);
 
 		while(
-		        !(task.isFailure(currentState) || task.isComplete(currentState)) // while task still valid
-                && (steps < maxSteps || maxSteps == -1)  // and still have steps it can take
-                && !(root.isComplete(root.mapState(baseState))) // and it hasn't solved the root goal, keep planning
+			// while task still valid
+		        !(task.isFailure(currentState) || task.isComplete(currentState))
+			// and still have steps it can take
+                && (steps < maxSteps || maxSteps == -1)
+			// and it hasn't solved the root goal, keep planning
+                && !(root.isComplete(root.mapState(baseState)))
         ){
 			actionCount++;
 			boolean subtaskCompleted = false;
@@ -134,7 +138,7 @@ public class RAMDPLearningAgent implements LearningAgent{
 //            System.out.println(tabLevel + "+++ " + task.getAction() + " " + actionCount);
 //			System.out.println(tabLevel + "    Possible Actions: " + task.getGroundedChildTasks(currentState));
 			Action a = nextAction(task, currentState);
-			String actionName = RAMDPModel.getActionNameSafe(a);
+			String actionName = StringFormat.parameterizedActionName(a);
 			GroundedTask action = this.taskNames.get(actionName);
 			if(action == null){
 				addChildrenToMap(task, currentState);

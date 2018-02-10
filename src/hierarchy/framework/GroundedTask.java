@@ -14,7 +14,6 @@ import burlap.mdp.core.action.Action;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.model.FullModel;
 import burlap.mdp.singleagent.oo.OOSADomain;
-import ramdp.agent.RAMDPModel;
 
 public class GroundedTask {
 
@@ -161,11 +160,7 @@ public class GroundedTask {
 
 	@Override
 	public String toString(){
-		if (action instanceof ObjectParameterizedAction) {
-			ObjectParameterizedAction opa = (ObjectParameterizedAction)action;
-			return action.actionName() + " " + String.join(" ",opa.getObjectParameters());
-		}
-		return action.actionName();
+		return StringFormat.parameterizedActionName(action);
 	}
 	
 	/**
@@ -189,7 +184,7 @@ public class GroundedTask {
         }
 
         GroundedTask o = (GroundedTask) other;
-        if(!RAMDPModel.getActionNameSafe(this.action).equals(RAMDPModel.getActionNameSafe(o.action))){
+        if(!StringFormat.parameterizedActionName(this.action).equals(StringFormat.parameterizedActionName(o.action))){
             return false; 
         }
         
@@ -199,7 +194,7 @@ public class GroundedTask {
     @Override
     public int hashCode() {
         HashCodeBuilder hashCodeBuilder = new HashCodeBuilder(31, 7);
-        hashCodeBuilder.append(RAMDPModel.getActionNameSafe(this.action));
+        hashCodeBuilder.append(StringFormat.parameterizedActionName(this.action));
         return hashCodeBuilder.toHashCode();
     }
 }

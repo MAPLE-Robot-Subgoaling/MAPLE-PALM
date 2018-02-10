@@ -1,7 +1,6 @@
 state: small
 
 agents:
-  - rmaxq
   - ramdp
 
 episodes: 30

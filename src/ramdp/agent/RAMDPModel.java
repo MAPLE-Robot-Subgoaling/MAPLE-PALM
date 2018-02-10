@@ -10,13 +10,15 @@ import burlap.mdp.core.action.Action;
 import burlap.mdp.core.oo.ObjectParameterizedAction;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.environment.EnvironmentOutcome;
+import burlap.mdp.singleagent.model.FactoredModel;
 import burlap.mdp.singleagent.model.FullModel;
 import burlap.mdp.singleagent.model.TransitionProb;
 import burlap.statehashing.HashableState;
 import burlap.statehashing.HashableStateFactory;
 import hierarchy.framework.GroundedTask;
+import hierarchy.framework.StringFormat;
 
-public class RAMDPModel implements FullModel{
+public class RAMDPModel extends FactoredModel {
 
 	/**
 	 * the rmax sample parameter
@@ -120,15 +122,6 @@ public class RAMDPModel implements FullModel{
 		return tps; 
 	}
 
-	public static String getActionNameSafe(Action a) {
-		String actionName = a.actionName();
-		if (a instanceof ObjectParameterizedAction) {
-			ObjectParameterizedAction opa = (ObjectParameterizedAction)a;
-			actionName = a.actionName() + "_" + String.join("_",opa.getObjectParameters());
-		}
-		return actionName;
-	}
-
 	
 	/**
 	 * updates the model counts, rewards and probabilities given the
@@ -139,7 +132,7 @@ public class RAMDPModel implements FullModel{
 		HashableState hs = this.hashingFactory.hashState(result.o);
 		double reward = result.r;
 		Action a = result.a;
-		String actionName = getActionNameSafe(a);
+		String actionName = StringFormat.parameterizedActionName(a);
 		HashableState hsp = this.hashingFactory.hashState(result.op);
 		
 		//add to the count the information in the outcome and restore
@@ -180,10 +173,10 @@ public class RAMDPModel implements FullModel{
 			this.transitions.put(hs, SResults);
 		}
 		
-		Map<HashableState, Double> SAResults = SResults.get(getActionNameSafe(a));
+		Map<HashableState, Double> SAResults = SResults.get(StringFormat.parameterizedActionName(a));
 		if(SAResults == null){
 			SAResults = new HashMap<HashableState, Double>();
-			SResults.put(getActionNameSafe(a), SAResults);
+			SResults.put(StringFormat.parameterizedActionName(a), SAResults);
 		}
 		return SAResults;
 	}
@@ -201,10 +194,10 @@ public class RAMDPModel implements FullModel{
 			this.rewards.put(hs, rewards);
 		}
 		
-		Double reward = rewards.get(getActionNameSafe(a));
+		Double reward = rewards.get(StringFormat.parameterizedActionName(a));
 		if(reward == null){
 			reward = this.rmax;
-			rewards.put(getActionNameSafe(a), reward);
+			rewards.put(StringFormat.parameterizedActionName(a), reward);
 		}
 		return reward;
 	}
@@ -222,10 +215,10 @@ public class RAMDPModel implements FullModel{
 			this.stateActionCount.put(hs, stateCount);
 		}
 		
-		Integer SAcount = stateCount.get(getActionNameSafe(a));
+		Integer SAcount = stateCount.get(StringFormat.parameterizedActionName(a));
 		if(SAcount == null){
 			SAcount = 0;
-			stateCount.put(getActionNameSafe(a), SAcount);
+			stateCount.put(StringFormat.parameterizedActionName(a), SAcount);
 		}
 		return SAcount;
 	}
@@ -244,10 +237,10 @@ public class RAMDPModel implements FullModel{
 			this.resultingStateCount.put(hs, stateCount);
 		}
 		
-		Map<HashableState, Integer> SACount = stateCount.get(getActionNameSafe(a));
+		Map<HashableState, Integer> SACount = stateCount.get(StringFormat.parameterizedActionName(a));
 		if(SACount == null){
 			SACount = new HashMap<HashableState, Integer>();
-			stateCount.put(getActionNameSafe(a), SACount);
+			stateCount.put(StringFormat.parameterizedActionName(a), SACount);
 		}
 		
 		Integer SASPCount = SACount.get(hsp);
@@ -272,10 +265,10 @@ public class RAMDPModel implements FullModel{
 			this.totalReward.put(hs, Sreward);
 		}
 		
-		Double rewards = Sreward.get(getActionNameSafe(a));
+		Double rewards = Sreward.get(StringFormat.parameterizedActionName(a));
 		if(rewards == null){
 			rewards = 0.;
-			Sreward.put(getActionNameSafe(a), rewards);
+			Sreward.put(StringFormat.parameterizedActionName(a), rewards);
 		}
 		
 		return rewards;
@@ -297,7 +290,7 @@ public class RAMDPModel implements FullModel{
 	 */
 	protected void setReward(HashableState hs, Action a, double reward){
 		getReward(hs, a);
-		this.rewards.get(hs).put(getActionNameSafe(a), reward);
+		this.rewards.get(hs).put(StringFormat.parameterizedActionName(a), reward);
 	}
 	
 	/**
@@ -309,6 +302,6 @@ public class RAMDPModel implements FullModel{
 	 */
 	protected void setTransition(HashableState hs, Action a, HashableState hsp, double probability){
 		getResultingStates(hs, a);
-		this.transitions.get(hs).get(getActionNameSafe(a)).put(hsp, probability);
+		this.transitions.get(hs).get(StringFormat.parameterizedActionName(a)).put(hsp, probability);
 	}
 }
