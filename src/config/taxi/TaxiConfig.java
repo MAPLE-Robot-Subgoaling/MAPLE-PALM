@@ -40,14 +40,18 @@ public class TaxiConfig {
 
     public TaxiState generateState() {
         switch (state) {
+            case "classic":
+                return TaxiStateFactory.createClassicState();
             case "classic-2passengers":
                 return TaxiStateFactory.createClassicState(2);
             case "tiny":
                 return TaxiStateFactory.createTinyState();
             case "small":
                 return TaxiStateFactory.createSmallState();
+            case "small-2passengers":
+                return TaxiStateFactory.createSmallState(2);
             default:
-                return TaxiStateFactory.createClassicState();
+                throw new RuntimeException("ERROR: invalid state passed to generateState in TaxiConfig: " + state);
         }
     }
 }
