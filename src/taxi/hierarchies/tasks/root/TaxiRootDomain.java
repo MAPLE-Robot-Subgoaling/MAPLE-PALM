@@ -5,17 +5,23 @@ import burlap.behavior.policy.PolicyUtils;
 import burlap.behavior.singleagent.Episode;
 import burlap.behavior.singleagent.planning.stochastic.valueiteration.ValueIteration;
 import burlap.mdp.auxiliary.DomainGenerator;
+import burlap.mdp.auxiliary.common.NullTermination;
 import burlap.mdp.core.TerminalFunction;
 import burlap.mdp.core.action.ActionType;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.common.GoalBasedRF;
+import burlap.mdp.singleagent.common.NullRewardFunction;
 import burlap.mdp.singleagent.environment.SimulatedEnvironment;
 import burlap.mdp.singleagent.model.FactoredModel;
 import burlap.mdp.singleagent.model.RewardFunction;
 import burlap.mdp.singleagent.oo.OOSADomain;
 import burlap.statehashing.HashableStateFactory;
 import burlap.statehashing.simple.SimpleHashableStateFactory;
+import hierarchy.framework.GoalFailRF;
+import hierarchy.framework.GoalFailTF;
 import taxi.Taxi;
+import taxi.functions.amdp.RootCompletedPF;
+import taxi.functions.amdp.RootFailurePF;
 import taxi.hierarchies.tasks.root.state.RootStateMapper;
 import taxi.hierarchies.tasks.root.state.TaxiRootPassenger;
 import taxi.stateGenerator.TaxiStateFactory;
@@ -49,9 +55,10 @@ public class TaxiRootDomain implements DomainGenerator {
 	 * creates a abstraction 2 taxi domain
 	 */
 	public TaxiRootDomain() {
-		this.tf = new TaxiRootTerminalFunction();
-		this.rf = new GoalBasedRF(tf);
+        this.tf = new GoalFailTF(new RootCompletedPF(), null, new RootFailurePF(), null);
+        this.rf = new GoalFailRF((GoalFailTF) tf);
 	}
+
 
 	@Override
 	public OOSADomain generateDomain() {
@@ -60,6 +67,14 @@ public class TaxiRootDomain implements DomainGenerator {
 		domain.addStateClass(Taxi.CLASS_PASSENGER, TaxiRootPassenger.class);
 
 		TaxiRootModel tmodel = new TaxiRootModel();
+		if (tf == null) {
+			System.err.println("Warning: initializing " + this.getClass().getSimpleName() + " with Null TF");
+			tf = new NullTermination();
+		}
+		if (rf == null) {
+			System.err.println("Warning: initializing " + this.getClass().getSimpleName() + " with Null RF");
+			rf = new NullRewardFunction();
+		}
 		FactoredModel model = new FactoredModel(tmodel, rf, tf);
 		domain.setModel(model);
 		
@@ -79,7 +94,7 @@ public class TaxiRootDomain implements DomainGenerator {
 		HashableStateFactory hs = new SimpleHashableStateFactory();
 		ValueIteration vi = new ValueIteration(domain, 0.5, hs, 0.01, 10);
 		
-		State base = TaxiStateFactory.createClassicState();
+		State base = TaxiStateFactory.createClassicState(2);
 		RootStateMapper map = new RootStateMapper();
 		State L2s = map.mapState(base);
 

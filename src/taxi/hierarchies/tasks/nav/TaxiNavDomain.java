@@ -21,8 +21,11 @@ import burlap.mdp.singleagent.model.RewardFunction;
 import burlap.mdp.singleagent.oo.OOSADomain;
 import burlap.statehashing.HashableStateFactory;
 import burlap.statehashing.simple.SimpleHashableStateFactory;
+import hierarchy.framework.GoalFailRF;
+import hierarchy.framework.GoalFailTF;
 import taxi.Taxi;
 import taxi.functions.amdp.NavCompletedPF;
+import taxi.functions.amdp.NavFailurePF;
 import taxi.hierarchies.tasks.nav.state.NavStateMapper;
 import taxi.hierarchies.tasks.nav.state.TaxiNavAgent;
 import taxi.hierarchies.tasks.nav.state.TaxiNavLocation;
@@ -58,13 +61,19 @@ public class TaxiNavDomain implements DomainGenerator {
 		rf = r;
 		tf = t;
 	}
-	
+
 	/**
 	 * create a non fickle taxi abstraction 1 domain
 	 */
 	public TaxiNavDomain() {
-
+//		tf = new NullTermination();
+//		rf = new NullRewardFunction();
 	}
+
+	public TaxiNavDomain(String goalLocationName) {
+        tf = new GoalFailTF(new NavCompletedPF(), new String[]{goalLocationName}, new NavFailurePF(), null);
+        rf = new GoalFailRF((GoalFailTF) tf);
+    }
 	
 	public OOSADomain generateDomain() {
 		OOSADomain domain = new OOSADomain();
@@ -73,10 +82,12 @@ public class TaxiNavDomain implements DomainGenerator {
 		
 		TaxiNavModel taxiModel = new TaxiNavModel();
 		if (tf == null) {
-//			tf = new NullTermination();
+            System.err.println("Warning: initializing " + this.getClass().getSimpleName() + " with Null TF");
+			tf = new NullTermination();
 		}
 		if (rf == null) {
-//			rf = new GoalBasedRF(tf);
+            System.err.println("Warning: initializing " + this.getClass().getSimpleName() + " with Null RF");
+			rf = new NullRewardFunction();
 		}
 		FactoredModel model = new FactoredModel(taxiModel, rf, tf);
 		domain.setModel(model);
@@ -92,16 +103,9 @@ public class TaxiNavDomain implements DomainGenerator {
 	}
 
 	public static void main(String[] args) {
-		TaxiNavDomain taxiBuild = new TaxiNavDomain();
-		StateConditionTest goalCondition = new StateConditionTest() {
-			@Override
-			public boolean satisfies(State state) {
-				String debugGoalLocation = "Location0";
-				return new NavCompletedPF().isTrue((OOState) state, debugGoalLocation);
-			}
-		};
-		taxiBuild.tf = new GoalConditionTF(goalCondition);
-		taxiBuild.rf = new GoalBasedRF(taxiBuild.tf);
+
+        String goalLocationName = Taxi.CLASS_LOCATION+"2";
+		TaxiNavDomain taxiBuild = new TaxiNavDomain(goalLocationName);
 		OOSADomain domain = taxiBuild.generateDomain();
 
 		HashableStateFactory hs = new SimpleHashableStateFactory();

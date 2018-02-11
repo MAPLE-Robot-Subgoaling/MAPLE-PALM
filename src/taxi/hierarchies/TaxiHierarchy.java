@@ -122,7 +122,7 @@ public class TaxiHierarchy {
 		ActionType aSolve = new SolveActionType();
 		Task[] rootTasks = {get, put};
 		NonprimitiveTask root = new NonprimitiveTask(rootTasks, aSolve, rootDomain,
-				new RootStateMapper(), new RootPF(), new RootPF());
+				new RootStateMapper(), new RootFailurePF(), new RootCompletedPF());
 		
 		return root;
 	}

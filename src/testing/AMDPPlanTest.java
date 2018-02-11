@@ -29,7 +29,8 @@ public class AMDPPlanTest {
 		for(int i = 0; i < conf.episodes; i++){
 			Episode e = amdp.planFromState(init);
 			eps.add(e);
-			System.out.println()
+			System.out.println(e.actionSequence);
+			System.out.println(e.rewardSequence);
 			amdp.resetSolver();
 		}
 
