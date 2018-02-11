@@ -136,7 +136,6 @@ public class TaxiModel implements FullStateModel{
 					TaxiPassenger np = ns.touchPassenger(passengerName);
 					np.set(Taxi.ATT_X, nx);
 					np.set(Taxi.ATT_Y, ny);
-					break;
 				}
 			}
 			

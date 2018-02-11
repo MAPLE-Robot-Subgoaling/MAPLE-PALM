@@ -23,7 +23,7 @@ public class AMDPPlanTest {
 	
 	public static void plan(TaxiConfig conf, Task root, State init, HashableStateFactory hs, OOSADomain baseDomain) {
 		
-		AMDPPlanner amdp = new AMDPPlanner(root, conf.gamma, hs, conf.rmax.max_delta, conf.planning.rollouts);
+		AMDPPlanner amdp = new AMDPPlanner(root, conf.gamma, hs, conf.rmax.max_delta, conf.planning.rollouts, conf.max_steps);
 		List<Episode> eps = new ArrayList<Episode>();
 
 		for(int i = 0; i < conf.episodes; i++){

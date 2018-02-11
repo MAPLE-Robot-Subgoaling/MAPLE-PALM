@@ -44,13 +44,19 @@ public class AMDPPlanner {
 	 * the hashing factory
 	 */
 	private HashableStateFactory hs;
-	
-	/**
-	 * the maximum error allowed in the planning
-	 */
-	private double maxDelta;
-	
-	/**
+
+    /**
+     * the maximum error allowed in the planning
+     */
+    private double maxDelta;
+
+    /**
+     * the maximum number of steps in plan
+     */
+    private int maxSteps;
+
+
+    /**
 	 * the maximum number of rollouts allowed 
 	 */
 	private int maxRollouts;
@@ -67,13 +73,15 @@ public class AMDPPlanner {
 	 * @param hs hashing factory
 	 * @param maxDelta max error for the planner
 	 * @param maxRollouts max number of rollouts for BRTDP
+	 * @param maxSteps max number of steps in executing plan
 	 */
-	public AMDPPlanner(Task root, double gamma, HashableStateFactory hs, double maxDelta, int maxRollouts) {
+	public AMDPPlanner(Task root, double gamma, HashableStateFactory hs, double maxDelta, int maxRollouts, int maxSteps) {
 		this.root = root;
 		this.gamma = gamma;
 		this.hs = hs;
 		this.maxDelta = maxDelta;
-		this.maxRollouts = maxRollouts; 
+		this.maxRollouts = maxRollouts;
+		this.maxSteps = maxSteps;
 		this.actionMap = new HashMap<String, GroundedTask>();
 		this.taskPolicies = new HashMap<String, Policy>();
 	}
@@ -118,7 +126,8 @@ public class AMDPPlanner {
 			//get the policy for the current task and start state and execute
 			//it till task is completed or it fails
             Policy taskPolicy = getPolicy(task, currentState);
-            while(!(task.isFailure(currentState) || task.isComplete(currentState))){
+            while(!(task.isFailure(currentState) || task.isComplete(currentState))
+                    && e.actionSequence.size() < maxSteps){
 				Action a = taskPolicy.action(currentState);
 				GroundedTask child = getChildGT(task, a, currentState);
 				System.out.println(child);

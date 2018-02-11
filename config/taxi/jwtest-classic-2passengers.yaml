@@ -3,13 +3,13 @@ state: classic-2passengers
 agents:
   - ramdp
 
-episodes: 10
-max_steps: 2000
-trials: 2
+episodes: 1
+max_steps: 1000
+trials: 1
 gamma: 0.95
 
 stochastic:
-  seed: 4242419992
+  seed: 7237821
   correct_move: 1.0
   fickle: 0.0
   random_start: true
