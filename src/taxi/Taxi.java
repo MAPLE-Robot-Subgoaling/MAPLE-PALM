@@ -70,8 +70,9 @@ public class Taxi implements DomainGenerator{
 	public static final String ACTION_WEST = 				"west";
 	public static final String ACTION_PICKUP = 				"pickup";
 	public static final String ACTION_PUTDOWN = 			"putdown";
+    public static final String ERROR = 						"ERROR";
 
-	//action indexes
+    //action indexes
 	public static int IND_NORTH = 							0;
 	public static int IND_EAST = 							1;
 	public static int IND_SOUTH = 							2;

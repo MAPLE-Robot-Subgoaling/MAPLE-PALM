@@ -6,14 +6,15 @@ import java.util.List;
 import burlap.mdp.auxiliary.StateMapping;
 import burlap.mdp.core.state.State;
 import taxi.Taxi;
+import taxi.hierarchies.interfaces.ParameterizedStateMapping;
 import taxi.hierarchies.tasks.bringon.TaxiBringonDomain;
 import taxi.state.TaxiState;
 
-public class BringonStateMapper implements StateMapping {
+public class BringonStateMapper implements ParameterizedStateMapping {
 	//projection function from the base taxi to abstraction 1
 	
 	@Override
-	public State mapState(State s) {
+	public State mapState(State s, String... params) {
 		List<TaxiBringonPassenger> passengers = new ArrayList<TaxiBringonPassenger>();
 		TaxiState st = (TaxiState) s;
 
@@ -33,7 +34,8 @@ public class BringonStateMapper implements StateMapping {
 		TaxiBringonAgent taxi = new TaxiBringonAgent(Taxi.CLASS_TAXI, taxiLocation);
 
 		// Get Passengers
-		for(String passengerName : st.getPassengers()){
+		for(String passengerName : params){
+//		for(String passengerName : st.getPassengers()){
 			int px = (int) st.getPassengerAtt(passengerName, Taxi.ATT_X);
 			int py = (int) st.getPassengerAtt(passengerName, Taxi.ATT_Y);
 			boolean inTaxi = (boolean) st.getPassengerAtt(passengerName, Taxi.ATT_IN_TAXI);

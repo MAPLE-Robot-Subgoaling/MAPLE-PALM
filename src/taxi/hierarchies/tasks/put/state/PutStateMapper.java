@@ -37,9 +37,10 @@ public class PutStateMapper implements ParameterizedStateMapping {
 		TaxiPutAgent taxi = new TaxiPutAgent(Taxi.CLASS_TAXI, taxiLocation);
 
 		for(String passengerName : params){
+//		for(String passengerName : st.getPassengers()) {
 			String goal = (String) st.getPassengerAtt(passengerName, Taxi.ATT_GOAL_LOCATION);
 			boolean inTaxi = (boolean) st.getPassengerAtt(passengerName, Taxi.ATT_IN_TAXI);
-			String location = "ERROR";
+			String location = Taxi.ERROR;
 			if (inTaxi) {
 				location = TaxiPutDomain.IN_TAXI;
 			} else {
@@ -53,7 +54,7 @@ public class PutStateMapper implements ParameterizedStateMapping {
 					}
 				}
 			}
-			if (location.equals("ERROR")) { throw new RuntimeException("ERROR: passenger at invalid location in mapper"); }
+			if (location.equals(Taxi.ERROR)) { throw new RuntimeException("Error: passenger at invalid location in mapper"); }
 			passengers.add(new TaxiPutPassenger(passengerName, goal, location));
 		}
 
