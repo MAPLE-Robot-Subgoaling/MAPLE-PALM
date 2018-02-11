@@ -40,6 +40,8 @@ public class TaxiConfig {
 
     public TaxiState generateState() {
         switch (state) {
+            case "classic-2passengers":
+                return TaxiStateFactory.createClassicState(2);
             case "tiny":
                 return TaxiStateFactory.createTinyState();
             case "small":

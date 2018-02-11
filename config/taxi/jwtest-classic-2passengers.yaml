@@ -1,31 +1,31 @@
-state: small
+state: classic-2passengers
 
 agents:
   - ramdp
 
-episodes: 30
+episodes: 10
 max_steps: 2000
 trials: 2
 gamma: 0.95
 
 stochastic:
-  correct_move: 0.8
-  fickle: 0.1
-  random_start: false
+  seed: 4242419992
+  correct_move: 1.0
+  fickle: 0.0
+  random_start: true
 
 planning:
   rollouts: 1000
 
 rmax:
   vmax: 20
-  threshold: 3
-  max_delta: 0.001
-  max_delta_in_model: 0.001
+  threshold: 2
+  max_delta: 0.00001
 
 output:
   csv:
     enabled: true
-    output: results/ramdp-jwtest.csv
+    output: results/jwtest-classic-2passengers.csv
 
   chart:
     enabled: true
@@ -33,7 +33,7 @@ output:
     width: 500
     height: 300
     columns: 2
-    max_height: 900
+    max_height: 1000
     trial_mode: MOST_RECENT_AND_AVERAGE
 
     metrics:
@@ -42,6 +42,6 @@ output:
       - CUMULATIVE_REWARD_PER_EPISODE
 
   visualizer:
-    enabled: true
+    enabled: false
     width: 5
     height: 5
