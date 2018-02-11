@@ -82,8 +82,6 @@ public class TaxiVisualizer {
 			float realy = taxiy + 0.05f * taxiHeight;
 			
 			g2.fill(new Ellipse2D.Float(realX, realy, realWidth, realHeight));
-
-			System.out.println(s);
 		}
 	}
 	

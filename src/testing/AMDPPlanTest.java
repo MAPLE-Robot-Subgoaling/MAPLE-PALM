@@ -27,7 +27,9 @@ public class AMDPPlanTest {
 		List<Episode> eps = new ArrayList<Episode>();
 
 		for(int i = 0; i < conf.episodes; i++){
-			eps.add(amdp.planFromState(init));
+			Episode e = amdp.planFromState(init);
+			eps.add(e);
+			System.out.println()
 			amdp.resetSolver();
 		}
 
