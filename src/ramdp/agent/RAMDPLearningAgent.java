@@ -138,7 +138,7 @@ public class RAMDPLearningAgent implements LearningAgent{
 			pastState = currentState;
 			EnvironmentOutcome result;
 
-            System.out.println(tabLevel + task.getAction() + " " + actionCount);
+//            System.out.println(tabLevel + task.getAction() + " " + actionCount);
 			//System.out.println(tabLevel + "    Possible Actions: " + task.getGroundedChildTasks(currentState));
 			Action a = nextAction(task, currentState);
 			String actionName = StringFormat.parameterizedActionName(a);
@@ -150,7 +150,7 @@ public class RAMDPLearningAgent implements LearningAgent{
 
 
 			if(action.isPrimitive()){
-                System.out.println(tabLevel + "    " + actionName);
+//                System.out.println(tabLevel + "    " + actionName);
 				subtaskCompleted = true;
 				result = baseEnv.executeAction(a);
 				e.transition(result);
@@ -173,8 +173,8 @@ public class RAMDPLearningAgent implements LearningAgent{
                 // use multi-time model discounting ((gamma^k)*reward) for k steps taken by multi-time model)
 				double discount = Math.pow(gamma, stepsTaken);
 				double discountedReward = discount * task.getReward(pastState, a, currentState);
-				System.out.println(StringFormat.parameterizedActionName(action.getAction()) + ": " + e.actionSequence.get(e.actionSequence.size()-1) + " " + stepsBefore + " " + stepsAfter + " " + stepsTaken + " " + discountedReward);
-                System.out.println(e.actionSequence.subList(stepsBefore,e.actionSequence.size()));
+//				System.out.println(StringFormat.parameterizedActionName(action.getAction()) + ": " + e.actionSequence.get(e.actionSequence.size()-1) + " " + stepsBefore + " " + stepsAfter + " " + stepsTaken + " " + discountedReward);
+//                System.out.println(e.actionSequence.subList(stepsBefore,e.actionSequence.size()));
 				result = new EnvironmentOutcome(pastState, a, currentState,
 						discountedReward, task.isFailure
 						(currentState));
@@ -187,7 +187,7 @@ public class RAMDPLearningAgent implements LearningAgent{
 			}
 		}
 
-		System.out.println(tabLevel + "<<< " + StringFormat.parameterizedActionName(task.getAction()) + " " + actionCount);
+//		System.out.println(tabLevel + "<<< " + StringFormat.parameterizedActionName(task.getAction()) + " " + actionCount);
         tabLevel = tabLevel.substring(0, (tabLevel.length() - 1));
 		return task.isComplete(currentState) || actionCount == 0;
 	}
@@ -217,13 +217,13 @@ public class RAMDPLearningAgent implements LearningAgent{
 		Policy viPolicy = plan.planFromState(s);
 		Policy rmaxPolicy = new RMAXPolicy(model, viPolicy, domain.getActionTypes(), hashingFactory);
 		Action action = rmaxPolicy.action(s);
-		try {
-            Episode e = PolicyUtils.rollout(rmaxPolicy, s, model, 100);
-            System.out.println(tabLevel + "    Debug rollout: " + e.actionSequence);
-        } catch (Exception e) {
-		    // ignore, temp debug to assess ramdp
-//            System.err.println(e);
-        }
+//		try {
+//            Episode e = PolicyUtils.rollout(rmaxPolicy, s, model, 100);
+//            System.out.println(tabLevel + "    Debug rollout: " + e.actionSequence);
+//        } catch (Exception e) {
+//		    // ignore, temp debug to assess ramdp
+////            System.err.println(e);
+//        }
 		return action;
 	}
 
