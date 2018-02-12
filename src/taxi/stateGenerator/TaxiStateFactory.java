@@ -37,18 +37,18 @@ public class TaxiStateFactory {
             // other passengers both start and go to a random depot
             if (i > 0) {
 //                 get a random goal
-//                goalLocationName = locations.get(RandomFactory.getMapped(0).nextInt(locations.size())).getName();
-//                String startLocationName = goalLocationName;
-//                while (startLocationName.equals(goalLocationName)) {
-//                    // put the agent in a random depot that is NOT the goal
-//                    TaxiLocation startLocation = locations.get(RandomFactory.getMapped(0).nextInt(locations.size()));
-//                    startX = (int) startLocation.get(Taxi.ATT_X);
-//                    startY = (int) startLocation.get(Taxi.ATT_Y);
-//                    startLocationName = startLocation.getName();
-//                }
-                startX = 0;
-                startY = 4;
-                goalLocationName = Taxi.CLASS_LOCATION+2;
+                goalLocationName = locations.get(RandomFactory.getMapped(0).nextInt(locations.size())).getName();
+                String startLocationName = goalLocationName;
+                while (startLocationName.equals(goalLocationName)) {
+                    // put the agent in a random depot that is NOT the goal
+                    TaxiLocation startLocation = locations.get(RandomFactory.getMapped(0).nextInt(locations.size()));
+                    startX = (int) startLocation.get(Taxi.ATT_X);
+                    startY = (int) startLocation.get(Taxi.ATT_Y);
+                    startLocationName = startLocation.getName();
+                }
+//                startX = 0;
+//                startY = 4;
+//                goalLocationName = Taxi.CLASS_LOCATION+2;
             }
             passengers.add(new TaxiPassenger(Taxi.CLASS_PASSENGER + i, startX, startY, goalLocationName));
 		}
