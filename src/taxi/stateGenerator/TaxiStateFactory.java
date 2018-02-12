@@ -46,9 +46,9 @@ public class TaxiStateFactory {
 //                    startY = (int) startLocation.get(Taxi.ATT_Y);
 //                    startLocationName = startLocation.getName();
 //                } ;
-                startX = 0;
-                startY = 4;
-                goalLocationName = Taxi.CLASS_LOCATION+2;
+                startX = 3;
+                startY = 0;
+                goalLocationName = Taxi.CLASS_LOCATION+0;
             }
             passengers.add(new TaxiPassenger(Taxi.CLASS_PASSENGER + i, startX, startY, goalLocationName));
 		}
