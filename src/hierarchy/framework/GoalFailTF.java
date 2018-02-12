@@ -1,6 +1,8 @@
 package hierarchy.framework;
 
 import burlap.mdp.core.TerminalFunction;
+import burlap.mdp.core.action.Action;
+import burlap.mdp.core.oo.ObjectParameterizedAction;
 import burlap.mdp.core.oo.propositional.PropositionalFunction;
 import burlap.mdp.core.oo.state.OOState;
 import burlap.mdp.core.state.State;
@@ -27,6 +29,18 @@ public class GoalFailTF implements TerminalFunction {
     public boolean atFailure(State state) {
         OOState ooState = (OOState) state;
         return failPF.isTrue(ooState, failParams);
+    }
+
+    public boolean atGoal(State state, String[] goalParams) {
+        setGoalParams(goalParams);
+        boolean goal = atGoal(state);
+        return goal;
+    }
+
+    public boolean atFailure(State state, String[] failParams) {
+        setFailParams(failParams);
+        boolean failure = atFailure(state);
+        return failure;
     }
 
     @Override
@@ -65,4 +79,5 @@ public class GoalFailTF implements TerminalFunction {
     public void setFailParams(String[] failParams) {
         this.failParams = failParams;
     }
+
 }

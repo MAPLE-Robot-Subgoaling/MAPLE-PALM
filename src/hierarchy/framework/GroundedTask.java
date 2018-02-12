@@ -45,19 +45,21 @@ public class GroundedTask {
 		return action;
 	}
 
-	protected void setupGroundedTF(OOSADomain domain) {
-        FactoredModel model = (FactoredModel) domain.getModel();
-        StateConditionTest localFailureOrCompletion = new StateConditionTest() {
-            @Override
-            public boolean satisfies(State state) {
-                return isComplete(state);// || isFailure(state);
-            }
-        };
-        GoalConditionTF groundedTerminalFunction = new GoalConditionTF(localFailureOrCompletion);
-        model.setTf(groundedTerminalFunction);
-        GoalBasedRF groundedRewardFunction = new GoalBasedRF(groundedTerminalFunction);
-        model.setRf(groundedRewardFunction);
-    }
+//	protected void setupGroundedTF(OOSADomain domain) {
+//        FactoredModel model = (FactoredModel) domain.getModel();
+//        StateConditionTest localFailureOrCompletion = new StateConditionTest() {
+//            @Override
+//            public boolean satisfies(State state) {
+//                return isComplete(state);// || isFailure(state);
+//            }
+//        };
+//        GoalConditionTF groundedTerminalFunction = new GoalConditionTF(localFailureOrCompletion);
+//        model.setTf(groundedTerminalFunction);
+//        GoalBasedRF groundedRewardFunction = new GoalBasedRF(groundedTerminalFunction);
+//        model.setRf(groundedRewardFunction);
+//        GoalFailTF groundedTF = new GoalFailTF(isComplete())
+//		model.setTf()
+//    }
 
 
 	/**
@@ -66,7 +68,7 @@ public class GroundedTask {
 	 */
 	public OOSADomain getDomain(){
 		OOSADomain domain = t.getDomain();
-		setupGroundedTF(domain);
+//		setupGroundedTF(domain);
 		return domain;
 	}
 	
@@ -82,7 +84,7 @@ public class GroundedTask {
 		for(Task child : children){
 			domain.addActionType(child.getActionType());
 		}
-        setupGroundedTF(domain);
+//        setupGroundedTF(domain);
 		return domain;
 	}
 	
@@ -140,22 +142,7 @@ public class GroundedTask {
 	 * @return the grounded task's reward of a transition to s
 	 */
 	public double getReward(State s, Action a, State sPrime) {
-		if (!a.equals(action)) {
-//			System.out.println("a: " + a);
-//			System.out.println("action: " + action);
-//			throw new RuntimeException("a not equal to action in groundedtask");
-			// if a is primitive, pass this current task "action" instead of primitive a
-			NonprimitiveTask npt = (NonprimitiveTask) t;
-			return npt.reward(s, action, sPrime);
-		}
-		if(!t.isPrimitive()) {
-			NonprimitiveTask npt = (NonprimitiveTask) t;
-			return npt.reward(s, a, sPrime);
-		} else {
-			throw new RuntimeException("should not give a primitive task for getReward");
-//			return ((FactoredModel)getDomain().getModel()).getRf().reward(s, a, sPrime);
-//			return 1.0;
-		}
+		return t.reward(s, a, sPrime);
 	}
 
 	@Override

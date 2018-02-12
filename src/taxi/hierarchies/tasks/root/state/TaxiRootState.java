@@ -12,7 +12,7 @@ import java.util.*;
 
 public class TaxiRootState implements MutableOOState {
 
-	//this state has passengers and depots
+	//this state has passengers
 	private Map<String, TaxiRootPassenger> passengers;
 
 	public TaxiRootState(List<TaxiRootPassenger> pass) {

@@ -3,6 +3,7 @@ package hierarchy.framework;
 import burlap.mdp.core.action.Action;
 import burlap.mdp.core.action.ActionType;
 import burlap.mdp.core.state.State;
+import burlap.mdp.singleagent.model.FactoredModel;
 import burlap.mdp.singleagent.oo.OOSADomain;
 
 public class PrimitiveTask extends Task{
@@ -26,7 +27,12 @@ public class PrimitiveTask extends Task{
 	public boolean isComplete(State s, Action a){
 		return true;
 	}
-	
+
+	@Override
+	public double reward(State s, Action a, State sPrime) {
+		return ((FactoredModel)this.domain.getModel()).getRf().reward(s, a, sPrime);
+	}
+
 	@Override
 	public boolean isPrimitive() {
 		return true;

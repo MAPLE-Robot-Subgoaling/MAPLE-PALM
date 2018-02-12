@@ -52,8 +52,10 @@ public class RMAXPolicy implements Policy {
 		//if there are action that have not reached the sample threshold, they get priority
 		List<Action> unmodeled = unmodeledActions(s);
 		
-		if(unmodeled.size() > 0)
-			return unmodeled.get((int) (RandomFactory.getMapped(0).nextDouble() * unmodeled.size()));
+		if(unmodeled.size() > 0) {
+			System.out.print("*");
+			return unmodeled.get(RandomFactory.getMapped(0).nextInt(unmodeled.size()));
+		}
 
 		//if not, default to original policy
 		return basePolicy.action(s);

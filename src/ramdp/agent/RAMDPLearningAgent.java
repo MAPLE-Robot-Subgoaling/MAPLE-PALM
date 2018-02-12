@@ -125,6 +125,23 @@ public class RAMDPLearningAgent implements LearningAgent{
 		tabLevel += "\t";
 //        System.out.println(tabLevel + ">>> " + task.getAction() + " " + actionCount);
 
+        if(task.isPrimitive()) {
+            EnvironmentOutcome result;
+            Action a = task.getAction();
+//                System.out.println(tabLevel + "    " + actionName);
+//            subtaskCompleted = true;
+            result = baseEnv.executeAction(a);
+            e.transition(result);
+            baseState = result.op;
+            currentState = task.mapState(result.op);
+            result.o = pastState;
+            result.op = currentState;
+            result.a = a;
+            result.r = task.getReward(pastState, a, currentState);
+            steps++;
+        }
+
+
 		while(
 			// while task still valid
 		        !(task.isFailure(currentState) || task.isComplete(currentState))
@@ -149,19 +166,19 @@ public class RAMDPLearningAgent implements LearningAgent{
 			}
 
 
-			if(action.isPrimitive()){
-//                System.out.println(tabLevel + "    " + actionName);
-				subtaskCompleted = true;
-				result = baseEnv.executeAction(a);
-				e.transition(result);
-				baseState = result.op;
-				currentState = task.mapState(result.op);
-				result.o = pastState;
-				result.op = currentState;
-				result.a = a;
-				result.r = task.getReward(pastState, a, currentState);
-				steps++;
-			}else{
+//			if(action.isPrimitive()){
+////                System.out.println(tabLevel + "    " + actionName);
+//				subtaskCompleted = true;
+//				result = baseEnv.executeAction(a);
+//				e.transition(result);
+//				baseState = result.op;
+//				currentState = task.mapState(result.op);
+//				result.o = pastState;
+//				result.op = currentState;
+//				result.a = a;
+//				result.r = task.getReward(pastState, a, currentState);
+//				steps++;
+//			}else{
 			    int stepsBefore = steps;
 				subtaskCompleted = solveTask(action, baseEnv, maxSteps);
 				int stepsAfter = steps;
@@ -178,7 +195,7 @@ public class RAMDPLearningAgent implements LearningAgent{
 				result = new EnvironmentOutcome(pastState, a, currentState,
 						discountedReward, task.isFailure
 						(currentState));
-			}
+//			}
             //System.out.println(tabLevel + "\treward: " + result.r);
 
 			//update task model if the subtask completed correctly
@@ -217,13 +234,20 @@ public class RAMDPLearningAgent implements LearningAgent{
 		Policy viPolicy = plan.planFromState(s);
 		Policy rmaxPolicy = new RMAXPolicy(model, viPolicy, domain.getActionTypes(), hashingFactory);
 		Action action = rmaxPolicy.action(s);
-//		try {
-//            Episode e = PolicyUtils.rollout(rmaxPolicy, s, model, 100);
-//            System.out.println(tabLevel + "    Debug rollout: " + e.actionSequence);
-//        } catch (Exception e) {
-//		    // ignore, temp debug to assess ramdp
-////            System.err.println(e);
-//        }
+		if (task.toString().contains("solve")) {
+            try {
+                Episode e = PolicyUtils.rollout(rmaxPolicy, s, model, 100);
+                System.out.println(tabLevel + "    Debug rollout: " + e.actionSequence);
+                //System.out.println(tabLevel + "    chose " + action);
+            } catch (Exception e) {
+                // ignore, temp debug to assess ramdp
+                //System.out.println(e);
+//                e.printStackTrace();
+                //System.out.println(action);
+                //Action temp = rmaxPolicy.action(s);
+                //System.out.println(temp);
+            }
+        }
 		return action;
 	}
 

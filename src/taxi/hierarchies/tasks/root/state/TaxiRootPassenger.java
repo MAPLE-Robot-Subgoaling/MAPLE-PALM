@@ -15,7 +15,8 @@ public class TaxiRootPassenger extends MutableObject {
 	 * whether they have just been picked up and haven't changed goal
 	 */
 	private final static List<Object> keys = Arrays.<Object>asList(
-			TaxiRootDomain.ATT_CURRENT_LOCATION
+			TaxiRootDomain.ATT_CURRENT_LOCATION,
+			TaxiRootDomain.ATT_GOAL_LOCATION
 			);
 	
 	public TaxiRootPassenger(String name, String currentLocation) {
