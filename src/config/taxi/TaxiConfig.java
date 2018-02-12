@@ -1,5 +1,6 @@
 package config.taxi;
 
+import burlap.debugtools.DPrint;
 import burlap.debugtools.RandomFactory;
 import config.output.OutputConfig;
 import config.planning.PlanningConfig;
@@ -34,7 +35,12 @@ public class TaxiConfig {
 
         TaxiConfig config = (TaxiConfig) yaml.load(input);
 
-        RandomFactory.seedMapped(0, config.stochastic.seed);
+        long seed = config.stochastic.seed;
+        if (seed == 0) {
+            seed = System.nanoTime();
+            System.err.println("Warning: using a randomly generated RNG seed: " + seed);
+        }
+        RandomFactory.seedMapped(0, seed);
 
         return config;
     }
