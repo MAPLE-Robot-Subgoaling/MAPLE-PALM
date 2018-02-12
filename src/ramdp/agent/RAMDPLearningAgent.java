@@ -4,6 +4,7 @@ import burlap.behavior.policy.Policy;
 import burlap.behavior.policy.PolicyUtils;
 import burlap.behavior.singleagent.Episode;
 import burlap.behavior.singleagent.learning.LearningAgent;
+import burlap.behavior.valuefunction.ConstantValueFunction;
 import burlap.mdp.core.action.Action;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.environment.Environment;
@@ -168,10 +169,11 @@ public class RAMDPLearningAgent implements LearningAgent{
 				action = this.taskNames.get(actionName);
 			}
 
+//            int stepsBefore = steps;
+
 			// solve this task's next chosen subtask, recursively
             subtaskCompleted = solveTask(action, baseEnv, maxSteps);
 
-//            int stepsBefore = steps;
 //            int stepsAfter = steps;
 //            int stepsTaken = stepsAfter - stepsBefore;
             //System.out.println(tabLevel + "+++ " + task.getAction() + " " + actionCount);

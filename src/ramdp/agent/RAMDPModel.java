@@ -125,9 +125,6 @@ public class RAMDPModel extends FactoredModel {
 			double p = resultingStates.get(hsPrime);
 			tps.add( new TransitionProb(p, eo));
 		}
-		if (tps.size() < 1) {
-			// System.err.println("no resulting states");
-		}
 		return tps;
 	}
 
