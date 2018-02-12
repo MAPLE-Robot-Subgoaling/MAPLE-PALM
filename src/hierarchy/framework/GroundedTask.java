@@ -81,6 +81,7 @@ public class GroundedTask {
 		OOSADomain domain = new OOSADomain();
 		domain.setModel(model);
 		Task[] children = t.getChildren();
+		// domain does not have any accessor for stateClasses's KEYS
 		for(Task child : children){
 			domain.addActionType(child.getActionType());
 		}

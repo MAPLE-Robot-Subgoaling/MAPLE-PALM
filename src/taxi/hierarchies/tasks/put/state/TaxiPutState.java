@@ -40,12 +40,15 @@ public class TaxiPutState extends TaxiGetPutState {
 	
 	@Override
 	public int numObjects() {
-		return 1 + passengers.size() + locations.size();
+		int total = taxi == null ? 0 : 1;
+		total += passengers.size();
+		total += locations.size();
+		return total;
 	}
 
 	@Override
 	public ObjectInstance object(String oname) {
-		if(oname.equals(taxi.name())) {
+		if(taxi != null && oname.equals(taxi.name())) {
 			return taxi;
 		}
 
@@ -63,7 +66,7 @@ public class TaxiPutState extends TaxiGetPutState {
 	@Override
 	public List<ObjectInstance> objects() {
 		List<ObjectInstance> obj = new ArrayList<ObjectInstance>();
-		obj.add(taxi);
+		if (taxi != null) { obj.add(taxi); }
 		obj.addAll(passengers.values());
 		obj.addAll(locations.values());
 		return obj;
@@ -72,7 +75,7 @@ public class TaxiPutState extends TaxiGetPutState {
 	@Override
 	public List<ObjectInstance> objectsOfClass(String oclass) {
 	    if(oclass.equals(Taxi.CLASS_TAXI))
-	        return Arrays.<ObjectInstance>asList(taxi);
+            return taxi == null ? new ArrayList<ObjectInstance>() : Arrays.<ObjectInstance>asList(taxi);
 		if(oclass.equals(Taxi.CLASS_PASSENGER))
 			return new ArrayList<ObjectInstance>(passengers.values());
 		if(oclass.equals(Taxi.CLASS_LOCATION))
@@ -92,14 +95,14 @@ public class TaxiPutState extends TaxiGetPutState {
 
 	@Override
 	public TaxiPutState copy() {
-		return new TaxiPutState(taxi, passengers, locations);
+		return new TaxiPutState(touchTaxi(), touchPassengers(), touchLocations());
 	}
 
 	@Override
 	public MutableState set(Object variableKey, Object value) {
 		OOVariableKey key = OOStateUtilities.generateKey(variableKey);
 
-		if(key.obName.equals(taxi.name())) {
+		if(taxi != null && key.obName.equals(taxi.name())) {
 			touchTaxi().set(variableKey, value);
 		} else if(passengers.get(key.obName) != null){
 			touchPassenger(key.obName).set(variableKey, value);
@@ -127,7 +130,17 @@ public class TaxiPutState extends TaxiGetPutState {
 
 	@Override
 	public MutableOOState removeObject(String oname) {
-		throw new RuntimeException("Remove not implemented");
+        ObjectInstance objectInstance = this.object(oname);
+        if (objectInstance instanceof TaxiPutAgent) {
+            taxi = null;
+        } else if (objectInstance instanceof TaxiPutPassenger) {
+            touchPassenger(oname);
+            passengers.remove(oname);
+        } else if (objectInstance instanceof TaxiPutLocation) {
+            touchLocation(oname);
+            locations.remove(oname);
+        }
+        return this;
 	}
 
 	@Override
@@ -137,7 +150,7 @@ public class TaxiPutState extends TaxiGetPutState {
 
 	//touch methods allow a shallow copy of states and a copy of objects only when modified
 	public TaxiPutAgent touchTaxi() {
-		this.taxi = taxi.copy();
+		if (taxi != null) { this.taxi = taxi.copy(); }
 		return taxi;
 	}
 
@@ -184,7 +197,10 @@ public class TaxiPutState extends TaxiGetPutState {
 	}
 
 	public Object getTaxiAtt(String attName) {
-		return taxi.get(attName);
+		if (taxi == null) {
+            return null;
+        }
+        return taxi.get(attName);
 	}
 
 	public Object getPassengerAtt(String passname, String attName){
@@ -200,7 +216,9 @@ public class TaxiPutState extends TaxiGetPutState {
 	public String toString(){
 		String out = "{\n";
 
-		out += taxi.toString() + "\n";
+		if (taxi != null) {
+            out += taxi.toString() + "\n";
+        }
 
 		for(TaxiPutPassenger p : passengers.values()){
 			out += p.toString() + "\n";

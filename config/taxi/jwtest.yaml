@@ -6,7 +6,7 @@ agents:
 episodes: 100
 max_steps: 250
 trials: 1
-gamma: 0.95
+gamma: 0.99
 
 stochastic:
   seed: 2131312

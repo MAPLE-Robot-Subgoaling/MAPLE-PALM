@@ -16,6 +16,7 @@ public class NavCompletedPF extends PropositionalFunction {
 	@Override
 	public boolean isTrue(OOState s, String... params) {
 		TaxiNavState st = new NavStateMapper().mapState(s);
+		if (st.objectsOfClass(Taxi.CLASS_TAXI).size() < 1) { return false; }
 		int tx = (int) st.getTaxiAtt(Taxi.ATT_X);
 		int ty = (int) st.getTaxiAtt(Taxi.ATT_Y);
 		int lx = (int) st.getLocationAtt(params[0], Taxi.ATT_X);

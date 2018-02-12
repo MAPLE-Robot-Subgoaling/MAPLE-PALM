@@ -66,7 +66,7 @@ public class TaxiRootState implements MutableOOState {
 
 	@Override
 	public TaxiRootState copy() {
-		return new TaxiRootState(passengers);
+		return new TaxiRootState(touchPassengers());
 	}
 
 	@Override
@@ -93,7 +93,9 @@ public class TaxiRootState implements MutableOOState {
 
 	@Override
 	public MutableOOState removeObject(String oname) {
-		throw new RuntimeException("Remove not implemented");
+        touchPassenger(oname);
+        passengers.remove(oname);
+		return this;
 	}
 
 	@Override

@@ -4,6 +4,9 @@ import java.util.*;
 
 import burlap.debugtools.RandomFactory;
 import burlap.mdp.core.action.Action;
+import burlap.mdp.core.oo.state.MutableOOState;
+import burlap.mdp.core.oo.state.OOState;
+import burlap.mdp.core.oo.state.ObjectInstance;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.environment.EnvironmentOutcome;
 import burlap.mdp.singleagent.model.FactoredModel;
@@ -14,6 +17,8 @@ import hierarchy.framework.GroundedTask;
 import hierarchy.framework.StringFormat;
 
 public class RAMDPModel extends FactoredModel {
+
+    protected HashableState hImaginedState;
 
 	/**
 	 * the rmax sample parameter
@@ -94,10 +99,16 @@ public class RAMDPModel extends FactoredModel {
 		throw new RuntimeException("Probabilities don't sum to 1.0: " + sum);
 	}
 
-	//the model is terminal if the task is completed or if it fails
+	//the model is terminal if the task is completed or if it fails, or is the imagined state
 	@Override
 	public boolean terminal(State s) {
-		return task.isFailure(s) || task.isComplete(s);
+        boolean failOrComplete = task.isFailure(s) || task.isComplete(s);
+        if (failOrComplete) { return true; }
+        if (hImaginedState == null) { return false; }
+	    HashableState hs = hashingFactory.hashState(s);
+        boolean isImaginedState = hImaginedState.equals(hs);
+        if (isImaginedState) { return true; }
+        return false;
 	}
 
 	// the transitions come from the recorded rewards and probabilities in the maps
@@ -150,7 +161,18 @@ public class RAMDPModel extends FactoredModel {
         }
 
 	}
-	
+
+	protected HashableState createImaginedState(HashableState basis) {
+        MutableOOState imaginedState = (MutableOOState) basis.s().copy();
+        List<ObjectInstance> objectInstances = new ArrayList<ObjectInstance>(imaginedState.objects());
+        for (ObjectInstance objectInstance : objectInstances) {
+            imaginedState.removeObject(objectInstance.name());
+        }
+        HashableState hImaginedState = hashingFactory.hashState(imaginedState);
+        return hImaginedState;
+    }
+
+
 	/**
 	 * get a map of state that could result from taking action a in state s
 	 * along with their probabilities
@@ -160,10 +182,13 @@ public class RAMDPModel extends FactoredModel {
 	 */
 	protected Map<HashableState, Double> getTransitionProbabilities(HashableState hs, Action a){
         String actionName = StringFormat.parameterizedActionName(a);
-        if (!transitionProbabilities.containsKey(hs) || !transitionProbabilities.get(hs).containsKey(actionName)) {
+        int n_sa = getStateActionCount(hs, a);
+        if (n_sa < mThreshold) {
+            if (hImaginedState == null) {
+                hImaginedState = createImaginedState(hs);
+            }
             Map<HashableState, Double> tempTransition = new HashMap<HashableState, Double>();
-//            HashableState tempState = hs;
-//            tempTransition.put(tempState, 0.0);
+            tempTransition.put(hImaginedState, 1.0);
             return tempTransition;
         }
 	    return transitionProbabilities.get(hs).get(actionName);
@@ -171,7 +196,7 @@ public class RAMDPModel extends FactoredModel {
 
 	protected double getReward(HashableState hs, Action a) {
         String actionName = StringFormat.parameterizedActionName(a);
-        if (!rewards.containsKey(hs) || !rewards.get(hs).containsKey(actionName)) {
+        if (rewards.get(hs) == null || rewards.get(hs).get(actionName) == null) {
             return rmax;
         }
         return rewards.get(hs).get(actionName);
@@ -185,15 +210,17 @@ public class RAMDPModel extends FactoredModel {
 	 */
 	public int getStateActionCount(HashableState hs, Action a){
 	    String actionName = StringFormat.parameterizedActionName(a);
-	    if (!stateActionCount.containsKey(hs)) {
-            Map<String, Integer> actionToCount = new HashMap<String,Integer>();
+        Map<String, Integer> actionToCount = stateActionCount.get(hs);
+        if (actionToCount == null) {
+            actionToCount = new HashMap<String,Integer>();
 	        stateActionCount.put(hs, actionToCount);
         }
-        Map<String, Integer> actionToCount = stateActionCount.get(hs);
-	    if (!actionToCount.containsKey(actionName)) {
-	        actionToCount.put(actionName, 0);
+        Integer count = actionToCount.get(actionName);
+        if (count == null) {
+            count = 0;
+	        actionToCount.put(actionName, count);
         }
-		return actionToCount.get(actionName);
+		return count;
 	}
 	
 	/**
@@ -205,20 +232,22 @@ public class RAMDPModel extends FactoredModel {
 	 */
 	protected int getResultingStateCount(HashableState hs, Action a, HashableState hsp){
 	    String actionName = StringFormat.parameterizedActionName(a);
-		if (!resultingStateCount.containsKey(hs)){
-            Map<String, Map<HashableState, Integer>> actionToResultingStateToCount = new HashMap<String, Map<HashableState, Integer>>();
+        Map<String, Map<HashableState, Integer>> actionToResultingStateToCount = resultingStateCount.get(hs);
+        if (actionToResultingStateToCount == null){
+            actionToResultingStateToCount = new HashMap<String, Map<HashableState, Integer>>();
 			resultingStateCount.put(hs, actionToResultingStateToCount);
 		}
-        Map<String, Map<HashableState, Integer>> actionToResultingStateToCount = resultingStateCount.get(hs);
-		if (!actionToResultingStateToCount.containsKey(actionName)){
-            Map<HashableState, Integer> resultingStateToCount = new HashMap<HashableState, Integer>();
+        Map<HashableState, Integer> resultingStateToCount = actionToResultingStateToCount.get(actionName);
+        if (resultingStateToCount == null){
+            resultingStateToCount = new HashMap<HashableState, Integer>();
             actionToResultingStateToCount.put(actionName, resultingStateToCount);
 		}
-        Map<HashableState, Integer> resultingStateToCount = actionToResultingStateToCount.get(actionName);
-		if (!resultingStateToCount.containsKey(hsp)) {
-		    resultingStateToCount.put(hsp, 0);
+		Integer count = resultingStateToCount.get(hsp);
+		if (count == null) {
+		    count = 0;
+		    resultingStateToCount.put(hsp, count);
         }
-		return resultingStateToCount.get(hsp);
+		return count;
 	}
 	
 	/**
@@ -229,15 +258,17 @@ public class RAMDPModel extends FactoredModel {
 	 */
 	protected double getTotalReward(HashableState hs, Action a){
 	    String actionName = StringFormat.parameterizedActionName(a);
-		if (!totalReward.containsKey(hs)) {
-		    Map<String, Double> actionToReward = new HashMap<String,Double>();
+        Map<String, Double> actionToReward = totalReward.get(hs);
+		if (actionToReward == null) {
+		    actionToReward = new HashMap<String,Double>();
 		    totalReward.put(hs, actionToReward);
         }
-        Map<String, Double> actionToReward = totalReward.get(hs);
-        if (!actionToReward.containsKey(actionName)) {
-            actionToReward.put(actionName, 0.0);
+        Double reward = actionToReward.get(actionName);
+        if (reward == null) {
+            reward = 0.0;
+            actionToReward.put(actionName, reward);
         }
-        return actionToReward.get(actionName);
+        return reward;
 	}
 	
 	/**
@@ -257,11 +288,11 @@ public class RAMDPModel extends FactoredModel {
      */
     protected void setReward(HashableState hs, Action a, double reward){
         String actionName = StringFormat.parameterizedActionName(a);
-        if (!rewards.containsKey(hs)) {
-            Map<String, Double> actionToReward = new HashMap<String, Double>();
+        Map<String, Double> actionToReward = rewards.get(hs);
+        if (actionToReward == null) {
+            actionToReward = new HashMap<String, Double>();
             rewards.put(hs, actionToReward);
         }
-        Map<String, Double> actionToReward = rewards.get(hs);
         actionToReward.put(actionName, reward);
     }
 
@@ -274,16 +305,16 @@ public class RAMDPModel extends FactoredModel {
      */
     protected void setTransitionProbability(HashableState hs, Action a, HashableState hsp, double probability){
         String actionName = StringFormat.parameterizedActionName(a);
-        if (!transitionProbabilities.containsKey(hs)) {
-            Map<String, Map<HashableState, Double>> actionToSPrimeToDouble = new HashMap<String, Map<HashableState, Double>>();
+        Map<String, Map<HashableState, Double>> actionToSPrimeToDouble = transitionProbabilities.get(hs);
+        if (actionToSPrimeToDouble == null) {
+            actionToSPrimeToDouble = new HashMap<String, Map<HashableState, Double>>();
             transitionProbabilities.put(hs, actionToSPrimeToDouble);
         }
-        Map<String, Map<HashableState, Double>> actionToSPrimeToDouble = transitionProbabilities.get(hs);
-        if (!actionToSPrimeToDouble.containsKey(actionName)) {
-            Map<HashableState, Double> sPrimeToDouble = new HashMap<HashableState, Double>();
+        Map<HashableState, Double> sPrimeToDouble = actionToSPrimeToDouble.get(actionName);
+        if (sPrimeToDouble == null) {
+            sPrimeToDouble = new HashMap<HashableState, Double>();
             actionToSPrimeToDouble.put(actionName, sPrimeToDouble);
         }
-        Map<HashableState, Double> sPrimeToDouble = actionToSPrimeToDouble.get(actionName);
         sPrimeToDouble.put(hsp, probability);
     }
 

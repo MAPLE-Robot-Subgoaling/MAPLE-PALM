@@ -18,6 +18,7 @@ public class PutCompletedPF extends PropositionalFunction{
 	public boolean isTrue(OOState s, String... params) {
 		String passengerName = params[0];
 		MutableObject passenger = (MutableObject) s.object(passengerName);
+		if (passenger == null) { return false; }
 		String passengerGoal = (String) passenger.get(TaxiPutDomain.ATT_GOAL_LOCATION);
 		String passengerLocation = (String) passenger.get(TaxiPutDomain.ATT_LOCATION);
 		return passengerGoal.equals(passengerLocation);

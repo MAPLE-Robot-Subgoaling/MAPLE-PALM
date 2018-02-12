@@ -15,6 +15,7 @@ import hierarchy.framework.GroundedTask;
 import hierarchy.framework.StringFormat;
 import utilities.ValueIteration;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -141,6 +142,7 @@ public class RAMDPLearningAgent implements LearningAgent{
             steps++;
         }
 
+        List<GroundedTask> subtasksExecuted = new ArrayList<GroundedTask>();
 
         int stepsBefore = steps;
 		while(
@@ -182,10 +184,17 @@ public class RAMDPLearningAgent implements LearningAgent{
             //System.out.println(tabLevel + "\treward: " + result.r);
 
 			//update task model if the subtask completed correctly
+            // the case in which this is NOT updated is if the subtask failed or did not take at least one step
+            // for example, the root "solve" task may not complete
 			if(subtaskCompleted){
 				model.updateModel(result);
+				subtasksExecuted.add(action);
 			}
 		}
+
+		if (task.toString().contains("solve")) {
+            System.out.println(subtasksExecuted);
+        }
 
 //		System.out.println(tabLevel + "<<< " + StringFormat.parameterizedActionName(task.getAction()) + " " + actionCount);
         tabLevel = tabLevel.substring(0, (tabLevel.length() - 1));
@@ -217,6 +226,8 @@ public class RAMDPLearningAgent implements LearningAgent{
 		Policy viPolicy = plan.planFromState(s);
 		Policy rmaxPolicy = new RMAXPolicy(model, viPolicy, domain.getActionTypes(), hashingFactory);
 		Action action = rmaxPolicy.action(s);
+//        Policy tempPolicy = plan.planFromState(s);
+//        Action action = tempPolicy.action(s);
 //        try {
 //            if (task.toString().contains("solve")) {
 ////                Episode e = PolicyUtils.rollout(rmaxPolicy, s, model, 100);

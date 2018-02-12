@@ -15,6 +15,7 @@ public class DropoffFailurePF extends PropositionalFunction {
 	@Override
 	public boolean isTrue(OOState s, String... params) {
 		MutableObject passenger = (MutableObject)s.object(params[0]);
+		if (passenger == null) { return false; }
 		String pass_loc = (String)passenger.get(TaxiDropoffDomain.ATT_LOCATION);
 
 		return pass_loc.equals(TaxiDropoffDomain.NOT_IN_TAXI) || pass_loc.equals(TaxiDropoffDomain.ON_ROAD);

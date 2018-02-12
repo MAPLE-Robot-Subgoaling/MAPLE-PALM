@@ -37,12 +37,14 @@ public class TaxiBringonState implements MutableOOState {
 	}
 	@Override
 	public int numObjects() {
-		return 1 + passengers.size();
+		int total = taxi == null ? 0 : 1;
+		total += passengers.size();
+		return total;
 	}
 
 	@Override
 	public ObjectInstance object(String oname) {
-		if(oname.equals(taxi.name()))
+		if(taxi != null && oname.equals(taxi.name()))
 			return taxi;
 		
 		ObjectInstance o = passengers.get(oname);
@@ -55,7 +57,9 @@ public class TaxiBringonState implements MutableOOState {
 	@Override
 	public List<ObjectInstance> objects() {
 		List<ObjectInstance> obj = new ArrayList<ObjectInstance>();
-		obj.add(taxi);
+		if (taxi != null) {
+			obj.add(taxi);
+		}
 		obj.addAll(passengers.values());
 		return obj;
 	}
@@ -63,7 +67,7 @@ public class TaxiBringonState implements MutableOOState {
 	@Override
 	public List<ObjectInstance> objectsOfClass(String oclass) {
 		if(oclass.equals(Taxi.CLASS_TAXI))
-			return Arrays.<ObjectInstance>asList(taxi);
+            return taxi == null ? new ArrayList<ObjectInstance>() : Arrays.<ObjectInstance>asList(taxi);
 		else if(oclass.equals(Taxi.CLASS_PASSENGER))
 			return new ArrayList<ObjectInstance>(passengers.values());
 		throw new RuntimeException("No object class " + oclass);
@@ -81,14 +85,14 @@ public class TaxiBringonState implements MutableOOState {
 
 	@Override
 	public TaxiBringonState copy() {
-		return new TaxiBringonState(taxi, passengers);
+		return new TaxiBringonState(touchTaxi(), touchPassengers());
 	}
 
 	@Override
 	public MutableState set(Object variableKey, Object value) {
 		OOVariableKey key = OOStateUtilities.generateKey(variableKey);
 		
-		if(key.obName.equals(taxi.name())){
+		if(taxi != null && key.obName.equals(taxi.name())){
 			touchTaxi().set(variableKey, value);
 		}else if(passengers.get(key.obName) != null){
 			touchPassenger(key.obName).set(variableKey, value);
@@ -113,8 +117,17 @@ public class TaxiBringonState implements MutableOOState {
 
 	@Override
 	public MutableOOState removeObject(String oname) {
-		throw new RuntimeException("Remove not implemented");
-	}
+        ObjectInstance objectInstance = this.object(oname);
+        if (objectInstance instanceof TaxiBringonAgent) {
+//            touchTaxi();
+            taxi = null;
+        } else if (objectInstance instanceof TaxiBringonPassenger) {
+            touchPassenger(oname);
+            passengers.remove(oname);
+        }
+        return this;
+
+    }
 
 	@Override
 	public MutableOOState renameObject(String objectName, String newName) {
@@ -123,7 +136,9 @@ public class TaxiBringonState implements MutableOOState {
 
 	//touch methods allow a shallow copy of states and a copy of objects only when modified
 	public TaxiBringonAgent touchTaxi(){
-		this.taxi = taxi.copy();
+		if (taxi != null) {
+		    this.taxi = taxi.copy();
+        }
 		return taxi;
 	}
 	
@@ -149,6 +164,9 @@ public class TaxiBringonState implements MutableOOState {
 	}
 	
 	public Object getTaxiAtt(String attName){
+		if (taxi == null) {
+		    return null;
+        }
 		return taxi.get(attName);
 	}
 	
@@ -159,8 +177,11 @@ public class TaxiBringonState implements MutableOOState {
 	@Override
 	public String toString(){
 		String out = "{\n";
-		out += taxi.toString() + "\n";
-		
+
+		if (taxi != null) {
+            out += taxi.toString() + "\n";
+        }
+
 		for(TaxiBringonPassenger p : passengers.values()){
 			out += p.toString() + "\n";
 		}
