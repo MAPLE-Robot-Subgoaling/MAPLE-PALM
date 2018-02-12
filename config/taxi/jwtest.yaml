@@ -1,4 +1,4 @@
-state: small-2passengers
+state: classic-2passengers
 
 agents:
   - ramdp

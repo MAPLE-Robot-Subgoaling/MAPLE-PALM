@@ -17,6 +17,11 @@ public class GoalFailRF implements RewardFunction {
         this.tf = tf;
     }
 
+    public GoalFailRF(GoalFailTF tf, double rewardDefault) {
+        this.tf = tf;
+        this.rewardDefault = rewardDefault;
+    }
+
     public GoalFailRF(GoalFailTF tf, double rewardGoal, double rewardFail, double rewardDefault) {
         this.tf = tf;
         this.rewardGoal = rewardGoal;

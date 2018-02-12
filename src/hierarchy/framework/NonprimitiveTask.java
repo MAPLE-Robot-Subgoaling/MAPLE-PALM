@@ -14,8 +14,12 @@ import ramdp.agent.RAMDPModel;
 import java.util.Arrays;
 
 public class NonprimitiveTask extends Task {
-	//tasks which are not at the base of the hierarchy
-	
+    //tasks which are not at the base of the hierarchy
+
+    // default reward used in nonprimitive task's pseudo-reward function
+    // a slightly positive reward provides a smooth gradient for learning discounts in a multi-time model
+    public static double DEFAULT_REWARD = 0.000001;
+
 	protected GoalFailTF goalFailTF;
 	protected GoalFailRF goalFailRF;
 	
@@ -30,13 +34,10 @@ public class NonprimitiveTask extends Task {
 	 * @param compl the completion PF
 	 */
 	public NonprimitiveTask(Task[] children, ActionType aType, OOSADomain abstractDomain, StateMapping map,
-			PropositionalFunction fail, PropositionalFunction compl) {
+			PropositionalFunction fail, PropositionalFunction compl, double defaultReward) {
 		super(children, aType, abstractDomain, map);
 		this.goalFailTF = new GoalFailTF(compl, null, fail, null);
-		this.goalFailRF = new GoalFailRF(this.goalFailTF);
-//		this.rf = new NonprimitiveRewardFunction(this);
-//		this.failure = fail;
-//		this.completed = compl;
+		this.goalFailRF = new GoalFailRF(this.goalFailTF, defaultReward);
 	}
 
 	/**
@@ -49,7 +50,7 @@ public class NonprimitiveTask extends Task {
 	 */
 	public NonprimitiveTask(Task[] children, ActionType aType, StateMapping map,
 							PropositionalFunction fail, PropositionalFunction compl) {
-		this(children, aType, null, map, fail, compl);
+		this(children, aType, null, map, fail, compl, DEFAULT_REWARD);
 	}
 	//used for hierarchies with no abstraction
 	/**
@@ -61,7 +62,7 @@ public class NonprimitiveTask extends Task {
 	 */
 	public NonprimitiveTask(Task[] children, ActionType aType,
 			PropositionalFunction fail, PropositionalFunction compl) {
-		this(children, aType, null, null, fail, compl);
+		this(children, aType, null, null, fail, compl, DEFAULT_REWARD);
 	}
 
 	

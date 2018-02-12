@@ -81,10 +81,12 @@ public class TaxiHierarchy {
 		PrimitiveTask west = new PrimitiveTask(aWest, baseDomain);
 		Task[] navTasks = {north, east, south, west};
 
+		double defaultReward = NonprimitiveTask.DEFAULT_REWARD;
+
 		// Nav (Task used by Get and Put)
 		ActionType aNavigate = putDomain.getAction(TaxiPutDomain.ACTION_NAV);
 		NonprimitiveTask navigate = new NonprimitiveTask(navTasks, aNavigate, navDomain,
-				new NavStateMapper(), new NavFailurePF(), new NavCompletedPF());
+				new NavStateMapper(), new NavFailurePF(), new NavCompletedPF(), defaultReward);
 
 		// Pickup (Primitive used by Bringon)
 		ActionType aPickup = bringonDomain.getAction(Taxi.ACTION_PICKUP);
@@ -94,13 +96,13 @@ public class TaxiHierarchy {
 		ActionType aBringon = getDomain.getAction(TaxiGetDomain.ACTION_BRINGON);
 		Task[] bringonTasks = {pickup};
 		NonprimitiveTask bringon = new NonprimitiveTask(bringonTasks, aBringon, bringonDomain,
-				new BringonStateMapper(), new BringonFailurePF(), new BringonCompletedPF());
+				new BringonStateMapper(), new BringonFailurePF(), new BringonCompletedPF(), defaultReward);
 
 		// Get (Task used by Root)
 		ActionType aGet = rootDomain.getAction(TaxiRootDomain.ACTION_GET);
 		Task[] getTasks = {bringon, navigate};
 		NonprimitiveTask get = new NonprimitiveTask(getTasks, aGet, getDomain,
-				new GetStateMapper(), new GetFailurePF(), new GetCompletedPF());
+				new GetStateMapper(), new GetFailurePF(), new GetCompletedPF(), defaultReward);
 
 		// Putdown (Primitive used by Dropoff)
 		ActionType aPutdown = dropoffDomain.getAction(Taxi.ACTION_PUTDOWN);
@@ -110,19 +112,19 @@ public class TaxiHierarchy {
 		ActionType aDropoff = putDomain.getAction(TaxiPutDomain.ACTION_DROPOFF);
 		Task[] dropoffTasks = {putdown};
 		NonprimitiveTask dropoff = new NonprimitiveTask(dropoffTasks, aDropoff, dropoffDomain,
-				new DropoffStateMapper(), new DropoffFailurePF(), new DropoffCompletedPF());
+				new DropoffStateMapper(), new DropoffFailurePF(), new DropoffCompletedPF(), defaultReward);
 
 		// Put (Task used by Root)
 		ActionType aPut = rootDomain.getAction(TaxiRootDomain.ACTION_PUT);
 		Task[] putTasks = {dropoff, navigate};
 		NonprimitiveTask put = new NonprimitiveTask(putTasks, aPut, putDomain,
-				new PutStateMapper(), new PutFailurePF(), new PutCompletedPF());
+				new PutStateMapper(), new PutFailurePF(), new PutCompletedPF(), defaultReward);
 
 		// Root
 		ActionType aSolve = new SolveActionType();
 		Task[] rootTasks = {get, put};
 		NonprimitiveTask root = new NonprimitiveTask(rootTasks, aSolve, rootDomain,
-				new RootStateMapper(), new RootFailurePF(), new RootCompletedPF());
+				new RootStateMapper(), new RootFailurePF(), new RootCompletedPF(), defaultReward);
 		
 		return root;
 	}
@@ -170,10 +172,12 @@ public class TaxiHierarchy {
 		Task[] bringonTasks = new Task[]{pickup};
 		Task[] dropoffTasks = new Task[]{dropoff};
 
-		PropositionalFunction navFailPF = new BaseNavigateFailurePF();
+        double defaultReward = NonprimitiveTask.DEFAULT_REWARD;
+
+        PropositionalFunction navFailPF = new BaseNavigateFailurePF();
 		PropositionalFunction navCompPF = new BaseNavigateCompletedPF();
 		NonprimitiveTask navigate = new NonprimitiveTask(navTasks, aNavigate, taxiDomain.generateNavigateDomain(),
-				new IdentityMap(), navFailPF, navCompPF);
+				new IdentityMap(), navFailPF, navCompPF, defaultReward);
 
 		Task[] getTasks = new Task[]{pickup, navigate};
 		Task[] putTasks = new Task[]{navigate, dropoff};
@@ -198,7 +202,7 @@ public class TaxiHierarchy {
 				aPickup,
 				aPutdown
 		);
-		Task root = new NonprimitiveTask(rootTasks, aSolve, baseActual, new IdentityMap(), rootPF, rootPF);
+		Task root = new NonprimitiveTask(rootTasks, aSolve, baseActual, new IdentityMap(), rootPF, rootPF, defaultReward);
 
 		return root;
 		
