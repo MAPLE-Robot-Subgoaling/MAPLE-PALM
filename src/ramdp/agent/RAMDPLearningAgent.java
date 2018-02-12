@@ -142,6 +142,7 @@ public class RAMDPLearningAgent implements LearningAgent{
         }
 
 
+        int stepsBefore = steps;
 		while(
 			// while task still valid
 		        !(task.isFailure(currentState) || task.isComplete(currentState))
@@ -165,35 +166,19 @@ public class RAMDPLearningAgent implements LearningAgent{
 				action = this.taskNames.get(actionName);
 			}
 
+			// solve this task's next chosen subtask, recursively
+            subtaskCompleted = solveTask(action, baseEnv, maxSteps);
 
-//			if(action.isPrimitive()){
-////                System.out.println(tabLevel + "    " + actionName);
-//				subtaskCompleted = true;
-//				result = baseEnv.executeAction(a);
-//				e.transition(result);
-//				baseState = result.op;
-//				currentState = task.mapState(result.op);
-//				result.o = pastState;
-//				result.op = currentState;
-//				result.a = a;
-//				result.r = task.getReward(pastState, a, currentState);
-//				steps++;
-//			}else{
-			    int stepsBefore = steps;
-				subtaskCompleted = solveTask(action, baseEnv, maxSteps);
-				int stepsAfter = steps;
-				int stepsTaken = stepsAfter - stepsBefore;
-				//System.out.println(tabLevel + "+++ " + task.getAction() + " " + actionCount);
-				baseState = e.stateSequence.get(e.stateSequence.size() - 1);
-				currentState = task.mapState(baseState);
+			int stepsAfter = steps;
+            int stepsTaken = stepsAfter - stepsBefore;
+            //System.out.println(tabLevel + "+++ " + task.getAction() + " " + actionCount);
+            baseState = e.stateSequence.get(e.stateSequence.size() - 1);
+            currentState = task.mapState(baseState);
 
-                // use multi-time model discounting ((gamma^k)*reward) for k steps taken by multi-time model)
-				double discount = Math.pow(gamma, stepsTaken);
-				double discountedReward = discount * task.getReward(pastState, a, currentState);
-//				System.out.println(StringFormat.parameterizedActionName(action.getAction()) + ": " + e.actionSequence.get(e.actionSequence.size()-1) + " " + stepsBefore + " " + stepsAfter + " " + stepsTaken + " " + discountedReward);
-//                System.out.println(e.actionSequence.subList(stepsBefore,e.actionSequence.size()));
-				result = new EnvironmentOutcome(pastState, a, currentState, discountedReward, false); //task.isFailure(currentState));
-//			}
+            // use multi-time model discounting ((gamma^k)*reward) for k steps taken by multi-time model)
+            double discount = Math.pow(gamma, stepsTaken);
+            double discountedReward = discount * task.getReward(pastState, a, currentState);
+            result = new EnvironmentOutcome(pastState, a, currentState, discountedReward, false); //task.isFailure(currentState));
             //System.out.println(tabLevel + "\treward: " + result.r);
 
 			//update task model if the subtask completed correctly
@@ -232,20 +217,17 @@ public class RAMDPLearningAgent implements LearningAgent{
 		Policy viPolicy = plan.planFromState(s);
 		Policy rmaxPolicy = new RMAXPolicy(model, viPolicy, domain.getActionTypes(), hashingFactory);
 		Action action = rmaxPolicy.action(s);
-        try {
-            if (task.toString().contains("solve")) {
-                Episode e = PolicyUtils.rollout(rmaxPolicy, s, model, 100);
-                System.out.println(tabLevel + "    Debug rollout: " + e.actionSequence);
-                //System.out.println(tabLevel + "    chose " + action);
-            }
-        } catch (Exception e) {
-            // ignore, temp debug to assess ramdp
-            //System.out.println(e);
-//                e.printStackTrace();
-            //System.out.println(action);
-            //Action temp = rmaxPolicy.action(s);
-            //System.out.println(temp);
-        }
+//        try {
+//            if (task.toString().contains("solve")) {
+////                Episode e = PolicyUtils.rollout(rmaxPolicy, s, model, 100);
+////                System.out.println(tabLevel + "    Debug rollout: " + e.actionSequence);
+//                System.out.print(action + ", ");
+//            }
+//        } catch (Exception e) {
+//            // ignore, temp debug to assess ramdp
+//            //System.out.println(e);
+////                e.printStackTrace();
+//        }
     	return action;
 	}
 

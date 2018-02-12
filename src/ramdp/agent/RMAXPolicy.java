@@ -53,7 +53,7 @@ public class RMAXPolicy implements Policy {
 		List<Action> unmodeled = unmodeledActions(s);
 		
 		if(unmodeled.size() > 0) {
-			System.out.print("*");
+//			System.out.print("*");
 			return unmodeled.get(RandomFactory.getMapped(0).nextInt(unmodeled.size()));
 		}
 
@@ -66,7 +66,7 @@ public class RMAXPolicy implements Policy {
 		List<Action> unmodeled = unmodeledActions(s);
 		
 		if(unmodeled.size() > 0)
-			return 1 / (double) unmodeled.size();
+			return 1.0 / (double) unmodeled.size();
 		return basePolicy.actionProb(s, a);
 	}
 

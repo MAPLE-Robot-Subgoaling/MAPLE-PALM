@@ -36,7 +36,7 @@ public class TaxiStateFactory {
 		    String goalLocationName = Taxi.CLASS_LOCATION+0;
             // other passengers both start and go to a random depot
             if (i > 0) {
-                // get a random goal
+//                 get a random goal
 //                goalLocationName = locations.get(RandomFactory.getMapped(0).nextInt(locations.size())).getName();
 //                String startLocationName = goalLocationName;
 //                while (startLocationName.equals(goalLocationName)) {
@@ -45,10 +45,10 @@ public class TaxiStateFactory {
 //                    startX = (int) startLocation.get(Taxi.ATT_X);
 //                    startY = (int) startLocation.get(Taxi.ATT_Y);
 //                    startLocationName = startLocation.getName();
-//                } ;
-                startX = 3;
-                startY = 0;
-                goalLocationName = Taxi.CLASS_LOCATION+0;
+//                }
+                startX = 0;
+                startY = 4;
+                goalLocationName = Taxi.CLASS_LOCATION+2;
             }
             passengers.add(new TaxiPassenger(Taxi.CLASS_PASSENGER + i, startX, startY, goalLocationName));
 		}
@@ -107,7 +107,7 @@ public class TaxiStateFactory {
                     startX = (int) startLocation.get(Taxi.ATT_X);
                     startY = (int) startLocation.get(Taxi.ATT_Y);
                     startLocationName = startLocation.getName();
-                } ;
+                }
             }
             passengers.add(new TaxiPassenger(Taxi.CLASS_PASSENGER + i, startX, startY, goalLocationName));
         }
