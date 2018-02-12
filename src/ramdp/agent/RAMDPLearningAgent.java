@@ -169,21 +169,21 @@ public class RAMDPLearningAgent implements LearningAgent{
 				action = this.taskNames.get(actionName);
 			}
 
-//            int stepsBefore = steps;
+            int stepsBefore = steps;
 
 			// solve this task's next chosen subtask, recursively
             subtaskCompleted = solveTask(action, baseEnv, maxSteps);
 
-//            int stepsAfter = steps;
-//            int stepsTaken = stepsAfter - stepsBefore;
+            int stepsAfter = steps;
+            int stepsTaken = stepsAfter - stepsBefore;
             //System.out.println(tabLevel + "+++ " + task.getAction() + " " + actionCount);
             baseState = e.stateSequence.get(e.stateSequence.size() - 1);
             currentState = task.mapState(baseState);
 
             // use multi-time model discounting ((gamma^k)*reward) for k steps taken by multi-time model)
-//            double discount = Math.pow(gamma, stepsTaken);
-//            double discountedReward = discount * task.getReward(pastState, a, currentState);
-            double discountedReward = task.getReward(pastState, a, currentState);
+            double discount = Math.pow(gamma, stepsTaken);
+            double discountedReward = discount * task.getReward(pastState, a, currentState);
+//            double discountedReward = task.getReward(pastState, a, currentState);
             result = new EnvironmentOutcome(pastState, a, currentState, discountedReward, false); //task.isFailure(currentState));
             //System.out.println(tabLevel + "\treward: " + result.r);
 

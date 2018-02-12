@@ -32,10 +32,11 @@ public class TaxiConfig {
         Yaml yaml = new Yaml(new Constructor(TaxiConfig.class));
         InputStream input = new FileInputStream(new File(conffile));
 
+        TaxiConfig config = (TaxiConfig) yaml.load(input);
 
-        RandomFactory.seedMapped(0, 2320942930L);
+        RandomFactory.seedMapped(0, config.stochastic.seed);
 
-        return (TaxiConfig) yaml.load(input);
+        return config;
     }
 
     public TaxiState generateState() {
