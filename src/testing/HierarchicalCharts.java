@@ -1,5 +1,7 @@
 package testing;
 
+import burlap.behavior.singleagent.Episode;
+import burlap.behavior.singleagent.auxiliary.EpisodeSequenceVisualizer;
 import burlap.behavior.singleagent.auxiliary.performance.PerformanceMetric;
 import burlap.behavior.singleagent.auxiliary.performance.TrialMode;
 import burlap.behavior.singleagent.learning.LearningAgent;
@@ -24,6 +26,7 @@ import taxi.stateGenerator.TaxiStateFactory;
 import utilities.LearningAlgorithmExperimenter;
 
 import java.io.FileNotFoundException;
+import java.util.List;
 
 //import utilities.SimpleHashableStateFactory;
 
@@ -118,10 +121,17 @@ public class HierarchicalCharts {
 			);
 		}
 		
-		exp.startExperiment();
+		List<Episode> episodes = exp.startExperiment();
 		if(conf.output.csv.enabled) {
 			exp.writeEpisodeDataToCSV(conf.output.csv.output);
 		}
+
+		if (conf.output.visualizer.episodes){
+            EpisodeSequenceVisualizer ev = new EpisodeSequenceVisualizer
+                    (TaxiVisualizer.getVisualizer(conf.output.visualizer.width, conf.output.visualizer.height), domain, episodes);;
+            ev.setDefaultCloseOperation(ev.EXIT_ON_CLOSE);
+            ev.initGUI();
+        }
 	}
 
 	public static void main(String[] args) {

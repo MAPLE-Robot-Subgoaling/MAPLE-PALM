@@ -192,9 +192,7 @@ public class RAMDPLearningAgent implements LearningAgent{
 				double discountedReward = discount * task.getReward(pastState, a, currentState);
 //				System.out.println(StringFormat.parameterizedActionName(action.getAction()) + ": " + e.actionSequence.get(e.actionSequence.size()-1) + " " + stepsBefore + " " + stepsAfter + " " + stepsTaken + " " + discountedReward);
 //                System.out.println(e.actionSequence.subList(stepsBefore,e.actionSequence.size()));
-				result = new EnvironmentOutcome(pastState, a, currentState,
-						discountedReward, task.isFailure
-						(currentState));
+				result = new EnvironmentOutcome(pastState, a, currentState, discountedReward, false); //task.isFailure(currentState));
 //			}
             //System.out.println(tabLevel + "\treward: " + result.r);
 
@@ -234,21 +232,21 @@ public class RAMDPLearningAgent implements LearningAgent{
 		Policy viPolicy = plan.planFromState(s);
 		Policy rmaxPolicy = new RMAXPolicy(model, viPolicy, domain.getActionTypes(), hashingFactory);
 		Action action = rmaxPolicy.action(s);
-		if (task.toString().contains("solve")) {
-            try {
+        try {
+            if (task.toString().contains("solve")) {
                 Episode e = PolicyUtils.rollout(rmaxPolicy, s, model, 100);
                 System.out.println(tabLevel + "    Debug rollout: " + e.actionSequence);
                 //System.out.println(tabLevel + "    chose " + action);
-            } catch (Exception e) {
-                // ignore, temp debug to assess ramdp
-                //System.out.println(e);
-//                e.printStackTrace();
-                //System.out.println(action);
-                //Action temp = rmaxPolicy.action(s);
-                //System.out.println(temp);
             }
+        } catch (Exception e) {
+            // ignore, temp debug to assess ramdp
+            //System.out.println(e);
+//                e.printStackTrace();
+            //System.out.println(action);
+            //Action temp = rmaxPolicy.action(s);
+            //System.out.println(temp);
         }
-		return action;
+    	return action;
 	}
 
 	/**

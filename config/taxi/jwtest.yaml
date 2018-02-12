@@ -3,8 +3,8 @@ state: classic-2passengers
 agents:
   - ramdp
 
-episodes: 100
-max_steps: 2000
+episodes: 250
+max_steps: 100
 trials: 2
 gamma: 0.95
 
@@ -43,5 +43,7 @@ output:
 
   visualizer:
     enabled: false
+    episodes: true
     width: 5
     height: 5
+    
