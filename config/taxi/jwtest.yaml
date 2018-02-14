@@ -1,15 +1,15 @@
-state: small
+state: small-2passengers
 
 agents:
   - ramdp
 
-episodes: 100
+episodes: 200
 max_steps: 500
 trials: 1
 gamma: 0.99
 
 stochastic:
-  seed: 293811
+  seed: 29511
   correct_move: 0.75
   fickle: 0.40
   random_start: false

@@ -8,14 +8,23 @@ import burlap.statehashing.HashableStateFactory;
 
 public class PossibleOutcome {
 
+    // reference to the HashableStateFactory used by the given domain
     protected HashableStateFactory hashingFactory;
-    protected EnvironmentOutcome outcome;
-    protected TransitionProb transitionProbability;
 
-    public PossibleOutcome(HashableStateFactory hashingFactory, EnvironmentOutcome outcome, double probability) {
+    // approximated model
+    protected EnvironmentOutcome outcome;
+    protected TransitionProb transitionProb;
+
+    // totals needed in RMAX
+    protected int transitionCount;
+    protected double rewardTotal;
+
+    public PossibleOutcome(HashableStateFactory hashingFactory, EnvironmentOutcome outcome, double probability, int transitionCount, double rewardTotal) {
         this.hashingFactory = hashingFactory;
         this.outcome = outcome;
-        this.transitionProbability = new TransitionProb(probability, this.outcome);
+        this.transitionProb = new TransitionProb(probability, this.outcome);
+        this.transitionCount = transitionCount;
+        this.rewardTotal = rewardTotal;
     }
 
     public EnvironmentOutcome getOutcome() {
@@ -24,7 +33,7 @@ public class PossibleOutcome {
 
     public void setOutcome(EnvironmentOutcome outcome) {
         this.outcome = outcome;
-        this.transitionProbability.eo = this.outcome;
+        this.transitionProb.eo = this.outcome;
     }
 
     public HashableStateFactory getHashingFactory() {
@@ -36,11 +45,11 @@ public class PossibleOutcome {
     }
 
     public double getTransitionProbability() {
-        return transitionProbability.p;
+        return transitionProb.p;
     }
 
     public void setTransitionProbability(double transitionProbability) {
-        this.transitionProbability.p = transitionProbability;
+        this.transitionProb.p = transitionProbability;
     }
 
     public double getReward() {
@@ -51,18 +60,42 @@ public class PossibleOutcome {
         this.outcome.r = reward;
     }
 
+    public int getTransitionCount() {
+        return transitionCount;
+    }
+
+    public void setTransitionCount(int transitionCount) {
+        this.transitionCount = transitionCount;
+    }
+
+    public double getRewardTotal() {
+        return rewardTotal;
+    }
+
+    public void setRewardTotal(double rewardTotal) {
+        this.rewardTotal = rewardTotal;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        if (outcome != null && transitionProbability != null && transitionProbability.eo != null && outcome != transitionProbability.eo) {
+        if (outcome != null && transitionProb != null && transitionProb.eo != null && outcome != transitionProb.eo) {
             throw new RuntimeException("ERROR: the EnvironmentOutcome stored in the TransitionProb was not identical to the one in its own PossibleOutcome");
         }
 
         PossibleOutcome that = (PossibleOutcome) o;
 
-        if (transitionProbability.p != that.transitionProbability.p) {
+        if (this.rewardTotal != that.rewardTotal) {
+            return false;
+        }
+
+        if (this.transitionCount != that.transitionCount) {
+            return false;
+        }
+
+        if (transitionProb.p != that.transitionProb.p) {
             return false;
         }
 
@@ -107,14 +140,15 @@ public class PossibleOutcome {
     @Override
     public int hashCode() {
         // hashes and collides on hashedState, action, hashedStatePrime
-        int result = hashingFactory != null ? hashingFactory.hashCode() : 0;
-        HashableState hs = hashingFactory.hashState(outcome.o);
-        Action action = outcome.a;
-        HashableState hsPrime = hashingFactory.hashState(outcome.op);
-        result = 31 * result + (hs != null ? hs.hashCode() : 0);
-        result = 31 * result + (action != null ? action.hashCode() : 0);
-        result = 31 * result + (hsPrime != null ? hsPrime.hashCode() : 0);
-        return result;
+//        int result = hashingFactory != null ? hashingFactory.hashCode() : 0;
+//        HashableState hs = hashingFactory.hashState(outcome.o);
+//        Action action = outcome.a;
+//        HashableState hsPrime = hashingFactory.hashState(outcome.op);
+//        result = 31 * result + (hs != null ? hs.hashCode() : 0);
+//        result = 31 * result + (action != null ? action.hashCode() : 0);
+//        result = 31 * result + (hsPrime != null ? hsPrime.hashCode() : 0);
+//        return result;
+        throw new RuntimeException("not implemented");
     }
 
     @Override

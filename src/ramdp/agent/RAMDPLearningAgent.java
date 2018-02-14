@@ -214,8 +214,8 @@ public class RAMDPLearningAgent implements LearningAgent{
 	 * @param s the current state
 	 */
 	protected void addChildrenToMap(GroundedTask gt, State s){
-		List<GroundedTask> chilkdren = gt.getGroundedChildTasks(s);
-		for(GroundedTask child : chilkdren){
+		List<GroundedTask> children = gt.getGroundedChildTasks(s);
+		for(GroundedTask child : children){
 			taskNames.put(child.toString(), child);
 		}
 	}
