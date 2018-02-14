@@ -190,7 +190,7 @@ public class RAMDPModel extends FactoredModel {
             approximateTransitions.put(pair, hsPrimeToOutcomes);
         } else if (hsPrimeToOutcomes.size() < 1) {
 //            System.err.println("hsPrimeToOutcomes is empty ... ");
-        }git 
+        }
         return hsPrimeToOutcomes;
     }
 
