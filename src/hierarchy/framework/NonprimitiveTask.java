@@ -16,9 +16,9 @@ import java.util.Arrays;
 public class NonprimitiveTask extends Task {
     //tasks which are not at the base of the hierarchy
 
-    // default reward used in nonprimitive task's pseudo-reward function
-    // a slightly positive reward provides a smooth gradient for learning discounts in a multi-time model
-    public static double DEFAULT_REWARD = 0.000001;
+    // default rewardTotal used in nonprimitive task's pseudo-rewardTotal function
+    // a slightly positive rewardTotal provides a smooth gradient for learning discounts in a multi-time model
+    public static double DEFAULT_REWARD = 0.0;
 
 	protected GoalFailTF goalFailTF;
 	protected GoalFailRF goalFailRF;
@@ -72,11 +72,11 @@ public class NonprimitiveTask extends Task {
 	}
 	
 	/**
-	 * uses the defined reward function to assign reward to states
+	 * uses the defined rewardTotal function to assign rewardTotal to states
 	 * @param s the original state that is being transitioned from
 	 * @param a the action associated with the grounded version of this task
 	 * @param sPrime the next state that is being transitioned into
-	 * @return the reward assigned to s by the reward function
+	 * @return the rewardTotal assigned to s by the rewardTotal function
 	 */
 	@Override
 	public double reward(State s, Action a, State sPrime){
@@ -84,8 +84,8 @@ public class NonprimitiveTask extends Task {
 	}
 	
 	/**
-	 * customise the reward function
-	 * @param rf the reward function which should take in a state and
+	 * customise the rewardTotal function
+	 * @param rf the rewardTotal function which should take in a state and
 	 * grounded action
 	 */
 	public void setRF(GoalFailRF rf){

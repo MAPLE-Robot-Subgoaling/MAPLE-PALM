@@ -34,7 +34,7 @@ import burlap.statehashing.HashableStateFactory;
  * the {@link #setRunRolloutsInRevere(boolean)} method).
  * <p>
  * Finally, after action selection, the next outcome state from which the rollout continues may also be selected in a number of ways.
- * The way presnted in the original paper is to select the next state randomly according to the transition dynamics probability weighted
+ * The way presnted in the original paper is to select the next state randomly according to the transition dynamics transitionProbability weighted
  * by the margin between the upper bound and lower bound of the states, which promotes exploration toward states that are uncertain.
  * However, in practice, we found that the standard unweighted sampling apporach of RTDP can work better and is more efficient; therefore,
  * the default in this implementation is to use the unweighted transition dynamics, but it can be changed to way presented in the paper using
@@ -66,7 +66,7 @@ public class BoundedRTDP extends DynamicProgramming implements Planner {
 	 * has an efficient performAction state sampler, this mode will provide some computational gains over the other approaches.
 	 * <p>
 	 * WEIGHTEDMARGIN is the state selection method suggested in the original Bounded RTDP paper, which we found to be somewhat slower than
-	 * MODELBASED. In this approach, each possible outcome state is selected randomly from a distribution that is the transition dynamics probability
+	 * MODELBASED. In this approach, each possible outcome state is selected randomly from a distribution that is the transition dynamics transitionProbability
 	 * weighted by the margin in the lower bound and upper bound of the next state's value function. This promotes exploration towards states that
 	 * are more uncertain.
 	 * <p>
@@ -152,7 +152,7 @@ public class BoundedRTDP extends DynamicProgramming implements Planner {
 	
 	
 	/**
-	 * Whether each rollout should be run in reverse after completion. This is useful in goal-directed MDPs because it backups the goal reward to the initial state.
+	 * Whether each rollout should be run in reverse after completion. This is useful in goal-directed MDPs because it backups the goal rewardTotal to the initial state.
 	 * The default is true.
 	 */
 	protected boolean							runRolloutsInReverse = true;
@@ -229,7 +229,7 @@ public class BoundedRTDP extends DynamicProgramming implements Planner {
 	}
 	
 	/**
-	 * Sets whether each rollout should be run in reverse after completion. This is useful in goal-directed MDPs because it backups the goal reward to the initial state.
+	 * Sets whether each rollout should be run in reverse after completion. This is useful in goal-directed MDPs because it backups the goal rewardTotal to the initial state.
 	 * @param runRolloutsInRevers if true, then rollouts will be run in reverse. If false, then they will not be run in reverse.
 	 */
 	public void setRunRolloutsInRevere(boolean runRolloutsInRevers){

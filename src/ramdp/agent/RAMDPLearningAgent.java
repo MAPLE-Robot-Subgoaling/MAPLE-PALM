@@ -34,7 +34,7 @@ public class RAMDPLearningAgent implements LearningAgent{
 	private int rmaxThreshold;
 	
 	/**
-	 * maximum reward
+	 * maximum rewardTotal
 	 */
 	private double rmax;
 	
@@ -67,6 +67,8 @@ public class RAMDPLearningAgent implements LearningAgent{
 	 * the max error allowed for the planner
 	 */
 	private double maxDelta;
+
+	private int maxIterationsInModelPlanner = -1;
 	
 	/**
 	 * the current episode
@@ -78,12 +80,12 @@ public class RAMDPLearningAgent implements LearningAgent{
 	 * @param root the root of the hierarchy to learn
 	 * @param threshold the rmax sample threshold
 	 * @param discount the discount for the tasks' domains 
-	 * @param rmax the max reward
+	 * @param rmax the max rewardTotal
 	 * @param hs a state hashing factory
 	 * @param delta the max error for the planner
 	 */
 	public RAMDPLearningAgent(GroundedTask root, int threshold, double discount, double rmax,
-			HashableStateFactory hs, double delta) {
+			HashableStateFactory hs, double delta, int maxIterationsInModelPlanner) {
 		this.rmaxThreshold = threshold;
 		this.root = root;
 		this.gamma = discount;
@@ -92,6 +94,7 @@ public class RAMDPLearningAgent implements LearningAgent{
 		this.models = new HashMap<GroundedTask, RAMDPModel>();
 		this.taskNames = new HashMap<String, GroundedTask>();
 		this.maxDelta = delta;
+		this.maxIterationsInModelPlanner = maxIterationsInModelPlanner;
 	}
 	
 	@Override
@@ -180,10 +183,10 @@ public class RAMDPLearningAgent implements LearningAgent{
             baseState = e.stateSequence.get(e.stateSequence.size() - 1);
             currentState = task.mapState(baseState);
 
-            // use multi-time model discounting ((gamma^k)*reward) for k steps taken by multi-time model)
+            // use multi-time model discounting ((gamma^k)*rewardTotal) for k steps taken by multi-time model)
             double discount = Math.pow(gamma, stepsTaken);
             double discountedReward = discount * task.getReward(pastState, a, currentState);
-//            double discountedReward = task.getReward(pastState, a, currentState);
+//            double discountedReward = task.getApproximateReward(pastState, a, currentState);
             result = new EnvironmentOutcome(pastState, a, currentState, discountedReward, false); //task.isFailure(currentState));
             //System.out.println(tabLevel + "\treward: " + result.r);
 
@@ -226,7 +229,8 @@ public class RAMDPLearningAgent implements LearningAgent{
 	protected Action nextAction(GroundedTask task, State s){
 		RAMDPModel model = getModel(task);
 		OOSADomain domain = task.getDomain(model);
-		ValueIteration plan = new ValueIteration(domain, gamma, hashingFactory, maxDelta, 1000);
+		ValueIteration plan = new ValueIteration(domain, gamma, hashingFactory, maxDelta, maxIterationsInModelPlanner);
+		plan.toggleReachabiltiyTerminalStatePruning(true);
 		Policy viPolicy = plan.planFromState(s);
 		Policy rmaxPolicy = new RMAXPolicy(model, viPolicy, domain.getActionTypes(), hashingFactory);
 		Action action = rmaxPolicy.action(s);

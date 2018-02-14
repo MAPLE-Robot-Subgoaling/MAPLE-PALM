@@ -161,7 +161,7 @@ public class AMDPPlanner {
 //		Policy p = taskPolicies.get(currentHashableState);
 		if(p == null){
 			//generate a new policy using BRTDP planning to solve the task
-			//create a copy of the task's domain with the same action the terminates and defines reward specific
+			//create a copy of the task's domain with the same action the terminates and defines rewardTotal specific
 			//to the task
 			OOSADomain domain = t.getDomain();
 

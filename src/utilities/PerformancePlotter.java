@@ -62,7 +62,7 @@ import burlap.mdp.singleagent.environment.extensions.EnvironmentObserver;
  * method calls behind the scenes.
  * <p>
  * When testing is done, you may optionally request all data to be printed to CSV files. One CSV file will produce the step-wise performance
- * metric (cumulaitve reward by step) for all agents and trials. Another will produce all the episode-wise performance metric data. This data
+ * metric (cumulaitve rewardTotal by step) for all agents and trials. Another will produce all the episode-wise performance metric data. This data
  * can be produced regardless of which metrics you requested to be plotted.
  * <p>
  * Note that the plots that are created have a number of interactive options. Try right-clicking on them to see the list of things you can modfiy in the GUI.
@@ -104,22 +104,22 @@ public class PerformancePlotter extends JFrame implements EnvironmentObserver {
 	
 	
 	/**
-	 * All agent plot series for the the most recetent trial's cumulative reward per step
+	 * All agent plot series for the the most recetent trial's cumulative rewardTotal per step
 	 */
 	protected XYSeriesCollection colCSR;
 	
 	/**
-	 * All agent plot series for the the most recetent trial's cumulative reward per episode
+	 * All agent plot series for the the most recetent trial's cumulative rewardTotal per episode
 	 */
 	protected XYSeriesCollection colCER;
 	
 	/**
-	 * All agent plot series for the the most recetent trial's average reward per episode
+	 * All agent plot series for the the most recetent trial's average rewardTotal per episode
 	 */
 	protected XYSeriesCollection colAER;
 	
 	/**
-	 * All agent plot series for the the most recetent trial's median reward per episode
+	 * All agent plot series for the the most recetent trial's median rewardTotal per episode
 	 */
 	protected XYSeriesCollection colMER;
 	
@@ -135,22 +135,22 @@ public class PerformancePlotter extends JFrame implements EnvironmentObserver {
 	
 	
 	/**
-	 * All agent plot series for the average of all trial's cumulative reward per step
+	 * All agent plot series for the average of all trial's cumulative rewardTotal per step
 	 */
 	protected YIntervalSeriesCollection colCSRAvg;
 	
 	/**
-	 * All agent plot series for the average of all trial's cumulative reward per episode
+	 * All agent plot series for the average of all trial's cumulative rewardTotal per episode
 	 */
 	protected YIntervalSeriesCollection colCERAvg;
 	
 	/**
-	 * All agent plot series for the average of all trial's average reward per episode
+	 * All agent plot series for the average of all trial's average rewardTotal per episode
 	 */
 	protected YIntervalSeriesCollection colAERAvg;
 	
 	/**
-	 * All agent plot series for the average of all trial's median reward per episode
+	 * All agent plot series for the average of all trial's median rewardTotal per episode
 	 */
 	protected YIntervalSeriesCollection colMERAvg;
 	
@@ -877,7 +877,7 @@ public class PerformancePlotter extends JFrame implements EnvironmentObserver {
 	
 	
 	/**
-	 * Updates the cumulative reward by step series. Does nothing if that metric is not being plotted.
+	 * Updates the cumulative rewardTotal by step series. Does nothing if that metric is not being plotted.
 	 */
 	protected void updateCSRSeries(){
 		
@@ -896,7 +896,7 @@ public class PerformancePlotter extends JFrame implements EnvironmentObserver {
 	
 	
 	/**
-	 * Updates the cumulative reward by episode series.  Does nothing if that metric is not being plotted.
+	 * Updates the cumulative rewardTotal by episode series.  Does nothing if that metric is not being plotted.
 	 */
 	protected void updateCERSeries(){
 		
@@ -916,7 +916,7 @@ public class PerformancePlotter extends JFrame implements EnvironmentObserver {
 	
 	
 	/**
-	 * Updates the average reward by episode series.  Does nothing if that metric is not being plotted.
+	 * Updates the average rewardTotal by episode series.  Does nothing if that metric is not being plotted.
 	 */
 	protected void updateAERSeris(){
 		
@@ -935,7 +935,7 @@ public class PerformancePlotter extends JFrame implements EnvironmentObserver {
 	
 	
 	/**
-	 * Updates the median reward by episode series.  Does nothing if that metric is not being plotted.
+	 * Updates the median rewardTotal by episode series.  Does nothing if that metric is not being plotted.
 	 */
 	protected void updateMERSeris(){
 		
@@ -1054,22 +1054,22 @@ public class PerformancePlotter extends JFrame implements EnvironmentObserver {
 	protected class Trial{
 		
 		/**
-		 * Stores the cumulative reward by step
+		 * Stores the cumulative rewardTotal by step
 		 */
 		public List<Double> cumulativeStepReward = new ArrayList<Double>();
 		
 		/**
-		 * Stores the cumulative reward by episode
+		 * Stores the cumulative rewardTotal by episode
 		 */
 		public List<Double> cumulativeEpisodeReward = new ArrayList<Double>();
 		
 		/**
-		 * Stores the average reward by episode
+		 * Stores the average rewardTotal by episode
 		 */
 		public List<Double> averageEpisodeReward = new ArrayList<Double>();
 		
 		/**
-		 * Stores the median reward by episode
+		 * Stores the median rewardTotal by episode
 		 */
 		public List<Double> medianEpisodeReward = new ArrayList<Double>();
 		
@@ -1086,7 +1086,7 @@ public class PerformancePlotter extends JFrame implements EnvironmentObserver {
 		
 		
 		/**
-		 * The cumulative reward of the episode so far
+		 * The cumulative rewardTotal of the episode so far
 		 */
 		public double curEpisodeReward = 0.;
 		
@@ -1107,15 +1107,15 @@ public class PerformancePlotter extends JFrame implements EnvironmentObserver {
 		
 		
 		/**
-		 * A list of the reward sequence in the current episode
+		 * A list of the rewardTotal sequence in the current episode
 		 */
 		protected List<Double> curEpisodeRewards = new ArrayList<Double>();
 		
 		
 		
 		/**
-		 * Updates all datastructures with the reward received from the last step
-		 * @param r the last reward received
+		 * Updates all datastructures with the rewardTotal received from the last step
+		 * @param r the last rewardTotal received
 		 */
 		public void stepIncrement(double r){
 			
@@ -1178,22 +1178,22 @@ public class PerformancePlotter extends JFrame implements EnvironmentObserver {
 		
 		
 		/**
-		 * Most recent trial's cumulative reward per step series data
+		 * Most recent trial's cumulative rewardTotal per step series data
 		 */
 		public XYSeries 		cumulativeStepRewardSeries;
 		
 		/**
-		 * Most recent trial's cumulative reward per step episode data
+		 * Most recent trial's cumulative rewardTotal per step episode data
 		 */
 		public XYSeries 		cumulativeEpisodeRewardSeries;
 		
 		/**
-		 * Most recent trial's average reward per step episode data
+		 * Most recent trial's average rewardTotal per step episode data
 		 */
 		public XYSeries 		averageEpisodeRewardSeries;
 		
 		/**
-		 * Most recent trial's median reward per step episode data
+		 * Most recent trial's median rewardTotal per step episode data
 		 */
 		public XYSeries			medianEpisodeRewardSeries;
 		
@@ -1210,22 +1210,22 @@ public class PerformancePlotter extends JFrame implements EnvironmentObserver {
 		
 		
 		/**
-		 * All trial's average cumulative reward per step series data
+		 * All trial's average cumulative rewardTotal per step series data
 		 */
 		public YIntervalSeries	csrAvgSeries;
 		
 		/**
-		 * All trial's average cumulative reward per episode series data
+		 * All trial's average cumulative rewardTotal per episode series data
 		 */
 		public YIntervalSeries	cerAvgSeries;
 		
 		/**
-		 * All trial's average average reward per episode series data
+		 * All trial's average average rewardTotal per episode series data
 		 */
 		public YIntervalSeries	aerAvgSeries;
 		
 		/**
-		 * All trial's average median reward per episode series data
+		 * All trial's average median rewardTotal per episode series data
 		 */
 		public YIntervalSeries	merAvgSeries;
 		

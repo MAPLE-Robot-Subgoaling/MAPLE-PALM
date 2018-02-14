@@ -5,7 +5,6 @@ import java.util.*;
 import burlap.debugtools.RandomFactory;
 import burlap.mdp.core.action.Action;
 import burlap.mdp.core.oo.state.MutableOOState;
-import burlap.mdp.core.oo.state.OOState;
 import burlap.mdp.core.oo.state.ObjectInstance;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.environment.EnvironmentOutcome;
@@ -20,6 +19,8 @@ public class RAMDPModel extends FactoredModel {
 
     protected HashableState hImaginedState;
 
+    protected Map<HashableStateActionPair, HashMap<HashableState, PossibleOutcome>> approximateTransitions;
+
 	/**
 	 * the rmax sample parameter
 	 */
@@ -29,31 +30,13 @@ public class RAMDPModel extends FactoredModel {
 	 * the provided hashing factory
 	 */
 	private HashableStateFactory hashingFactory;
-
-	/**
-	 * reward function, S x ActionName
-	 */
-    private Map<HashableState, Map<String, Double>> rewards;
-
-    /**
-     * transition probabilities function, S x ActionName x S' -> [0, 1]
-     */
-    private Map<HashableState, Map<String, Map<HashableState, Double>>> transitionProbabilities;
 	
 	/**
-	 * n(s, a) - count of executing a in s
+	 * n(s, a, s') - transitionCount of executing a in s resulted in s'
+     * and
+     * r(s, a, s') - total sum of rewardTotal received after taking a in s and going to s'
 	 */
-	private Map<HashableState, Map<String, Integer>> stateActionCount;
-	
-	/**
-	 * n(s, a, s') - count of executing a in s resulted in s'
-	 */
-	private Map<HashableState, Map<String, Map<HashableState, Integer>>> resultingStateCount;
-	
-	/**
-	 * r(s, a) - total sum of reward received after taking a in s 
-	 */
-	private Map<HashableState, Map<String, Double>> totalReward;
+	private Map<HashableState, Map<String, Map<HashableState, TransitionCountRewardTotalPair>>> stateActionSPrimeCountRewardPairs;
 	
 	/**
 	 * the grounded task that is being modeled
@@ -61,7 +44,7 @@ public class RAMDPModel extends FactoredModel {
 	private GroundedTask task;
 	
 	/**
-	 * the max reward for the domain
+	 * the max rewardTotal for the domain
 	 */
 	private double rmax;
 	
@@ -69,17 +52,19 @@ public class RAMDPModel extends FactoredModel {
 	 * creates a rmax model
 	 * @param task the grounded task to model
 	 * @param threshold rmax sample threshold
-	 * @param rmax max reward in domain
+	 * @param rmax max rewardTotal in domain
 	 * @param hs provided hashing factory
 	 */
 	public RAMDPModel( GroundedTask task, int threshold, double rmax, HashableStateFactory hs) {
 		this.hashingFactory = hs;
 		this.mThreshold = threshold;
-		this.rewards = new HashMap<HashableState, Map<String, Double>>();
-		this.transitionProbabilities = new HashMap<HashableState, Map<String, Map<HashableState,Double>>>();
-		this.stateActionCount = new HashMap<HashableState, Map<String,Integer>>();
-		this.resultingStateCount = new HashMap<HashableState, Map<String, Map<HashableState, Integer>>>();
-		this.totalReward = new HashMap<HashableState, Map<String,Double>>();
+//		this.rewards = new HashMap<HashableState, Map<String, Double>>();
+//		this.transitionProbabilities = new HashMap<HashableState, Map<String, Map<HashableState,Double>>>();
+        this.approximateTransitions = new HashMap<HashableStateActionPair, HashMap<HashableState, PossibleOutcome>>();
+		this.stateActionSPrimeCountRewardPairs = new HashMap<HashableState, Map<String, Map<HashableState, TransitionCountRewardTotalPair>>>();
+//		this.stateActionCount = new HashMap<HashableState, Map<String,Integer>>();
+//		this.resultingStateCount = new HashMap<HashableState, Map<String, Map<HashableState, Integer>>>();
+//		this.totalReward = new HashMap<HashableState, Map<String,Double>>();
 		this.task = task;
 		this.rmax = rmax;
 	}
@@ -111,24 +96,81 @@ public class RAMDPModel extends FactoredModel {
         return false;
 	}
 
-	// the transitions come from the recorded rewards and probabilities in the maps
-	@Override
-	public List<TransitionProb> transitions(State s, Action a) {
-		HashableState hs = this.hashingFactory.hashState(s);
-		Map<HashableState, Double> resultingStates = getTransitionProbabilities(hs, a);
-		List<TransitionProb> tps = new ArrayList<TransitionProb>();
-		double reward = getReward(hs, a);
-		
-		for(HashableState hsPrime : resultingStates.keySet()){
-			EnvironmentOutcome eo = new EnvironmentOutcome(s, a, hsPrime.s(),
-					reward, terminal(hsPrime.s()));
-			double p = resultingStates.get(hsPrime);
-			tps.add( new TransitionProb(p, eo));
-		}
-		return tps;
-	}
+    /**
+     * get the number of action attempts needed for a transition to be known
+     * @return the rmax m coefficient
+     */
+    public int getThreshold(){
+        return mThreshold;
+    }
 
-	
+    /**
+     * get the number of times a was executed in s
+     * @param hs current state
+     * @param a the action
+     * @return n(s, a)
+     */
+    public int getStateActionCount(HashableState hs, Action a){
+        int totalCount = 0;
+        Map<HashableState, TransitionCountRewardTotalPair> resultingStateToCount = getResultingStateMap(hs, a);
+        for(HashableState hsPrime : resultingStateToCount.keySet()) {
+            TransitionCountRewardTotalPair pair = resultingStateToCount.get(hsPrime);
+            int count = pair.transitionCount;
+            totalCount += count;
+        }
+        return totalCount;
+    }
+
+    public Map<HashableState, TransitionCountRewardTotalPair> getResultingStateMap(HashableState hs, Action a) {
+        String actionName = StringFormat.parameterizedActionName(a);
+        Map<String, Map<HashableState, TransitionCountRewardTotalPair>> actionToResultingStateToCount = stateActionSPrimeCountRewardPairs.get(hs);
+        if (actionToResultingStateToCount == null){
+            actionToResultingStateToCount = new HashMap<String, Map<HashableState, TransitionCountRewardTotalPair>>();
+            stateActionSPrimeCountRewardPairs.put(hs, actionToResultingStateToCount);
+        }
+        Map<HashableState, TransitionCountRewardTotalPair> resultingStateToCount = actionToResultingStateToCount.get(actionName);
+        if (resultingStateToCount == null){
+            resultingStateToCount = new HashMap<HashableState, TransitionCountRewardTotalPair>();
+            actionToResultingStateToCount.put(actionName, resultingStateToCount);
+        }
+        return resultingStateToCount;
+    }
+
+    public TransitionCountRewardTotalPair getStateCountRewardTotal(HashableState hs, Action a, HashableState hsPrime) {
+        Map<HashableState, TransitionCountRewardTotalPair> resultingStateToCount = getResultingStateMap(hs, a);
+        TransitionCountRewardTotalPair pair = resultingStateToCount.get(hsPrime);
+        if (pair == null) {
+            int count = 0;
+            pair = new TransitionCountRewardTotalPair(count, 0.0);
+            resultingStateToCount.put(hsPrime, pair);
+        }
+        return pair;
+    }
+
+    /**
+     * get the number of times sprime was reached after executing a in s
+     * @param hs the start state
+     * @param a the action
+     * @param hsPrime the resulting state
+     * @return n(s, a, s')
+     */
+    protected int getResultingStateCount(HashableState hs, Action a, HashableState hsPrime){
+        TransitionCountRewardTotalPair pair = getStateCountRewardTotal(hs, a, hsPrime);
+        return pair.transitionCount;
+    }
+
+    /**
+     * gets the cumulative rewardTotal over all attempts of action a in state s
+     * @param hs the current state
+     * @param a the action
+     * @param hsPrime the resulting state
+     * @return r(s, a)
+     */
+    protected double getResultingRewardTotal(HashableState hs, Action a, HashableState hsPrime){
+        TransitionCountRewardTotalPair pair = getStateCountRewardTotal(hs, a, hsPrime);
+        return pair.rewardTotal;
+    }
+
 	/**
 	 * updates the model counts, rewards and probabilities given the
 	 * information in the outcome
@@ -138,28 +180,103 @@ public class RAMDPModel extends FactoredModel {
 		HashableState hs = this.hashingFactory.hashState(result.o);
 		double reward = result.r;
 		Action a = result.a;
-		String actionName = StringFormat.parameterizedActionName(a);
-		HashableState hsp = this.hashingFactory.hashState(result.op);
+		HashableState hsPrime = this.hashingFactory.hashState(result.op);
 		
-		//add to the count the information in the outcome and restore
+		//add to the transitionCount the information in the outcome and restore
 		int n_sa = getStateActionCount(hs, a) + 1;
-		double r_sa = getTotalReward(hs, a) + reward;
-		int n_sasp = getResultingStateCount(hs, a, hsp) + 1;
-		
-		this.stateActionCount.get(hs).put(actionName, n_sa);
-		this.totalReward.get(hs).put(actionName, r_sa);
-		this.resultingStateCount.get(hs).get(actionName).put(hsp, n_sasp);
+		double r_sasp = getResultingRewardTotal(hs, a, hsPrime) + reward;
+		int n_sasp = getResultingStateCount(hs, a, hsPrime) + 1;
+
+        Map<HashableState, TransitionCountRewardTotalPair> resultingStateMap = getResultingStateMap(hs, a);
+		TransitionCountRewardTotalPair pair = resultingStateMap.get(hsPrime);
+        pair.transitionCount = n_sasp;
+		pair.rewardTotal = r_sasp;
+        resultingStateMap.put(hsPrime, pair);
 
 		if (n_sa >= mThreshold) {
-            double newR = r_sa / n_sa;
-		    setReward(hs, a, newR);
-            double newP = (double) n_sasp / (1.0 * n_sa);
-		    setTransitionProbability(hs, a, hsp, newP);
-        }
 
+		    // update THIS transition
+            PossibleOutcome outcome = getPossibleOutcome(hs, a, hsPrime);
+            double newR = (1.0 * r_sasp) / (1.0 * n_sasp); // .... was n_sa;
+            double newP = (1.0 * n_sasp) / (1.0 * n_sa);
+            setApproximateReward(hs, a, hsPrime, newR);
+            setApproximateTransitionProbability(hs, a, hsPrime, newP);
+
+            // update the other known possible transitions
+            for (HashableState otherHsPrime : resultingStateMap.keySet()) {
+                if (otherHsPrime.equals(hsPrime)) {
+                    // this is the transition we just updated, skip
+                    continue;
+                }
+                int otherTransitionCount = getResultingStateCount(hs, a, otherHsPrime);
+                double remainingP = (1.0 * otherTransitionCount) / (1.0 * n_sa);
+                setApproximateTransitionProbability(hs, a, otherHsPrime, remainingP);
+            }
+
+        }
 	}
 
-	protected HashableState createImaginedState(HashableState basis) {
+	protected PossibleOutcome getPossibleOutcome(HashableState hs, Action a, HashableState hsPrime) {
+        Map<HashableState, PossibleOutcome> sPrimeToOutcomes = getSPrimeToOutcomes(hs, a);
+        PossibleOutcome outcome = sPrimeToOutcomes.get(hsPrime);
+        if (outcome == null) {
+            double initialReward = 0.0;
+            double initialProbability = 0.0;
+            EnvironmentOutcome eo = new EnvironmentOutcome(hs.s(), a, hsPrime.s(), initialReward, terminal(hsPrime.s()));
+            outcome = new PossibleOutcome(hashingFactory, eo, initialProbability);
+            sPrimeToOutcomes.put(hsPrime, outcome);
+        }
+        return outcome;
+    }
+
+	protected void setApproximateReward(HashableState hs, Action a, HashableState hsPrime, double reward) {
+        PossibleOutcome outcome = getPossibleOutcome(hs, a, hsPrime);
+        outcome.setReward(reward);
+    }
+
+    protected void setApproximateTransitionProbability(HashableState hs, Action a, HashableState hsPrime, double probability) {
+        PossibleOutcome outcome = getPossibleOutcome(hs, a, hsPrime);
+        outcome.setTransitionProbability(probability);
+    }
+
+    protected Map<HashableState, PossibleOutcome> getSPrimeToOutcomes(HashableState hs, Action a) {
+        String actionName = StringFormat.parameterizedActionName(a);
+        HashableStateActionPair pair = new HashableStateActionPair(hs, actionName);
+        HashMap<HashableState, PossibleOutcome> sPrimeToOutcomes = approximateTransitions.get(pair);
+        if (sPrimeToOutcomes == null) {
+            sPrimeToOutcomes = new HashMap<HashableState, PossibleOutcome>();
+            approximateTransitions.put(pair, sPrimeToOutcomes);
+        }
+        return sPrimeToOutcomes;
+    }
+
+    // the transitions come from the recorded rewards and probabilities in the maps
+    @Override
+    public List<TransitionProb> transitions(State s, Action a) {
+        HashableState hs = this.hashingFactory.hashState(s);
+        Map<HashableState, PossibleOutcome> sPrimeToOutcomes = getSPrimeToOutcomes(hs, a);
+        Collection<PossibleOutcome> outcomes = sPrimeToOutcomes.values();
+        List<TransitionProb> tps = new ArrayList<TransitionProb>();
+        if (outcomes.size() < 1) {
+            if (hImaginedState == null) {
+                hImaginedState = createImaginedState(hs);
+            }
+            EnvironmentOutcome imaginedOutcome = new EnvironmentOutcome(s, a, hImaginedState.s(), rmax, true);
+            TransitionProb imaginedTransition = new TransitionProb(1.0, imaginedOutcome);
+            tps.add(imaginedTransition);
+            return tps;
+        }
+        for (PossibleOutcome outcome : outcomes) {
+            TransitionProb probability = outcome.transitionProbability;
+            if (outcome.getOutcome() != probability.eo) {
+                throw new RuntimeException("ERROR: the EnvironmentOutcome stored in the TransitionProb was not identical to the one in its own PossibleOutcome");
+            }
+            tps.add(probability);
+        }
+        return tps;
+    }
+
+    protected HashableState createImaginedState(HashableState basis) {
         MutableOOState imaginedState = (MutableOOState) basis.s().copy();
         List<ObjectInstance> objectInstances = new ArrayList<ObjectInstance>(imaginedState.objects());
         for (ObjectInstance objectInstance : objectInstances) {
@@ -167,152 +284,6 @@ public class RAMDPModel extends FactoredModel {
         }
         HashableState hImaginedState = hashingFactory.hashState(imaginedState);
         return hImaginedState;
-    }
-
-
-	/**
-	 * get a map of state that could result from taking action a in state s
-	 * along with their probabilities
-	 * @param hs the current hashed state
-	 * @param a the action to take
-	 * @return a map of hashed resulting states with their probability
-	 */
-	protected Map<HashableState, Double> getTransitionProbabilities(HashableState hs, Action a){
-        String actionName = StringFormat.parameterizedActionName(a);
-        int n_sa = getStateActionCount(hs, a);
-        if (n_sa < mThreshold) {
-            if (hImaginedState == null) {
-                hImaginedState = createImaginedState(hs);
-            }
-            Map<HashableState, Double> tempTransition = new HashMap<HashableState, Double>();
-            tempTransition.put(hImaginedState, 1.0);
-            return tempTransition;
-        }
-	    return transitionProbabilities.get(hs).get(actionName);
-	}
-
-	protected double getReward(HashableState hs, Action a) {
-        String actionName = StringFormat.parameterizedActionName(a);
-        if (rewards.get(hs) == null || rewards.get(hs).get(actionName) == null) {
-            return rmax;
-        }
-        return rewards.get(hs).get(actionName);
-    }
-
-	/**
-	 * get the number of times a was executed in s
-	 * @param hs current state
-	 * @param a the action
-	 * @return n(s, a)
-	 */
-	public int getStateActionCount(HashableState hs, Action a){
-	    String actionName = StringFormat.parameterizedActionName(a);
-        Map<String, Integer> actionToCount = stateActionCount.get(hs);
-        if (actionToCount == null) {
-            actionToCount = new HashMap<String,Integer>();
-	        stateActionCount.put(hs, actionToCount);
-        }
-        Integer count = actionToCount.get(actionName);
-        if (count == null) {
-            count = 0;
-	        actionToCount.put(actionName, count);
-        }
-		return count;
-	}
-	
-	/**
-	 * get the number of times sprime was reached after executing a in s
-	 * @param hs the start state
-	 * @param a the action
-	 * @param hsp the resulting state
-	 * @return n(s, a, s')
-	 */
-	protected int getResultingStateCount(HashableState hs, Action a, HashableState hsp){
-	    String actionName = StringFormat.parameterizedActionName(a);
-        Map<String, Map<HashableState, Integer>> actionToResultingStateToCount = resultingStateCount.get(hs);
-        if (actionToResultingStateToCount == null){
-            actionToResultingStateToCount = new HashMap<String, Map<HashableState, Integer>>();
-			resultingStateCount.put(hs, actionToResultingStateToCount);
-		}
-        Map<HashableState, Integer> resultingStateToCount = actionToResultingStateToCount.get(actionName);
-        if (resultingStateToCount == null){
-            resultingStateToCount = new HashMap<HashableState, Integer>();
-            actionToResultingStateToCount.put(actionName, resultingStateToCount);
-		}
-		Integer count = resultingStateToCount.get(hsp);
-		if (count == null) {
-		    count = 0;
-		    resultingStateToCount.put(hsp, count);
-        }
-		return count;
-	}
-	
-	/**
-	 * gets the cumulative reward over all attempts of action a in state s
-	 * @param hs the current state
-	 * @param a the action
-	 * @return r(s, a)
-	 */
-	protected double getTotalReward(HashableState hs, Action a){
-	    String actionName = StringFormat.parameterizedActionName(a);
-        Map<String, Double> actionToReward = totalReward.get(hs);
-		if (actionToReward == null) {
-		    actionToReward = new HashMap<String,Double>();
-		    totalReward.put(hs, actionToReward);
-        }
-        Double reward = actionToReward.get(actionName);
-        if (reward == null) {
-            reward = 0.0;
-            actionToReward.put(actionName, reward);
-        }
-        return reward;
-	}
-	
-	/**
-	 * get the number of action attempts needed for a transition to be known
-	 * @return the rmax m coefficient
-	 */
-	public int getThreshold(){
-		return mThreshold;
-	}
-
-
-    /**
-     * sets R(s,a) to the given value
-     * @param hs the current state
-     * @param a the action to take
-     * @param reward the new reward
-     */
-    protected void setReward(HashableState hs, Action a, double reward){
-        String actionName = StringFormat.parameterizedActionName(a);
-        Map<String, Double> actionToReward = rewards.get(hs);
-        if (actionToReward == null) {
-            actionToReward = new HashMap<String, Double>();
-            rewards.put(hs, actionToReward);
-        }
-        actionToReward.put(actionName, reward);
-    }
-
-    /**
-     * sets the probability of going to s' from s after executing a
-     * @param hs the current state
-     * @param a the action
-     * @param hsp the resulting state
-     * @param probability the new probability
-     */
-    protected void setTransitionProbability(HashableState hs, Action a, HashableState hsp, double probability){
-        String actionName = StringFormat.parameterizedActionName(a);
-        Map<String, Map<HashableState, Double>> actionToSPrimeToDouble = transitionProbabilities.get(hs);
-        if (actionToSPrimeToDouble == null) {
-            actionToSPrimeToDouble = new HashMap<String, Map<HashableState, Double>>();
-            transitionProbabilities.put(hs, actionToSPrimeToDouble);
-        }
-        Map<HashableState, Double> sPrimeToDouble = actionToSPrimeToDouble.get(actionName);
-        if (sPrimeToDouble == null) {
-            sPrimeToDouble = new HashMap<HashableState, Double>();
-            actionToSPrimeToDouble.put(actionName, sPrimeToDouble);
-        }
-        sPrimeToDouble.put(hsp, probability);
     }
 
 }

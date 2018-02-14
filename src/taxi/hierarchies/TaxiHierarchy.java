@@ -48,8 +48,8 @@ public class TaxiHierarchy {
 	
 	/***
 	 * creates the standards taxi hierarchy and returns the root task
-	 * @param correctMoveprob the probability that a movement action will work as expected
-	 * @param fickleProbability the probability that a passenger in the taxi will change goals
+	 * @param correctMoveprob the transitionProbability that a movement action will work as expected
+	 * @param fickleProbability the transitionProbability that a passenger in the taxi will change goals
 	 * @return the root task of the taxi hierarchy
 	 */
 	public static Task createAMDPHierarchy(double correctMoveprob, double fickleProbability, boolean plan){
@@ -131,8 +131,8 @@ public class TaxiHierarchy {
 
 	/**
 	 * creates a taxi hierarchy with no abstractions 
-	 * @param correctMoveprob the probability that a movement action will work as expected 
-	 * @param fickleProbability the probability that a passenger in the taxi will change goals
+	 * @param correctMoveprob the transitionProbability that a movement action will work as expected
+	 * @param fickleProbability the transitionProbability that a passenger in the taxi will change goals
 	 * @return the root task of the taxi hierarchy
 	 */
 	public static Task createRMAXQHierarchy(double correctMoveprob, double fickleProbability){
@@ -218,8 +218,8 @@ public class TaxiHierarchy {
 
 	/***
 	 * creates the hiergen taxi hierarchy and returns the root task
-	 * @param correctMoveprob the probability that a movement action will work as expected
-	 * @param fickleProbability the probability that a passenger in the taxi will change goals
+	 * @param correctMoveprob the transitionProbability that a movement action will work as expected
+	 * @param fickleProbability the transitionProbability that a passenger in the taxi will change goals
 	 * @return the root task of the taxi hierarchy
 	 */
 	public static Task createHierGenHierarchy(double correctMoveprob, double fickleProbability) {

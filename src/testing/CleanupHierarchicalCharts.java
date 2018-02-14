@@ -69,7 +69,7 @@ public class CleanupHierarchicalCharts {
 
                     @Override
                     public LearningAgent generateAgent() {
-                        return new RAMDPLearningAgent(ramdpRoot, conf.rmax.threshold, conf.gamma, conf.rmax.vmax, hs, conf.rmax.max_delta);
+                        return new RAMDPLearningAgent(ramdpRoot, conf.rmax.threshold, conf.gamma, conf.rmax.vmax, hs, conf.rmax.max_delta, conf.rmax.max_iterations_in_model);
                     }
                 };
             }

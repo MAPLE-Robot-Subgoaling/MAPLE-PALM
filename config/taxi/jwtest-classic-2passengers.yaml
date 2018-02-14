@@ -10,7 +10,7 @@ gamma: 0.95
 
 stochastic:
   seed: 7237821
-  correct_move: 1.0
+  correct_move: 0.999
   fickle: 0.0
   random_start: true
 

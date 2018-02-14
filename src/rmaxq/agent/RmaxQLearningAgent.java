@@ -474,7 +474,7 @@ public class RmaxQLearningAgent implements LearningAgent {
 
 	private void setReward_eq6(GroundedTask task, HashableState hs) {
 		if (!task.isPrimitive()) {
-			throw new RuntimeException("Error: tried to approximate reward (equation 6) on non-primitive task");
+			throw new RuntimeException("Error: tried to approximate rewardTotal (equation 6) on non-primitive task");
 		}
 		// only primitive tasks are allowed to be computed this way
 		double reward;

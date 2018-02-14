@@ -43,7 +43,7 @@ public class TaxiRootDomain implements DomainGenerator {
 
 	/**
 	 * creates a abstraction 2 taxi domain
-	 * @param rf reward function
+	 * @param rf rewardTotal function
 	 * @param tf terminal function
 	 */
 	public TaxiRootDomain(RewardFunction rf, TerminalFunction tf) {

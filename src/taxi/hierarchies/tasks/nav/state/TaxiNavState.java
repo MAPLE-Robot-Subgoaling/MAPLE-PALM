@@ -192,4 +192,12 @@ public class TaxiNavState implements MutableOOState{
 		return walls.get(wallName).get(attName);
 	}
 
+	@Override
+	public String toString() {
+		return "TaxiNavState{" +
+				taxi +
+				", " + locations +
+				", " + walls +
+				'}';
+	}
 }

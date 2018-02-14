@@ -42,7 +42,7 @@ public class TaxiBringonDomain implements DomainGenerator {
 
 	/**
 	 * creates a taxi abstraction 1 domain generator
-	 * @param r reward function
+	 * @param r rewardTotal function
 	 * @param t terminal function
 	 */
 	public TaxiBringonDomain(RewardFunction r, TerminalFunction t) {

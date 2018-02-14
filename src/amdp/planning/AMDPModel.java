@@ -60,9 +60,9 @@
 //	public List<TransitionProb> transitions(State s, Action a) {
 // 		List<TransitionProb> tps = baseModel.transitions(s, a);
 //
-// 		//adjust the reward and terminal values to be relevant for the task
+// 		//adjust the rewardTotal and terminal values to be relevant for the task
 //		for(TransitionProb tp : tps){
-//			tp.eo.r = task.getReward(tp.eo.o, tp.eo.a, tp.eo.op);
+//			tp.eo.r = task.getApproximateReward(tp.eo.o, tp.eo.a, tp.eo.op);
 //			tp.eo.terminated = terminal(tp.eo.op);
 //		}
 //		return tps;

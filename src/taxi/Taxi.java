@@ -89,11 +89,11 @@ public class Taxi implements DomainGenerator{
 	
 	/**
 	 * create a taxi domain generator
-	 * @param r reward function
+	 * @param r rewardTotal function
 	 * @param t terminal function
 	 * @param fickle whether the domain is fickle
-	 * @param fickleprob probability the passenger that is just picked up will change their goal
-	 * @param correctMoveprob probability the taxi will go in the correct direction they select
+	 * @param fickleprob transitionProbability the passenger that is just picked up will change their goal
+	 * @param correctMoveprob transitionProbability the taxi will go in the correct direction they select
 	 */
 	public Taxi(RewardFunction r, TerminalFunction t, boolean fickle,
 			double fickleprob, double correctMoveprob) {
@@ -107,8 +107,8 @@ public class Taxi implements DomainGenerator{
 	/**
 	 * create a taxi domain generator
 	 * @param fickle whether the domain is fickle 
-	 * @param fickleprob probability the passenger that is just picked up will change their goal
-	 * @param correctMoveprob probability the taxi will go in the correct direction they select
+	 * @param fickleprob transitionProbability the passenger that is just picked up will change their goal
+	 * @param correctMoveprob transitionProbability the taxi will go in the correct direction they select
 	 */
 	public Taxi(boolean fickle, double fickleprob, double correctMoveprob) {
 		this.fickle = fickle;
@@ -121,8 +121,8 @@ public class Taxi implements DomainGenerator{
 	/**
 	 * create a taxi domain generator
 	 * @param fickle whether the domain is fickle 
-	 * @param fickleprob probability the passenger that is just picked up will change their goal
-	 * @param movement a array saying the probability of execution each action (2nd index) given 
+	 * @param fickleprob transitionProbability the passenger that is just picked up will change their goal
+	 * @param movement a array saying the transitionProbability of execution each action (2nd index) given
 	 * the selected action (1rt action)
 	 */
 	public Taxi(boolean fickle, double fickleprob, double[][] movement) {
@@ -142,8 +142,8 @@ public class Taxi implements DomainGenerator{
 	
 	/**
 	 * sets the movement array so the right direction will be taken with
-	 * the given probability and the perpendicular action the rest of the time
-	 * @param correctProb the probability that the correct action is taken
+	 * the given transitionProbability and the perpendicular action the rest of the time
+	 * @param correctProb the transitionProbability that the correct action is taken
 	 */
 	private void setMoveDynamics(double correctProb){
 		moveDynamics = new double[NUM_MOVE_ACTIONS][NUM_MOVE_ACTIONS];

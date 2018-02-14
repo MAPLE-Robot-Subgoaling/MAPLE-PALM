@@ -135,12 +135,12 @@ public class GroundedTask {
 	}
 	
 	/**
-	 * each grounded task has a specific reward function
-	 * this returns the reward of a transition into the given state 
+	 * each grounded task has a specific rewardTotal function
+	 * this returns the rewardTotal of a transition into the given state
 	 * @param s the source of the transition
 	 * @param a the action just taken
 	 * @param sPrime the result of the transition
-	 * @return the grounded task's reward of a transition to s
+	 * @return the grounded task's rewardTotal of a transition to s
 	 */
 	public double getReward(State s, Action a, State sPrime) {
 		return t.reward(s, a, sPrime);

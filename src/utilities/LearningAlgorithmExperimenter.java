@@ -32,7 +32,7 @@ import java.util.List;
  * an agent is generated from an agent factory, the performance plotter is temporarily frozen from collecting data until the new agent is returned. This allows
  * agent factories to perform offline learning before returning a new agent in the same domain without affecting the experimenter results.
  * <p>
- * By default the cumulative reward per step will be plotted and if more than one trial is specified, the both the most recent trail and the trial average plot will be shown.
+ * By default the cumulative rewardTotal per step will be plotted and if more than one trial is specified, the both the most recent trail and the trial average plot will be shown.
  * If only one trial is specified, then only the most recent trial plot will be shown. To control the kinds of plots displayed use the 
  * {@link #setUpPlottingConfiguration(int, int, int, int, TrialMode, PerformanceMetric...)} method. 
  * 
