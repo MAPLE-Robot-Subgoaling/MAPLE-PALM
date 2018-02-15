@@ -154,10 +154,12 @@ public class PossibleOutcome {
     @Override
     public String toString() {
         return "PossibleOutcome{" +
-                "p=" + getTransitionProbability() +
+                "a=" + outcome.a +
+                ", p=" + getTransitionProbability() +
                 ", r=" + getReward() +
+                ", tCount=" + getTransitionCount() +
+                ", rTotal=" + getRewardTotal() +
                 ", s=" + outcome.o +
-                ", a=" + outcome.a +
                 ", sp=" + outcome.op +
                 '}';
     }

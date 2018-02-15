@@ -18,7 +18,7 @@ public class NonprimitiveTask extends Task {
 
     // default rewardTotal used in nonprimitive task's pseudo-rewardTotal function
     // a slightly positive rewardTotal provides a smooth gradient for learning discounts in a multi-time model
-    public static double DEFAULT_REWARD = 0.0;
+    public static double DEFAULT_REWARD = 0.0;//0.000001;
 
 	protected GoalFailTF goalFailTF;
 	protected GoalFailRF goalFailRF;

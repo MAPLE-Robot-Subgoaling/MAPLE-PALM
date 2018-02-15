@@ -49,9 +49,8 @@ public class HashableStateActionPair {
 
     @Override
     public String toString() {
-        return "HSAPair{" +
-                "action=" + actionName +
-                ", hs=" + hs.s().toString() +
+        return "{" + actionName +
+                ", " + hs.s().toString() +
                 '}';
     }
 }

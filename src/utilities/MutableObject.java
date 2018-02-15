@@ -46,7 +46,8 @@ public abstract class MutableObject implements MutableObjectInstance, Serializab
 	@Override
 	public String toString() {
 		StringBuilder buf = new StringBuilder();
-		buf.append(className()).append(":").append(name());
+//		buf.append(className()).append(":").append(name());
+		buf.append(name());
 		buf.append(" {");
 		List<Object> keys = this.variableKeys();
 		for(Object key : keys){

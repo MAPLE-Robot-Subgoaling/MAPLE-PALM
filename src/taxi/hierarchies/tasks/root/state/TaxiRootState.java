@@ -137,10 +137,6 @@ public class TaxiRootState implements MutableOOState {
 
 	@Override
 	public String toString(){
-		String out = "{\n";
-		for(TaxiRootPassenger p : passengers.values()){
-			out += p.toString() + "\n";
-		}
-		return out;
+		return OOStateUtilities.ooStateToString(this);
 	}
 }

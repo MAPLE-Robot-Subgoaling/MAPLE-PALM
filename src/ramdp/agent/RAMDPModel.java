@@ -140,12 +140,13 @@ public class RAMDPModel extends FactoredModel {
                 double otherRewardTotal = otherOutcome.getRewardTotal();
                 int otherTransitionCount = otherOutcome.getTransitionCount();
                 double otherReward = (1.0 * otherRewardTotal) / (1.0 * otherTransitionCount);
-                double remainingP = (1.0 * otherTransitionCount) / (1.0 * n_sa);
+                double otherP = (1.0 * otherTransitionCount) / (1.0 * n_sa);
                 otherOutcome.setReward(otherReward);
-                otherOutcome.setTransitionProbability(remainingP);
+                otherOutcome.setTransitionProbability(otherP);
             }
 
         } else {
+            hsPrimeToOutcomes = getHsPrimeToOutcomes(hs, a);
 		    double imaginedR = 0.0;
 		    double equalP = 1.0 / hsPrimeToOutcomes.size();
 		    outcome.setReward(imaginedR);
@@ -172,6 +173,7 @@ public class RAMDPModel extends FactoredModel {
     public int getStateActionCount(HashableState hs, Action a){
         int totalCount = 0;
         Map<HashableState, PossibleOutcome> hsPrimeToOutcomes = getHsPrimeToOutcomes(hs, a);
+        if (hsPrimeToOutcomes == null) { return totalCount; }
         for(HashableState hsPrime : hsPrimeToOutcomes.keySet()) {
             PossibleOutcome outcome = getPossibleOutcome(hsPrimeToOutcomes, hs, a, hsPrime);
             int transitionCount = outcome.getTransitionCount();
@@ -186,6 +188,16 @@ public class RAMDPModel extends FactoredModel {
 //    }
 
     protected PossibleOutcome getPossibleOutcome(Map<HashableState, PossibleOutcome> hsPrimeToOutcomes, HashableState hs, Action a, HashableState hsPrime) {
+        if (hsPrimeToOutcomes == null) {
+            String actionName = StringFormat.parameterizedActionName(a);
+            HashableStateActionPair pair = new HashableStateActionPair(hs, actionName);
+            hsPrimeToOutcomes = new HashMap<HashableState, PossibleOutcome>();
+            approximateTransitions.put(pair, hsPrimeToOutcomes);
+        } else {
+            if (hsPrimeToOutcomes.size() < 1) {
+                System.err.println("empty");
+            }
+        }
         PossibleOutcome outcome = hsPrimeToOutcomes.get(hsPrime);
         if (outcome == null) {
             double initialReward = 0.0;
@@ -203,10 +215,7 @@ public class RAMDPModel extends FactoredModel {
         String actionName = StringFormat.parameterizedActionName(a);
         HashableStateActionPair pair = new HashableStateActionPair(hs, actionName);
         Map<HashableState, PossibleOutcome> hsPrimeToOutcomes = approximateTransitions.get(pair);
-        if (hsPrimeToOutcomes == null) {
-            hsPrimeToOutcomes = new HashMap<HashableState, PossibleOutcome>();
-            approximateTransitions.put(pair, hsPrimeToOutcomes);
-        }
+
         return hsPrimeToOutcomes;
     }
 
@@ -256,4 +265,17 @@ public class RAMDPModel extends FactoredModel {
         return hImaginedState;
     }
 
+    public void printDebugInfo() {
+        System.out.println("\n\n\n******************************************************************************************************\n\n\n");
+        for(HashableStateActionPair pair : approximateTransitions.keySet()) {
+            System.out.println(pair.actionName);
+            System.out.println(pair.hs.s().toString());
+            Map<HashableState, PossibleOutcome> hsPrimeToOutcomes = approximateTransitions.get(pair);
+            for (HashableState hsPrime : hsPrimeToOutcomes.keySet()) {
+                PossibleOutcome outcome = hsPrimeToOutcomes.get(hsPrime);
+                System.out.println(outcome.toString());
+            }
+            System.out.println("\n*****************\n");
+        }
+    }
 }
