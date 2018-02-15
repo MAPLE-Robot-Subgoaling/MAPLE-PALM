@@ -3,7 +3,9 @@ package taxi.functions.amdp;
 import burlap.mdp.core.oo.propositional.PropositionalFunction;
 import burlap.mdp.core.oo.state.OOState;
 import taxi.Taxi;
+import taxi.hierarchies.tasks.dropoff.state.TaxiDropoffState;
 import taxi.hierarchies.tasks.get.TaxiGetDomain;
+import taxi.hierarchies.tasks.get.state.TaxiGetState;
 import utilities.MutableObject;
 
 public class GetCompletedPF extends PropositionalFunction{ 
@@ -15,6 +17,7 @@ public class GetCompletedPF extends PropositionalFunction{
 	
 	@Override
 	public boolean isTrue(OOState s, String... params) {
+		if (!(s instanceof TaxiGetState)) { return false; }
 		String passengerName = params[0];
 		MutableObject passenger = (MutableObject) s.object(passengerName);
 		if (passenger == null) { return false; }

@@ -74,7 +74,7 @@ public class RAMDPModel extends FactoredModel {
 				return tp.eo;
 			}
 		}
-		
+
 		throw new RuntimeException("Probabilities don't sum to 1.0: " + sum);
 	}
 
@@ -98,6 +98,8 @@ public class RAMDPModel extends FactoredModel {
         return mThreshold;
     }
 
+    public double getRmax() { return rmax; }
+
 	/**
 	 * updates the model counts, rewards and probabilities given the
 	 * information in the outcome
@@ -108,10 +110,11 @@ public class RAMDPModel extends FactoredModel {
 		double reward = result.r;
 		Action a = result.a;
 		HashableState hsPrime = this.hashingFactory.hashState(result.op);
+        Map<HashableState, PossibleOutcome> hsPrimeToOutcomes = getHsPrimeToOutcomes(hs, a);
 		
 		//add to the transitionCount the information in the outcome and restore
 		int n_sa = getStateActionCount(hs, a) + 1;
-        PossibleOutcome outcome = getPossibleOutcome(hs, a, hsPrime);
+        PossibleOutcome outcome = getPossibleOutcome(hsPrimeToOutcomes, hs, a, hsPrime);
 		double r_sasp = outcome.getRewardTotal() + reward;
 		int n_sasp = outcome.getTransitionCount() + 1;
 
@@ -122,25 +125,40 @@ public class RAMDPModel extends FactoredModel {
 		if (n_sa >= mThreshold) {
 
 		    // update the approximate model for THIS transition
-            PossibleOutcome thisTransition = getPossibleOutcome(hs, a, hsPrime);
-            double newR = (1.0 * r_sasp) / (1.0 * n_sasp); // .... was n_sa;
+            double newR = (1.0 * r_sasp) / (1.0 * n_sasp); // n_sa, n_sasp
             double newP = (1.0 * n_sasp) / (1.0 * n_sa);
-            thisTransition.setReward(newR);
-            thisTransition.setTransitionProbability(newP);
+            outcome.setReward(newR);
+            outcome.setTransitionProbability(newP);
 
             // update the approximate model for the other known possible transitions
-            Map<HashableState, PossibleOutcome> hsPrimeToOutcomes = getHsPrimeToOutcomes(hs, a);
             for(HashableState otherHsPrime : hsPrimeToOutcomes.keySet()) {
                 if (otherHsPrime.equals(hsPrime)) {
                     // this is the transition we just updated, so skip it
                     continue;
                 }
-                PossibleOutcome otherOutcome = getPossibleOutcome(hs, a, otherHsPrime);
+                PossibleOutcome otherOutcome = getPossibleOutcome(hsPrimeToOutcomes, hs, a, otherHsPrime);
+                double otherRewardTotal = otherOutcome.getRewardTotal();
                 int otherTransitionCount = otherOutcome.getTransitionCount();
+                double otherReward = (1.0 * otherRewardTotal) / (1.0 * otherTransitionCount);
                 double remainingP = (1.0 * otherTransitionCount) / (1.0 * n_sa);
+                otherOutcome.setReward(otherReward);
                 otherOutcome.setTransitionProbability(remainingP);
             }
 
+        } else {
+		    double imaginedR = 0.0;
+		    double equalP = 1.0 / hsPrimeToOutcomes.size();
+		    outcome.setReward(imaginedR);
+		    outcome.setTransitionProbability(equalP);
+            for(HashableState otherHsPrime : hsPrimeToOutcomes.keySet()) {
+                if (otherHsPrime.equals(hsPrime)) {
+                    // this is the transition we just updated, so skip it
+                    continue;
+                }
+                PossibleOutcome otherOutcome = getPossibleOutcome(hsPrimeToOutcomes, hs, a, otherHsPrime);
+                otherOutcome.setReward(imaginedR);
+                otherOutcome.setTransitionProbability(equalP);
+            }
         }
 	}
 
@@ -162,10 +180,10 @@ public class RAMDPModel extends FactoredModel {
         return totalCount;
     }
 
-	protected PossibleOutcome getPossibleOutcome(HashableState hs, Action a, HashableState hsPrime) {
-        Map<HashableState, PossibleOutcome> hsPrimeToOutcomes = getHsPrimeToOutcomes(hs, a);
-        return getPossibleOutcome(hsPrimeToOutcomes, hs, a, hsPrime);
-    }
+//	protected PossibleOutcome getPossibleOutcome(HashableState hs, Action a, HashableState hsPrime) {
+//        Map<HashableState, PossibleOutcome> hsPrimeToOutcomes = getHsPrimeToOutcomes(hs, a);
+//        return getPossibleOutcome(hsPrimeToOutcomes, hs, a, hsPrime);
+//    }
 
     protected PossibleOutcome getPossibleOutcome(Map<HashableState, PossibleOutcome> hsPrimeToOutcomes, HashableState hs, Action a, HashableState hsPrime) {
         PossibleOutcome outcome = hsPrimeToOutcomes.get(hsPrime);
@@ -188,10 +206,17 @@ public class RAMDPModel extends FactoredModel {
         if (hsPrimeToOutcomes == null) {
             hsPrimeToOutcomes = new HashMap<HashableState, PossibleOutcome>();
             approximateTransitions.put(pair, hsPrimeToOutcomes);
-        } else if (hsPrimeToOutcomes.size() < 1) {
-//            System.err.println("hsPrimeToOutcomes is empty ... ");
         }
         return hsPrimeToOutcomes;
+    }
+
+    public TransitionProb makeImaginedTransition(HashableState hs, Action a) {
+        if (hImaginedState == null) {
+            hImaginedState = createImaginedState(hs);
+        }
+        EnvironmentOutcome imaginedOutcome = new EnvironmentOutcome(hs.s(), a, hImaginedState.s(), rmax, true);
+        TransitionProb imaginedTransition = new TransitionProb(1.0, imaginedOutcome);
+        return imaginedTransition;
     }
 
     // the transitions come from the recorded rewards and probabilities in the maps
@@ -200,22 +225,23 @@ public class RAMDPModel extends FactoredModel {
         HashableState hs = this.hashingFactory.hashState(s);
         Map<HashableState, PossibleOutcome> hsPrimeToOutcomes = getHsPrimeToOutcomes(hs, a);
         List<TransitionProb> tps = new ArrayList<TransitionProb>();
-        if (hsPrimeToOutcomes.size() < 1) {
-            if (hImaginedState == null) {
-                hImaginedState = createImaginedState(hs);
-            }
-            EnvironmentOutcome imaginedOutcome = new EnvironmentOutcome(s, a, hImaginedState.s(), rmax, true);
-            TransitionProb imaginedTransition = new TransitionProb(1.0, imaginedOutcome);
+        if (getStateActionCount(hs, a) < mThreshold || hsPrimeToOutcomes.size() < 1) {
+            TransitionProb imaginedTransition = makeImaginedTransition(hs, a);
             tps.add(imaginedTransition);
             return tps;
         }
+        double totalProbability = 0.0;
         for (HashableState hsPrime : hsPrimeToOutcomes.keySet()) {
-            PossibleOutcome outcome = getPossibleOutcome(hs, a, hsPrime);
+            PossibleOutcome outcome = getPossibleOutcome(hsPrimeToOutcomes, hs, a, hsPrime);
             TransitionProb probability = outcome.transitionProb;
             if (outcome.getOutcome() != probability.eo) {
                 throw new RuntimeException("ERROR: the EnvironmentOutcome stored in the TransitionProb was not identical to the one in its own PossibleOutcome");
             }
             tps.add(probability);
+            totalProbability += probability.p;
+        }
+        if (totalProbability < 0.99999999999 || totalProbability > 1.00000000001) {
+            System.err.println("total probability does not sum to 1.0");
         }
         return tps;
     }

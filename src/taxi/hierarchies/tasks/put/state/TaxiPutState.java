@@ -63,12 +63,16 @@ public class TaxiPutState extends TaxiGetPutState {
 		return null;
 	}
 
+	private List<ObjectInstance> cachedObjectList = null;
 	@Override
 	public List<ObjectInstance> objects() {
+		if (cachedObjectList == null) { cachedObjectList = new ArrayList<ObjectInstance>(); }
+		else { return cachedObjectList; }
 		List<ObjectInstance> obj = new ArrayList<ObjectInstance>();
 		if (taxi != null) { obj.add(taxi); }
 		obj.addAll(passengers.values());
 		obj.addAll(locations.values());
+		cachedObjectList = obj;
 		return obj;
 	}
 
@@ -125,6 +129,7 @@ public class TaxiPutState extends TaxiGetPutState {
 		} else {
 			throw new RuntimeException("Can only add certain objects to state.");
 		}
+        cachedObjectList = null;
 		return this;
 	}
 
@@ -140,6 +145,7 @@ public class TaxiPutState extends TaxiGetPutState {
             touchLocation(oname);
             locations.remove(oname);
         }
+        cachedObjectList = null;
         return this;
 	}
 

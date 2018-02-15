@@ -77,6 +77,43 @@ public class TaxiStateFactory {
 		return classic;
 	}
 
+	public static TaxiState createMediumState() { return createMediumState(1); }
+
+	public static TaxiState createMediumState(int numPassengers) {
+        TaxiAgent taxi = new TaxiAgent(Taxi.CLASS_TAXI + 0, 1, 1);
+
+        List<TaxiLocation> locations = new ArrayList<TaxiLocation>();
+        locations.add(new TaxiLocation(Taxi.CLASS_LOCATION + 0, 0, 0, Taxi.COLOR_RED));
+        locations.add(new TaxiLocation(Taxi.CLASS_LOCATION + 1, 0, 3, Taxi.COLOR_YELLOW));
+        locations.add(new TaxiLocation(Taxi.CLASS_LOCATION + 2, 3, 0, Taxi.COLOR_BLUE));
+        locations.add(new TaxiLocation(Taxi.CLASS_LOCATION + 3, 3, 3, Taxi.COLOR_GREEN));
+
+        List<TaxiPassenger> passengers = new ArrayList<TaxiPassenger>();
+        for (int i = 0; i < numPassengers; i++){
+            // get a random goal
+            int startX = 0;
+            int startY = 0;
+            String goalLocationName = locations.get(RandomFactory.getMapped(0).nextInt(locations.size())).getName();
+            String startLocationName = goalLocationName;
+            while (startLocationName.equals(goalLocationName)) {
+                // put the agent in a random depot that is NOT the goal
+                TaxiLocation startLocation = locations.get(RandomFactory.getMapped(0).nextInt(locations.size()));
+                startX = (int) startLocation.get(Taxi.ATT_X);
+                startY = (int) startLocation.get(Taxi.ATT_Y);
+                startLocationName = startLocation.getName();
+            }
+            passengers.add(new TaxiPassenger(Taxi.CLASS_PASSENGER + i, startX, startY, goalLocationName));
+        }
+
+        List<TaxiWall> walls = new ArrayList<TaxiWall>();
+        walls.add(new TaxiWall(Taxi.CLASS_WALL + 0, 0, 0, 4, false));
+        walls.add(new TaxiWall(Taxi.CLASS_WALL + 1, 4, 0, 4, false));
+        walls.add(new TaxiWall(Taxi.CLASS_WALL + 2, 0, 0, 4, true));
+        walls.add(new TaxiWall(Taxi.CLASS_WALL + 3, 0, 4, 4, true));
+
+        return new TaxiState(taxi, passengers, locations, walls);
+    }
+
 	public static TaxiState createSmallState() {
 	    return createSmallState(1);
     }

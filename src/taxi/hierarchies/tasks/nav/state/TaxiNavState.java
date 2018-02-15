@@ -91,12 +91,16 @@ public class TaxiNavState implements MutableOOState{
 		return null;
 	}
 
+	private List<ObjectInstance> cachedObjectList = null;
 	@Override
 	public List<ObjectInstance> objects() {
+        if (cachedObjectList == null) { cachedObjectList = new ArrayList<ObjectInstance>(); }
+        else { return cachedObjectList; }
 		List<ObjectInstance> objs = new ArrayList<ObjectInstance>();
 		if (taxi != null) { objs.add(taxi); }
 		objs.addAll(locations.values());
 		objs.addAll(walls.values());
+		cachedObjectList = objs;
 		return objs;
 	}
 
@@ -118,7 +122,7 @@ public class TaxiNavState implements MutableOOState{
 
 	@Override
 	public Object get(Object variableKey) {
-		return OOStateUtilities.get(this, variableKey);
+	    return OOStateUtilities.get(this, variableKey);
 	}
 
 	@Override
@@ -148,6 +152,7 @@ public class TaxiNavState implements MutableOOState{
             touchLocation(oname);
             locations.remove(oname);
         }
+        cachedObjectList = null;
         return this;
 	}
 
@@ -200,4 +205,6 @@ public class TaxiNavState implements MutableOOState{
 				", " + walls +
 				'}';
 	}
+
+
 }

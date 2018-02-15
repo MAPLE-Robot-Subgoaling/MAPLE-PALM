@@ -5,6 +5,7 @@ import burlap.behavior.policy.PolicyUtils;
 import burlap.behavior.singleagent.Episode;
 import burlap.behavior.singleagent.learning.LearningAgent;
 import burlap.behavior.valuefunction.ConstantValueFunction;
+import burlap.behavior.valuefunction.ValueFunction;
 import burlap.mdp.core.action.Action;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.environment.Environment;
@@ -14,6 +15,8 @@ import burlap.statehashing.HashableStateFactory;
 import com.sun.javafx.binding.StringFormatter;
 import hierarchy.framework.GroundedTask;
 import hierarchy.framework.StringFormat;
+import state.hashing.simple.CachedHashableStateFactory;
+import utilities.BoundedRTDP;
 import utilities.ValueIteration;
 
 import java.util.ArrayList;
@@ -172,21 +175,21 @@ public class RAMDPLearningAgent implements LearningAgent{
 				action = this.taskNames.get(actionName);
 			}
 
-            int stepsBefore = steps;
+//            int stepsBefore = steps;
 
 			// solve this task's next chosen subtask, recursively
             subtaskCompleted = solveTask(action, baseEnv, maxSteps);
 
-            int stepsAfter = steps;
-            int stepsTaken = stepsAfter - stepsBefore;
+//            int stepsAfter = steps;
+//            int stepsTaken = stepsAfter - stepsBefore;
             //System.out.println(tabLevel + "+++ " + task.getAction() + " " + actionCount);
             baseState = e.stateSequence.get(e.stateSequence.size() - 1);
             currentState = task.mapState(baseState);
 
             // use multi-time model discounting ((gamma^k)*rewardTotal) for k steps taken by multi-time model)
-            double discount = Math.pow(gamma, stepsTaken);
-            double discountedReward = discount * task.getReward(pastState, a, currentState);
-//            double discountedReward = task.getApproximateReward(pastState, a, currentState);
+//            double discount = Math.pow(gamma, stepsTaken);
+//            double discountedReward = discount * task.getReward(pastState, a, currentState);
+            double discountedReward = task.getReward(pastState, a, currentState);
             result = new EnvironmentOutcome(pastState, a, currentState, discountedReward, false); //task.isFailure(currentState));
             //System.out.println(tabLevel + "\treward: " + result.r);
 
@@ -229,23 +232,35 @@ public class RAMDPLearningAgent implements LearningAgent{
 	protected Action nextAction(GroundedTask task, State s){
 		RAMDPModel model = getModel(task);
 		OOSADomain domain = task.getDomain(model);
-		ValueIteration plan = new ValueIteration(domain, gamma, hashingFactory, maxDelta, maxIterationsInModelPlanner);
-		plan.toggleReachabiltiyTerminalStatePruning(true);
-		Policy viPolicy = plan.planFromState(s);
-		Policy rmaxPolicy = new RMAXPolicy(model, viPolicy, domain.getActionTypes(), hashingFactory);
-		Action action = rmaxPolicy.action(s);
+//        ValueFunction lowerVInit = new ConstantValueFunction(-model.getRmax());
+//        ValueFunction upperVInit = new ConstantValueFunction(model.getRmax());
+//        BoundedRTDP planner = new BoundedRTDP(domain, gamma, hashingFactory, lowerVInit, upperVInit, 0.01, 10);
+//        planner.setMaxRolloutDepth(100);
+        ValueIteration planner = new ValueIteration(domain, gamma, hashingFactory, maxDelta, maxIterationsInModelPlanner);
+//        planner.toggleReachabiltiyTerminalStatePruning(true);
+//        ValueFunction valueFunction = task.valueFunction;
+//        if (valueFunction != null) {
+//            planner.setValueFunctionInitialization(valueFunction);
+//        }
+		Policy viPolicy = planner.planFromState(s);
+//        double defaultValue = 0.0;
+//        valueFunction = planner.saveValueFunction(defaultValue);
+//        task.valueFunction = valueFunction;
+//		Policy rmaxPolicy = new RMAXPolicy(model, viPolicy, domain.getActionTypes(), hashingFactory);
+//		Action action = rmaxPolicy.action(s);
+        Action action = viPolicy.action(s);
 //        Policy tempPolicy = plan.planFromState(s);
 //        Action action = tempPolicy.action(s);
 //        try {
 //            if (task.toString().contains("solve")) {
-////                Episode e = PolicyUtils.rollout(rmaxPolicy, s, model, 100);
-////                System.out.println(tabLevel + "    Debug rollout: " + e.actionSequence);
+//                Episode e = PolicyUtils.rollout(rmaxPolicy, s, model, 10);
+//                System.out.println(tabLevel + "    Debug rollout: " + e.actionSequence);
 //                System.out.print(action + ", ");
 //            }
 //        } catch (Exception e) {
-//            // ignore, temp debug to assess ramdp
-//            //System.out.println(e);
-////                e.printStackTrace();
+            // ignore, temp debug to assess ramdp
+            //System.out.println(e);
+//                e.printStackTrace();
 //        }
     	return action;
 	}

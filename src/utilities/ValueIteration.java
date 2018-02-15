@@ -8,6 +8,7 @@ import java.util.Set;
 import burlap.behavior.policy.GreedyQPolicy;
 import burlap.behavior.singleagent.planning.Planner;
 import burlap.behavior.singleagent.planning.stochastic.DynamicProgramming;
+import burlap.behavior.valuefunction.ValueFunction;
 import burlap.mdp.core.action.Action;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.SADomain;
@@ -218,7 +219,13 @@ public class ValueIteration extends DynamicProgramming implements Planner {
 		
 	}
 	
-	
+	public ValueFunction saveValueFunction(double defaultValue) {
+		if (!this.hasRunVI) {
+			throw new RuntimeException("ERROR: have not run value iteration yet");
+		}
+		ValueFunction valueFunction = new TabularValueFunction(hashingFactory, this.valueFunction, defaultValue);
+		return valueFunction;
+	}
 	
 
 	

@@ -3,6 +3,7 @@ package hierarchy.framework;
 import java.util.ArrayList;
 import java.util.List;
 
+import burlap.behavior.valuefunction.ValueFunction;
 import burlap.mdp.auxiliary.common.GoalConditionTF;
 import burlap.mdp.auxiliary.stateconditiontest.StateConditionTest;
 import burlap.mdp.core.oo.ObjectParameterizedAction;
@@ -16,6 +17,8 @@ import burlap.mdp.singleagent.model.FullModel;
 import burlap.mdp.singleagent.oo.OOSADomain;
 
 public class GroundedTask {
+
+	public ValueFunction valueFunction;
 
 	/**
 	 * specific action in a task

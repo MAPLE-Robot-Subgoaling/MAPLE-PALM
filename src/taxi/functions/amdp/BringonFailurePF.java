@@ -14,9 +14,11 @@ public class BringonFailurePF extends PropositionalFunction {
 	
 	@Override
 	public boolean isTrue(OOState s, String... params) {
+		if (!(s instanceof TaxiBringonState)) { return false; }
 		TaxiBringonState st = (TaxiBringonState)s;
 		if (st.numObjects() < 1) { return false; }
-		String pass_loc = (String)st.getPassengerAtt(params[0], TaxiBringonDomain.ATT_LOCATION);
+		String passengerName = st.objectsOfClass(Taxi.CLASS_PASSENGER).get(0).name();
+		String pass_loc = (String)st.getPassengerAtt(passengerName, TaxiBringonDomain.ATT_LOCATION);
 		String taxi_loc = (String)st.getTaxiAtt(TaxiBringonDomain.ATT_LOCATION);
 		return !pass_loc.equals(taxi_loc);
 	}

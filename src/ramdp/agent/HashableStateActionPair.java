@@ -36,7 +36,7 @@ public class HashableStateActionPair {
 
         HashableStateActionPair that = (HashableStateActionPair) o;
 
-        if (hs != null ? !hs.equals(that.hs) : that.hs != null) return false;
+        if (hs == null || that.hs == null || hs.hashCode() != that.hs.hashCode()) return false;
         return actionName != null ? actionName.equals(that.actionName) : that.actionName == null;
     }
 

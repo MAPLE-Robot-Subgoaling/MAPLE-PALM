@@ -57,6 +57,10 @@ public class TaxiConfig {
                 return TaxiStateFactory.createSmallState();
             case "small-2passengers":
                 return TaxiStateFactory.createSmallState(2);
+            case "medium":
+                return TaxiStateFactory.createMediumState();
+            case "medium-2passengers":
+                return TaxiStateFactory.createMediumState(2);
             default:
                 throw new RuntimeException("ERROR: invalid state passed to generateState in TaxiConfig: " + state);
         }

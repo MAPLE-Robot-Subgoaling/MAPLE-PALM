@@ -40,10 +40,14 @@ public class TaxiRootState implements MutableOOState {
 		return null;
 	}
 
+	private List<ObjectInstance> cachedObjectList = null;
 	@Override
 	public List<ObjectInstance> objects() {
+		if (cachedObjectList == null) { cachedObjectList = new ArrayList<ObjectInstance>(); }
+		else { return cachedObjectList; }
 		List<ObjectInstance> obj = new ArrayList<>();
 		obj.addAll(passengers.values());
+		cachedObjectList = obj;
 		return obj;
 	}
 
@@ -88,6 +92,7 @@ public class TaxiRootState implements MutableOOState {
 		}else{
 			throw new RuntimeException("Can only add certain objects to state.");
 		}
+        cachedObjectList = null;
 		return this;
 	}
 
@@ -95,6 +100,7 @@ public class TaxiRootState implements MutableOOState {
 	public MutableOOState removeObject(String oname) {
         touchPassenger(oname);
         passengers.remove(oname);
+        cachedObjectList = null;
 		return this;
 	}
 
