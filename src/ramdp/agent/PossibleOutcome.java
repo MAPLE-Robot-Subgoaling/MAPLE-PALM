@@ -6,6 +6,8 @@ import burlap.mdp.singleagent.model.TransitionProb;
 import burlap.statehashing.HashableState;
 import burlap.statehashing.HashableStateFactory;
 
+import java.util.Map;
+
 public class PossibleOutcome {
 
     // reference to the HashableStateFactory used by the given domain
@@ -16,14 +18,15 @@ public class PossibleOutcome {
     protected TransitionProb transitionProb;
 
     // totals needed in RMAX
-    protected int transitionCount;
+//    protected int transitionCount;
+    protected Map<Integer, Integer> stepsTakenToTransitionCount;
     protected double rewardTotal;
 
-    public PossibleOutcome(HashableStateFactory hashingFactory, EnvironmentOutcome outcome, double probability, int transitionCount, double rewardTotal) {
+    public PossibleOutcome(HashableStateFactory hashingFactory, EnvironmentOutcome outcome, double probability, Map<Integer, Integer> stepsTakenToTransitionCount, double rewardTotal) {
         this.hashingFactory = hashingFactory;
         this.outcome = outcome;
         this.transitionProb = new TransitionProb(probability, this.outcome);
-        this.transitionCount = transitionCount;
+        this.stepsTakenToTransitionCount = stepsTakenToTransitionCount;
         this.rewardTotal = rewardTotal;
     }
 
@@ -60,12 +63,27 @@ public class PossibleOutcome {
         this.outcome.r = reward;
     }
 
-    public int getTransitionCount() {
-        return transitionCount;
+    public Map<Integer, Integer> getStepsTakenToTransitionCount() {
+        return stepsTakenToTransitionCount;
     }
 
-    public void setTransitionCount(int transitionCount) {
-        this.transitionCount = transitionCount;
+    public int getTransitionCountSummation() {
+        int sum = 0;
+        for (Integer stepsTaken : stepsTakenToTransitionCount.keySet()) {
+            sum += stepsTakenToTransitionCount.get(stepsTaken);
+        }
+        return sum;
+    }
+
+    public void setTransitionCount(int stepsTaken, int count) {
+        stepsTakenToTransitionCount.put(stepsTaken, count);
+    }
+
+    public int getTransitionCount(int stepsTaken) {
+        if (!stepsTakenToTransitionCount.containsKey(stepsTaken)) {
+            stepsTakenToTransitionCount.put(stepsTaken, 0);
+        }
+        return stepsTakenToTransitionCount.get(stepsTaken);
     }
 
     public double getRewardTotal() {
@@ -88,10 +106,6 @@ public class PossibleOutcome {
         PossibleOutcome that = (PossibleOutcome) o;
 
         if (this.rewardTotal != that.rewardTotal) {
-            return false;
-        }
-
-        if (this.transitionCount != that.transitionCount) {
             return false;
         }
 
@@ -124,13 +138,17 @@ public class PossibleOutcome {
 
         Double r = outcome.r;
         Double thatR = that.outcome.r;
-        if(r != null ? !r.equals(thatR) : thatR != null) {
+        if(!r.equals(thatR)) {
             return false;
         }
 
         Boolean terminated = outcome.terminated;
         Boolean thatTerminated = that.outcome.terminated;
-        if(terminated != null ? !terminated.equals(thatTerminated) : thatTerminated != null) {
+        if(!terminated.equals(thatTerminated)) {
+            return false;
+        }
+
+        if (stepsTakenToTransitionCount != null ? !stepsTakenToTransitionCount.equals(that.stepsTakenToTransitionCount) : that.stepsTakenToTransitionCount != null) {
             return false;
         }
 
@@ -153,14 +171,22 @@ public class PossibleOutcome {
 
     @Override
     public String toString() {
-        return "PossibleOutcome{" +
+        String out = "PossibleOutcome{" +
                 "a=" + outcome.a +
                 ", p=" + getTransitionProbability() +
                 ", r=" + getReward() +
-                ", tCount=" + getTransitionCount() +
-                ", rTotal=" + getRewardTotal() +
+                ", {";
+        for (Integer stepsTaken : stepsTakenToTransitionCount.keySet()) {
+            out += "(k="+stepsTaken;
+            out += ", tc="+stepsTakenToTransitionCount.get(stepsTaken);
+            out += ")";
+        }
+        out += "}";
+        out += ", rTotal=" + getRewardTotal() +
                 ", s=" + outcome.o +
                 ", sp=" + outcome.op +
                 '}';
+        return out;
     }
+
 }

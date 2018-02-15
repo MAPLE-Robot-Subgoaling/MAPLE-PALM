@@ -105,28 +105,44 @@ public class RAMDPModel extends FactoredModel {
 	 * information in the outcome
 	 * @param result the outcome of the latest action specific to the task rewards and abstractions
 	 */
-	public void updateModel(EnvironmentOutcome result){
+	public void updateModel(EnvironmentOutcome result, double gamma, int stepsTaken){
 		HashableState hs = this.hashingFactory.hashState(result.o);
 		double reward = result.r;
 		Action a = result.a;
 		HashableState hsPrime = this.hashingFactory.hashState(result.op);
         Map<HashableState, PossibleOutcome> hsPrimeToOutcomes = getHsPrimeToOutcomes(hs, a);
+
+        // apply the multi-time model update here
+        reward = reward * Math.pow(gamma, stepsTaken - 1);
+
 		
 		//add to the transitionCount the information in the outcome and restore
 		int n_sa = getStateActionCount(hs, a) + 1;
         PossibleOutcome outcome = getPossibleOutcome(hsPrimeToOutcomes, hs, a, hsPrime);
 		double r_sasp = outcome.getRewardTotal() + reward;
-		int n_sasp = outcome.getTransitionCount() + 1;
+		int n_saspk = outcome.getTransitionCount(stepsTaken) + 1;
 
         // update the totals for this transition
-        outcome.setTransitionCount(n_sasp);
+        outcome.setTransitionCount(stepsTaken, n_saspk);
         outcome.setRewardTotal(r_sasp);
 
 		if (n_sa >= mThreshold) {
 
 		    // update the approximate model for THIS transition
-            double newR = (1.0 * r_sasp) / (1.0 * n_sasp); // n_sa, n_sasp
-            double newP = (1.0 * n_sasp) / (1.0 * n_sa);
+//            double newR = (1.0 * r_sasp) / (1.0 * n_sasp); // n_sa, n_sasp
+//            double newP = (1.0 * n_sasp) / (1.0 * n_sa);
+
+            double newP = 0.0;
+            Map<Integer, Integer> stepsTakenToTransitionCount = outcome.getStepsTakenToTransitionCount();
+            for (int k : stepsTakenToTransitionCount.keySet()){
+                double stepwiseP = Math.pow(gamma, k) * stepsTakenToTransitionCount.get(k);
+                newP += stepwiseP;
+            }
+            newP = newP / (1.0 * n_sa);
+
+            int n_sasp = outcome.getTransitionCountSummation();
+            double newR = (1.0 * r_sasp) / (1.0 * n_sasp);
+
             outcome.setReward(newR);
             outcome.setTransitionProbability(newP);
 
@@ -137,12 +153,20 @@ public class RAMDPModel extends FactoredModel {
                     continue;
                 }
                 PossibleOutcome otherOutcome = getPossibleOutcome(hsPrimeToOutcomes, hs, a, otherHsPrime);
-                double otherRewardTotal = otherOutcome.getRewardTotal();
-                int otherTransitionCount = otherOutcome.getTransitionCount();
-                double otherReward = (1.0 * otherRewardTotal) / (1.0 * otherTransitionCount);
-                double otherP = (1.0 * otherTransitionCount) / (1.0 * n_sa);
-                otherOutcome.setReward(otherReward);
+                double otherP = 0.0;
+                Map<Integer, Integer> otherStepsTakenToTransitionCount = otherOutcome.getStepsTakenToTransitionCount();
+                for (int k : otherStepsTakenToTransitionCount.keySet()) {
+                    double stepwiseP = Math.pow(gamma, k) * otherStepsTakenToTransitionCount.get(k);
+                    otherP += stepwiseP;
+                }
+                otherP = otherP / (1.0 * n_sa);
                 otherOutcome.setTransitionProbability(otherP);
+//                int otherTransitionCount = otherOutcome.getTransitionCount();
+//                double otherP = (1.0 * otherTransitionCount) / (1.0 * n_sa);
+//                otherOutcome.setTransitionProbability(otherP);
+//                double otherRewardTotal = otherOutcome.getRewardTotal();
+//                double otherReward = (1.0 * otherRewardTotal) / (1.0 * otherTransitionCount);
+//                otherOutcome.setReward(otherReward);
             }
 
         } else {
@@ -176,7 +200,7 @@ public class RAMDPModel extends FactoredModel {
         if (hsPrimeToOutcomes == null) { return totalCount; }
         for(HashableState hsPrime : hsPrimeToOutcomes.keySet()) {
             PossibleOutcome outcome = getPossibleOutcome(hsPrimeToOutcomes, hs, a, hsPrime);
-            int transitionCount = outcome.getTransitionCount();
+            int transitionCount = outcome.getTransitionCountSummation();
             totalCount += transitionCount;
         }
         return totalCount;
@@ -202,10 +226,10 @@ public class RAMDPModel extends FactoredModel {
         if (outcome == null) {
             double initialReward = 0.0;
             double initialProbability = 0.0;
-            int initalCount = 0;
+            Map<Integer, Integer> stepsTakenToTransitionCount = new HashMap<Integer, Integer>();
             double initalRewardTotal = 0.0;
             EnvironmentOutcome eo = new EnvironmentOutcome(hs.s(), a, hsPrime.s(), initialReward, terminal(hsPrime.s()));
-            outcome = new PossibleOutcome(hashingFactory, eo, initialProbability, initalCount, initalRewardTotal);
+            outcome = new PossibleOutcome(hashingFactory, eo, initialProbability, stepsTakenToTransitionCount, initalRewardTotal);
             hsPrimeToOutcomes.put(hsPrime, outcome);
         }
         return outcome;
@@ -234,7 +258,8 @@ public class RAMDPModel extends FactoredModel {
         HashableState hs = this.hashingFactory.hashState(s);
         Map<HashableState, PossibleOutcome> hsPrimeToOutcomes = getHsPrimeToOutcomes(hs, a);
         List<TransitionProb> tps = new ArrayList<TransitionProb>();
-        if (getStateActionCount(hs, a) < mThreshold || hsPrimeToOutcomes.size() < 1) {
+        int transitionCount = getStateActionCount(hs, a);
+        if (transitionCount < mThreshold || hsPrimeToOutcomes.size() < 1) {
             TransitionProb imaginedTransition = makeImaginedTransition(hs, a);
             tps.add(imaginedTransition);
             return tps;
@@ -249,9 +274,12 @@ public class RAMDPModel extends FactoredModel {
             tps.add(probability);
             totalProbability += probability.p;
         }
-        if (totalProbability < 0.99999999999 || totalProbability > 1.00000000001) {
-            System.err.println("total probability does not sum to 1.0");
-        }
+        // IMPORTANT:
+        // with the Multi-time model, the totalProbability will not sum to 1.0 but to GAMMA
+        // the rationale for this is explained in Jong's RMAXQ paper (essentially the remainder is prob. of termination)
+//        if (totalProbability < 0.99999999999 || totalProbability > 1.00000000001) {
+//            System.err.println("total probability does not sum to 1.0: " + totalProbability);
+//        }
         return tps;
     }
 
