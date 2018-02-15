@@ -237,7 +237,7 @@ public class RAMDPLearningAgent implements LearningAgent{
 //        BoundedRTDP planner = new BoundedRTDP(domain, gamma, hashingFactory, lowerVInit, upperVInit, 0.01, 10);
 //        planner.setMaxRolloutDepth(100);
         ValueIteration planner = new ValueIteration(domain, gamma, hashingFactory, maxDelta, maxIterationsInModelPlanner);
-//        planner.toggleReachabiltiyTerminalStatePruning(true);
+        planner.toggleReachabiltiyTerminalStatePruning(true);
 //        ValueFunction valueFunction = task.valueFunction;
 //        if (valueFunction != null) {
 //            planner.setValueFunctionInitialization(valueFunction);
