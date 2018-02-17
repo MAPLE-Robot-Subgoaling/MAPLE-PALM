@@ -102,7 +102,7 @@ public class HierarchicalCharts {
 
 					@Override
 					public LearningAgent generateAgent() {
-						return new RmaxQLearningAgent(RMEXQRoot, hs, s, conf.rmax.vmax, conf.rmax.threshold, conf.rmax.max_delta, conf.rmax.max_delta_in_model);
+						return new RmaxQLearningAgent(RMEXQRoot, hs, s, conf.rmax.vmax, conf.rmax.threshold, conf.rmax.max_delta_rmaxq, conf.rmax.max_delta);
 					}
 				};
 			}
@@ -136,7 +136,7 @@ public class HierarchicalCharts {
 	}
 
 	public static void main(String[] args) {
-		String conffile = "config/taxi/jwtest.yaml";
+		String conffile = "config/taxi/classic.yaml";
 		if(args.length > 0) {
 			conffile = args[0];
 		}

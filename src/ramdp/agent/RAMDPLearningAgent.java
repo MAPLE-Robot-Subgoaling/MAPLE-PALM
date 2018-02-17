@@ -26,6 +26,8 @@ import java.util.Map;
 
 public class RAMDPLearningAgent implements LearningAgent{
 
+	public static boolean debug = false;
+
 	/**
 	 * The root of the task hierarchy
 	 */
@@ -149,7 +151,7 @@ public class RAMDPLearningAgent implements LearningAgent{
             steps++;
         }
 
-        List<GroundedTask> subtasksExecuted = new ArrayList<GroundedTask>();
+        List<String> subtasksExecuted = new ArrayList<String>();
 
 //        int stepsBefore = steps;
 		while(
@@ -198,7 +200,9 @@ public class RAMDPLearningAgent implements LearningAgent{
             // for example, the root "solve" task may not complete
 			if(subtaskCompleted){
 				model.updateModel(result, gamma, stepsTaken);
-				subtasksExecuted.add(action);
+				subtasksExecuted.add(action.toString()+"++");
+			} else {
+                subtasksExecuted.add(action.toString()+"--");
 			}
 		}
 
@@ -251,17 +255,19 @@ public class RAMDPLearningAgent implements LearningAgent{
         Action action = viPolicy.action(s);
 //        Policy tempPolicy = plan.planFromState(s);
 //        Action action = tempPolicy.action(s);
-//        try {
-//            if (task.toString().contains("solve")) {
-//                Episode e = PolicyUtils.rollout(rmaxPolicy, s, model, 10);
-//                System.out.println(tabLevel + "    Debug rollout: " + e.actionSequence);
-//                System.out.print(action + ", ");
-//            }
-//        } catch (Exception e) {
-            // ignore, temp debug to assess ramdp
-            //System.out.println(e);
-//                e.printStackTrace();
-//        }
+		if (debug) {
+			try {
+				if (task.toString().contains("solve")) {
+					Episode e = PolicyUtils.rollout(viPolicy, s, model, 10);
+					System.out.println(tabLevel + "    Debug rollout: " + e.actionSequence);
+					System.out.println(tabLevel + action + ", ");
+				}
+			} catch (Exception e) {
+				//             ignore, temp debug to assess ramdp
+				System.out.println(e);
+				e.printStackTrace();
+			}
+		}
     	return action;
 	}
 

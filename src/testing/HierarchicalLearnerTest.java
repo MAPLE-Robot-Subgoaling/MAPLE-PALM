@@ -81,7 +81,7 @@ public class HierarchicalLearnerTest {
 		}
 
 		List<Episode> episodes = new ArrayList<Episode>();
-		RmaxQLearningAgent rmaxq = new RmaxQLearningAgent(root, hs, initState, conf.rmax.vmax, conf.rmax.threshold, conf.rmax.max_delta, conf.rmax.max_delta_in_model);
+		RmaxQLearningAgent rmaxq = new RmaxQLearningAgent(root, hs, initState, conf.rmax.vmax, conf.rmax.threshold, conf.rmax.max_delta_rmaxq, conf.rmax.max_delta);
 		
 		for(int i = 1; i <= conf.episodes; i++){
 			Episode e = rmaxq.runLearningEpisode(env, conf.max_steps);

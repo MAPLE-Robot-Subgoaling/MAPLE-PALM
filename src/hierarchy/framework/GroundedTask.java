@@ -24,12 +24,12 @@ public class GroundedTask {
 	 * specific action in a task
 	 */
 	private Action action;
-	
+
 	/**
 	 * the general task node which this grounded task is part of
 	 */
 	private Task t;
-	
+
 	/**
 	 * each grounded task has an action and task
 	 * @param a the parameterization of the task
@@ -39,9 +39,9 @@ public class GroundedTask {
 		this.action = a;
 		this.t = t;
 	}
-	
+
 	/**
-	 * gets the action this task wraps around 
+	 * gets the action this task wraps around
 	 * @return the grounded task's action
 	 */
 	public Action getAction(){
@@ -74,9 +74,9 @@ public class GroundedTask {
 //		setupGroundedTF(domain);
 		return domain;
 	}
-	
+
 	/**
-	 * given a learned model, this builds a domain with the subtasks as actions 
+	 * given a learned model, this builds a domain with the subtasks as actions
 	 * @param model the model to included in the domain
 	 * @return a complete learned domain for the grounded task
 	 */
@@ -91,9 +91,9 @@ public class GroundedTask {
 //        setupGroundedTF(domain);
 		return domain;
 	}
-	
+
 	/**
-	 * gets all executable tasks that are children of the task 
+	 * gets all executable tasks that are children of the task
 	 * @param s the current task
 	 * @return list of all groundings of child tasks valid in the state
 	 */
@@ -117,7 +117,7 @@ public class GroundedTask {
     
 	/**
 	 * pass the given state through the task's abstraction function
-	 * @param s the base state 
+	 * @param s the base state
 	 * @return the abstracted state
 	 */
 	public State mapState(State s){
@@ -128,7 +128,7 @@ public class GroundedTask {
 		else
 			return t.mapState(s);
 	}
-	
+
 	/**
 	 * test if the task is in the base domain
 	 * @return whether this grounded represents an action in the base domain
@@ -136,7 +136,7 @@ public class GroundedTask {
 	public boolean isPrimitive(){
 		return t.isPrimitive();
 	}
-	
+
 	/**
 	 * each grounded task has a specific rewardTotal function
 	 * this returns the rewardTotal of a transition into the given state
@@ -153,7 +153,7 @@ public class GroundedTask {
 	public String toString(){
 		return StringFormat.parameterizedActionName(action);
 	}
-	
+
 	/**
 	 * return if the grounded task is complete in the given state
 	 * @param s the state to test

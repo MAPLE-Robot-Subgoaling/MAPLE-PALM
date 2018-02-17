@@ -1,9 +1,6 @@
 package taxi.hierarchies.tasks.root.state;
 
-import burlap.mdp.core.oo.state.MutableOOState;
-import burlap.mdp.core.oo.state.OOStateUtilities;
-import burlap.mdp.core.oo.state.OOVariableKey;
-import burlap.mdp.core.oo.state.ObjectInstance;
+import burlap.mdp.core.oo.state.*;
 import burlap.mdp.core.state.MutableState;
 import taxi.Taxi;
 import taxi.hierarchies.tasks.root.TaxiRootDomain;
@@ -136,7 +133,30 @@ public class TaxiRootState implements MutableOOState {
 	}
 
 	@Override
-	public String toString(){
-		return OOStateUtilities.ooStateToString(this);
+	public String toString() {
+		StringBuilder buf = new StringBuilder();
+		buf.append("");
+		for (TaxiRootPassenger passenger : passengers.values()) {
+			buf.append("P");
+			buf.append(passenger.name().charAt(passenger.name().length()-1));
+			buf.append(", at:");
+			String at = (String) passenger.get(TaxiRootDomain.ATT_CURRENT_LOCATION);
+			if (at.contains("Location")) {
+				buf.append("L");
+				buf.append(at.charAt(at.length()-1));
+			} else {
+				buf.append(at);
+			}
+			buf.append(", goal:");
+			String goal = (String) passenger.get(TaxiRootDomain.ATT_GOAL_LOCATION);
+			if (goal.contains("Location")) {
+				buf.append("L");
+				buf.append(goal.charAt(goal.length()-1));
+			} else {
+				buf.append(goal);
+			}
+			buf.append("; ");
+		}
+		return buf.toString();
 	}
 }

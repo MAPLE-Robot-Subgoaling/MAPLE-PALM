@@ -3,10 +3,10 @@ state: classic
 agents:
   - ramdp
 
-episodes: 60
+episodes: 100
 max_steps: 2000
-trials: 5
-gamma: 0.9
+trials: 2
+gamma: 0.99
 
 stochastic:
   seed: 2320942930
@@ -18,14 +18,15 @@ planning:
   rollouts: 1000
 
 rmax:
-  vmax: 20
-  threshold: 5
-  max_delta: 0.01
+  vmax: 1.0
+  threshold: 10
+  max_delta: 0.1
+  max_iterations_in_model: 10
 
 output:
   csv:
-    enabled: false
-    output: results/ramdpsmall.csv
+    enabled: true
+    output: results/ramdp-classic.csv
 
   chart:
     enabled: true
@@ -33,13 +34,17 @@ output:
     width: 500
     height: 300
     columns: 2
-    max_height: 1000
+    max_height: 900
     trial_mode: MOST_RECENT_AND_AVERAGE
 
     metrics:
+      - STEPS_PER_EPISODE
+      - CUMULATIVE_REWARD_PER_STEP
       - CUMULATIVE_REWARD_PER_EPISODE
 
   visualizer:
     enabled: false
+    episodes: true
     width: 5
     height: 5
+    

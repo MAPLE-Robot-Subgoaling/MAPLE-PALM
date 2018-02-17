@@ -6,6 +6,7 @@ import burlap.mdp.singleagent.model.TransitionProb;
 import burlap.statehashing.HashableState;
 import burlap.statehashing.HashableStateFactory;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class PossibleOutcome {
@@ -20,14 +21,14 @@ public class PossibleOutcome {
     // totals needed in RMAX
 //    protected int transitionCount;
     protected Map<Integer, Integer> stepsTakenToTransitionCount;
-    protected double rewardTotal;
+    protected Map<Integer, Double> stepsTakenToRewardTotal;
 
-    public PossibleOutcome(HashableStateFactory hashingFactory, EnvironmentOutcome outcome, double probability, Map<Integer, Integer> stepsTakenToTransitionCount, double rewardTotal) {
+    public PossibleOutcome(HashableStateFactory hashingFactory, EnvironmentOutcome outcome, double probability) {
         this.hashingFactory = hashingFactory;
         this.outcome = outcome;
         this.transitionProb = new TransitionProb(probability, this.outcome);
-        this.stepsTakenToTransitionCount = stepsTakenToTransitionCount;
-        this.rewardTotal = rewardTotal;
+        this.stepsTakenToTransitionCount = new HashMap<Integer, Integer>();
+        this.stepsTakenToRewardTotal = new HashMap<Integer, Double>();
     }
 
     public EnvironmentOutcome getOutcome() {
@@ -67,6 +68,10 @@ public class PossibleOutcome {
         return stepsTakenToTransitionCount;
     }
 
+    public Map<Integer, Double> getStepsTakenToRewardTotal() {
+        return stepsTakenToRewardTotal;
+    }
+
     public int getTransitionCountSummation() {
         int sum = 0;
         for (Integer stepsTaken : stepsTakenToTransitionCount.keySet()) {
@@ -86,12 +91,15 @@ public class PossibleOutcome {
         return stepsTakenToTransitionCount.get(stepsTaken);
     }
 
-    public double getRewardTotal() {
-        return rewardTotal;
+    public double getRewardTotal(int stepsTaken) {
+        if (!stepsTakenToRewardTotal.containsKey(stepsTaken)) {
+            stepsTakenToRewardTotal.put(stepsTaken, 0.0);
+        }
+        return stepsTakenToRewardTotal.get(stepsTaken);
     }
 
-    public void setRewardTotal(double rewardTotal) {
-        this.rewardTotal = rewardTotal;
+    public void setRewardTotal(int stepsTaken, double rewardTotal) {
+        this.stepsTakenToRewardTotal.put(stepsTaken, rewardTotal);
     }
 
     @Override
@@ -104,10 +112,6 @@ public class PossibleOutcome {
         }
 
         PossibleOutcome that = (PossibleOutcome) o;
-
-        if (this.rewardTotal != that.rewardTotal) {
-            return false;
-        }
 
         if (transitionProb.p != that.transitionProb.p) {
             return false;
@@ -152,6 +156,10 @@ public class PossibleOutcome {
             return false;
         }
 
+        if (stepsTakenToRewardTotal != null ? !stepsTakenToRewardTotal.equals(that.stepsTakenToRewardTotal) : that.stepsTakenToRewardTotal != null) {
+            return false;
+        }
+
         return true;
     }
 
@@ -181,8 +189,13 @@ public class PossibleOutcome {
             out += ", tc="+stepsTakenToTransitionCount.get(stepsTaken);
             out += ")";
         }
-        out += "}";
-        out += ", rTotal=" + getRewardTotal() +
+        out += "}, {";
+        for (Integer stepsTaken : stepsTakenToRewardTotal.keySet()) {
+            out += "(k="+stepsTaken;
+            out += ", rt="+stepsTakenToRewardTotal.get(stepsTaken);
+            out += ")";
+        }
+        out += "}" +
                 ", s=" + outcome.o +
                 ", sp=" + outcome.op +
                 '}';

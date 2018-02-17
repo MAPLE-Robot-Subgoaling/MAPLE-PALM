@@ -1,6 +1,5 @@
 package config.taxi;
 
-import burlap.debugtools.DPrint;
 import burlap.debugtools.RandomFactory;
 import config.output.OutputConfig;
 import config.planning.PlanningConfig;
@@ -41,6 +40,7 @@ public class TaxiConfig {
             System.err.println("Warning: using a randomly generated RNG seed: " + seed);
         }
         RandomFactory.seedMapped(0, seed);
+        System.out.println("Using seed: " + config.stochastic.seed);
 
         return config;
     }
@@ -61,6 +61,10 @@ public class TaxiConfig {
                 return TaxiStateFactory.createMediumState();
             case "medium-2passengers":
                 return TaxiStateFactory.createMediumState(2);
+            case "3depots":
+                return TaxiStateFactory.createThreeDepots();
+            case "3depots-2passengers":
+                return TaxiStateFactory.createThreeDepots(2);
             default:
                 throw new RuntimeException("ERROR: invalid state passed to generateState in TaxiConfig: " + state);
         }
