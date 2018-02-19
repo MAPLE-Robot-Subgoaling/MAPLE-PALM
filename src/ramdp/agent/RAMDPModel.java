@@ -51,6 +51,8 @@ public class RAMDPModel extends FactoredModel {
 	 * the max rewardTotal for the domain
 	 */
 	private double rmax;
+
+	private boolean useMultitimeModel;
 	
 	/**
 	 * creates a rmax model
@@ -59,12 +61,13 @@ public class RAMDPModel extends FactoredModel {
 	 * @param rmax max rewardTotal in domain
 	 * @param hs provided hashing factory
 	 */
-	public RAMDPModel( GroundedTask task, int threshold, double rmax, HashableStateFactory hs) {
+	public RAMDPModel( GroundedTask task, int threshold, double rmax, HashableStateFactory hs, boolean useMultitimeModel) {
 		this.hashingFactory = hs;
 		this.mThreshold = threshold;
         this.approximateTransitions = new HashMap<HashableStateActionPair, Map<HashableState, PossibleOutcome>>();
 		this.task = task;
 		this.rmax = rmax;
+		this.useMultitimeModel = useMultitimeModel;
 	}
 
 	@Override
@@ -135,9 +138,6 @@ public class RAMDPModel extends FactoredModel {
 		HashableState hsPrime = this.hashingFactory.hashState(result.op);
         Map<HashableState, PossibleOutcome> hsPrimeToOutcomes = getHsPrimeToOutcomes(hs, a);
 
-        // apply the multi-time model update here
-//        reward = reward * Math.pow(gamma, stepsTaken - 1);
-
 		//add to the transitionCount the information in the outcome and restore
         PossibleOutcome outcome = getPossibleOutcome(hsPrimeToOutcomes, hs, a, hsPrime);
 		int newTransitionCountSASP = outcome.getTransitionCount(stepsTaken) + 1;
@@ -192,8 +192,12 @@ public class RAMDPModel extends FactoredModel {
         double sumP = 0.0;
         Map<Integer, Integer> stepsTakenToTransitionCount = outcome.getStepsTakenToTransitionCount();
         for (int k : stepsTakenToTransitionCount.keySet()){
-            double multitimeModelDiscount = 1.0;//Math.pow(gamma, k);
-            double stepwiseP = multitimeModelDiscount * stepsTakenToTransitionCount.get(k);
+            double discount = 1.0;
+            if (useMultitimeModel) {
+                discount = Math.pow(gamma, k);
+            }
+            int transitionCount = stepsTakenToTransitionCount.get(k);
+            double stepwiseP = discount * transitionCount;
             sumP += stepwiseP;
         }
         double newP = sumP / (1.0 * stateActionCount);
@@ -204,19 +208,28 @@ public class RAMDPModel extends FactoredModel {
     }
 
     protected void updateApproximateReward(PossibleOutcome outcome, double gamma, int stateActionCount) {
-        int stateActionStatePrimeCount = outcome.getTransitionCountSummation();
         Map<Integer, Integer> stepsTakenToTransitionCount = outcome.getStepsTakenToTransitionCount();
         Map<Integer, Double> stepsTakenToRewardTotal = outcome.getStepsTakenToRewardTotal();
         double thisRewardTotal = 0.0;
         for (int k : stepsTakenToRewardTotal.keySet()){
-            double multitimeModelDiscount = 1.0;//Math.pow(gamma, k - 1);
-            double stepwiseR = multitimeModelDiscount * stepsTakenToRewardTotal.get(k);
-//            double probability = stepsTakenToTransitionCount.get(k) / (1.0 * stateActionStatePrimeCount);
-//            stepwiseR = stepwiseR * probability;
+            double discount = 1.0;
+            if (useMultitimeModel) {
+//                discount = Math.min(1.0, Math.pow(gamma, k - 1));
+                discount = Math.pow(gamma, k - 1);
+            }
+            int transitionCount = stepsTakenToTransitionCount.get(k);
+            double rewardTotal = stepsTakenToRewardTotal.get(k);
+            double stepwiseR = discount * rewardTotal;
+            stepwiseR /= (1.0 * transitionCount);
             thisRewardTotal += stepwiseR;
         }
-        double newR = (1.0 * thisRewardTotal) / (1.0 * stateActionStatePrimeCount);
-//        double newR = thisRewardTotal;
+//        int stateActionStatePrimeCount = outcome.getTransitionCountSummation();
+//        double newR = (1.0 * thisRewardTotal) / (1.0 * stateActionStatePrimeCount);
+        double newR = thisRewardTotal;
+        if (useMultitimeModel) {
+            double transitionProbability = outcome.getTransitionProbability();
+            newR *= transitionProbability;
+        };
         outcome.setReward(newR);
     }
 

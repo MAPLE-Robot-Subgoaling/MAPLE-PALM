@@ -349,7 +349,6 @@ public class LearningAlgorithmExperimenter {
 			episodes.add(episode);
 		}
 
-
 		this.plotter.endTrial();
 
 		return episodes;

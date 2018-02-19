@@ -73,7 +73,7 @@ public class HierarchicalCharts {
 
 					@Override
 					public LearningAgent generateAgent() {
-						return new RAMDPLearningAgent(RAMDPGroot, conf.rmax.threshold, conf.gamma, conf.rmax.vmax, hs, conf.rmax.max_delta, conf.rmax.max_iterations_in_model);
+						return new RAMDPLearningAgent(RAMDPGroot, conf.rmax.threshold, conf.gamma, conf.rmax.vmax, hs, conf.rmax.max_delta, conf.rmax.max_iterations_in_model, conf.rmax.use_multitime_model);
 					}
 				};
 			}
@@ -87,7 +87,7 @@ public class HierarchicalCharts {
 
 					@Override
 					public LearningAgent generateAgent() {
-						return new RAMDPLearningAgent(hierGenGroot, conf.rmax.threshold, conf.gamma, conf.rmax.vmax, hs, conf.rmax.max_delta, conf.rmax.max_iterations_in_model);
+						return new RAMDPLearningAgent(hierGenGroot, conf.rmax.threshold, conf.gamma, conf.rmax.vmax, hs, conf.rmax.max_delta, conf.rmax.max_iterations_in_model, conf.rmax.use_multitime_model);
 					}
 				};
 			}

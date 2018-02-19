@@ -20,7 +20,8 @@ import utilities.LearningAgentRuntimeAnalizer;
 public class RuntimeTest {
 	public static void createCrarts(final State s, OOSADomain domain, final Task RAMDPRoot, final Task RMEXQRoot,
 									final double rmax, final int threshold, final double maxDelta, final double discount,
-									int numEpisode, int maxSteps, int numTrial, int maxIterationsInModel){
+									int numEpisode, int maxSteps, int numTrial, int maxIterationsInModel,
+									boolean useMultitimeModel){
 		final HashableStateFactory hs = new SimpleHashableStateFactory(true);
 		final GroundedTask RAMDPGroot = RAMDPRoot.getAllGroundedTasks(s).get(0);
 
@@ -53,7 +54,7 @@ public class RuntimeTest {
 
 			@Override
 			public LearningAgent generateAgent() {
-				return new RAMDPLearningAgent(RAMDPGroot, threshold, discount, rmax, hs, maxDelta, maxIterationsInModel);
+				return new RAMDPLearningAgent(RAMDPGroot, threshold, discount, rmax, hs, maxDelta, maxIterationsInModel, useMultitimeModel);
 			}
 		};
 
@@ -74,12 +75,13 @@ public class RuntimeTest {
 		double rmax = 20;
 		double maxDelta = 0.01;
 		int maxIterationsInModel = 10000;
+		boolean useMultitimeModel = true;
 
 		TaxiState s = TaxiStateFactory.createTinyState();
 		Task RAMDProot = TaxiHierarchy.createAMDPHierarchy(correctMoveprob, fickleProb,  false);
 		OOSADomain base = TaxiHierarchy.getBaseDomain();
 		Task RMAXQroot = TaxiHierarchy.createRMAXQHierarchy(correctMoveprob,  fickleProb);
 		createCrarts(s, base, RAMDProot, RMAXQroot, rmax, rmaxThreshold, maxDelta, gamma,
-				numEpisodes, maxSteps, numTrials, maxIterationsInModel);
+				numEpisodes, maxSteps, numTrials, maxIterationsInModel, useMultitimeModel);
 	}
 }

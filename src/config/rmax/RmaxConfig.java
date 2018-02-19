@@ -8,5 +8,6 @@ public class RmaxConfig {
     public double max_delta;
     public double max_delta_rmaxq;
     public int max_iterations_in_model;
+    public boolean use_multitime_model;
     public PerformanceMetric[] metrics;
 }
