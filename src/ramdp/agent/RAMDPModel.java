@@ -225,7 +225,7 @@ public class RAMDPModel extends FactoredModel {
         }
 //        int stateActionStatePrimeCount = outcome.getTransitionCountSummation();
 //        double newR = (1.0 * thisRewardTotal) / (1.0 * stateActionStatePrimeCount);
-        double newR = thisRewardTotal;
+        double newR = thisRewardTotal / stepsTakenToRewardTotal.size();
         if (useMultitimeModel) {
             double transitionProbability = outcome.getTransitionProbability();
             newR *= transitionProbability;
@@ -318,4 +318,12 @@ public class RAMDPModel extends FactoredModel {
             System.out.println("\n*****************\n");
         }
     }
+
+//    public boolean isDoneExploring(State s, Action a) {
+//        HashableState hs = this.hashingFactory.hashState(s);
+//        Map<HashableState, PossibleOutcome> hsPrimeToOutcomes = getHsPrimeToOutcomes(hs, a);
+//        int transitionCount = getStateActionCount(hsPrimeToOutcomes, hs, a);
+//        return transitionCount >= mThreshold;
+//    }
+
 }

@@ -191,12 +191,8 @@ public class RAMDPLearningAgent implements LearningAgent{
             baseState = e.stateSequence.get(e.stateSequence.size() - 1);
             currentState = task.mapState(baseState);
 
-            // use multi-time model discounting ((gamma^k)*rewardTotal) for k steps taken by multi-time model)
-//            double discount = Math.pow(gamma, stepsTaken);
-//            double discountedReward = discount * task.getReward(pastState, a, currentState);
             double taskReward = task.getReward(pastState, a, currentState);
             result = new EnvironmentOutcome(pastState, a, currentState, taskReward, false); //task.isFailure(currentState));
-            //System.out.println(tabLevel + "\treward: " + result.r);
 
 			//update task model if the subtask completed correctly
             // the case in which this is NOT updated is if the subtask failed or did not take at least one step
