@@ -3,7 +3,7 @@ state: classic-2passengers
 agents:
   - ramdp
 
-episodes: 75
+episodes: 100
 max_steps: 500
 trials: 1
 gamma: 0.99
@@ -22,6 +22,7 @@ rmax:
   threshold: 5
   max_delta: 0.0000001
   max_iterations_in_model: 1000
+  use_multitime_model: false
 
 output:
   csv:

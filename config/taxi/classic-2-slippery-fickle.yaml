@@ -22,6 +22,7 @@ rmax:
   threshold: 5
   max_delta: 0.0000001
   max_iterations_in_model: 1000
+  use_multitime_model: false
 
 output:
   csv:

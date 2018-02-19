@@ -230,6 +230,9 @@ public class RAMDPModel extends FactoredModel {
             double transitionProbability = outcome.getTransitionProbability();
             newR *= transitionProbability;
         };
+        if (newR > 1.0) {
+            throw new RuntimeException("invalid reward");
+        }
         outcome.setReward(newR);
     }
 
