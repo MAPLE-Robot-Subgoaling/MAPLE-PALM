@@ -3,14 +3,14 @@ state: classic-2passengers
 agents:
   - ramdp
 
-episodes: 300
-max_steps: 1000
+episodes: 200
+max_steps: 500
 trials: 1
 gamma: 0.99
 
 stochastic:
-  seed: 7543221
-  correct_move: 0.85
+  seed: 1232100
+  correct_move: 1.0
   fickle: 0.0
   random_start: false
 
@@ -20,8 +20,8 @@ planning:
 rmax:
   vmax: 1.0
   threshold: 20
-  max_delta: 0.00001
-  max_iterations_in_model: 100
+  max_delta: 0.0000001
+  max_iterations_in_model: 1000
   use_multitime_model: true
 
 output:

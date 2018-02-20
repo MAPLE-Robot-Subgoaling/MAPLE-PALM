@@ -235,23 +235,23 @@ public class RAMDPLearningAgent implements LearningAgent{
 	protected Action nextAction(GroundedTask task, State s){
 		RAMDPModel model = getModel(task);
 		OOSADomain domain = task.getDomain(model);
+		double discount = useMultitimeModel ? 1.0 : gamma;
 //        ValueFunction lowerVInit = new ConstantValueFunction(-model.getRmax());
 //        ValueFunction upperVInit = new ConstantValueFunction(model.getRmax());
-//        BoundedRTDP planner = new BoundedRTDP(domain, gamma, hashingFactory, lowerVInit, upperVInit, 0.01, 10);
-//        planner.setMaxRolloutDepth(100);
-		double discount = useMultitimeModel ? 1.0 : gamma;
+//		BoundedRTDP planner = new BoundedRTDP(domain, discount, hashingFactory, lowerVInit, upperVInit, 0.001, 1000);
+//		planner.setMaxRolloutDepth(1000);
         ValueIteration planner = new ValueIteration(domain, discount, hashingFactory, maxDelta, maxIterationsInModelPlanner);
         planner.toggleReachabiltiyTerminalStatePruning(true);
 //		ValueFunction valueFunction = task.valueFunction;
 //		if (valueFunction != null) {
 //			planner.setValueFunctionInitialization(valueFunction);
 //		}
-		Policy viPolicy = planner.planFromState(s);
-        Action action = viPolicy.action(s);
+		Policy policy = planner.planFromState(s);
+        Action action = policy.action(s);
 		if (debug) {
 			try {
 				if (task.toString().contains("solve")) {
-					Episode e = PolicyUtils.rollout(viPolicy, s, model, 10);
+					Episode e = PolicyUtils.rollout(policy, s, model, 10);
 					System.out.println(tabLevel + "    Debug rollout: " + e.actionSequence);
 					System.out.println(tabLevel + action + ", ");
 				}
@@ -261,7 +261,7 @@ public class RAMDPLearningAgent implements LearningAgent{
 				e.printStackTrace();
 			}
 		}
-		double defaultValue = 0.0;
+//		double defaultValue = 0.0;
 //		valueFunction = planner.saveValueFunction(defaultValue, rmax);
 //		task.valueFunction = valueFunction;
     	return action;

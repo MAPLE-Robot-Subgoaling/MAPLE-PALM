@@ -252,6 +252,10 @@ public class BoundedRTDP extends DynamicProgramming implements Planner {
 		while(this.runRollout(initialState) > this.maxDiff && (nr < this.maxRollouts || this.maxRollouts == -1)){
 			nr++;
 		}
+
+		if (this.maxRollouts != -1 && nr >= this.maxRollouts) {
+			System.err.println("Warning: BRTDP exhausted rollout budget");
+		}
 		
 		
 //		DPrint.cl(this.debugCode, "Finished planning with a total of " + this.numBellmanUpdates + " backups.");
