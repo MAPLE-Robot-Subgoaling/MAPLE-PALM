@@ -242,19 +242,12 @@ public class RAMDPLearningAgent implements LearningAgent{
 		double discount = useMultitimeModel ? 1.0 : gamma;
         ValueIteration planner = new ValueIteration(domain, discount, hashingFactory, maxDelta, maxIterationsInModelPlanner);
         planner.toggleReachabiltiyTerminalStatePruning(true);
-//        ValueFunction valueFunction = task.valueFunction;
-//        if (valueFunction != null) {
-//            planner.setValueFunctionInitialization(valueFunction);
-//        }
+//		ValueFunction valueFunction = task.valueFunction;
+//		if (valueFunction != null) {
+//			planner.setValueFunctionInitialization(valueFunction);
+//		}
 		Policy viPolicy = planner.planFromState(s);
-//        double defaultValue = 0.0;
-//        valueFunction = planner.saveValueFunction(defaultValue);
-//        task.valueFunction = valueFunction;
-//		Policy rmaxPolicy = new RMAXPolicy(model, viPolicy, domain.getActionTypes(), hashingFactory);
-//		Action action = rmaxPolicy.action(s);
         Action action = viPolicy.action(s);
-//        Policy tempPolicy = plan.planFromState(s);
-//        Action action = tempPolicy.action(s);
 		if (debug) {
 			try {
 				if (task.toString().contains("solve")) {
@@ -268,6 +261,9 @@ public class RAMDPLearningAgent implements LearningAgent{
 				e.printStackTrace();
 			}
 		}
+		double defaultValue = 0.0;
+//		valueFunction = planner.saveValueFunction(defaultValue, rmax);
+//		task.valueFunction = valueFunction;
     	return action;
 	}
 

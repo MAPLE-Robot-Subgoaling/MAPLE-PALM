@@ -132,6 +132,7 @@ public class RAMDPModel extends FactoredModel {
 	 * @param result the outcome of the latest action specific to the task rewards and abstractions
 	 */
 	public void updateModel(EnvironmentOutcome result, double gamma, int stepsTaken){
+
 		HashableState hs = this.hashingFactory.hashState(result.o);
 		double reward = result.r;
 		Action a = result.a;
@@ -201,7 +202,7 @@ public class RAMDPModel extends FactoredModel {
             sumP += stepwiseP;
         }
         double newP = sumP / (1.0 * stateActionCount);
-        if (newP > 1.0 || newP <= 0.0) {
+        if (newP > 1.0 || newP < 0.0) {
             throw new RuntimeException("invalid probability");
         }
         outcome.setTransitionProbability(newP);
@@ -214,8 +215,11 @@ public class RAMDPModel extends FactoredModel {
         for (int k : stepsTakenToRewardTotal.keySet()){
             double discount = 1.0;
             if (useMultitimeModel) {
-//                discount = Math.min(1.0, Math.pow(gamma, k - 1));
-                discount = Math.pow(gamma, k - 1);
+                discount = Math.pow(gamma, k);
+//                discount = Math.pow(gamma, k - 1);
+//                if (discount > 1.0) {
+//                    discount = 1.0;
+//                }
             }
             int transitionCount = stepsTakenToTransitionCount.get(k);
             double rewardTotal = stepsTakenToRewardTotal.get(k);

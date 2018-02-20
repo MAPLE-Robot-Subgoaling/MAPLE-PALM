@@ -1,17 +1,17 @@
-state: medium-2passengers
+state: classic-2passengers
 
 agents:
   - ramdp
 
-episodes: 1000
-max_steps: 2000
+episodes: 300
+max_steps: 1000
 trials: 1
 gamma: 0.99
 
 stochastic:
-  seed: 64753211
+  seed: 7543221
   correct_move: 0.85
-  fickle: 0.40
+  fickle: 0.0
   random_start: false
 
 planning:
@@ -19,10 +19,10 @@ planning:
 
 rmax:
   vmax: 1.0
-  threshold: 3
-  max_delta: 0.000001
+  threshold: 20
+  max_delta: 0.00001
   max_iterations_in_model: 100
-  use_multitime_model: false
+  use_multitime_model: true
 
 output:
   csv:

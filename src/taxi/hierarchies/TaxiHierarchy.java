@@ -82,11 +82,12 @@ public class TaxiHierarchy {
 		Task[] navTasks = {north, east, south, west};
 
 		double defaultReward = NonprimitiveTask.DEFAULT_REWARD;
+		double noopReward = NonprimitiveTask.NOOP_REWARD;
 
 		// Nav (Task used by Get and Put)
 		ActionType aNavigate = putDomain.getAction(TaxiPutDomain.ACTION_NAV);
 		NonprimitiveTask navigate = new NonprimitiveTask(navTasks, aNavigate, navDomain,
-				new NavStateMapper(), new NavFailurePF(), new NavCompletedPF(), defaultReward);
+				new NavStateMapper(), new NavFailurePF(), new NavCompletedPF(), defaultReward, noopReward);
 
 		// Pickup (Primitive used by Bringon)
 		ActionType aPickup = bringonDomain.getAction(Taxi.ACTION_PICKUP);
@@ -96,13 +97,13 @@ public class TaxiHierarchy {
 		ActionType aBringon = getDomain.getAction(TaxiGetDomain.ACTION_BRINGON);
 		Task[] bringonTasks = {pickup};
 		NonprimitiveTask bringon = new NonprimitiveTask(bringonTasks, aBringon, bringonDomain,
-				new BringonStateMapper(), new BringonFailurePF(), new BringonCompletedPF(), defaultReward);
+				new BringonStateMapper(), new BringonFailurePF(), new BringonCompletedPF(), defaultReward, noopReward);
 
 		// Get (Task used by Root)
 		ActionType aGet = rootDomain.getAction(TaxiRootDomain.ACTION_GET);
 		Task[] getTasks = {bringon, navigate};
 		NonprimitiveTask get = new NonprimitiveTask(getTasks, aGet, getDomain,
-				new GetStateMapper(), new GetFailurePF(), new GetCompletedPF(), defaultReward);
+				new GetStateMapper(), new GetFailurePF(), new GetCompletedPF(), defaultReward, noopReward);
 
 		// Putdown (Primitive used by Dropoff)
 		ActionType aPutdown = dropoffDomain.getAction(Taxi.ACTION_PUTDOWN);
@@ -112,19 +113,19 @@ public class TaxiHierarchy {
 		ActionType aDropoff = putDomain.getAction(TaxiPutDomain.ACTION_DROPOFF);
 		Task[] dropoffTasks = {putdown};
 		NonprimitiveTask dropoff = new NonprimitiveTask(dropoffTasks, aDropoff, dropoffDomain,
-				new DropoffStateMapper(), new DropoffFailurePF(), new DropoffCompletedPF(), defaultReward);
+				new DropoffStateMapper(), new DropoffFailurePF(), new DropoffCompletedPF(), defaultReward, noopReward);
 
 		// Put (Task used by Root)
 		ActionType aPut = rootDomain.getAction(TaxiRootDomain.ACTION_PUT);
 		Task[] putTasks = {dropoff, navigate};
 		NonprimitiveTask put = new NonprimitiveTask(putTasks, aPut, putDomain,
-				new PutStateMapper(), new PutFailurePF(), new PutCompletedPF(), defaultReward);
+				new PutStateMapper(), new PutFailurePF(), new PutCompletedPF(), defaultReward, noopReward);
 
 		// Root
 		ActionType aSolve = new SolveActionType();
 		Task[] rootTasks = {get, put};
 		NonprimitiveTask root = new NonprimitiveTask(rootTasks, aSolve, rootDomain,
-				new RootStateMapper(), new RootFailurePF(), new RootCompletedPF(), defaultReward);
+				new RootStateMapper(), new RootFailurePF(), new RootCompletedPF(), defaultReward, noopReward);
 		
 		return root;
 	}
@@ -172,12 +173,13 @@ public class TaxiHierarchy {
 		Task[] bringonTasks = new Task[]{pickup};
 		Task[] dropoffTasks = new Task[]{dropoff};
 
-        double defaultReward = NonprimitiveTask.DEFAULT_REWARD;
+		double defaultReward = NonprimitiveTask.DEFAULT_REWARD;
+		double noopReward = NonprimitiveTask.NOOP_REWARD;
 
         PropositionalFunction navFailPF = new BaseNavigateFailurePF();
 		PropositionalFunction navCompPF = new BaseNavigateCompletedPF();
 		NonprimitiveTask navigate = new NonprimitiveTask(navTasks, aNavigate, taxiDomain.generateNavigateDomain(),
-				new IdentityMap(), navFailPF, navCompPF, defaultReward);
+				new IdentityMap(), navFailPF, navCompPF, defaultReward, noopReward);
 
 		Task[] getTasks = new Task[]{pickup, navigate};
 		Task[] putTasks = new Task[]{navigate, dropoff};
@@ -202,7 +204,7 @@ public class TaxiHierarchy {
 				aPickup,
 				aPutdown
 		);
-		Task root = new NonprimitiveTask(rootTasks, aSolve, baseActual, new IdentityMap(), rootPF, rootPF, defaultReward);
+		Task root = new NonprimitiveTask(rootTasks, aSolve, baseActual, new IdentityMap(), rootPF, rootPF, defaultReward, noopReward);
 
 		return root;
 		

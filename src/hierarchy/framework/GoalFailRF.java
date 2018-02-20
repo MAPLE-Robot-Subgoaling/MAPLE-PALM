@@ -10,6 +10,7 @@ public class GoalFailRF implements RewardFunction {
     protected double rewardGoal = 1.0;
     protected double rewardFail = -1.0;
     protected double rewardDefault = 0.0;
+    protected double rewardNoop = 0.0;
 
     protected GoalFailTF tf;
 
@@ -17,21 +18,28 @@ public class GoalFailRF implements RewardFunction {
         this.tf = tf;
     }
 
-    public GoalFailRF(GoalFailTF tf, double rewardDefault) {
+    public GoalFailRF(GoalFailTF tf, double rewardDefault, double rewardNoop) {
         this.tf = tf;
         this.rewardDefault = rewardDefault;
+        this.rewardNoop = rewardNoop;
     }
 
-    public GoalFailRF(GoalFailTF tf, double rewardGoal, double rewardFail, double rewardDefault) {
+    public GoalFailRF(GoalFailTF tf, double rewardGoal, double rewardFail, double rewardDefault, double rewardNoop) {
         this.tf = tf;
         this.rewardGoal = rewardGoal;
         this.rewardFail = rewardFail;
         this.rewardDefault = rewardDefault;
+        this.rewardNoop = rewardNoop;
     }
 
     @Override
     public double reward(State state, Action action, State sPrime) {
         double r = rewardDefault;
+
+        if (state.equals(sPrime)) {
+            r += rewardNoop;
+        }
+
         if (tf.atGoal(sPrime)) {
             r += rewardGoal;
         } else if (tf.atFailure(sPrime)) {
@@ -39,6 +47,7 @@ public class GoalFailRF implements RewardFunction {
         } else {
             // neither goal nor failure
         }
+
         return r;
     }
 

@@ -187,4 +187,22 @@ public class TaxiBringonState implements MutableOOState {
 		}
 		return out;
 	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		TaxiBringonState that = (TaxiBringonState) o;
+
+		if (taxi != null ? !taxi.equals(that.taxi) : that.taxi != null) return false;
+		return passengers != null ? passengers.equals(that.passengers) : that.passengers == null;
+	}
+
+	@Override
+	public int hashCode() {
+		int result = taxi != null ? taxi.hashCode() : 0;
+		result = 31 * result + (passengers != null ? passengers.hashCode() : 0);
+		return result;
+	}
 }

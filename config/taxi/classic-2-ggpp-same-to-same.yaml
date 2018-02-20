@@ -3,7 +3,7 @@ state: classic-2passengers
 agents:
   - ramdp
 
-episodes: 100
+episodes: 200
 max_steps: 500
 trials: 1
 gamma: 0.99
@@ -19,10 +19,10 @@ planning:
 
 rmax:
   vmax: 1.0
-  threshold: 5
+  threshold: 30
   max_delta: 0.0000001
   max_iterations_in_model: 1000
-  use_multitime_model: false
+  use_multitime_model: true
   
 
 output:

@@ -18,6 +18,7 @@ public class NonprimitiveTask extends Task {
 
     // default rewardTotal used in nonprimitive task's pseudo-rewardTotal function
     public static double DEFAULT_REWARD = 0.0;//0.000001;
+	public static double NOOP_REWARD = 0.0;//-0.0001;
 
 	protected GoalFailTF goalFailTF;
 	protected GoalFailRF goalFailRF;
@@ -33,10 +34,10 @@ public class NonprimitiveTask extends Task {
 	 * @param compl the completion PF
 	 */
 	public NonprimitiveTask(Task[] children, ActionType aType, OOSADomain abstractDomain, StateMapping map,
-			PropositionalFunction fail, PropositionalFunction compl, double defaultReward) {
+			PropositionalFunction fail, PropositionalFunction compl, double defaultReward, double noopReward) {
 		super(children, aType, abstractDomain, map);
 		this.goalFailTF = new GoalFailTF(compl, null, fail, null);
-		this.goalFailRF = new GoalFailRF(this.goalFailTF, defaultReward);
+		this.goalFailRF = new GoalFailRF(this.goalFailTF, defaultReward, noopReward);
 	}
 
 	/**
@@ -49,7 +50,7 @@ public class NonprimitiveTask extends Task {
 	 */
 	public NonprimitiveTask(Task[] children, ActionType aType, StateMapping map,
 							PropositionalFunction fail, PropositionalFunction compl) {
-		this(children, aType, null, map, fail, compl, DEFAULT_REWARD);
+		this(children, aType, null, map, fail, compl, DEFAULT_REWARD, NOOP_REWARD);
 	}
 	//used for hierarchies with no abstraction
 	/**
@@ -61,7 +62,7 @@ public class NonprimitiveTask extends Task {
 	 */
 	public NonprimitiveTask(Task[] children, ActionType aType,
 			PropositionalFunction fail, PropositionalFunction compl) {
-		this(children, aType, null, null, fail, compl, DEFAULT_REWARD);
+		this(children, aType, null, null, fail, compl, DEFAULT_REWARD, NOOP_REWARD);
 	}
 
 	

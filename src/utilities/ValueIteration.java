@@ -221,15 +221,18 @@ public class ValueIteration extends DynamicProgramming implements Planner {
 		
 	}
 	
-	public ValueFunction saveValueFunction(double defaultValue) {
+	public ValueFunction saveValueFunction(double defaultValue, double cutoffValue) {
 		if (!this.hasRunVI) {
 			throw new RuntimeException("ERROR: have not run value iteration yet");
 		}
 		ValueFunction valueFunction = new TabularValueFunction(hashingFactory, this.valueFunction, defaultValue);
+		for(Iterator<Map.Entry<HashableState, Double>> it = this.valueFunction.entrySet().iterator(); it.hasNext(); ) {
+			Map.Entry<HashableState, Double> entry = it.next();
+			if(entry.getValue() >= cutoffValue) {
+				it.remove();
+			}
+		}
 		return valueFunction;
 	}
-	
 
-	
-	
 }

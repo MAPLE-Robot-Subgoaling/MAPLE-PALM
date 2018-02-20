@@ -3,14 +3,14 @@ state: classic-2passengers
 agents:
   - ramdp
 
-episodes: 200
+episodes: 300
 max_steps: 500
 trials: 1
 gamma: 0.99
 
 stochastic:
   seed: 3727891
-  correct_move: 1.0
+  correct_move: 0.85
   fickle: 0.0
   random_start: false
 
@@ -27,7 +27,7 @@ rmax:
 output:
   csv:
     enabled: true
-    output: results/ramdp-classic-2-gpgp-chain.csv
+    output: results/ramdp-classic-2-ggpp-d2s-slippery.csv
 
   chart:
     enabled: true

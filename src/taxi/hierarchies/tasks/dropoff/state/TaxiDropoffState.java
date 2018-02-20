@@ -134,4 +134,19 @@ public class TaxiDropoffState implements MutableOOState{
 		}
 		return out;
 	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		TaxiDropoffState that = (TaxiDropoffState) o;
+
+		return passengers != null ? passengers.equals(that.passengers) : that.passengers == null;
+	}
+
+	@Override
+	public int hashCode() {
+		return passengers != null ? passengers.hashCode() : 0;
+	}
 }

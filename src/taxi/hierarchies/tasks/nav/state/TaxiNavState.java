@@ -206,5 +206,23 @@ public class TaxiNavState implements MutableOOState{
 				'}';
 	}
 
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
 
+		TaxiNavState that = (TaxiNavState) o;
+
+		if (taxi != null ? !taxi.equals(that.taxi) : that.taxi != null) return false;
+		if (locations != null ? !locations.equals(that.locations) : that.locations != null) return false;
+		return walls != null ? walls.equals(that.walls) : that.walls == null;
+	}
+
+	@Override
+	public int hashCode() {
+		int result = taxi != null ? taxi.hashCode() : 0;
+		result = 31 * result + (locations != null ? locations.hashCode() : 0);
+		result = 31 * result + (walls != null ? walls.hashCode() : 0);
+		return result;
+	}
 }
