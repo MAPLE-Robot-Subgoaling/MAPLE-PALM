@@ -245,21 +245,11 @@ public class RAMDPLearningAgent implements LearningAgent{
 //		planner.setMaxRolloutDepth(1000);
         ValueIteration planner = new ValueIteration(domain, discount, hashingFactory, maxDelta, maxIterationsInModelPlanner);
         planner.toggleReachabiltiyTerminalStatePruning(true);
-//		ValueFunction valueFunction = task.valueFunction;
-//		if (valueFunction != null) {
-//			planner.setValueFunctionInitialization(valueFunction);
-//		}
-		Policy policy = planner.planFromState(s);
-		if (debug) {
-			DynamicProgramming dp = planner.getCopyOfValueFunction();
-			List<State> states = planner.getAllStates();
-			for (State state : states) {
-				System.out.println(state);
-				for (QValue qv : dp.qValues(state)) {
-					System.out.println(qv.a + " " + qv.q);
-				}
-			}
+		ValueFunction valueFunction = task.valueFunction;
+		if (valueFunction != null) {
+			planner.setValueFunctionInitialization(valueFunction);
 		}
+		Policy policy = planner.planFromState(s);
         Action action = policy.action(s);
 		if (debug) {
 			try {
@@ -274,9 +264,9 @@ public class RAMDPLearningAgent implements LearningAgent{
 				e.printStackTrace();
 			}
 		}
-//		double defaultValue = 0.0;
-//		valueFunction = planner.saveValueFunction(defaultValue, rmax);
-//		task.valueFunction = valueFunction;
+		double defaultValue = 0.0;
+		valueFunction = planner.saveValueFunction(defaultValue, rmax);
+		task.valueFunction = valueFunction;
     	return action;
 	}
 
