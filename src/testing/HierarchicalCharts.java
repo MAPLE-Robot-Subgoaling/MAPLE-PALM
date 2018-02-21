@@ -48,7 +48,7 @@ public class HierarchicalCharts {
 			hierGenGroot = hierGenRoot.getAllGroundedTasks(s).get(0);
 		}
 
-		hs = new SimpleHashableStateFactory(true); //new CachedHashableStateFactory(true); // new SimpleHashableStateFactory(true);
+		hs = new SimpleHashableStateFactory(false); //new CachedHashableStateFactory(true); // new SimpleHashableStateFactory(true);
 
 		if(conf.output.visualizer.enabled) {
 			VisualActionObserver obs = new VisualActionObserver(domain, TaxiVisualizer.getVisualizer(conf.output.visualizer.width, conf.output.visualizer.height));

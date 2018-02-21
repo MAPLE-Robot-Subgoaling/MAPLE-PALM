@@ -128,10 +128,11 @@ public class TaxiDropoffState implements MutableOOState{
 	}
 	
 	public String toString(){
-		String out = "{\n";
+		String out = "{ " + this.getClass().getSimpleName() + "\n";
 		for(TaxiDropoffPassenger p : passengers.values()){
 			out += p.toString() + "\n";
 		}
+		out += "}";
 		return out;
 	}
 

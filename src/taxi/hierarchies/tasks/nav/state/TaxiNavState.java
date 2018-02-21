@@ -7,6 +7,8 @@ import burlap.mdp.core.oo.state.OOStateUtilities;
 import burlap.mdp.core.oo.state.ObjectInstance;
 import burlap.mdp.core.state.MutableState;
 import taxi.Taxi;
+import taxi.hierarchies.tasks.get.state.TaxiGetLocation;
+import taxi.hierarchies.tasks.get.state.TaxiGetPassenger;
 import taxi.hierarchies.tasks.nav.TaxiNavDomain;
 
 public class TaxiNavState implements MutableOOState{
@@ -199,11 +201,16 @@ public class TaxiNavState implements MutableOOState{
 
 	@Override
 	public String toString() {
-		return "TaxiNavState{" +
-				taxi +
-				", " + locations +
-				", " + walls +
-				'}';
+		String out = "{ " + this.getClass().getSimpleName() + "\n";
+		out += taxi.toString();
+		for(TaxiNavLocation loc : locations.values()){
+			out += loc.toString() + "\n";
+		}
+		for(TaxiNavWall wall : walls.values()){
+			out += wall.toString() + "\n";
+		}
+		out += "\n}";
+		return out;
 	}
 
 	@Override

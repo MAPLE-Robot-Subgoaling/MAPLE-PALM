@@ -109,6 +109,7 @@ public class RAMDPModel extends FactoredModel {
             tps.add(imaginedTransition);
             return tps;
         }
+        double totalProbability = 0.0;
         for (HashableState hsPrime : hsPrimeToOutcomes.keySet()) {
             PossibleOutcome outcome = getPossibleOutcome(hsPrimeToOutcomes, hs, a, hsPrime);
             TransitionProb probability = outcome.transitionProb;
@@ -116,13 +117,14 @@ public class RAMDPModel extends FactoredModel {
                 throw new RuntimeException("ERROR: the EnvironmentOutcome stored in the TransitionProb was not identical to the one in its own PossibleOutcome");
             }
             tps.add(probability);
+            totalProbability += probability.p;
         }
         // IMPORTANT:
         // with the Multi-time model, the totalProbability will not sum to 1.0 but to GAMMA, or less even
         // the rationale for this is explained in Jong's RMAXQ paper (essentially the remainder is prob. of termination)
-//        if (totalProbability < 0.99999999999 || totalProbability > 1.00000000001) {
-//            System.err.println("total probability does not sum to 1.0: " + totalProbability);
-//        }
+        if (totalProbability < 0.99999999999 || totalProbability > 1.00000000001) {
+            System.err.println("total probability does not sum to 1.0: " + totalProbability);
+        }
         return tps;
     }
 
@@ -154,7 +156,7 @@ public class RAMDPModel extends FactoredModel {
         } else {
             hsPrimeToOutcomes = getHsPrimeToOutcomes(hs, a);
 		    double imaginedR = 0.0;
-		    double equalP = 1.0 / hsPrimeToOutcomes.size();
+		    double equalP = 1.0 / (1.0 * hsPrimeToOutcomes.size());
 		    outcome.setReward(imaginedR);
 		    outcome.setTransitionProbability(equalP);
             for(HashableState otherHsPrime : hsPrimeToOutcomes.keySet()) {
@@ -184,60 +186,26 @@ public class RAMDPModel extends FactoredModel {
         }
     }
 
-    protected void updateApproximateModelFor(PossibleOutcome outcome, double gamma, int stateActionCount) {
-        updateApproximateProbability(outcome, gamma, stateActionCount);
-        updateApproximateReward(outcome, gamma, stateActionCount);
-    }
-
-    protected void updateApproximateProbability(PossibleOutcome outcome, double gamma, int stateActionCount) {
-        double sumP = 0.0;
-        Map<Integer, Integer> stepsTakenToTransitionCount = outcome.getStepsTakenToTransitionCount();
-        for (int k : stepsTakenToTransitionCount.keySet()){
-            double discount = 1.0;
-            if (useMultitimeModel) {
-                discount = Math.pow(gamma, k);
-            }
-            int transitionCount = stepsTakenToTransitionCount.get(k);
-            double stepwiseP = discount * transitionCount;
-            sumP += stepwiseP;
-        }
-        double newP = sumP / (1.0 * stateActionCount);
-        if (newP > 1.0 || newP < 0.0) {
-            throw new RuntimeException("invalid probability");
-        }
-        outcome.setTransitionProbability(newP);
-    }
-
-    protected void updateApproximateReward(PossibleOutcome outcome, double gamma, int stateActionCount) {
+    protected void updateApproximateModelFor(PossibleOutcome outcome, double gamma, int transitionCountSA) {
         Map<Integer, Integer> stepsTakenToTransitionCount = outcome.getStepsTakenToTransitionCount();
         Map<Integer, Double> stepsTakenToRewardTotal = outcome.getStepsTakenToRewardTotal();
-        double thisRewardTotal = 0.0;
-        for (int k : stepsTakenToRewardTotal.keySet()){
+        double transitionCountSASP = 0.0;
+        double rewardTotalSASP = 0.0;
+        for (int k : stepsTakenToTransitionCount.keySet()) {
+            int transitionCountSASPK = stepsTakenToTransitionCount.get(k);
+            transitionCountSASP += transitionCountSASPK;
+            double rewardTotalSASPK = stepsTakenToRewardTotal.get(k);
             double discount = 1.0;
             if (useMultitimeModel) {
-                discount = Math.pow(gamma, k);
-//                discount = Math.pow(gamma, k - 1);
-//                if (discount > 1.0) {
-//                    discount = 1.0;
-//                }
+                discount = Math.min(1.0, Math.pow(gamma, k - 1));
             }
-            int transitionCount = stepsTakenToTransitionCount.get(k);
-            double rewardTotal = stepsTakenToRewardTotal.get(k);
-            double stepwiseR = discount * rewardTotal;
-            stepwiseR /= (1.0 * transitionCount);
-            thisRewardTotal += stepwiseR;
+            rewardTotalSASPK *= discount;
+            rewardTotalSASP += rewardTotalSASPK;
         }
-//        int stateActionStatePrimeCount = outcome.getTransitionCountSummation();
-//        double newR = (1.0 * thisRewardTotal) / (1.0 * stateActionStatePrimeCount);
-        double newR = thisRewardTotal / stepsTakenToRewardTotal.size();
-        if (useMultitimeModel) {
-            double transitionProbability = outcome.getTransitionProbability();
-            newR *= transitionProbability;
-        };
-        if (newR > 1.0) {
-            throw new RuntimeException("invalid reward");
-        }
-        outcome.setReward(newR);
+        double transitionProbabilitySASP = transitionCountSASP / (1.0 * transitionCountSA);
+        outcome.setTransitionProbability(transitionProbabilitySASP);
+        double rewardEstimateSASP = rewardTotalSASP / transitionCountSASP;
+        outcome.setReward(rewardEstimateSASP);
     }
 
     /**

@@ -17,7 +17,7 @@ public class NonprimitiveTask extends Task {
     //tasks which are not at the base of the hierarchy
 
     // default rewardTotal used in nonprimitive task's pseudo-rewardTotal function
-    public static double DEFAULT_REWARD = 0.0;//0.000001;
+    public static double DEFAULT_REWARD = 0.0001;//0.000001;
 	public static double NOOP_REWARD = 0.0;//-0.0001;
 
 	protected GoalFailTF goalFailTF;

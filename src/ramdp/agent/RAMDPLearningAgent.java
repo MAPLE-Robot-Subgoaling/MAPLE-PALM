@@ -4,7 +4,9 @@ import burlap.behavior.policy.Policy;
 import burlap.behavior.policy.PolicyUtils;
 import burlap.behavior.singleagent.Episode;
 import burlap.behavior.singleagent.learning.LearningAgent;
+import burlap.behavior.singleagent.planning.stochastic.DynamicProgramming;
 import burlap.behavior.valuefunction.ConstantValueFunction;
+import burlap.behavior.valuefunction.QValue;
 import burlap.behavior.valuefunction.ValueFunction;
 import burlap.mdp.core.action.Action;
 import burlap.mdp.core.state.State;
@@ -235,7 +237,8 @@ public class RAMDPLearningAgent implements LearningAgent{
 	protected Action nextAction(GroundedTask task, State s){
 		RAMDPModel model = getModel(task);
 		OOSADomain domain = task.getDomain(model);
-		double discount = useMultitimeModel ? 1.0 : gamma;
+//		double discount = useMultitimeModel ? 1.0 : gamma;
+		double discount = gamma;
 //        ValueFunction lowerVInit = new ConstantValueFunction(-model.getRmax());
 //        ValueFunction upperVInit = new ConstantValueFunction(model.getRmax());
 //		BoundedRTDP planner = new BoundedRTDP(domain, discount, hashingFactory, lowerVInit, upperVInit, 0.001, 1000);
@@ -247,6 +250,16 @@ public class RAMDPLearningAgent implements LearningAgent{
 //			planner.setValueFunctionInitialization(valueFunction);
 //		}
 		Policy policy = planner.planFromState(s);
+		if (debug) {
+			DynamicProgramming dp = planner.getCopyOfValueFunction();
+			List<State> states = planner.getAllStates();
+			for (State state : states) {
+				System.out.println(state);
+				for (QValue qv : dp.qValues(state)) {
+					System.out.println(qv.a + " " + qv.q);
+				}
+			}
+		}
         Action action = policy.action(s);
 		if (debug) {
 			try {

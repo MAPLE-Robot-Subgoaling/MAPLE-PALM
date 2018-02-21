@@ -204,9 +204,13 @@ public class ValueIteration extends DynamicProgramming implements Planner {
 				List<TransitionProb> tps = ((FullModel)model).transitions(sh.s(), a);
 				for(TransitionProb tp : tps){
 					HashableState tsh = this.stateHash(tp.eo.op);
-					if(!openedSet.contains(tsh) && !valueFunction.containsKey(tsh)){
-						openedSet.add(tsh);
-						openList.offer(tsh);
+					boolean inOpenSet = openedSet.contains(tsh);
+					if (!inOpenSet) {
+						boolean alreadyInVF = valueFunction.containsKey(tsh);
+						if (!alreadyInVF) {
+							openedSet.add(tsh);
+							openList.offer(tsh);
+						}
 					}
 				}
 			}

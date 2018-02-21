@@ -176,7 +176,7 @@ public class TaxiBringonState implements MutableOOState {
 	
 	@Override
 	public String toString(){
-		String out = "{\n";
+		String out = "{ " + this.getClass().getSimpleName() + "\n";
 
 		if (taxi != null) {
             out += taxi.toString() + "\n";
@@ -185,6 +185,7 @@ public class TaxiBringonState implements MutableOOState {
 		for(TaxiBringonPassenger p : passengers.values()){
 			out += p.toString() + "\n";
 		}
+		out += "}";
 		return out;
 	}
 

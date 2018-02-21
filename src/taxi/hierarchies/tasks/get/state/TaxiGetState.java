@@ -211,7 +211,7 @@ public class TaxiGetState extends TaxiGetPutState {
 
 	@Override
 	public String toString(){
-		String out = "{\n";
+		String out = "{ " + this.getClass().getSimpleName() + "\n";
 
 		if (taxi != null) {
             out += taxi.toString() + "\n";
@@ -224,6 +224,7 @@ public class TaxiGetState extends TaxiGetPutState {
 		for(TaxiGetLocation loc : locations.values()){
 			out += loc.toString() + "\n";
 		}
+		out += "}";
 		return out;
 	}
 
