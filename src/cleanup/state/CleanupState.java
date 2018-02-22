@@ -68,7 +68,23 @@ public class CleanupState implements MutableOOState {
 
     @Override
     public MutableOOState removeObject(String oname) {
-        throw new RuntimeException("Remove not implemented");
+        ObjectInstance objectInstance = this.object(oname);
+        if (objectInstance instanceof CleanupAgent) {
+            agent = null;
+        } else if (objectInstance instanceof CleanupBlock) {
+            touchBlock(oname);
+            blocks.remove(oname);
+        } else if (objectInstance instanceof CleanupDoor) {
+            touchDoor(oname);
+            doors.remove(oname);
+        } else if (objectInstance instanceof CleanupRoom) {
+            touchRoom(oname);
+            rooms.remove(oname);
+        } else {
+            throw new RuntimeException("unknown oname passed to removeObject: " + oname);
+        }
+        return this;
+
     }
 
     @Override
@@ -85,7 +101,7 @@ public class CleanupState implements MutableOOState {
 
     @Override
     public ObjectInstance object(String oname) {
-        if (oname.equals(agent.name())) {
+        if (agent != null && oname.equals(agent.name())) {
             return agent;
         }
         ObjectInstance out = blocks.get(oname);

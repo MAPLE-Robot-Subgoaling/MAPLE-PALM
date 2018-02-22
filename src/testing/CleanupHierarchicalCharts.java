@@ -1,5 +1,7 @@
 package testing;
 
+import burlap.behavior.singleagent.Episode;
+import burlap.behavior.singleagent.auxiliary.EpisodeSequenceVisualizer;
 import burlap.behavior.singleagent.auxiliary.performance.PerformanceMetric;
 import burlap.behavior.singleagent.auxiliary.performance.TrialMode;
 import burlap.behavior.singleagent.learning.LearningAgent;
@@ -13,6 +15,8 @@ import burlap.statehashing.HashableStateFactory;
 import burlap.statehashing.simple.SimpleHashableStateFactory;
 import cleanup.CleanupVisualizer;
 import cleanup.hierarchies.CleanupHierarchy;
+import cleanup.hierarchies.CleanupHierarchyRAMDP;
+import cleanup.hierarchies.CleanupHierarchyRMAXQ;
 import cleanup.state.CleanupRandomStateGenerator;
 import cleanup.state.CleanupState;
 import config.cleanup.CleanupConfig;
@@ -23,10 +27,12 @@ import hierarchy.framework.Task;
 import ramdp.agent.RAMDPLearningAgent;
 import rmaxq.agent.RmaxQLearningAgent;
 import state.hashing.simple.CachedHashableStateFactory;
+import taxi.TaxiVisualizer;
 import taxi.stateGenerator.RandomPassengerTaxiState;
 import utilities.LearningAlgorithmExperimenter;
 
 import java.io.FileNotFoundException;
+import java.util.List;
 
 //import utilities.SimpleHashableStateFactory;
 
@@ -104,15 +110,22 @@ public class CleanupHierarchicalCharts {
             );
         }
 
-        exp.startExperiment();
+        List<Episode> episodes = exp.startExperiment();
         if(conf.output.csv.enabled) {
             exp.writeEpisodeDataToCSV(conf.output.csv.output);
+        }
+
+        if (conf.output.visualizer.episodes){
+            EpisodeSequenceVisualizer ev = new EpisodeSequenceVisualizer
+                    (CleanupVisualizer.getVisualizer(conf.output.visualizer.width, conf.output.visualizer.height), domain, episodes);
+            ev.setDefaultCloseOperation(ev.EXIT_ON_CLOSE);
+            ev.initGUI();
         }
     }
 
     public static void main(String[] args) {
 
-        String conffile = "config/cleanup/rmaxqTest2r1b.yaml";
+        String conffile = "config/cleanup/jwtest.yaml";
         if(args.length > 0) {
             conffile = args[0];
         }
@@ -127,9 +140,11 @@ public class CleanupHierarchicalCharts {
         }
 
         CleanupState initialState = config.generateState();
-        Task ramdpRoot = CleanupHierarchy.createAMDPHierarchy(config);
-        Task rmaxqRoot = CleanupHierarchy.createRMAXQHierarchy(config);
-        OOSADomain baseDomain = CleanupHierarchy.getBaseDomain();
+        CleanupHierarchyRAMDP ramdpHierarchy = new CleanupHierarchyRAMDP();
+        CleanupHierarchyRMAXQ rmaxqHierarchy = new CleanupHierarchyRMAXQ();
+        Task ramdpRoot = ramdpHierarchy.createAMDPHierarchy(config);
+        Task rmaxqRoot = rmaxqHierarchy.createRMAXQHierarchy(config);
+        OOSADomain baseDomain = ramdpHierarchy.getBaseDomain();
         createCharts(config, initialState, baseDomain, ramdpRoot, rmaxqRoot);
 
     }

@@ -19,6 +19,7 @@ public class ObjectInRegionGoalPF extends PropositionalFunction {
         String regionName = params[1];
         ObjectInstance object = state.object(objectName);
         ObjectInstance region = state.object(regionName);
+        if (object == null || region == null) { return false; }
         int x = (int) object.get(ATT_X);
         int y = (int) object.get(ATT_Y);
         int left = (int) region.get(ATT_LEFT);
