@@ -75,6 +75,14 @@ public class GoalFailRF implements RewardFunction {
         this.rewardDefault = rewardDefault;
     }
 
+    public double getRewardNoop() {
+        return rewardNoop;
+    }
+
+    public void setRewardNoop(double rewardNoop) {
+        this.rewardNoop = rewardNoop;
+    }
+
     public GoalFailTF getTf() {
         return tf;
     }

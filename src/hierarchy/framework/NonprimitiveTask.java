@@ -40,31 +40,6 @@ public class NonprimitiveTask extends Task {
 		this.goalFailRF = new GoalFailRF(this.goalFailTF, defaultReward, noopReward);
 	}
 
-	/**
-	 * create a nunprimitive taks
-	 * @param children the subtasks
-	 * @param aType the set of actions this task represents in its parent task's domain
-	 * @param map the state abstraction function into the domain
-	 * @param fail the failure PF
-	 * @param compl the completion PF
-	 */
-	public NonprimitiveTask(Task[] children, ActionType aType, StateMapping map,
-							PropositionalFunction fail, PropositionalFunction compl) {
-		this(children, aType, null, map, fail, compl, DEFAULT_REWARD, NOOP_REWARD);
-	}
-	//used for hierarchies with no abstraction
-	/**
-	 * create a nunprimitive taks
-	 * @param children the subtasks
-	 * @param aType the set of actions this task represents in its parent task's domain
-	 * @param fail the failure PF
-	 * @param compl the completion PF
-	 */
-	public NonprimitiveTask(Task[] children, ActionType aType,
-			PropositionalFunction fail, PropositionalFunction compl) {
-		this(children, aType, null, null, fail, compl, DEFAULT_REWARD, NOOP_REWARD);
-	}
-
 	
 	@Override
 	public boolean isPrimitive() {
@@ -94,7 +69,7 @@ public class NonprimitiveTask extends Task {
 
 	@Override
 	public boolean isFailure(State s, Action a) {
-	    String[] params = parseParams(a);
+		String[] params = parseParams(a);
 		boolean atFailure = goalFailTF.atFailure(s, params);
 		return atFailure;
 	}
@@ -114,4 +89,12 @@ public class NonprimitiveTask extends Task {
         }
         return params;
     }
+
+	public GoalFailTF getGoalFailTF() {
+		return goalFailTF;
+	}
+
+	public GoalFailRF getGoalFailRF() {
+		return goalFailRF;
+	}
 }

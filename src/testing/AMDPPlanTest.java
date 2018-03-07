@@ -41,7 +41,7 @@ public class AMDPPlanTest {
 	}
 	
 	public static void main(String[] args) {
-		String conffile = "config/taxi/jwtest-classic-2passengers.yaml";
+		String conffile = "./config/taxi/classic-deterministic.yaml";
 		if(args.length > 0) {
 			conffile = args[0];
 		}

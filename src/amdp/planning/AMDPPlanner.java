@@ -14,12 +14,13 @@ import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.environment.Environment;
 import burlap.mdp.singleagent.environment.EnvironmentOutcome;
 import burlap.mdp.singleagent.environment.SimulatedEnvironment;
+import burlap.mdp.singleagent.model.FactoredModel;
 import burlap.mdp.singleagent.model.FullModel;
 import burlap.mdp.singleagent.oo.OOSADomain;
 import burlap.statehashing.HashableState;
 import burlap.statehashing.HashableStateFactory;
-import hierarchy.framework.GroundedTask;
-import hierarchy.framework.Task;
+import hierarchy.framework.*;
+import ramdp.agent.RAMDPLearningAgent;
 import utilities.BoundedRTDP;
 
 public class AMDPPlanner {
@@ -164,6 +165,8 @@ public class AMDPPlanner {
 			//create a copy of the task's domain with the same action the terminates and defines rewardTotal specific
 			//to the task
 			OOSADomain domain = t.getDomain();
+			String[] params = NonprimitiveTask.parseParams(t.getAction());
+			bindTaskParametersToDomainModel(domain, params);
 
 			//plan over the modified domain to solve the task
 			BoundedRTDP brtdp = new BoundedRTDP(domain, gamma, hs, new ConstantValueFunction(0), new ConstantValueFunction(1),
@@ -174,6 +177,14 @@ public class AMDPPlanner {
 //			taskPolicies.put(currentHashableState, p);
 		}
 		return p;
+	}
+
+	private void bindTaskParametersToDomainModel(OOSADomain domain, String[] params) {
+		FactoredModel model = ((FactoredModel)domain.getModel());
+		GoalFailTF tf = (GoalFailTF) model.getTf();
+		tf.setGoalParams(params);
+		tf.setFailParams(params);
+		GoalFailRF rf = (GoalFailRF) model.getRf();
 	}
 
 	/**
