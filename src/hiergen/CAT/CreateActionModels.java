@@ -3,7 +3,6 @@ package hiergen.CAT;
 import burlap.behavior.singleagent.Episode;
 import burlap.mdp.core.action.Action;
 import burlap.mdp.core.state.State;
-import opoptions.OPODriver;
 import utils.MurmurHash;
 import weka.classifiers.trees.J48;
 import weka.core.Attribute;
