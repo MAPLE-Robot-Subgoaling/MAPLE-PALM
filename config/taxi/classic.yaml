@@ -1,7 +1,7 @@
-state: classic
+state: tiny
 
 agents:
-  - ramdp
+  - rmaxq
 
 episodes: 100
 max_steps: 2000
@@ -10,8 +10,8 @@ gamma: 0.99
 
 stochastic:
   seed: 2320942930
-  correct_move: 0.8
-  fickle: 0.05
+  correct_move: 1.0
+  fickle: 0.00
   random_start: false
 
 planning:
@@ -33,9 +33,9 @@ output:
     enabled: true
 
     width: 500
-    height: 300
+    height: 200
     columns: 2
-    max_height: 900
+    max_height: 650
     trial_mode: MOST_RECENT_AND_AVERAGE
 
     metrics:
