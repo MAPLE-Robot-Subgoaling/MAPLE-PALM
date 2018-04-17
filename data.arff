@@ -1,0 +1,53 @@
+@relation pickup_Taxi0:x-weka.filters.unsupervised.attribute.NumericToNominal-Rfirst-last-weka.filters.unsupervised.attribute.AddValues-Cfirst-L_-weka.filters.unsupervised.attribute.StringToNominal-Rlast
+
+@attribute Taxi0:x_prime {_}
+@attribute Taxi0:x {}
+@attribute Taxi0:y {}
+@attribute Taxi0:taxiOccupied {}
+@attribute Passenger0:x {}
+@attribute Passenger0:y {}
+@attribute Passenger0:inTaxi {}
+@attribute Passenger0:goalLocation {}
+@attribute Passenger0:justPickedUp {}
+@attribute Location3:x {}
+@attribute Location3:y {}
+@attribute Location3:color {}
+@attribute Location1:x {}
+@attribute Location1:y {}
+@attribute Location1:color {}
+@attribute Location2:x {}
+@attribute Location2:y {}
+@attribute Location2:color {}
+@attribute Location0:x {}
+@attribute Location0:y {}
+@attribute Location0:color {}
+@attribute Wall1:startX {}
+@attribute Wall1:startY {}
+@attribute Wall1:length {}
+@attribute Wall1:isHorizontal {}
+@attribute Wall0:startX {}
+@attribute Wall0:startY {}
+@attribute Wall0:length {}
+@attribute Wall0:isHorizontal {}
+@attribute Wall6:startX {}
+@attribute Wall6:startY {}
+@attribute Wall6:length {}
+@attribute Wall6:isHorizontal {}
+@attribute Wall5:startX {}
+@attribute Wall5:startY {}
+@attribute Wall5:length {}
+@attribute Wall5:isHorizontal {}
+@attribute Wall4:startX {}
+@attribute Wall4:startY {}
+@attribute Wall4:length {}
+@attribute Wall4:isHorizontal {}
+@attribute Wall3:startX {}
+@attribute Wall3:startY {}
+@attribute Wall3:length {}
+@attribute Wall3:isHorizontal {}
+@attribute Wall2:startX {}
+@attribute Wall2:startY {}
+@attribute Wall2:length {}
+@attribute Wall2:isHorizontal {}
+
+@data

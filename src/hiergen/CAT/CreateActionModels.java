@@ -34,8 +34,9 @@ public class CreateActionModels {
         List<String> actions = new ArrayList<String>();
         for (Episode e : trajectories) {
             for (Action a : e.actionSequence) {
-                if (!actions.contains(a.toString()))
-                    actions.add(a.toString());
+                if (!actions.contains(a.actionName())) {
+                    actions.add(a.actionName());
+                }
             }
         }
 
@@ -88,10 +89,10 @@ public class CreateActionModels {
                 J48 tree = buildTree(dataset);
                 //System.out.println(tree+"\n");
 
-                if(action.contains("pickup"))
+                /*if(action.contains("pickup"))
                 {
                     System.out.println(action + "-------------------" + var.toString());
-                }
+                }*/
                 writeTreeToFile(action, var.toString(), tree);
                 addTree(action, var.toString(), tree);
             }
@@ -115,6 +116,10 @@ public class CreateActionModels {
                 State prior = priorStates.get(i);
                 addSStateVars(variables, dataPoint, prior);
                 dataset.add(dataPoint);
+            }
+            if(action.equals("putdown"))
+            {
+                System.out.println();
             }
             J48 tree = buildTree(dataset);
             /*System.out.println("\n\n\n----------------------------------------- Tree ------------------------------------------\n");
@@ -195,11 +200,12 @@ public class CreateActionModels {
 
             String[] options = {"-M", "1", "-U"};
             tree.setOptions(options);
+            //System.out.println("-------------------------------------------------");
+            //System.out.println(dataset);
             tree.buildClassifier(dataset);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        //System.out.println(tree);
         return tree;
     }
 
@@ -247,12 +253,5 @@ public class CreateActionModels {
 
         actionTrees.put(var, parsedTree);
         trees.replace(action, actionTrees);
-        /*if(var.equals("R") && actionTrees != null) {
-            System.out.println("\n--------- " + action + " - " + var + " ---------------------------------------------");
-            System.out.println(treeStr);
-            //System.out.println(parsedTree);
-            System.out.println(trees.get(action));
-            System.out.println(actionTrees.get("R"));
-        }*/
     }
 }
