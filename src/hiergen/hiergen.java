@@ -20,10 +20,11 @@ public class hiergen {
         //determine goal somehow
         for(CATrajectory c: caTrajectories)
         {
-            if(c.getActions().size() > 1){
+        if(c.getActions().size() > 1){
 
-            }
         }
+    }
+    return null;
     }
 
     public static ArrayList<Task> builder(Map<String, Map<String, VariableTree>> trees, ArrayList<CATrajectory> caTrajectories)
@@ -40,7 +41,7 @@ public class hiergen {
         }
         ArrayList<Integer> indices = CATScan.scan(caTrajectories, goalVars);
 
-
+        return null;
     }
 
     public static Map<Object, Object> determineGoal(ArrayList<CATrajectory> caTrajectories)
