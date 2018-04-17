@@ -51,7 +51,8 @@ public class CATrajectory {
             Action a = e.actionSequence.get(i - 1);
 
             //add the vars which were used to get reward
-            VariableTree rewardTree = decisions.get(action).get("R");
+            System.out.println(action);
+            VariableTree rewardTree = decisions.get(action.toString()).get("R");
             List<String> rewardChecked = rewardTree.getCheckedVariables(s);
             checkedVariables[i].addAll(rewardChecked);
 

@@ -30,6 +30,7 @@ public class CreateActionModels {
     public static Map<String, Map<String, VariableTree>> createModels(List<Episode> trajectories) {
         trees = new HashMap<String, Map<String, VariableTree>>();
 
+
         List<String> actions = new ArrayList<String>();
         for (Episode e : trajectories) {
             for (Action a : e.actionSequence) {
@@ -82,12 +83,20 @@ public class CreateActionModels {
                     dataset.add(dataPoint);
                 }
 
+                //System.out.println("\nAction is: " + action);
+                //System.out.println(dataset+"\n");
                 J48 tree = buildTree(dataset);
+                //System.out.println(tree+"\n");
+
+                if(action.contains("pickup"))
+                {
+                    System.out.println(action + "-------------------" + var.toString());
+                }
                 writeTreeToFile(action, var.toString(), tree);
                 addTree(action, var.toString(), tree);
             }
 
-            //create tree for reward with claas as reward
+            //create tree for reward with class as reward
             ArrayList<Attribute> attributes = new ArrayList<Attribute>();
             attributes.add(new Attribute("reward"));
             for (Object var : variables) {
@@ -108,6 +117,9 @@ public class CreateActionModels {
                 dataset.add(dataPoint);
             }
             J48 tree = buildTree(dataset);
+            /*System.out.println("\n\n\n----------------------------------------- Tree ------------------------------------------\n");
+            System.out.println(tree);
+            System.out.println("\nDataset:\n"+dataset);*/
             writeTreeToFile(action, "R", tree);
             addTree(action, "R", tree);
         }
@@ -172,6 +184,7 @@ public class CreateActionModels {
             ex.printStackTrace();
         }
 
+        //System.out.println("\n\n\n-------------------------------\n"+dataset);
         //train tree
         J48 tree = new J48();
         try {
@@ -186,6 +199,7 @@ public class CreateActionModels {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+        //System.out.println(tree);
         return tree;
     }
 
@@ -232,5 +246,13 @@ public class CreateActionModels {
         }
 
         actionTrees.put(var, parsedTree);
+        trees.replace(action, actionTrees);
+        /*if(var.equals("R") && actionTrees != null) {
+            System.out.println("\n--------- " + action + " - " + var + " ---------------------------------------------");
+            System.out.println(treeStr);
+            //System.out.println(parsedTree);
+            System.out.println(trees.get(action));
+            System.out.println(actionTrees.get("R"));
+        }*/
     }
 }
