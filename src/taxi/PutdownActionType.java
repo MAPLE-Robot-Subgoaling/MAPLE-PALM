@@ -28,12 +28,13 @@ public class PutdownActionType extends ObjectParameterizedActionType {
         for(String loc : state.getLocations()) {
             int lx = (int)state.getLocationAtt(loc, Taxi.ATT_X);
             int ly = (int)state.getLocationAtt(loc, Taxi.ATT_Y);
-
+            // must be at ANY location in order to put the passenger down
             if(lx == px && ly == py) {
                 return true;
             }
         }
 
+        // the passenger is in the taxi but not at a location
         return false;
     }
 }

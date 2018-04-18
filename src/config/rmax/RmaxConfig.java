@@ -6,6 +6,8 @@ public class RmaxConfig {
     public double vmax;
     public int threshold;
     public double max_delta;
-    public double max_delta_in_model;
+    public double max_delta_rmaxq;
+    public int max_iterations_in_model;
+    public boolean use_multitime_model;
     public PerformanceMetric[] metrics;
 }

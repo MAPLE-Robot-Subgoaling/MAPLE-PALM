@@ -1,5 +1,7 @@
 package testing;
 
+import burlap.behavior.singleagent.Episode;
+import burlap.behavior.singleagent.auxiliary.EpisodeSequenceVisualizer;
 import burlap.behavior.singleagent.auxiliary.performance.PerformanceMetric;
 import burlap.behavior.singleagent.auxiliary.performance.TrialMode;
 import burlap.behavior.singleagent.learning.LearningAgent;
@@ -16,6 +18,7 @@ import hierarchy.framework.GroundedTask;
 import hierarchy.framework.Task;
 import ramdp.agent.RAMDPLearningAgent;
 import rmaxq.agent.RmaxQLearningAgent;
+import state.hashing.simple.CachedHashableStateFactory;
 import taxi.TaxiVisualizer;
 import taxi.hierarchies.TaxiHierarchy;
 import taxi.state.TaxiState;
@@ -24,6 +27,7 @@ import taxi.stateGenerator.TaxiStateFactory;
 import utilities.LearningAlgorithmExperimenter;
 
 import java.io.FileNotFoundException;
+import java.util.List;
 
 //import utilities.SimpleHashableStateFactory;
 
@@ -44,7 +48,7 @@ public class HierarchicalCharts {
 			hierGenGroot = hierGenRoot.getAllGroundedTasks(s).get(0);
 		}
 
-		hs = new SimpleHashableStateFactory(true);
+		hs = new SimpleHashableStateFactory(false); //new CachedHashableStateFactory(true); // new SimpleHashableStateFactory(true);
 
 		if(conf.output.visualizer.enabled) {
 			VisualActionObserver obs = new VisualActionObserver(domain, TaxiVisualizer.getVisualizer(conf.output.visualizer.width, conf.output.visualizer.height));
@@ -69,7 +73,7 @@ public class HierarchicalCharts {
 
 					@Override
 					public LearningAgent generateAgent() {
-						return new RAMDPLearningAgent(RAMDPGroot, conf.rmax.threshold, conf.gamma, conf.rmax.vmax, hs, conf.rmax.max_delta);
+						return new RAMDPLearningAgent(RAMDPGroot, conf.rmax.threshold, conf.gamma, conf.rmax.vmax, hs, conf.rmax.max_delta, conf.rmax.max_iterations_in_model, conf.rmax.use_multitime_model);
 					}
 				};
 			}
@@ -83,7 +87,7 @@ public class HierarchicalCharts {
 
 					@Override
 					public LearningAgent generateAgent() {
-						return new RAMDPLearningAgent(hierGenGroot, conf.rmax.threshold, conf.gamma, conf.rmax.vmax, hs, conf.rmax.max_delta);
+						return new RAMDPLearningAgent(hierGenGroot, conf.rmax.threshold, conf.gamma, conf.rmax.vmax, hs, conf.rmax.max_delta, conf.rmax.max_iterations_in_model, conf.rmax.use_multitime_model);
 					}
 				};
 			}
@@ -98,7 +102,7 @@ public class HierarchicalCharts {
 
 					@Override
 					public LearningAgent generateAgent() {
-						return new RmaxQLearningAgent(RMEXQRoot, hs, s, conf.rmax.vmax, conf.rmax.threshold, conf.rmax.max_delta, conf.rmax.max_delta_in_model);
+						return new RmaxQLearningAgent(RMEXQRoot, hs, s, conf.rmax.vmax, conf.rmax.threshold, conf.rmax.max_delta_rmaxq, conf.rmax.max_delta);
 					}
 				};
 			}
@@ -118,14 +122,21 @@ public class HierarchicalCharts {
 			);
 		}
 		
-		exp.startExperiment();
+		List<Episode> episodes = exp.startExperiment();
 		if(conf.output.csv.enabled) {
 			exp.writeEpisodeDataToCSV(conf.output.csv.output);
 		}
+
+		if (conf.output.visualizer.episodes){
+            EpisodeSequenceVisualizer ev = new EpisodeSequenceVisualizer
+                    (TaxiVisualizer.getVisualizer(conf.output.visualizer.width, conf.output.visualizer.height), domain, episodes);;
+            ev.setDefaultCloseOperation(ev.EXIT_ON_CLOSE);
+            ev.initGUI();
+        }
 	}
 
 	public static void main(String[] args) {
-		String conffile = "config/taxi/multipassenger.yaml";
+		String conffile = "config/taxi/classic.yaml";
 		if(args.length > 0) {
 			conffile = args[0];
 		}

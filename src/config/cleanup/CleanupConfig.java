@@ -41,11 +41,18 @@ public class CleanupConfig {
     public static CleanupConfig load(String conffile) throws FileNotFoundException {
         Yaml yaml = new Yaml(new Constructor(CleanupConfig.class));
         InputStream input = new FileInputStream(new File(conffile));
-        return (CleanupConfig) yaml.load(input);
+        CleanupConfig config = (CleanupConfig) yaml.load(input);
+        long seed = config.seed;
+        if (seed == 0) {
+            seed = System.nanoTime();
+            System.err.println("Warning: using a randomly generated RNG seed: " + seed);
+        }
+        RandomFactory.seedMapped(0, seed);
+        System.out.println("Using seed: " + config.seed);
+        return config;
     }
 
     public CleanupState generateState() {
-        RandomFactory.seedMapped(0, seed); // 32552L
         return (CleanupState) new CleanupRandomStateGenerator(minX, minY, maxX, maxY).getStateFor(state, numBlocks);
     }
 }

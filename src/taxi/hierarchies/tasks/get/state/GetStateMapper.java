@@ -35,6 +35,7 @@ public class GetStateMapper implements ParameterizedStateMapping {
 
 		// Get Passengers
 		for(String passengerName : params){
+//		for(String passengerName : st.getPassengers()) {
 			int px = (int) st.getPassengerAtt(passengerName, Taxi.ATT_X);
 			int py = (int) st.getPassengerAtt(passengerName, Taxi.ATT_Y);
 			boolean inTaxi = (boolean) st.getPassengerAtt(passengerName, Taxi.ATT_IN_TAXI);

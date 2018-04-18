@@ -8,9 +8,10 @@ import burlap.mdp.core.oo.state.OOVariableKey;
 import burlap.mdp.core.oo.state.ObjectInstance;
 import burlap.mdp.core.state.MutableState;
 import taxi.Taxi;
+import taxi.hierarchies.TaxiGetPutState;
 import taxi.hierarchies.tasks.get.TaxiGetDomain;
 
-public class TaxiGetState implements MutableOOState {
+public class TaxiGetState extends TaxiGetPutState {
 
 	//this state has passengers and depots
 	private TaxiGetAgent taxi;
@@ -39,12 +40,15 @@ public class TaxiGetState implements MutableOOState {
 	
 	@Override
 	public int numObjects() {
-		return 1 + passengers.size() + locations.size();
+	    int total = taxi == null ? 0 : 1;
+	    total += passengers.size();
+	    total += locations.size();
+	    return total;
 	}
 
 	@Override
 	public ObjectInstance object(String oname) {
-	    if(oname.equals(taxi.name())) {
+	    if(taxi != null && oname.equals(taxi.name())) {
 	    	return taxi;
 		}
 
@@ -62,7 +66,7 @@ public class TaxiGetState implements MutableOOState {
 	@Override
 	public List<ObjectInstance> objects() {
 		List<ObjectInstance> obj = new ArrayList<ObjectInstance>();
-		obj.add(taxi);
+		if (taxi != null) { obj.add(taxi); }
 		obj.addAll(passengers.values());
 		obj.addAll(locations.values());
 		return obj;
@@ -71,7 +75,7 @@ public class TaxiGetState implements MutableOOState {
 	@Override
 	public List<ObjectInstance> objectsOfClass(String oclass) {
 	    if(oclass.equals(Taxi.CLASS_TAXI))
-	        return Arrays.<ObjectInstance>asList(taxi);
+            return taxi == null ? new ArrayList<ObjectInstance>() : Arrays.<ObjectInstance>asList(taxi);
 		if(oclass.equals(Taxi.CLASS_PASSENGER))
 			return new ArrayList<ObjectInstance>(passengers.values());
 		if(oclass.equals(Taxi.CLASS_LOCATION))
@@ -91,7 +95,7 @@ public class TaxiGetState implements MutableOOState {
 
 	@Override
 	public TaxiGetState copy() {
-		return new TaxiGetState(taxi, passengers, locations);
+		return new TaxiGetState(touchTaxi(), touchPassengers(), touchLocations());
 	}
 
 	@Override
@@ -126,7 +130,17 @@ public class TaxiGetState implements MutableOOState {
 
 	@Override
 	public MutableOOState removeObject(String oname) {
-		throw new RuntimeException("Remove not implemented");
+        ObjectInstance objectInstance = this.object(oname);
+        if (objectInstance instanceof TaxiGetAgent) {
+            taxi = null;
+        } else if (objectInstance instanceof TaxiGetPassenger) {
+            touchPassenger(oname);
+            passengers.remove(oname);
+        } else if (objectInstance instanceof TaxiGetLocation) {
+            touchLocation(oname);
+            locations.remove(oname);
+        }
+        return this;
 	}
 
 	@Override
@@ -136,14 +150,14 @@ public class TaxiGetState implements MutableOOState {
 
 	//touch methods allow a shallow copy of states and a copy of objects only when modified
 	public TaxiGetAgent touchTaxi() {
-	    this.taxi = taxi.copy();
+	    if (this.taxi != null) { this.taxi = taxi.copy(); }
 	    return taxi;
 	}
 
-	public TaxiGetPassenger touchPassenger(String passName){
-		TaxiGetPassenger p = passengers.get(passName).copy();
-		touchPassengers().remove(passName);
-		passengers.put(passName, p);
+	public TaxiGetPassenger touchPassenger(String name){
+		TaxiGetPassenger p = passengers.get(name).copy();
+		touchPassengers().remove(name);
+		passengers.put(name, p);
 		return p;
 	}
 
@@ -161,10 +175,10 @@ public class TaxiGetState implements MutableOOState {
 		return ret;
 	}
 
-	public TaxiGetLocation touchLocation(String passName){
-		TaxiGetLocation loc = locations.get(passName).copy();
-		touchLocations().remove(passName);
-		locations.put(passName, loc);
+	public TaxiGetLocation touchLocation(String name){
+		TaxiGetLocation loc = locations.get(name).copy();
+		touchLocations().remove(name);
+		locations.put(name, loc);
 		return loc;
 	}
 
@@ -183,23 +197,26 @@ public class TaxiGetState implements MutableOOState {
 	}
 
 	public Object getTaxiAtt(String attName) {
+	    if (taxi == null) { return null; }
 		return taxi.get(attName);
 	}
 
-	public Object getPassengerAtt(String passname, String attName){
-		return passengers.get(passname).get(attName);
+	public Object getPassengerAtt(String passName, String attName){
+		return passengers.get(passName).get(attName);
 	}
 
-	public Object getLocationAtt(String locname, String attName) {
-		return locations.get(locname).get(attName);
+	public Object getLocationAtt(String locName, String attName) {
+		return locations.get(locName).get(attName);
 	}
 
 	@Override
 	public String toString(){
-		String out = "{\n";
+		String out = "{ " + this.getClass().getSimpleName() + "\n";
 
-		out += taxi.toString() + "\n";
-		
+		if (taxi != null) {
+            out += taxi.toString() + "\n";
+        }
+
 		for(TaxiGetPassenger p : passengers.values()){
 			out += p.toString() + "\n";
 		}
@@ -207,6 +224,27 @@ public class TaxiGetState implements MutableOOState {
 		for(TaxiGetLocation loc : locations.values()){
 			out += loc.toString() + "\n";
 		}
+		out += "}";
 		return out;
 	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		TaxiGetState that = (TaxiGetState) o;
+
+		if (taxi != null ? !taxi.equals(that.taxi) : that.taxi != null) return false;
+		if (passengers != null ? !passengers.equals(that.passengers) : that.passengers != null) return false;
+		return locations != null ? locations.equals(that.locations) : that.locations == null;
 	}
+
+	@Override
+	public int hashCode() {
+		int result = taxi != null ? taxi.hashCode() : 0;
+		result = 31 * result + (passengers != null ? passengers.hashCode() : 0);
+		result = 31 * result + (locations != null ? locations.hashCode() : 0);
+		return result;
+	}
+}

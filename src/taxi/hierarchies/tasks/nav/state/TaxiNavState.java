@@ -1,16 +1,14 @@
 package taxi.hierarchies.tasks.nav.state;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import burlap.mdp.core.oo.state.MutableOOState;
 import burlap.mdp.core.oo.state.OOStateUtilities;
 import burlap.mdp.core.oo.state.ObjectInstance;
 import burlap.mdp.core.state.MutableState;
 import taxi.Taxi;
+import taxi.hierarchies.tasks.get.state.TaxiGetLocation;
+import taxi.hierarchies.tasks.get.state.TaxiGetPassenger;
 import taxi.hierarchies.tasks.nav.TaxiNavDomain;
 
 public class TaxiNavState implements MutableOOState{
@@ -39,18 +37,49 @@ public class TaxiNavState implements MutableOOState{
 	}
 
 	public TaxiNavAgent touchTaxi(){
-		this.taxi = taxi.copy();
+		if (this.taxi != null) {
+            this.taxi = taxi.copy();
+        }
 		return taxi;
 	}
 
-	@Override
+	public TaxiNavLocation touchLocation(String name){
+		TaxiNavLocation loc = locations.get(name).copy();
+		touchLocations().remove(name);
+		locations.put(name, loc);
+		return loc;
+	}
+
+	public Map<String, TaxiNavLocation> touchLocations(){
+		this.locations = new HashMap<String, TaxiNavLocation>(locations);
+		return locations;
+	}
+
+    public TaxiNavWall touchWall(String name){
+        TaxiNavWall wall = walls.get(name).copy();
+        touchWalls().remove(name);
+        walls.put(name, wall);
+        return wall;
+    }
+
+    public Map<String, TaxiNavWall> touchWalls(){
+        this.walls = new HashMap<String, TaxiNavWall>(walls);
+        return walls;
+    }
+
+
+
+    @Override
 	public int numObjects() {
-		return 1 + locations.size() + walls.size();
+        int total = taxi == null ? 0 : 1;
+        total += walls.size();
+        total += locations.size();
+        return total;
 	}
 
 	@Override
 	public ObjectInstance object(String oname) {
-		if(taxi.name().equals(oname))
+		if(taxi != null && taxi.name().equals(oname))
 			return taxi;
 		
 		ObjectInstance o = locations.get(oname);
@@ -64,19 +93,23 @@ public class TaxiNavState implements MutableOOState{
 		return null;
 	}
 
+	private List<ObjectInstance> cachedObjectList = null;
 	@Override
 	public List<ObjectInstance> objects() {
+        if (cachedObjectList == null) { cachedObjectList = new ArrayList<ObjectInstance>(); }
+        else { return cachedObjectList; }
 		List<ObjectInstance> objs = new ArrayList<ObjectInstance>();
-		objs.add(taxi);
+		if (taxi != null) { objs.add(taxi); }
 		objs.addAll(locations.values());
 		objs.addAll(walls.values());
+		cachedObjectList = objs;
 		return objs;
 	}
 
 	@Override
 	public List<ObjectInstance> objectsOfClass(String oclass) {
 		if(oclass.equals(Taxi.CLASS_TAXI))
-			return Arrays.<ObjectInstance>asList(taxi);
+			return taxi == null ? new ArrayList<ObjectInstance>() : Arrays.<ObjectInstance>asList(taxi);
 		else if(oclass.equals(Taxi.CLASS_LOCATION))
 			return new ArrayList<ObjectInstance>(locations.values());
 		else if(oclass.equals(Taxi.CLASS_WALL))
@@ -91,12 +124,12 @@ public class TaxiNavState implements MutableOOState{
 
 	@Override
 	public Object get(Object variableKey) {
-		return OOStateUtilities.get(this, variableKey);
+	    return OOStateUtilities.get(this, variableKey);
 	}
 
 	@Override
 	public TaxiNavState copy() {
-		return new TaxiNavState(taxi, locations, walls);
+		return new TaxiNavState(touchTaxi(), touchLocations(), touchWalls());
 	}
 
 	@Override
@@ -111,7 +144,18 @@ public class TaxiNavState implements MutableOOState{
 
 	@Override
 	public MutableOOState removeObject(String oname) {
-		throw new RuntimeException("Remove not implemented");
+        ObjectInstance objectInstance = this.object(oname);
+        if (objectInstance instanceof TaxiNavAgent) {
+            taxi = null;
+        } else if (objectInstance instanceof TaxiNavWall) {
+            touchWall(oname);
+            walls.remove(oname);
+        } else if (objectInstance instanceof TaxiNavLocation) {
+            touchLocation(oname);
+            locations.remove(oname);
+        }
+        cachedObjectList = null;
+        return this;
 	}
 
 	@Override
@@ -135,7 +179,15 @@ public class TaxiNavState implements MutableOOState{
 		return ret;
 	}
 
+	public Collection<TaxiNavWall> getWallObjects() {
+	    return walls.values();
+    }
+
+
 	public Object getTaxiAtt(String attName){
+		if(taxi == null) {
+		    return null;
+		}
 		return taxi.get(attName);
 	}
 
@@ -147,4 +199,37 @@ public class TaxiNavState implements MutableOOState{
 		return walls.get(wallName).get(attName);
 	}
 
+	@Override
+	public String toString() {
+		String out = "{ " + this.getClass().getSimpleName() + "\n";
+		out += taxi.toString();
+		for(TaxiNavLocation loc : locations.values()){
+			out += loc.toString() + "\n";
+		}
+		for(TaxiNavWall wall : walls.values()){
+			out += wall.toString() + "\n";
+		}
+		out += "\n}";
+		return out;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		TaxiNavState that = (TaxiNavState) o;
+
+		if (taxi != null ? !taxi.equals(that.taxi) : that.taxi != null) return false;
+		if (locations != null ? !locations.equals(that.locations) : that.locations != null) return false;
+		return walls != null ? walls.equals(that.walls) : that.walls == null;
+	}
+
+	@Override
+	public int hashCode() {
+		int result = taxi != null ? taxi.hashCode() : 0;
+		result = 31 * result + (locations != null ? locations.hashCode() : 0);
+		result = 31 * result + (walls != null ? walls.hashCode() : 0);
+		return result;
+	}
 }

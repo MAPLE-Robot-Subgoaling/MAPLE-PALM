@@ -123,4 +123,7 @@ public abstract class Task {
 	 * @return wether a is complete in s
 	 */
 	public abstract boolean isComplete(State s, Action a);
+
+	public abstract double reward(State s, Action a, State sPrime);
+
 }

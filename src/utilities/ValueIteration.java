@@ -1,13 +1,11 @@
 package utilities;
 
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import burlap.behavior.policy.GreedyQPolicy;
 import burlap.behavior.singleagent.planning.Planner;
 import burlap.behavior.singleagent.planning.stochastic.DynamicProgramming;
+import burlap.behavior.valuefunction.ValueFunction;
 import burlap.mdp.core.action.Action;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.SADomain;
@@ -15,7 +13,8 @@ import burlap.mdp.singleagent.model.FullModel;
 import burlap.mdp.singleagent.model.TransitionProb;
 import burlap.statehashing.HashableState;
 import burlap.statehashing.HashableStateFactory;
-
+import ramdp.agent.RAMDPModel;
+import taxi.hierarchies.tasks.root.state.TaxiRootState;
 
 
 /**
@@ -133,7 +132,7 @@ public class ValueIteration extends DynamicProgramming implements Planner {
 		}
 		
 		Set <HashableState> states = valueFunction.keySet();
-		
+
 		int i;
 		for(i = 0; i < this.maxIterations; i++){
 			
@@ -151,7 +150,11 @@ public class ValueIteration extends DynamicProgramming implements Planner {
 			}
 			
 		}
-		
+
+		if (i >= maxIterations) {
+		    System.err.println("ValueIteration exhausted its planning budget ... ");
+        }
+
 		this.hasRunVI = true;
 		
 	}
@@ -201,9 +204,13 @@ public class ValueIteration extends DynamicProgramming implements Planner {
 				List<TransitionProb> tps = ((FullModel)model).transitions(sh.s(), a);
 				for(TransitionProb tp : tps){
 					HashableState tsh = this.stateHash(tp.eo.op);
-					if(!openedSet.contains(tsh) && !valueFunction.containsKey(tsh)){
-						openedSet.add(tsh);
-						openList.offer(tsh);
+					boolean inOpenSet = openedSet.contains(tsh);
+					if (!inOpenSet) {
+						boolean alreadyInVF = valueFunction.containsKey(tsh);
+						if (!alreadyInVF) {
+							openedSet.add(tsh);
+							openList.offer(tsh);
+						}
 					}
 				}
 			}
@@ -218,9 +225,18 @@ public class ValueIteration extends DynamicProgramming implements Planner {
 		
 	}
 	
-	
-	
+	public ValueFunction saveValueFunction(double defaultValue, double cutoffValue) {
+		if (!this.hasRunVI) {
+			throw new RuntimeException("ERROR: have not run value iteration yet");
+		}
+		ValueFunction valueFunction = new TabularValueFunction(hashingFactory, this.valueFunction, defaultValue);
+		for(Iterator<Map.Entry<HashableState, Double>> it = this.valueFunction.entrySet().iterator(); it.hasNext(); ) {
+			Map.Entry<HashableState, Double> entry = it.next();
+			if(entry.getValue() >= cutoffValue) {
+				it.remove();
+			}
+		}
+		return valueFunction;
+	}
 
-	
-	
 }

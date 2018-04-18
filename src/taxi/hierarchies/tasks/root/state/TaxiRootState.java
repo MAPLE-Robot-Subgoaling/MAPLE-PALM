@@ -1,9 +1,6 @@
 package taxi.hierarchies.tasks.root.state;
 
-import burlap.mdp.core.oo.state.MutableOOState;
-import burlap.mdp.core.oo.state.OOStateUtilities;
-import burlap.mdp.core.oo.state.OOVariableKey;
-import burlap.mdp.core.oo.state.ObjectInstance;
+import burlap.mdp.core.oo.state.*;
 import burlap.mdp.core.state.MutableState;
 import taxi.Taxi;
 import taxi.hierarchies.tasks.root.TaxiRootDomain;
@@ -12,7 +9,7 @@ import java.util.*;
 
 public class TaxiRootState implements MutableOOState {
 
-	//this state has passengers and depots
+	//this state has passengers
 	private Map<String, TaxiRootPassenger> passengers;
 
 	public TaxiRootState(List<TaxiRootPassenger> pass) {
@@ -40,10 +37,14 @@ public class TaxiRootState implements MutableOOState {
 		return null;
 	}
 
+	private List<ObjectInstance> cachedObjectList = null;
 	@Override
 	public List<ObjectInstance> objects() {
+		if (cachedObjectList == null) { cachedObjectList = new ArrayList<ObjectInstance>(); }
+		else { return cachedObjectList; }
 		List<ObjectInstance> obj = new ArrayList<>();
 		obj.addAll(passengers.values());
+		cachedObjectList = obj;
 		return obj;
 	}
 
@@ -66,7 +67,7 @@ public class TaxiRootState implements MutableOOState {
 
 	@Override
 	public TaxiRootState copy() {
-		return new TaxiRootState(passengers);
+		return new TaxiRootState(touchPassengers());
 	}
 
 	@Override
@@ -88,12 +89,16 @@ public class TaxiRootState implements MutableOOState {
 		}else{
 			throw new RuntimeException("Can only add certain objects to state.");
 		}
+        cachedObjectList = null;
 		return this;
 	}
 
 	@Override
 	public MutableOOState removeObject(String oname) {
-		throw new RuntimeException("Remove not implemented");
+        touchPassenger(oname);
+        passengers.remove(oname);
+        cachedObjectList = null;
+		return this;
 	}
 
 	@Override
@@ -128,12 +133,45 @@ public class TaxiRootState implements MutableOOState {
 	}
 
 	@Override
-	public String toString(){
-		String out = "{\n";
-
-		for(TaxiRootPassenger p : passengers.values()){
-			out += p.toString() + "\n";
+	public String toString() {
+		StringBuilder buf = new StringBuilder();
+		buf.append("");
+		for (TaxiRootPassenger passenger : passengers.values()) {
+			buf.append("P");
+			buf.append(passenger.name().charAt(passenger.name().length()-1));
+			buf.append(", at:");
+			String at = (String) passenger.get(TaxiRootDomain.ATT_CURRENT_LOCATION);
+			if (at.contains("Location")) {
+				buf.append("L");
+				buf.append(at.charAt(at.length()-1));
+			} else {
+				buf.append(at);
+			}
+			buf.append(", goal:");
+			String goal = (String) passenger.get(TaxiRootDomain.ATT_GOAL_LOCATION);
+			if (goal.contains("Location")) {
+				buf.append("L");
+				buf.append(goal.charAt(goal.length()-1));
+			} else {
+				buf.append(goal);
+			}
+			buf.append("; ");
 		}
-		return out;
+		return buf.toString();
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		TaxiRootState that = (TaxiRootState) o;
+
+		return passengers != null ? passengers.equals(that.passengers) : that.passengers == null;
+	}
+
+	@Override
+	public int hashCode() {
+		return passengers != null ? passengers.hashCode() : 0;
 	}
 }

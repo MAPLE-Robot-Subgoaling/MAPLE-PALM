@@ -14,6 +14,7 @@ import burlap.mdp.core.oo.propositional.PropositionalFunction;
 import burlap.mdp.core.oo.state.OOState;
 import burlap.mdp.core.oo.state.ObjectInstance;
 import burlap.mdp.core.state.State;
+import burlap.mdp.singleagent.common.NullRewardFunction;
 import burlap.mdp.singleagent.common.UniformCostRF;
 import burlap.mdp.singleagent.model.FactoredModel;
 import burlap.mdp.singleagent.model.RewardFunction;
@@ -279,6 +280,8 @@ public class Cleanup implements DomainGenerator {
             ObjectInstance o = cws.object(params[0]);
             ObjectInstance region = cws.object(params[1]);
 
+            if (o == null) { return false; }
+
             String abstractInRegion = (String) o.get(ATT_REGION);
             if (abstractInRegion != null) {
                 // this object is abstract, as in the Cleanup AMDP
@@ -372,9 +375,11 @@ public class Cleanup implements DomainGenerator {
         RewardFunction rf = this.rf;
         TerminalFunction tf = this.tf;
         if (rf == null) {
-            rf = new UniformCostRF();
+            System.err.println("Warning: calling generateDomain with null reward function");
+            rf = new NullRewardFunction();
         }
         if (tf == null) {
+            System.err.println("Warning: calling generateDomain with null terminal function");
             tf = new NullTermination();
         }
         FactoredModel model = new FactoredModel(smodel, rf, tf);

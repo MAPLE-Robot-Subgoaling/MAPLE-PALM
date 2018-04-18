@@ -3,7 +3,11 @@ package hierarchy.framework;
 import java.util.ArrayList;
 import java.util.List;
 
+import burlap.behavior.valuefunction.ValueFunction;
+import burlap.mdp.auxiliary.common.GoalConditionTF;
+import burlap.mdp.auxiliary.stateconditiontest.StateConditionTest;
 import burlap.mdp.core.oo.ObjectParameterizedAction;
+import burlap.mdp.singleagent.common.GoalBasedRF;
 import burlap.mdp.singleagent.model.FactoredModel;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
@@ -11,20 +15,21 @@ import burlap.mdp.core.action.Action;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.model.FullModel;
 import burlap.mdp.singleagent.oo.OOSADomain;
-import ramdp.agent.RAMDPModel;
 
 public class GroundedTask {
+
+	public ValueFunction valueFunction;
 
 	/**
 	 * specific action in a task
 	 */
 	private Action action;
-	
+
 	/**
 	 * the general task node which this grounded task is part of
 	 */
 	private Task t;
-	
+
 	/**
 	 * each grounded task has an action and task
 	 * @param a the parameterization of the task
@@ -34,41 +39,61 @@ public class GroundedTask {
 		this.action = a;
 		this.t = t;
 	}
-	
+
 	/**
-	 * gets the action this task wraps around 
+	 * gets the action this task wraps around
 	 * @return the grounded task's action
 	 */
 	public Action getAction(){
 		return action;
 	}
-	
+
+//	protected void setupGroundedTF(OOSADomain domain) {
+//        FactoredModel model = (FactoredModel) domain.getModel();
+//        StateConditionTest localFailureOrCompletion = new StateConditionTest() {
+//            @Override
+//            public boolean satisfies(State state) {
+//                return isComplete(state);// || isFailure(state);
+//            }
+//        };
+//        GoalConditionTF groundedTerminalFunction = new GoalConditionTF(localFailureOrCompletion);
+//        model.setTf(groundedTerminalFunction);
+//        GoalBasedRF groundedRewardFunction = new GoalBasedRF(groundedTerminalFunction);
+//        model.setRf(groundedRewardFunction);
+//        GoalFailTF groundedTF = new GoalFailTF(isComplete())
+//		model.setTf()
+//    }
+
+
 	/**
 	 * get the domain of the grounded task
 	 * @return the domain which this task defines
 	 */
 	public OOSADomain getDomain(){
-		return t.getDomain();
+		OOSADomain domain = t.getDomain();
+//		setupGroundedTF(domain);
+		return domain;
 	}
-	
+
 	/**
-	 * given a learned model, this builds a domain with the subtasks as actions 
+	 * given a learned model, this builds a domain with the subtasks as actions
 	 * @param model the model to included in the domain
 	 * @return a complete learned domain for the grounded task
 	 */
 	public OOSADomain getDomain(FullModel model){
-		OOSADomain d = new OOSADomain();
-		d.setModel(model);
-		
+		OOSADomain domain = new OOSADomain();
+		domain.setModel(model);
 		Task[] children = t.getChildren();
+		// domain does not have any accessor for stateClasses's KEYS
 		for(Task child : children){
-			d.addActionType(child.getActionType());
+			domain.addActionType(child.getActionType());
 		}
-		return d;
+//        setupGroundedTF(domain);
+		return domain;
 	}
-	
+
 	/**
-	 * gets all executable tasks that are children of the task 
+	 * gets all executable tasks that are children of the task
 	 * @param s the current task
 	 * @return list of all groundings of child tasks valid in the state
 	 */
@@ -92,7 +117,7 @@ public class GroundedTask {
     
 	/**
 	 * pass the given state through the task's abstraction function
-	 * @param s the base state 
+	 * @param s the base state
 	 * @return the abstracted state
 	 */
 	public State mapState(State s){
@@ -103,7 +128,7 @@ public class GroundedTask {
 		else
 			return t.mapState(s);
 	}
-	
+
 	/**
 	 * test if the task is in the base domain
 	 * @return whether this grounded represents an action in the base domain
@@ -111,43 +136,24 @@ public class GroundedTask {
 	public boolean isPrimitive(){
 		return t.isPrimitive();
 	}
-	
+
 	/**
-	 * each grounded task has a specific reward function
-	 * this returns the reward of a transition into the given state 
+	 * each grounded task has a specific rewardTotal function
+	 * this returns the rewardTotal of a transition into the given state
 	 * @param s the source of the transition
 	 * @param a the action just taken
 	 * @param sPrime the result of the transition
-	 * @return the grounded task's reward of a transition to s
+	 * @return the grounded task's rewardTotal of a transition to s
 	 */
 	public double getReward(State s, Action a, State sPrime) {
-		if (!a.equals(action)) {
-//			System.out.println("a: " + a);
-//			System.out.println("action: " + action);
-//			throw new RuntimeException("a not equal to action in groundedtask");
-			// if a is primitive, pass this current task "action" instead of primitive a
-			NonprimitiveTask npt = (NonprimitiveTask) t;
-			return npt.reward(s, action, sPrime);
-		}
-		if(!t.isPrimitive()) {
-			NonprimitiveTask npt = (NonprimitiveTask) t;
-			return npt.reward(s, a, sPrime);
-		} else {
-			throw new RuntimeException("should not give a primitive task for getReward");
-//			return ((FactoredModel)getDomain().getModel()).getRf().reward(s, a, sPrime);
-//			return 1.0;
-		}
+		return t.reward(s, a, sPrime);
 	}
 
 	@Override
 	public String toString(){
-		if (action instanceof ObjectParameterizedAction) {
-			ObjectParameterizedAction opa = (ObjectParameterizedAction)action;
-			return action.actionName() + " " + String.join(" ",opa.getObjectParameters());
-		}
-		return action.actionName();
+		return StringFormat.parameterizedActionName(action);
 	}
-	
+
 	/**
 	 * return if the grounded task is complete in the given state
 	 * @param s the state to test
@@ -169,7 +175,7 @@ public class GroundedTask {
         }
 
         GroundedTask o = (GroundedTask) other;
-        if(!RAMDPModel.getActionNameSafe(this.action).equals(RAMDPModel.getActionNameSafe(o.action))){
+        if(!StringFormat.parameterizedActionName(this.action).equals(StringFormat.parameterizedActionName(o.action))){
             return false; 
         }
         
@@ -179,7 +185,8 @@ public class GroundedTask {
     @Override
     public int hashCode() {
         HashCodeBuilder hashCodeBuilder = new HashCodeBuilder(31, 7);
-        hashCodeBuilder.append(RAMDPModel.getActionNameSafe(this.action));
+        hashCodeBuilder.append(StringFormat.parameterizedActionName(this.action));
         return hashCodeBuilder.toHashCode();
     }
+
 }

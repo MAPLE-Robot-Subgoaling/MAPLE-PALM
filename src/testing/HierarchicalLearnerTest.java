@@ -36,7 +36,8 @@ public class HierarchicalLearnerTest {
 		GroundedTask rootgt = root.getAllGroundedTasks(initial).get(0);
 		
 		RAMDPLearningAgent ramdp = new RAMDPLearningAgent(rootgt, conf.rmax.threshold, conf.gamma, conf.rmax.vmax,
-				new SimpleHashableStateFactory(true), conf.rmax.max_delta);
+				new SimpleHashableStateFactory(true), conf.rmax.max_delta,
+				conf.rmax.max_iterations_in_model, conf.rmax.use_multitime_model);
 		SimulatedEnvironment env;
 		if(conf.stochastic.random_start) {
 			env = new SimulatedEnvironment(groundDomain, new RandomPassengerTaxiState());
@@ -81,7 +82,7 @@ public class HierarchicalLearnerTest {
 		}
 
 		List<Episode> episodes = new ArrayList<Episode>();
-		RmaxQLearningAgent rmaxq = new RmaxQLearningAgent(root, hs, initState, conf.rmax.vmax, conf.rmax.threshold, conf.rmax.max_delta, conf.rmax.max_delta_in_model);
+		RmaxQLearningAgent rmaxq = new RmaxQLearningAgent(root, hs, initState, conf.rmax.vmax, conf.rmax.threshold, conf.rmax.max_delta_rmaxq, conf.rmax.max_delta);
 		
 		for(int i = 1; i <= conf.episodes; i++){
 			Episode e = rmaxq.runLearningEpisode(env, conf.max_steps);

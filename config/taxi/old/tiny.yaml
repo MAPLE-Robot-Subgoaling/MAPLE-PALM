@@ -1,4 +1,4 @@
-state: classic
+state: tiny
 
 agents:
   - ramdp
@@ -10,8 +10,8 @@ trials: 20
 gamma: 0.9
 
 stochastic:
-  correct_move: 0.8
-  fickle: 0.225
+  correct_move: 1
+  fickle: 0
   random_start: false
 
 planning:
@@ -21,11 +21,12 @@ rmax:
   vmax: 20
   threshold: 5
   max_delta: 0.01
+  max_iterations_in_model: 1000
 
 output:
   csv:
     enabled: true
-    output: results/ramdp-classic-fickle.csv
+    output: results/ramdp-tiny.csv
 
   chart:
     enabled: true

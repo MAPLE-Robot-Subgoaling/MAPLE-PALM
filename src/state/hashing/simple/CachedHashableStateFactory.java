@@ -3,8 +3,14 @@ package state.hashing.simple;
 import burlap.mdp.core.state.State;
 import burlap.statehashing.HashableState;
 import burlap.statehashing.HashableStateFactory;
+import burlap.statehashing.WrappedHashableState;
+
+import java.util.HashMap;
+import java.util.HashSet;
 
 public class CachedHashableStateFactory implements HashableStateFactory {
+
+    protected HashMap<Integer, WrappedHashableState> states = new HashMap<Integer, WrappedHashableState>();
 
     /**
      * Whether state evaluations of OO-MDPs are object identifier independent (the names of objects don't matter). By
@@ -36,7 +42,12 @@ public class CachedHashableStateFactory implements HashableStateFactory {
         }
 
         if(identifierIndependent){
-            return new IICachedHashableState(s);
+            WrappedHashableState hs = new IICachedHashableState(s);
+            Integer hashCode = hs.hashCode();
+            if (!states.containsKey(hashCode)) {
+                states.put(hashCode, hs);
+            }
+            return states.get(hashCode);
         }
         return new IDCachedHashableState(s);
     }

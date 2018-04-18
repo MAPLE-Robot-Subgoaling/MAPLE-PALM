@@ -10,10 +10,9 @@ trials: 20
 gamma: 0.9
 
 stochastic:
-  seed: 2320942930
   correct_move: 0.8
   fickle: 0.225
-  random_start: true
+  random_start: false
 
 planning:
   rollouts: 1000
@@ -22,11 +21,12 @@ rmax:
   vmax: 20
   threshold: 5
   max_delta: 0.01
+  max_iterations_in_model: 1000
 
 output:
   csv:
     enabled: true
-    output: results/ramdp-random-start-fickle.csv
+    output: results/ramdp-classic-fickle.csv
 
   chart:
     enabled: true

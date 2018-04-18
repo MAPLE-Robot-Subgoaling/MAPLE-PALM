@@ -18,7 +18,8 @@ public class DropoffActionType extends ObjectParameterizedActionType {
         String passengerName = params[0];
         ObjectInstance passenger = state.object(passengerName);
         String taxiLoc = (String)state.getTaxiAtt(TaxiPutDomain.ATT_TAXI_LOCATION);
-        return (boolean)passenger.get(TaxiPutDomain.ATT_IN_TAXI) && !taxiLoc.equals(TaxiPutDomain.ON_ROAD);
+        return ((String)passenger.get(TaxiPutDomain.ATT_LOCATION)).equals(TaxiPutDomain.IN_TAXI)
+                && !taxiLoc.equals(TaxiPutDomain.ON_ROAD);
     }
 }
 

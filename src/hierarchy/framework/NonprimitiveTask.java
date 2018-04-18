@@ -13,18 +13,15 @@ import ramdp.agent.RAMDPModel;
 
 import java.util.Arrays;
 
-public class NonprimitiveTask extends Task{
-	//tasks which are not at the base of the hierarchy
-	
-	/**
-	 * the function which assigns rewards for transitions in the task 
-	 */
-	private RewardFunction rf;
-	
-	/**
-	 * the functions that test states for completion and failure
-	 */
-	private PropositionalFunction failure, completed;
+public class NonprimitiveTask extends Task {
+    //tasks which are not at the base of the hierarchy
+
+    // default rewardTotal used in nonprimitive task's pseudo-rewardTotal function
+    public static double DEFAULT_REWARD = 0.0001;//0.000001;
+	public static double NOOP_REWARD = 0.0;//-0.0001;
+
+	protected GoalFailTF goalFailTF;
+	protected GoalFailRF goalFailRF;
 	
 	//used for hierarchies with abstractions
 	/**
@@ -37,62 +34,12 @@ public class NonprimitiveTask extends Task{
 	 * @param compl the completion PF
 	 */
 	public NonprimitiveTask(Task[] children, ActionType aType, OOSADomain abstractDomain, StateMapping map,
-			PropositionalFunction fail, PropositionalFunction compl) {
+			PropositionalFunction fail, PropositionalFunction compl, double defaultReward, double noopReward) {
 		super(children, aType, abstractDomain, map);
-		this.rf = new NonprimitiveRewardFunction(this);
-		this.failure = fail;
-		this.completed = compl; 
+		this.goalFailTF = new GoalFailTF(compl, null, fail, null);
+		this.goalFailRF = new GoalFailRF(this.goalFailTF, defaultReward, noopReward);
 	}
 
-	/**
-	 * create a nunprimitive taks
-	 * @param children the subtasks
-	 * @param aType the set of actions this task represents in its parent task's domain
-	 * @param map the state abstraction function into the domain
-	 * @param fail the failure PF
-	 * @param compl the completion PF
-	 */
-	public NonprimitiveTask(Task[] children, ActionType aType, StateMapping map,
-							PropositionalFunction fail, PropositionalFunction compl) {
-		super(children, aType, null, map);
-		this.rf = new NonprimitiveRewardFunction(this);
-		this.failure = fail;
-		this.completed = compl;
-	}
-	//used for hierarchies with no abstraction
-	/**
-	 * create a nunprimitive taks
-	 * @param children the subtasks
-	 * @param aType the set of actions this task represents in its parent task's domain
-	 * @param term the failure PF
-	 * @param compl the completion PF
-	 */
-	public NonprimitiveTask(Task[] children, ActionType aType,
-			PropositionalFunction fail, PropositionalFunction compl) {
-		super(children, aType,  null, null);
-		this.rf = new NonprimitiveRewardFunction(this);
-		this.failure = fail;
-		this.completed = compl;
-	}
-	
-	/**
-	 * 
-	 * create a nunprimitive taks
-	 * @param children the subtasks
-	 * @param aType the set of actions this task represents in its parent task's domain
-	 * @param abstractDomain the domain this task executes actions in
-	 * @param map the state abstraction function into the domain
-	 * @param taskrf the custom reward function for the task
-	 * @param term the failure PF
-	 * @param compl the completion PF
-	 */
-	public NonprimitiveTask(Task[] children, ActionType aType, OOSADomain abstractDomain, StateMapping map,
-			 RewardFunction taskrf, PropositionalFunction fail, PropositionalFunction compl) {
-		super(children, aType, abstractDomain, map);
-		this.rf = taskrf;
-		this.failure = fail;
-		this.completed = compl;
-	}
 	
 	@Override
 	public boolean isPrimitive() {
@@ -100,44 +47,54 @@ public class NonprimitiveTask extends Task{
 	}
 	
 	/**
-	 * uses the defined reward function to assign reward to states
+	 * uses the defined rewardTotal function to assign rewardTotal to states
 	 * @param s the original state that is being transitioned from
 	 * @param a the action associated with the grounded version of this task
 	 * @param sPrime the next state that is being transitioned into
-	 * @return the reward assigned to s by the reward function
+	 * @return the rewardTotal assigned to s by the rewardTotal function
 	 */
+	@Override
 	public double reward(State s, Action a, State sPrime){
-		return rf.reward(s, a, sPrime);
+		return goalFailRF.reward(s, a, sPrime);
 	}
 	
 	/**
-	 * customise the reward function
-	 * @param rf the reward function which should take in a state and
+	 * customise the rewardTotal function
+	 * @param rf the rewardTotal function which should take in a state and
 	 * grounded action
 	 */
-	public void setRF(RewardFunction rf){
-		this.rf = rf;
+	public void setRF(GoalFailRF rf){
+		this.goalFailRF = rf;
 	}
 
-	//these functions use the two propositional function provided
-	//to test states for completion and failure of the grounded 
-	//task's action give by a
 	@Override
 	public boolean isFailure(State s, Action a) {
-		if (a instanceof ObjectParameterizedAction) {
-			return failure.isTrue((OOState) s, ((ObjectParameterizedAction) a).getObjectParameters());
-		} else {
-			return failure.isTrue((OOState) s, RAMDPModel.getActionNameSafe(a));
-		}
+		String[] params = parseParams(a);
+		boolean atFailure = goalFailTF.atFailure(s, params);
+		return atFailure;
 	}
 	
 	@Override
 	public boolean isComplete(State s, Action a){
-//        return completed.isTrue((OOState) s, a.actionName());
-		if (a instanceof ObjectParameterizedAction) {
-			return completed.isTrue((OOState) s, ((ObjectParameterizedAction) a).getObjectParameters());
-		} else {
-			return completed.isTrue((OOState) s, RAMDPModel.getActionNameSafe(a));
-		}
+        String[] params = parseParams(a);
+	    boolean atGoal = goalFailTF.atGoal(s, params);
+	    return atGoal;
+	}
+    public static String[] parseParams(Action action) {
+        String[] params = null;
+        if (action instanceof ObjectParameterizedAction) {
+            params = ((ObjectParameterizedAction) action).getObjectParameters();
+        } else {
+            params = new String[]{StringFormat.parameterizedActionName(action)};
+        }
+        return params;
+    }
+
+	public GoalFailTF getGoalFailTF() {
+		return goalFailTF;
+	}
+
+	public GoalFailRF getGoalFailRF() {
+		return goalFailRF;
 	}
 }

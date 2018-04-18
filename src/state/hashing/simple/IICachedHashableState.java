@@ -18,7 +18,7 @@ import burlap.statehashing.WrappedHashableState;
 
 public class IICachedHashableState extends WrappedHashableState {
 
-    protected int cachedHashCode = Integer.MIN_VALUE;
+    protected Integer cachedHashCode = null;
     protected boolean dirty = true;
     protected boolean hashed = false;
     protected int hashVal;
@@ -53,10 +53,13 @@ public class IICachedHashableState extends WrappedHashableState {
         if(obj == this){
             return true;
         }
-        if(!(obj instanceof HashableState)){
+        if(!(obj instanceof IICachedHashableState)){
             return false;
         }
-        return statesEqual(this.s, ((HashableState)obj).s());
+        int thisHashCode = this.hashCode();
+        int thatHashCode = obj.hashCode();
+        return thisHashCode == thatHashCode;
+//        return statesEqual(this.s, ((HashableState)obj).s());
     }
 
 

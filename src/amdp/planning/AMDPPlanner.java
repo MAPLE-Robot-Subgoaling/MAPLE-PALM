@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import burlap.behavior.policy.Policy;
+import burlap.behavior.policy.PolicyUtils;
 import burlap.behavior.singleagent.Episode;
 import burlap.behavior.valuefunction.ConstantValueFunction;
 import burlap.mdp.core.action.Action;
@@ -13,12 +14,13 @@ import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.environment.Environment;
 import burlap.mdp.singleagent.environment.EnvironmentOutcome;
 import burlap.mdp.singleagent.environment.SimulatedEnvironment;
+import burlap.mdp.singleagent.model.FactoredModel;
 import burlap.mdp.singleagent.model.FullModel;
 import burlap.mdp.singleagent.oo.OOSADomain;
 import burlap.statehashing.HashableState;
 import burlap.statehashing.HashableStateFactory;
-import hierarchy.framework.GroundedTask;
-import hierarchy.framework.Task;
+import hierarchy.framework.*;
+import ramdp.agent.RAMDPLearningAgent;
 import utilities.BoundedRTDP;
 
 public class AMDPPlanner {
@@ -32,7 +34,7 @@ public class AMDPPlanner {
 	 * The cashed policies which tell the agent what to do
 	 * they is one for each task and start state which the agent encounters
 	 */
-	private Map<String, Map<HashableState, Policy>> taskPolicies;
+	private Map<String, Policy> taskPolicies;
 	
 	/**
 	 * the discount factor for the domains
@@ -43,13 +45,19 @@ public class AMDPPlanner {
 	 * the hashing factory
 	 */
 	private HashableStateFactory hs;
-	
-	/**
-	 * the maximum error allowed in the planning
-	 */
-	private double maxDelta;
-	
-	/**
+
+    /**
+     * the maximum error allowed in the planning
+     */
+    private double maxDelta;
+
+    /**
+     * the maximum number of steps in plan
+     */
+    private int maxSteps;
+
+
+    /**
 	 * the maximum number of rollouts allowed 
 	 */
 	private int maxRollouts;
@@ -66,16 +74,23 @@ public class AMDPPlanner {
 	 * @param hs hashing factory
 	 * @param maxDelta max error for the planner
 	 * @param maxRollouts max number of rollouts for BRTDP
+	 * @param maxSteps max number of steps in executing plan
 	 */
-	public AMDPPlanner(Task root, double gamma, HashableStateFactory hs, double maxDelta, int maxRollouts) {
+	public AMDPPlanner(Task root, double gamma, HashableStateFactory hs, double maxDelta, int maxRollouts, int maxSteps) {
 		this.root = root;
 		this.gamma = gamma;
 		this.hs = hs;
 		this.maxDelta = maxDelta;
-		this.maxRollouts = maxRollouts; 
+		this.maxRollouts = maxRollouts;
+		this.maxSteps = maxSteps;
 		this.actionMap = new HashMap<String, GroundedTask>();
-		this.taskPolicies = new HashMap<String, Map<HashableState,Policy>>();
+		this.taskPolicies = new HashMap<String, Policy>();
 	}
+
+	public void resetSolver() {
+	    this.actionMap.clear();
+	    this.taskPolicies.clear();
+    }
 	
 	/**
 	 * generate a sequence of actions starting at the given state and 
@@ -111,8 +126,9 @@ public class AMDPPlanner {
 
 			//get the policy for the current task and start state and execute
 			//it till task is completed or it fails
-			Policy taskPolicy = getPolicy(task, currentState);
-			while(!(task.isFailure(currentState) || task.isComplete(currentState))){
+            Policy taskPolicy = getPolicy(task, currentState);
+            while(!(task.isFailure(currentState) || task.isComplete(currentState))
+                    && e.actionSequence.size() < maxSteps){
 				Action a = taskPolicy.action(currentState);
 				GroundedTask child = getChildGT(task, a, currentState);
 				System.out.println(child);
@@ -134,40 +150,43 @@ public class AMDPPlanner {
 	 * @return a policy to solve the task
 	 */
 	private Policy getPolicy(GroundedTask t, State s){
-		HashableState hscurrwnt = hs.hashState(s);
+		HashableState currentHashableState = hs.hashState(s);
 		
 		//try to get the policy for task and state
-		Map<HashableState, Policy> taskPolicies = this.taskPolicies.get(t.toString());
-		if(taskPolicies == null){
-			taskPolicies = new HashMap<HashableState, Policy>();
-			this.taskPolicies.put(t.toString(), taskPolicies);
-		}
-		
-		Policy p = taskPolicies.get(hscurrwnt);
+		Policy p = this.taskPolicies.get(t.toString());
+//		if(taskPolicies == null){
+//			taskPolicies = new HashMap<HashableState, Policy>();
+//			this.taskPolicies.put(t.toString(), taskPolicies);
+//		}
+//
+//		Policy p = taskPolicies.get(currentHashableState);
 		if(p == null){
 			//generate a new policy using BRTDP planning to solve the task
-			//create a copy of the task's domain with the same action the terminates and defines reward specific
+			//create a copy of the task's domain with the same action the terminates and defines rewardTotal specific
 			//to the task
 			OOSADomain domain = t.getDomain();
-			OOSADomain copy = new OOSADomain();
-			List<ActionType> acts = domain.getActionTypes();
-			for(ActionType a : acts){
-				copy.addActionType(a);
-			}
-			
-			FullModel generalModel = (FullModel) domain.getModel();
-			FullModel newModel = new AMDPModel(t, generalModel);
-			copy.setModel(newModel);
-			
+			String[] params = NonprimitiveTask.parseParams(t.getAction());
+			bindTaskParametersToDomainModel(domain, params);
+
 			//plan over the modified domain to solve the task
-			BoundedRTDP brtdp = new BoundedRTDP(copy, gamma, hs, new ConstantValueFunction(0), new ConstantValueFunction(1),
+			BoundedRTDP brtdp = new BoundedRTDP(domain, gamma, hs, new ConstantValueFunction(0), new ConstantValueFunction(1),
 					 maxDelta, maxRollouts);
 			p = brtdp.planFromState(s);
-			taskPolicies.put(hscurrwnt, p);
+            Episode debugEpisode = PolicyUtils.rollout(p, s, domain.getModel());
+            System.out.println(debugEpisode.actionSequence);
+//			taskPolicies.put(currentHashableState, p);
 		}
 		return p;
 	}
-	
+
+	private void bindTaskParametersToDomainModel(OOSADomain domain, String[] params) {
+		FactoredModel model = ((FactoredModel)domain.getModel());
+		GoalFailTF tf = (GoalFailTF) model.getTf();
+		tf.setGoalParams(params);
+		tf.setFailParams(params);
+		GoalFailRF rf = (GoalFailRF) model.getRf();
+	}
+
 	/**
 	 * setup a environment to execute base actions with 
 	 * @param t some task in the hierarchy

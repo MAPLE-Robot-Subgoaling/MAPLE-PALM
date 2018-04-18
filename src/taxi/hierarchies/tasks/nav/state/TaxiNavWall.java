@@ -57,4 +57,36 @@ public class TaxiNavWall extends MutableObject {
 	public List<Object> variableKeys() {
 		return keys;
 	}
+
+    public boolean blocksMovement(int tx, int ty, int dx, int dy) {
+		int wx = (int)get(TaxiNavDomain.ATT_START_X);
+		int wy = (int)get(TaxiNavDomain.ATT_START_Y);
+		int wl = (int)get(TaxiNavDomain.ATT_LENGTH);
+		boolean isHorizontal = (boolean)get(TaxiNavDomain.ATT_IS_HORIZONTAL);
+		boolean betweenX = wx <= tx && tx < (wx+wl);
+		boolean betweenY = wy <= ty && ty < (wy+wl);
+		if (isHorizontal && dy > 0) { // going north
+			// if just below wall, block
+			boolean justBelow = ty + 1 == wy;
+			return justBelow && betweenX;
+		}
+		if (isHorizontal && dy < 0) { // going south
+			// if just above wall, block
+			boolean justAbove = ty == wy;
+			return justAbove && betweenX;
+		}
+		if (!isHorizontal && dx > 0) { // going east
+			// if just left of wall, block
+			boolean justLeft = tx+1 == wx;
+			return justLeft && betweenY;
+		}
+		if (!isHorizontal && dx < 0) { // going west
+			// if just right of wall, block
+			boolean justRight = tx == wx;
+			return justRight && betweenY;
+		}
+		// if none of the cases applied, it does not block movement
+		return false;
+	}
+
 }

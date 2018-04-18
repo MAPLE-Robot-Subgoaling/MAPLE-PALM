@@ -4,6 +4,7 @@ import burlap.mdp.core.oo.propositional.PropositionalFunction;
 import burlap.mdp.core.oo.state.OOState;
 import taxi.Taxi;
 import taxi.hierarchies.tasks.put.TaxiPutDomain;
+import taxi.hierarchies.tasks.put.state.TaxiPutState;
 import taxi.hierarchies.tasks.root.TaxiRootDomain;
 import utilities.MutableObject;
 
@@ -18,11 +19,12 @@ public class PutFailurePF extends PropositionalFunction{
 
 	@Override
 	public boolean isTrue(OOState s, String... params) {
+		if (!(s instanceof TaxiPutState)) { return false; }
 		String passengerName = params[0];
 		MutableObject passenger = (MutableObject) s.object(passengerName);
-		String passengerGoal = (String) passenger.get(ATT_GOAL_LOCATION);
-		boolean inTaxi = (boolean) passenger.get(TaxiPutDomain.ATT_IN_TAXI);
-		return !inTaxi;
+		if (passenger == null) { return false; }
+		String passengerLocation = (String) passenger.get(TaxiPutDomain.ATT_LOCATION);
+		return !passengerLocation.equals(TaxiPutDomain.IN_TAXI);
 	}
 	
 }

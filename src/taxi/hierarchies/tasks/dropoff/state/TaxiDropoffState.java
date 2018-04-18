@@ -64,7 +64,7 @@ public class TaxiDropoffState implements MutableOOState{
 
 	@Override
 	public TaxiDropoffState copy() {
-		return new TaxiDropoffState(passengers);
+		return new TaxiDropoffState(touchPassengers());
 	}
 
 	@Override
@@ -91,7 +91,9 @@ public class TaxiDropoffState implements MutableOOState{
 
 	@Override
 	public MutableOOState removeObject(String oname) {
-		throw new RuntimeException("Remove not implemented");
+		touchPassenger(oname);
+		passengers.remove(oname);
+		return this;
 	}
 
 	@Override
@@ -126,10 +128,26 @@ public class TaxiDropoffState implements MutableOOState{
 	}
 	
 	public String toString(){
-		String out = "{\n";
+		String out = "{ " + this.getClass().getSimpleName() + "\n";
 		for(TaxiDropoffPassenger p : passengers.values()){
 			out += p.toString() + "\n";
 		}
+		out += "}";
 		return out;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		TaxiDropoffState that = (TaxiDropoffState) o;
+
+		return passengers != null ? passengers.equals(that.passengers) : that.passengers == null;
+	}
+
+	@Override
+	public int hashCode() {
+		return passengers != null ? passengers.hashCode() : 0;
 	}
 }

@@ -21,7 +21,7 @@ public class TaxiModel implements FullStateModel{
 	private double[][] moveProbability;
 	
 	/**
-	 * probability the passenger just picked up changes their goal 
+	 * transitionProbability the passenger just picked up changes their goal
 	 */
 	private double fickleChangeGoalProbaility;
 	
@@ -34,7 +34,7 @@ public class TaxiModel implements FullStateModel{
 	 * create a taxi model
 	 * @param moveprob array of movement probabilities
 	 * @param fickle whether passengers are fickle
-	 * @param fickleprob probability the passengers are fickle
+	 * @param fickleprob transitionProbability the passengers are fickle
 	 */
 	public TaxiModel(double[][] moveprob, boolean fickle, double fickleprob) {
 		this.moveProbability = moveprob;
@@ -136,7 +136,6 @@ public class TaxiModel implements FullStateModel{
 					TaxiPassenger np = ns.touchPassenger(passengerName);
 					np.set(Taxi.ATT_X, nx);
 					np.set(Taxi.ATT_Y, ny);
-					break;
 				}
 			}
 			

@@ -14,6 +14,7 @@ import burlap.mdp.singleagent.model.SampleModel;
 import burlap.statehashing.HashableState;
 import burlap.statehashing.HashableStateFactory;
 import hierarchy.framework.GroundedTask;
+import hierarchy.framework.StringFormat;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -78,9 +79,9 @@ public class QProviderRmaxQ implements QProvider, MDPSolverInterface{
 		}
 		List<QValue> qValues = stateToQValues.get(hs);
 
-		String taskNameNew = RmaxQLearningAgent.getActionNameSafe(a);
+		String taskNameNew = StringFormat.parameterizedActionName(a);
 		for(QValue q : qValues){
-			String taskNameThis = RmaxQLearningAgent.getActionNameSafe(q.a);
+			String taskNameThis = StringFormat.parameterizedActionName(q.a);
 			if(taskNameNew.equals(taskNameThis)) {
 				return q.q;
 			}
@@ -105,9 +106,9 @@ public class QProviderRmaxQ implements QProvider, MDPSolverInterface{
 	 */
 	public void update(State s, Action a, double val){
 		List<QValue> qvalsins = stateToQValues.get(hashingFactory.hashState(s));
-		String taskNameNew = RmaxQLearningAgent.getActionNameSafe(a);
+		String taskNameNew = StringFormat.parameterizedActionName(a);
 		for(QValue q : qvalsins){
-			String taskNameThis = RmaxQLearningAgent.getActionNameSafe(q.a);
+			String taskNameThis = StringFormat.parameterizedActionName(q.a);
 			if(taskNameNew.equals(taskNameThis)) {
 				q.q = val;
 				return;

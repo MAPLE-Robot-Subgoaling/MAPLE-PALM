@@ -1,9 +1,11 @@
 package taxi.hierarchies;
 
 import burlap.mdp.auxiliary.StateMapping;
+import burlap.mdp.auxiliary.common.IdentityStateMapping;
 import burlap.mdp.core.action.ActionType;
 import burlap.mdp.core.action.UniversalActionType;
 import burlap.mdp.core.oo.propositional.PropositionalFunction;
+import burlap.mdp.singleagent.model.FactoredModel;
 import burlap.mdp.singleagent.oo.OOSADomain;
 import hierarchy.framework.*;
 import taxi.PickupActionType;
@@ -48,8 +50,8 @@ public class TaxiHierarchy {
 	
 	/***
 	 * creates the standards taxi hierarchy and returns the root task
-	 * @param correctMoveprob the probability that a movement action will work as expected
-	 * @param fickleProbability the probability that a passenger in the taxi will change goals
+	 * @param correctMoveprob the transitionProbability that a movement action will work as expected
+	 * @param fickleProbability the transitionProbability that a passenger in the taxi will change goals
 	 * @return the root task of the taxi hierarchy
 	 */
 	public static Task createAMDPHierarchy(double correctMoveprob, double fickleProbability, boolean plan){
@@ -81,15 +83,22 @@ public class TaxiHierarchy {
 		PrimitiveTask west = new PrimitiveTask(aWest, baseDomain);
 		Task[] navTasks = {north, east, south, west};
 
-		// Put Nav (Task used by Put)
-		ActionType aPNavigate = putDomain.getAction(TaxiPutDomain.ACTION_NAV);
-		NonprimitiveTask pNavigate = new NonprimitiveTask(navTasks, aPNavigate, navDomain,
-				new NavStateMapper(), new NavFailurePF(), new NavCompletedPF());
+		double defaultReward = NonprimitiveTask.DEFAULT_REWARD;
+		double noopReward = NonprimitiveTask.NOOP_REWARD;
 
-		// Get Nav (Task used by Get)
-		ActionType aGNavigate = getDomain.getAction(TaxiGetDomain.ACTION_NAV);
-		NonprimitiveTask gNavigate = new NonprimitiveTask(navTasks, aGNavigate, navDomain,
-				new NavStateMapper(), new NavFailurePF(), new NavCompletedPF());
+		// Nav (Task used by Get and Put)
+		ActionType aNavigate = putDomain.getAction(TaxiPutDomain.ACTION_NAV);
+		NonprimitiveTask navigate = new NonprimitiveTask(
+				navTasks,
+				aNavigate,
+				navDomain,
+				new NavStateMapper(),
+				new NavFailurePF(),
+				new NavCompletedPF(),
+				defaultReward,
+				noopReward
+		);
+		if (plan) { setupKnownTFRF(navigate); }
 
 		// Pickup (Primitive used by Bringon)
 		ActionType aPickup = bringonDomain.getAction(Taxi.ACTION_PICKUP);
@@ -98,14 +107,32 @@ public class TaxiHierarchy {
 		// Bringon (Task used by Get)
 		ActionType aBringon = getDomain.getAction(TaxiGetDomain.ACTION_BRINGON);
 		Task[] bringonTasks = {pickup};
-		NonprimitiveTask bringon = new NonprimitiveTask(bringonTasks, aBringon, bringonDomain,
-				new BringonStateMapper(), new BringonFailurePF(), new BringonCompletedPF());
+		NonprimitiveTask bringon = new NonprimitiveTask(
+				bringonTasks,
+				aBringon,
+				bringonDomain,
+				new BringonStateMapper(),
+				new BringonFailurePF(),
+				new BringonCompletedPF(),
+				defaultReward,
+				noopReward
+		);
+		if (plan) { setupKnownTFRF(bringon); }
 
 		// Get (Task used by Root)
 		ActionType aGet = rootDomain.getAction(TaxiRootDomain.ACTION_GET);
-		Task[] getTasks = {bringon, gNavigate};
-		NonprimitiveTask get = new NonprimitiveTask(getTasks, aGet, getDomain,
-				new GetStateMapper(), new GetFailurePF(), new GetCompletedPF());
+		Task[] getTasks = {bringon, navigate};
+		NonprimitiveTask get = new NonprimitiveTask(
+				getTasks,
+				aGet,
+				getDomain,
+				new GetStateMapper(),
+				new GetFailurePF(),
+				new GetCompletedPF(),
+				defaultReward,
+				noopReward
+		);
+		if (plan) { setupKnownTFRF(get); }
 
 		// Putdown (Primitive used by Dropoff)
 		ActionType aPutdown = dropoffDomain.getAction(Taxi.ACTION_PUTDOWN);
@@ -114,33 +141,68 @@ public class TaxiHierarchy {
 		// Dropoff (Task used by Put)
 		ActionType aDropoff = putDomain.getAction(TaxiPutDomain.ACTION_DROPOFF);
 		Task[] dropoffTasks = {putdown};
-		NonprimitiveTask dropoff = new NonprimitiveTask(dropoffTasks, aDropoff, dropoffDomain,
-				new DropoffStateMapper(), new DropoffFailurePF(), new DropoffCompletedPF());
+		NonprimitiveTask dropoff = new NonprimitiveTask(
+				dropoffTasks,
+				aDropoff,
+				dropoffDomain,
+				new DropoffStateMapper(),
+				new DropoffFailurePF(),
+				new DropoffCompletedPF(),
+				defaultReward,
+				noopReward
+		);
+		if (plan) { setupKnownTFRF(dropoff); }
 
 		// Put (Task used by Root)
 		ActionType aPut = rootDomain.getAction(TaxiRootDomain.ACTION_PUT);
-		Task[] putTasks = {pNavigate, dropoff};
-		NonprimitiveTask put = new NonprimitiveTask(putTasks, aPut, putDomain,
-				new PutStateMapper(), new PutFailurePF(), new PutCompletedPF());
+		Task[] putTasks = {dropoff, navigate};
+		NonprimitiveTask put = new NonprimitiveTask(
+				putTasks,
+				aPut,
+				putDomain,
+				new PutStateMapper(),
+				new PutFailurePF(),
+				new PutCompletedPF(),
+				defaultReward,
+				noopReward
+		);
+		if (plan) { setupKnownTFRF(put); }
 
 		// Root
 		ActionType aSolve = new SolveActionType();
 		Task[] rootTasks = {get, put};
-		NonprimitiveTask root = new NonprimitiveTask(rootTasks, aSolve, rootDomain,
-				new RootStateMapper(), new RootPF(), new RootPF());
-		
+		NonprimitiveTask root = new NonprimitiveTask(
+				rootTasks,
+				aSolve,
+				rootDomain,
+				new RootStateMapper(),
+				new RootFailurePF(),
+				new RootCompletedPF(),
+				defaultReward,
+				noopReward
+		);
+		if (plan) { setupKnownTFRF(root); }
+
 		return root;
+	}
+
+	private static void setupKnownTFRF(NonprimitiveTask task) {
+		GoalFailTF tf = task.getGoalFailTF();
+		GoalFailRF rf = task.getGoalFailRF();
+		FactoredModel model = (FactoredModel) task.getDomain().getModel();
+		model.setTf(tf);
+		model.setRf(rf);
 	}
 
 	/**
 	 * creates a taxi hierarchy with no abstractions 
-	 * @param correctMoveprob the probability that a movement action will work as expected 
-	 * @param fickleProbability the probability that a passenger in the taxi will change goals
+	 * @param correctMoveprob the transitionProbability that a movement action will work as expected
+	 * @param fickleProbability the transitionProbability that a passenger in the taxi will change goals
 	 * @return the root task of the taxi hierarchy
 	 */
 	public static Task createRMAXQHierarchy(double correctMoveprob, double fickleProbability){
 		Taxi taxiDomain;
-		
+
 		if(fickleProbability == 0){
 			taxiDomain = new Taxi(false, fickleProbability, correctMoveprob);
 		}else{
@@ -170,27 +232,50 @@ public class TaxiHierarchy {
 		PrimitiveTask wast = new PrimitiveTask(aWest, baseDomain);
 		PrimitiveTask pickup = new PrimitiveTask(aPickup, baseDomain);
 		PrimitiveTask dropoff = new PrimitiveTask(aPutdown, baseDomain);
-		
+
 		Task[] navTasks = new Task[]{north, east, south, wast};
 		Task[] bringonTasks = new Task[]{pickup};
 		Task[] dropoffTasks = new Task[]{dropoff};
 
-		PropositionalFunction navFailPF = new BaseNavigateFailurePF();
+		double defaultReward = NonprimitiveTask.DEFAULT_REWARD;
+		double noopReward = NonprimitiveTask.NOOP_REWARD;
+
+        PropositionalFunction navFailPF = new BaseNavigateFailurePF();
 		PropositionalFunction navCompPF = new BaseNavigateCompletedPF();
 		NonprimitiveTask navigate = new NonprimitiveTask(navTasks, aNavigate, taxiDomain.generateNavigateDomain(),
-				new IdentityMap(), navFailPF, navCompPF);
+				new IdentityMap(), navFailPF, navCompPF, defaultReward, noopReward);
 
 		Task[] getTasks = new Task[]{pickup, navigate};
 		Task[] putTasks = new Task[]{navigate, dropoff};
-		
+
 		PropositionalFunction getFailPF = new BaseGetFailurePF();
 		PropositionalFunction getCompPF = new BaseGetCompletedPF();
-		NonprimitiveTask get = new NonprimitiveTask(getTasks, aGet, getFailPF, getCompPF);
-		
+//		NonprimitiveTask get = new NonprimitiveTask(getTasks, aGet, getFailPF, getCompPF);
+		NonprimitiveTask get = new NonprimitiveTask(
+				getTasks,
+				aGet,
+				baseDomain,
+				new IdentityStateMapping(),//new GetStateMapper(),
+				new GetFailurePF(),
+				new GetCompletedPF(),
+				defaultReward,
+				noopReward
+		);
+
 		PropositionalFunction putFailPF = new BasePutFailurePF();
 		PropositionalFunction putCompPF = new BasePutCompletedPF();
-		NonprimitiveTask put = new NonprimitiveTask(putTasks, aPut, putFailPF, putCompPF);
-		
+//		NonprimitiveTask put = new NonprimitiveTask(putTasks, aPut, putFailPF, putCompPF);
+		NonprimitiveTask put = new NonprimitiveTask(
+				putTasks,
+				aPut,
+				baseDomain,
+				new IdentityStateMapping(),//new PutStateMapper(),
+				new PutFailurePF(),
+				new PutCompletedPF(),
+				defaultReward,
+				noopReward
+		);
+
 		Task[] rootTasks = {get, put};
 		PropositionalFunction rootPF = new BaseRootPF();
 		OOSADomain baseActual = taxiDomain.generateDomain();
@@ -203,9 +288,10 @@ public class TaxiHierarchy {
 				aPickup,
 				aPutdown
 		);
-		Task root = new NonprimitiveTask(rootTasks, aSolve, baseActual, new IdentityMap(), rootPF, rootPF);
+		Task root = new NonprimitiveTask(rootTasks, aSolve, baseActual, new IdentityMap(), rootPF, rootPF, defaultReward, noopReward);
 
 		return root;
+//		throw new RuntimeException("need to be reimplemented");
 		
 	}
 	
@@ -219,8 +305,8 @@ public class TaxiHierarchy {
 
 	/***
 	 * creates the hiergen taxi hierarchy and returns the root task
-	 * @param correctMoveprob the probability that a movement action will work as expected
-	 * @param fickleProbability the probability that a passenger in the taxi will change goals
+	 * @param correctMoveprob the transitionProbability that a movement action will work as expected
+	 * @param fickleProbability the transitionProbability that a passenger in the taxi will change goals
 	 * @return the root task of the taxi hierarchy
 	 */
 	public static Task createHierGenHierarchy(double correctMoveprob, double fickleProbability) {
@@ -256,23 +342,50 @@ public class TaxiHierarchy {
 		PrimitiveTask pickup = new PrimitiveTask(aPickup, baseDomain);
 		PrimitiveTask dropoff = new PrimitiveTask(aPutdown, baseDomain);
 
+		double defaultReward = NonprimitiveTask.DEFAULT_REWARD;
+		double noopReward = NonprimitiveTask.NOOP_REWARD;
+
 		Task[] task5Children = {north, east, south, wast};
 		PropositionalFunction task5CompletedPF = new HierGenTask5Completed();
 		PropositionalFunction task5FailPF = new FailureFunction();
-		NonprimitiveTask task5 = new NonprimitiveTask(task5Children, aTask5, task5Map,
-				task5FailPF, task5CompletedPF);
+		NonprimitiveTask task5 = new NonprimitiveTask(
+				task5Children,
+				aTask5,
+				baseDomain,
+				task5Map,
+				task5FailPF,
+				task5CompletedPF,
+				defaultReward,
+				noopReward
+		);
 
 		Task[] task7Children = {task5, pickup};
 		PropositionalFunction task7CompletedPF = new HierGenTask7Completed();
 		PropositionalFunction task7FailPF = new FailureFunction();
-		NonprimitiveTask task7 = new NonprimitiveTask(task7Children, aTask7, task7Map,
-				task7FailPF, task7CompletedPF);
+		NonprimitiveTask task7 = new NonprimitiveTask(
+				task7Children,
+				aTask7,
+				baseDomain,
+				task7Map,
+				task7FailPF,
+				task7CompletedPF,
+				defaultReward,
+				noopReward
+		);
 
 		Task[] rootChildren = {task7, dropoff, task5};
 		PropositionalFunction rootCompletedPF = new HierGenRootCompleted();
 		PropositionalFunction rootFailPF = new FailureFunction();
-		NonprimitiveTask root = new NonprimitiveTask(rootChildren, asolve, rootMap,
-				rootFailPF, rootCompletedPF);
+		NonprimitiveTask root = new NonprimitiveTask(
+				rootChildren,
+				asolve,
+				baseDomain,
+				rootMap,
+				rootFailPF,
+				rootCompletedPF,
+				defaultReward,
+				noopReward
+		);
 
 		return root;
 	}

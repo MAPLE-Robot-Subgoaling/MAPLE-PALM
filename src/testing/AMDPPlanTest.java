@@ -23,11 +23,15 @@ public class AMDPPlanTest {
 	
 	public static void plan(TaxiConfig conf, Task root, State init, HashableStateFactory hs, OOSADomain baseDomain) {
 		
-		AMDPPlanner amdp = new AMDPPlanner(root, conf.gamma, hs, conf.rmax.max_delta, conf.planning.rollouts);
+		AMDPPlanner amdp = new AMDPPlanner(root, conf.gamma, hs, conf.rmax.max_delta, conf.planning.rollouts, conf.max_steps);
 		List<Episode> eps = new ArrayList<Episode>();
 
 		for(int i = 0; i < conf.episodes; i++){
-			eps.add(amdp.planFromState(init));
+			Episode e = amdp.planFromState(init);
+			eps.add(e);
+			System.out.println(e.actionSequence);
+			System.out.println(e.rewardSequence);
+			amdp.resetSolver();
 		}
 
 		EpisodeSequenceVisualizer ev = new EpisodeSequenceVisualizer
@@ -37,7 +41,7 @@ public class AMDPPlanTest {
 	}
 	
 	public static void main(String[] args) {
-		String conffile = "config/taxi/classic.yaml";
+		String conffile = "./config/taxi/classic-deterministic.yaml";
 		if(args.length > 0) {
 			conffile = args[0];
 		}

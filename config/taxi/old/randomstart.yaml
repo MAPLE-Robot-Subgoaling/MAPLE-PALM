@@ -1,4 +1,4 @@
-state: tiny
+state: classic
 
 agents:
   - ramdp
@@ -10,9 +10,10 @@ trials: 20
 gamma: 0.9
 
 stochastic:
-  correct_move: 1
-  fickle: 0
-  random_start: false
+  seed: 2320942930
+  correct_move: 0.8
+  fickle: 0.225
+  random_start: true
 
 planning:
   rollouts: 1000
@@ -21,11 +22,12 @@ rmax:
   vmax: 20
   threshold: 5
   max_delta: 0.01
+  max_iterations_in_model: 1000
 
 output:
   csv:
     enabled: true
-    output: results/ramdp-tiny.csv
+    output: results/ramdp-random-start-fickle.csv
 
   chart:
     enabled: true
