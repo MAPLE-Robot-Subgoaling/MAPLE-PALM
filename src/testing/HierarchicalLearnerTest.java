@@ -118,7 +118,7 @@ public class HierarchicalLearnerTest {
 			OOSADomain base = TaxiHierarchy.getBaseDomain();
 			runRAMDPEpisodes(conf, RAMDProot, s, base);
 		}
-		if(conf.agents.contains("ramdp")) {
+		if(conf.agents.contains("rmaxq")) {
 			Task RMAXQroot = TaxiHierarchy.createRMAXQHierarchy(conf.stochastic.correct_move, conf.stochastic.fickle);
 			OOSADomain base = TaxiHierarchy.getBaseDomain();
 			runRMAXQEpsodes(conf, RMAXQroot, s, base);

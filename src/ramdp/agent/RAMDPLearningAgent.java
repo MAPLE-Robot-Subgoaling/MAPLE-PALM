@@ -14,7 +14,7 @@ import burlap.mdp.singleagent.environment.Environment;
 import burlap.mdp.singleagent.environment.EnvironmentOutcome;
 import burlap.mdp.singleagent.oo.OOSADomain;
 import burlap.statehashing.HashableStateFactory;
-import com.sun.javafx.binding.StringFormatter;
+//import com.sun.javafx.binding.StringFormatter;
 import hierarchy.framework.GroundedTask;
 import hierarchy.framework.StringFormat;
 import state.hashing.simple.CachedHashableStateFactory;
