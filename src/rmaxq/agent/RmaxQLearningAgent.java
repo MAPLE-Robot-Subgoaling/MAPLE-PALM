@@ -92,7 +92,7 @@ public class RmaxQLearningAgent implements LearningAgent {
 
 	public Episode runLearningEpisode(Environment env, int maxSteps) {
 		this.env = env;
-		Episode e = new Episode(initialState);
+ 		Episode e = new Episode(initialState);
 		rootSolve = root.getAllGroundedTasks(env.currentObservation()).get(0);
 		numberPrimitivesExecuted = 0;
 		timestepsByTask.clear();
@@ -260,7 +260,7 @@ public class RmaxQLearningAgent implements LearningAgent {
 				maxDelta = deltaV;
 			}
 		}
-		boolean converged = maxDelta < maxDeltaInPolicy;
+		boolean converged = maxDelta <= maxDeltaInPolicy;
 		return converged;
 	}
 
@@ -343,9 +343,9 @@ public class RmaxQLearningAgent implements LearningAgent {
 	 */
 	public void prepareEnvelope(GroundedTask task, HashableState hs){
 		List<HashableState> envelope = envelopesByTask.get(task);
-		if (isTerminal(task, hs)) {
-			return; // skip terminal states since we can't "plan" beyond the terminal point of this task
-		}
+//		if (isTerminal(task, hs)) {
+//			return; // skip terminal states since we can't "plan" beyond the terminal point of this task
+//		}
 		if(!envelope.contains(hs)){
 			envelope.add(hs);
 			List<GroundedTask> childTasks = task.getGroundedChildTasks(hs.s());
@@ -407,7 +407,7 @@ public class RmaxQLearningAgent implements LearningAgent {
 				}
 			}
 		}
-		boolean converged = maxDelta < maxDeltaInModel;
+		boolean converged = maxDelta <= maxDeltaInModel;
 		return converged;
 	}
 	private double setR_eq4(GroundedTask task, HashableState hs, GroundedTask childTask) {
