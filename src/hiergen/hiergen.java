@@ -61,7 +61,6 @@ public class hiergen {
             Object obj = CATrajectories.get(0).getBaseTrajectory().state(CATrajectories.get(0).getBaseTrajectory().stateSequence.size()-1).get(var);
             goal.put(var, obj);
         }
-        System.out.println(goal.toString());
         for(CATrajectory c: CATrajectories)
         {
             List<Object> remove = new ArrayList<>();

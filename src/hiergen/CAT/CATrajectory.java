@@ -110,7 +110,7 @@ public class CATrajectory {
             if (edge.getStart() == start) {
                 if (ai == null)
                     ai = new ArrayList<>();
-                ai.add(edge.getStart());
+                ai.add(edge.getEnd());
             }
         }
 
