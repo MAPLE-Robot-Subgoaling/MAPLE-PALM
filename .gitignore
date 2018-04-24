@@ -6,4 +6,4 @@ Maple-RAMDP.iml
 .classpath
 .project
 out/
-.arff
+data.arff
