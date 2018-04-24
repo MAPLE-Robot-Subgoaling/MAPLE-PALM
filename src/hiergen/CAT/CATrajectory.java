@@ -102,11 +102,39 @@ public class CATrajectory {
         }
         return -1;
     }
-    public List<Integer> reverseFindEdges(int end, String variable){
+
+    public List<Integer> findEdges(int start)
+    {
+        List<Integer> ai = null;
+        for (CausalEdge edge : edges) {
+            if (edge.getStart() == start) {
+                if (ai == null)
+                    ai = new ArrayList<>();
+                ai.add(edge.getStart());
+            }
+        }
+
+        return ai;
+    }
+
+    public List<Integer> reverseFindEdges(int end){
+        List<Integer> ai = null;
+        for (CausalEdge edge : edges) {
+            if (edge.getEnd() == end) {
+                if(ai == null)
+                    ai = new ArrayList<Integer>();
+                ai.add(edge.getStart());
+            }
+        }
+
+        return ai;
+    }
+
+    public List<Integer> reverseFindEdges(int end, String variable) {
         List<Integer> ai = null;
         for (CausalEdge edge : edges) {
             if (edge.getEnd() == end && edge.getRelavantVariable().equals(variable)) {
-                if(ai == null)
+                if (ai == null)
                     ai = new ArrayList<Integer>();
                 ai.add(edge.getStart());
             }

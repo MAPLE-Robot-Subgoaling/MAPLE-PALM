@@ -39,7 +39,7 @@ public class hiergen {
         {
             goalVars.add(rv.toString());
         }
-        ArrayList<Integer> indices = CATScan.scan(caTrajectories, goalVars);
+        //ArrayList<Integer> indices = CATScan.scan(caTrajectories, goalVars);
 
         return null;
     }
