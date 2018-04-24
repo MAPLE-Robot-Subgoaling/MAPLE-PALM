@@ -4,6 +4,7 @@ import burlap.behavior.singleagent.Episode;
 import burlap.mdp.auxiliary.stateconditiontest.StateConditionTest;
 import burlap.mdp.core.state.State;
 import hiergen.CAT.CATrajectory;
+import hiergen.CAT.SubCAT;
 import hiergen.CAT.VariableTree;
 
 import java.lang.reflect.Array;
@@ -14,59 +15,71 @@ import java.util.*;
  */
 public class hiergen {
 
-    public static Task generate(Map<String, Map<String, VariableTree>> trees, ArrayList<CATrajectory> caTrajectories)
+    public static Task generate(Map<String, Map<String, VariableTree>> trees, ArrayList<CATrajectory> CATrajectories)
     {
-        ArrayList<String> goalVars = new ArrayList<>();
-        //determine goal somehow
-        for(CATrajectory c: caTrajectories)
+        Map<Object, Object> goalVars = determineGoal(CATrajectories);
+        if(goalVars.isEmpty())
+            return null;
+
+        if(CATrajectories.get(0).actionCount() > 1)
         {
-        if(c.getActions().size() > 1){
-
+            builder(trees, CATrajectories);
         }
-    }
-    return null;
+        //List<String> actions = CATrajectories.get(0).getActions();
+        return null;
     }
 
-    public static ArrayList<Task> builder(Map<String, Map<String, VariableTree>> trees, ArrayList<CATrajectory> caTrajectories)
+    public static ArrayList<Task> builder(Map<String, Map<String, VariableTree>> trees, ArrayList<CATrajectory> CATrajectories)
     {
-        Map<Object, Object> goal = hiergen.determineGoal(caTrajectories);
-        if(goal.size() == 0)
+        Map<Object, Object> goal = hiergen.determineGoal(CATrajectories);
+        if(goal.isEmpty())
             return null;
         Set<Object> keys = goal.keySet();
-        ArrayList<Object> releventVarsObj = new ArrayList<Object>(keys);
-        ArrayList<String> goalVars = new ArrayList<>();
-        for(Object rv : releventVarsObj)
+        ArrayList<Object> relevantVars = new ArrayList<Object>(keys);
+        List<SubCAT> subCATs = new ArrayList<>();
+
+        for(Object rv : relevantVars)
         {
-            goalVars.add(rv.toString());
+            ArrayList<Object> curr = new ArrayList<>();
+            curr.add(rv);
+            List<SubCAT> temp = CATScan.scan(CATrajectories, curr);
         }
+
+
+
         //ArrayList<Integer> indices = CATScan.scan(caTrajectories, goalVars);
 
         return null;
     }
 
-    public static Map<Object, Object> determineGoal(ArrayList<CATrajectory> caTrajectories)
+    public static Map<Object, Object> determineGoal(ArrayList<CATrajectory> CATrajectories)
     {
-        Episode e = caTrajectories.get(0).getBaseTrajectory();
-        State s = e.state(e.numActions());
-        List<Object> vars = s.variableKeys();
-        Map<Object, Object> goalCond = new HashMap<>();
+        List<Object> vars = CATrajectories.get(0).getBaseTrajectory().state(0).variableKeys();
+        Map<Object, Object> goal = new HashMap<>();
         for(Object var: vars)
         {
-            goalCond.put(var, s.get(var));
+            Object obj = CATrajectories.get(0).getBaseTrajectory().state(CATrajectories.get(0).getBaseTrajectory().stateSequence.size()-1).get(var);
+            goal.put(var, obj);
         }
-        for(CATrajectory cat: caTrajectories)
+        System.out.println(goal.toString());
+        for(CATrajectory c: CATrajectories)
         {
-            e = caTrajectories.get(0).getBaseTrajectory();
-            s = e.state(e.numActions());
-            for(Object var: vars)
+            List<Object> remove = new ArrayList<>();
+            for(Object key: goal.keySet())
             {
-                if(!(goalCond.get(var).equals(s.get(var))))
+                Object obj = c.getBaseTrajectory().state(c.getBaseTrajectory().stateSequence.size()-1).get(key);
+                if(!obj.equals(goal.get(key)))
                 {
-                    goalCond.remove(var);
+                    remove.add(key);
                 }
             }
+
+            for(Object r: remove)
+            {
+                goal.remove(r);
+            }
         }
-        return goalCond;
+        return goal;
     }
 
 }

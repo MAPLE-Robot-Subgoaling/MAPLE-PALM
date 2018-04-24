@@ -42,5 +42,7 @@ public class hiergenTest {
             temp.annotateTrajectory(e, actionModels, (FullModel) domain.getModel());
             CATs.add(temp);
         }
+
+        hiergen.generate(actionModels, CATs);
     }
 }

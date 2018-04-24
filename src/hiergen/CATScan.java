@@ -10,15 +10,17 @@ import java.util.List;
 
 public class CATScan {
 
-    public static SubCAT scan (ArrayList<CATrajectory > trajectories, List<String > variables)
+    public static List<SubCAT> scan(ArrayList<CATrajectory > trajectories, List<Object> variables)
     {
+        List<SubCAT> subCATs = new ArrayList<SubCAT>();
         ArrayList<Integer> actionIndicies = new ArrayList<>();
         int start = -1, end = -1;
         for(CATrajectory ct : trajectories)
         {
             List<CausalEdge> edges = ct.getEdges();
-            for(String var: variables)
+            for(Object v: variables)
             {
+                String var = (String)v;
                 for (CausalEdge e : edges)
                 {
                     if (e.getEnd() == ct.actionCount() && e.getRelavantVariable().equals(var) && !(actionIndicies.contains(e.getStart())))
@@ -63,9 +65,10 @@ public class CATScan {
                     }
                 }
             }while(actionIndicies.size() != prevSize);
+
+            subCATs.add(new SubCAT(start, end, actionIndicies));
         }
 
-
-        return new SubCAT(start, end, actionIndicies);
+        return subCATs;
     }
 }
