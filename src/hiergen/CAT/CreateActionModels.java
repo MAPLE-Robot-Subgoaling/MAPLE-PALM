@@ -46,7 +46,7 @@ public class CreateActionModels {
             List<Double> rewards = new ArrayList<Double>();
             for (Episode trajectory : trajectories) {
                 for (int i = 0; i < trajectory.actionSequence.size(); i++) {
-                    if (trajectory.actionSequence.get(i).toString().equals(action)) {
+                    if (trajectory.actionSequence.get(i).actionName().equals(action)) {
                         priorStates.add(trajectory.stateSequence.get(i));
                         postStates.add(trajectory.stateSequence.get(i + 1));
                         rewards.add(trajectory.rewardSequence.get(i));
@@ -66,35 +66,26 @@ public class CreateActionModels {
                 }
                 Instances dataset = new Instances(action + "_" + var.toString(), attributes, priorStates.size());
                 dataset.setClassIndex(0);
-
                 //fill with data
-                for (int i = 0; i < priorStates.size(); i++) {
-                    Instance dataPoint = new DenseInstance(variables.size() + 1);
-                    dataPoint.setDataset(dataset);
+                if (priorStates.size() > 0) {
+                    for (int i = 0; i < priorStates.size(); i++) {
+                        Instance dataPoint = new DenseInstance(variables.size() + 1);
+                        dataPoint.setDataset(dataset);
+                        Object label = postStates.get(i).get(var);
+                        if (label instanceof Number) {
+                            dataPoint.setValue(0, ((Number) label).doubleValue());
+                        } else {
+                            dataPoint.setValue(0, MurmurHash.hash32(label.toString()));
+                        }
 
-                    Object label = postStates.get(i).get(var);
-                    if (label instanceof Number) {
-                        dataPoint.setValue(0, ((Number) label).doubleValue());
-                    } else {
-                        dataPoint.setValue(0, MurmurHash.hash32(label.toString()));
+                        State prior = priorStates.get(i);
+                        addSStateVars(variables, dataPoint, prior);
+                        dataset.add(dataPoint);
                     }
-
-                    State prior = priorStates.get(i);
-                    addSStateVars(variables, dataPoint, prior);
-                    dataset.add(dataPoint);
+                    J48 tree = buildTree(dataset);
+                    writeTreeToFile(action, var.toString(), tree);
+                    addTree(action, var.toString(), tree);
                 }
-
-                //System.out.println("\nAction is: " + action);
-                //System.out.println(dataset+"\n");
-                J48 tree = buildTree(dataset);
-                //System.out.println(tree+"\n");
-
-                /*if(action.contains("pickup"))
-                {
-                    System.out.println(action + "-------------------" + var.toString());
-                }*/
-                writeTreeToFile(action, var.toString(), tree);
-                addTree(action, var.toString(), tree);
             }
 
             //create tree for reward with class as reward
@@ -117,16 +108,11 @@ public class CreateActionModels {
                 addSStateVars(variables, dataPoint, prior);
                 dataset.add(dataPoint);
             }
-            if(action.equals("putdown"))
-            {
-                System.out.println();
-            }
             J48 tree = buildTree(dataset);
-            /*System.out.println("\n\n\n----------------------------------------- Tree ------------------------------------------\n");
-            System.out.println(tree);
-            System.out.println("\nDataset:\n"+dataset);*/
-            writeTreeToFile(action, "R", tree);
-            addTree(action, "R", tree);
+            if (tree != null) {
+                writeTreeToFile(action, "R", tree);
+                addTree(action, "R", tree);
+            }
         }
         return trees;
     }
@@ -189,7 +175,6 @@ public class CreateActionModels {
             ex.printStackTrace();
         }
 
-        //System.out.println("\n\n\n-------------------------------\n"+dataset);
         //train tree
         J48 tree = new J48();
         try {
@@ -200,8 +185,6 @@ public class CreateActionModels {
 
             String[] options = {"-M", "1", "-U"};
             tree.setOptions(options);
-            //System.out.println("-------------------------------------------------");
-            //System.out.println(dataset);
             tree.buildClassifier(dataset);
         } catch (Exception ex) {
             ex.printStackTrace();
