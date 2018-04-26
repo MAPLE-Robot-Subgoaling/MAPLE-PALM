@@ -146,7 +146,8 @@ public class CATrajectory {
         if (baseTrajectory == null) {
             return 0;
         } else {
-            return baseTrajectory.actionSequence.size();
+            return actions.size();
+            //return baseTrajectory.actionSequence.size();
         }
     }
 

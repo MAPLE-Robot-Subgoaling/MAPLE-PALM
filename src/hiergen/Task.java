@@ -13,6 +13,8 @@ public class Task {
     Map<Object, Object> goal;
     ArrayList<Object> actions;
     ArrayList<String> variables;
+    ArrayList<Task> subTasks;
+
 
     public Task()
     {
@@ -26,11 +28,28 @@ public class Task {
         goal = g;
         actions = a;
         variables = v;
+        subTasks = null;
+    }
+
+    public Task(Map<Object, Object> g, ArrayList<Object> a, ArrayList<String> v, ArrayList<Task> subTasks)
+    {
+        goal = g;
+        actions = a;
+        variables = v;
+        this.subTasks = subTasks;
     }
 
     public String toString()
     {
         return "\n--------------Task----------\n" +
                 actions.toString();
+    }
+
+    public String actionName()
+    {
+        String action = "";
+        for(String var: variables)
+            action += "var ";
+        return action + "\n";
     }
 }

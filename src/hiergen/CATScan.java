@@ -29,7 +29,7 @@ public class CATScan {
                         System.out.println(e.getStart());
                         System.out.println(ct.actionCount());
                     }*/
-                    if (e.getEnd() == ct.actionCount()+1 && e.getRelavantVariable().equals(var) && !(actionIndicies.contains(e.getStart())))
+                    if (e.getEnd() == ct.actionCount() && e.getRelavantVariable().equals(var) && !(actionIndicies.contains(e.getStart())))
                     {
                         //System.out.println("Entered");
                         actionIndicies.add(e.getStart());
@@ -82,9 +82,11 @@ public class CATScan {
             for(Integer ind: actionIndicies)
                 System.out.print(ind + " ");
             System.out.println();
-            subCATs.add(new SubCAT(start, end, actionIndicies));
+            subCATs.add(new SubCAT(start, end, actionIndicies, ct));
         }
 
         return subCATs;
     }
+
+
 }
