@@ -7,6 +7,7 @@ import utilities.MutableObject;
 
 import java.util.Arrays;
 import java.util.List;
+import static taxi.TaxiConstants.*;
 
 public class TaxiPutPassenger extends MutableObject {
 
@@ -15,8 +16,8 @@ public class TaxiPutPassenger extends MutableObject {
 	 * whether they have just been picked up and haven't changed goal
 	 */
 	private final static List<Object> keys = Arrays.<Object>asList(
-			TaxiPutDomain.ATT_GOAL_LOCATION,
-			TaxiPutDomain.ATT_LOCATION
+			ATT_GOAL_LOCATION,
+			ATT_LOCATION
 			);
 	
 	public TaxiPutPassenger(String name, String goalLocation, String location){
@@ -24,14 +25,14 @@ public class TaxiPutPassenger extends MutableObject {
 	}
 
 	private TaxiPutPassenger(String name, Object goalLocation, Object location){
-		this.set(TaxiPutDomain.ATT_GOAL_LOCATION, goalLocation);
-		this.set(TaxiPutDomain.ATT_LOCATION, location);
+		this.set(ATT_GOAL_LOCATION, goalLocation);
+		this.set(ATT_LOCATION, location);
 		this.setName(name);
 	}
 	
 	@Override
 	public String className() {
-		return Taxi.CLASS_PASSENGER;
+		return CLASS_PASSENGER;
 	}
 
 	@Override
@@ -43,8 +44,8 @@ public class TaxiPutPassenger extends MutableObject {
 	public ObjectInstance copyWithName(String objectName) {
 		return new TaxiPutPassenger(
 				objectName,
-				get(TaxiPutDomain.ATT_GOAL_LOCATION),
-				get(TaxiPutDomain.ATT_LOCATION)
+				get(ATT_GOAL_LOCATION),
+				get(ATT_LOCATION)
 		);
 	}
 

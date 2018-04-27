@@ -6,11 +6,12 @@ import taxi.Taxi;
 import taxi.hierarchies.tasks.get.TaxiGetDomain;
 import utilities.MutableObject;
 
+import static taxi.TaxiConstants.*;
 public class GetFailurePF extends PropositionalFunction {
 	//get fails if any passenger if in taxi unless it is the right one
 	
 	public GetFailurePF() {
-		super("getFail", new String[]{Taxi.CLASS_PASSENGER});
+		super("getFail", new String[]{CLASS_PASSENGER});
 	}
 	
 	@Override

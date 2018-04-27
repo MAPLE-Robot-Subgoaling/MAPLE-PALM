@@ -6,8 +6,8 @@ import burlap.mdp.core.oo.state.ObjectInstance;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.oo.ObjectParameterizedActionType;
 
-import static taxi.hierarchies.tasks.root.TaxiRootDomain.ATT_CURRENT_LOCATION;
-import static taxi.hierarchies.tasks.root.TaxiRootDomain.IN_TAXI;
+import static taxi.TaxiConstants.ATT_CURRENT_LOCATION;
+import static taxi.TaxiConstants.IN_TAXI;
 
 public class PutActionType  extends ObjectParameterizedActionType {
 

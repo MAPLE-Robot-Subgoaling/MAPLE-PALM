@@ -5,13 +5,12 @@ import burlap.mdp.core.oo.state.OOStateUtilities;
 import burlap.mdp.core.oo.state.ObjectInstance;
 import burlap.mdp.core.state.MutableState;
 import burlap.mdp.core.state.State;
-import taxi.Taxi;
 import taxi.hierarchies.interfaces.PassengerLocationParameterizable;
 import taxi.hierarchies.interfaces.PassengerParameterizable;
-import taxi.hierarchies.tasks.dropoff.TaxiDropoffDomain;
 
 import java.util.*;
 
+import static taxi.TaxiConstants.*;
 public class TaxiHierGenRootState implements MutableOOState, PassengerParameterizable, PassengerLocationParameterizable {
 
 	public static final String CLASS_ROOT_PASSENGER = 		"rootPassenger";
@@ -121,18 +120,18 @@ public class TaxiHierGenRootState implements MutableOOState, PassengerParameteri
 
 	@Override
 	public String getPassengerLocation(String pname) {
-		boolean inTaxi = (boolean) passengers.get(pname).get(Taxi.ATT_IN_TAXI);
-		int tx = (int) taxi.get(Taxi.ATT_X);
-		int ty = (int) taxi.get(Taxi.ATT_Y);
-		int px = (int) passengers.get(pname).get(Taxi.ATT_X);
-		int py = (int) passengers.get(pname).get(Taxi.ATT_Y);
+		boolean inTaxi = (boolean) passengers.get(pname).get(ATT_IN_TAXI);
+		int tx = (int) taxi.get(ATT_X);
+		int ty = (int) taxi.get(ATT_Y);
+		int px = (int) passengers.get(pname).get(ATT_X);
+		int py = (int) passengers.get(pname).get(ATT_Y);
 
 		if(!inTaxi)
-			return TaxiDropoffDomain.NOT_IN_TAXI;
+			return NOT_IN_TAXI;
 		else if(tx == px && ty == py)
 			return READY;
 		else
-			return Taxi.ON_ROAD;
+			return ON_ROAD;
 	}
 
 	public Object getTaxiAtt(String attName){

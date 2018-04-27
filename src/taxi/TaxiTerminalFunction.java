@@ -3,6 +3,7 @@ package taxi;
 import burlap.mdp.core.TerminalFunction;
 import burlap.mdp.core.state.State;
 import taxi.state.TaxiState;
+import static taxi.TaxiConstants.*;
 
 public class TaxiTerminalFunction implements TerminalFunction{
 	//the taxi domain is terminal when all passengers are at their goal
@@ -13,18 +14,18 @@ public class TaxiTerminalFunction implements TerminalFunction{
 		TaxiState state = (TaxiState) s;
 		
 		for(String passengerName : state.getPassengers()){
-			boolean inTaxi = (boolean) state.getPassengerAtt(passengerName, Taxi.ATT_IN_TAXI);
+			boolean inTaxi = (boolean) state.getPassengerAtt(passengerName, ATT_IN_TAXI);
 			if(inTaxi)
 				return false;
 			
-			String passengerGoal = (String) state.getPassengerAtt(passengerName, Taxi.ATT_GOAL_LOCATION);
-			int px = (int) state.getPassengerAtt(passengerName, Taxi.ATT_X);
-			int py = (int) state.getPassengerAtt(passengerName, Taxi.ATT_Y);
+			String passengerGoal = (String) state.getPassengerAtt(passengerName, ATT_GOAL_LOCATION);
+			int px = (int) state.getPassengerAtt(passengerName, ATT_X);
+			int py = (int) state.getPassengerAtt(passengerName, ATT_Y);
 			
 			for(String locName : state.getLocations()){
 				if(passengerGoal.equals(locName)){
-					int lx = (int) state.getLocationAtt(locName, Taxi.ATT_X);
-					int ly = (int) state.getLocationAtt(locName, Taxi.ATT_Y);
+					int lx = (int) state.getLocationAtt(locName, ATT_X);
+					int ly = (int) state.getLocationAtt(locName, ATT_Y);
 					if(lx != px || ly != py)
 						return false;
 					

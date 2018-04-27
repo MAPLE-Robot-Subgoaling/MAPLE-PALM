@@ -10,6 +10,7 @@ import taxi.hierarchies.interfaces.PassengerLocationParameterizable;
 import taxi.hierarchies.interfaces.PassengerParameterizable;
 
 import java.util.*;
+import static taxi.TaxiConstants.*;
 
 public class TaxiHierGenTask7State implements MutableOOState, PassengerParameterizable, PassengerLocationParameterizable{
 
@@ -99,12 +100,12 @@ public class TaxiHierGenTask7State implements MutableOOState, PassengerParameter
 
 	@Override
 	public int getLocationX(String pname) {
-		return (int) passengers.get(pname).get(Taxi.ATT_X);
+		return (int) passengers.get(pname).get(ATT_X);
 	}
 
 	@Override
 	public int getLocationY(String pname) {
-		return (int) passengers.get(pname).get(Taxi.ATT_Y);
+		return (int) passengers.get(pname).get(ATT_Y);
 	}
 
 	//get values from objects
@@ -118,18 +119,18 @@ public class TaxiHierGenTask7State implements MutableOOState, PassengerParameter
 
 	@Override
 	public String getPassengerLocation(String pname) {
-		boolean inTaxi = (boolean) passengers.get(pname).get(Taxi.ATT_IN_TAXI);
-		int tx = (int) taxi.get(Taxi.ATT_X);
-		int ty = (int) taxi.get(Taxi.ATT_Y);
-		int px = (int) passengers.get(pname).get(Taxi.ATT_X);
-		int py = (int) passengers.get(pname).get(Taxi.ATT_Y);
+		boolean inTaxi = (boolean) passengers.get(pname).get(ATT_IN_TAXI);
+		int tx = (int) taxi.get(ATT_X);
+		int ty = (int) taxi.get(ATT_Y);
+		int px = (int) passengers.get(pname).get(ATT_X);
+		int py = (int) passengers.get(pname).get(ATT_Y);
 
 		if(inTaxi)
-			return Taxi.ATT_IN_TAXI;
+			return ATT_IN_TAXI;
 		else if(tx == px && ty == py)
 			return REEADY_TO_PICKUP;
 		else
-			return Taxi.ON_ROAD;
+			return ON_ROAD;
 
 	}
 

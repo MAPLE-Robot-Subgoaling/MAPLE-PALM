@@ -7,12 +7,13 @@ import taxi.hierarchies.tasks.nav.TaxiNavDomain;
 import taxi.hierarchies.tasks.nav.state.NavStateMapper;
 import taxi.hierarchies.tasks.nav.state.TaxiNavState;
 import utilities.MutableObject;
+import static taxi.TaxiConstants.*;
 
 public class NavFailurePF extends PropositionalFunction {
 	//nav is terminal when the taxi is at the desired location
 
 	public NavFailurePF() {
-		super("Nav to depot", new String[]{Taxi.CLASS_LOCATION});
+		super("Nav to depot", new String[]{CLASS_LOCATION});
 	}
 	
 	@Override

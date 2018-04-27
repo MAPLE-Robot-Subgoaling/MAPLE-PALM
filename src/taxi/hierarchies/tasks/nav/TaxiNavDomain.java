@@ -30,24 +30,9 @@ import taxi.hierarchies.tasks.nav.state.NavStateMapper;
 import taxi.hierarchies.tasks.nav.state.TaxiNavAgent;
 import taxi.hierarchies.tasks.nav.state.TaxiNavLocation;
 import taxi.stateGenerator.TaxiStateFactory;
+import static taxi.TaxiConstants.*;
 
 public class TaxiNavDomain implements DomainGenerator {
-
-	//attributes
-	public static final String ATT_X =						"x";
-	public static final String ATT_Y =						"y";
-
-	// wall attributes
-	public static final String ATT_START_X = 				"startX";
-	public static final String ATT_START_Y = 				"startY";
-	public static final String ATT_IS_HORIZONTAL =			"isHorizontal";
-	public static final String ATT_LENGTH =					"length";
-
-	//  action
-	public static final String ACTION_NORTH =				"north";
-	public static final String ACTION_SOUTH =				"south";
-	public static final String ACTION_EAST =				"east";
-	public static final String ACTION_WEST =				"west";
 
 	private RewardFunction rf;
 	private TerminalFunction tf;
@@ -78,7 +63,7 @@ public class TaxiNavDomain implements DomainGenerator {
 	public OOSADomain generateDomain() {
 		OOSADomain domain = new OOSADomain();
 
-		domain.addStateClass(Taxi.CLASS_TAXI, TaxiNavAgent.class).addStateClass(Taxi.CLASS_LOCATION, TaxiNavLocation.class);
+		domain.addStateClass(CLASS_TAXI, TaxiNavAgent.class).addStateClass(CLASS_LOCATION, TaxiNavLocation.class);
 		
 		TaxiNavModel taxiModel = new TaxiNavModel();
 		if (tf == null) {
@@ -104,7 +89,7 @@ public class TaxiNavDomain implements DomainGenerator {
 
 	public static void main(String[] args) {
 
-        String goalLocationName = Taxi.CLASS_LOCATION+"2";
+        String goalLocationName = CLASS_LOCATION+"2";
 		TaxiNavDomain taxiBuild = new TaxiNavDomain(goalLocationName);
 		OOSADomain domain = taxiBuild.generateDomain();
 

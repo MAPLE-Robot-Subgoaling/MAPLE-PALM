@@ -7,6 +7,7 @@ import utilities.MutableObject;
 
 import java.util.Arrays;
 import java.util.List;
+import static taxi.TaxiConstants.*;
 
 public class TaxiGetLocation extends MutableObject{
 
@@ -18,7 +19,7 @@ public class TaxiGetLocation extends MutableObject{
 
 	@Override
 	public String className() {
-		return Taxi.CLASS_LOCATION;
+		return CLASS_LOCATION;
 	}
 
 	@Override

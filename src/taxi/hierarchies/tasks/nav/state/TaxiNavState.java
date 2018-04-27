@@ -11,6 +11,7 @@ import taxi.hierarchies.tasks.get.state.TaxiGetLocation;
 import taxi.hierarchies.tasks.get.state.TaxiGetPassenger;
 import taxi.hierarchies.tasks.nav.TaxiNavDomain;
 
+import static taxi.TaxiConstants.*;
 public class TaxiNavState implements MutableOOState{
 	private TaxiNavAgent taxi;
 	private Map<String, TaxiNavLocation> locations;
@@ -108,11 +109,11 @@ public class TaxiNavState implements MutableOOState{
 
 	@Override
 	public List<ObjectInstance> objectsOfClass(String oclass) {
-		if(oclass.equals(Taxi.CLASS_TAXI))
+		if(oclass.equals(CLASS_TAXI))
 			return taxi == null ? new ArrayList<ObjectInstance>() : Arrays.<ObjectInstance>asList(taxi);
-		else if(oclass.equals(Taxi.CLASS_LOCATION))
+		else if(oclass.equals(CLASS_LOCATION))
 			return new ArrayList<ObjectInstance>(locations.values());
-		else if(oclass.equals(Taxi.CLASS_WALL))
+		else if(oclass.equals(CLASS_WALL))
 			return new ArrayList<ObjectInstance>(walls.values());
 		throw new RuntimeException("No object class " + oclass);
 	}

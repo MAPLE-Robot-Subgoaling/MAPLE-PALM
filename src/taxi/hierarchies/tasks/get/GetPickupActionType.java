@@ -6,8 +6,10 @@ import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.oo.ObjectParameterizedActionType;
 import taxi.hierarchies.tasks.get.state.TaxiGetState;
 
-public class BringonActionType extends ObjectParameterizedActionType {
-    public BringonActionType(String name, String[] parameterClasses) {
+import static taxi.TaxiConstants.*;
+
+public class GetPickupActionType extends ObjectParameterizedActionType {
+    public GetPickupActionType(String name, String[] parameterClasses) {
         super(name, parameterClasses);
     }
 
@@ -18,7 +20,7 @@ public class BringonActionType extends ObjectParameterizedActionType {
         String passengerName = params[0];
         ObjectInstance passenger = state.object(passengerName);
         // passenger location is not IN_TAXI if it matches Taxi location
-        return passenger.get(TaxiGetDomain.ATT_LOCATION).equals(state.getTaxiAtt(TaxiGetDomain.ATT_LOCATION));
+        return passenger.get(ATT_LOCATION).equals(state.getTaxiAtt(ATT_LOCATION));
     }
 }
 
