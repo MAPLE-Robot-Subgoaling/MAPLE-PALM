@@ -132,15 +132,6 @@ public class Taxi implements DomainGenerator{
 		return domain;
 	}
 	
-	//for the taxi hierarchy, each node has a different set of actions, 
-	//these mothods remove all actions besides the subtask for each task  
-	public OOSADomain generateBringOnDomain(){
-		OOSADomain d = generateDomain();
-		d.clearActionTypes();
-		d.addActionType(new PickupActionType(ACTION_PICKUP, new String[]{CLASS_PASSENGER}));
-		return d;
-	}
-	
 	public OOSADomain generateNavigateDomain(){
 		OOSADomain d = generateDomain();
 		d.clearActionTypes();
@@ -150,13 +141,6 @@ public class Taxi implements DomainGenerator{
                 new UniversalActionType(ACTION_EAST),
                 new UniversalActionType(ACTION_WEST)
                 );
-		return d;
-	}
-	
-	public OOSADomain generateDropOffDomain(){
-		OOSADomain d = generateDomain();
-		d.clearActionTypes();
-		d.addActionType(new PutdownActionType(ACTION_PUTDOWN, new String[]{CLASS_PASSENGER}));
 		return d;
 	}
 				
