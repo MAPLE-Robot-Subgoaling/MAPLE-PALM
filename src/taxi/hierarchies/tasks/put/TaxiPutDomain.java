@@ -21,6 +21,7 @@ import hierarchy.framework.GoalFailTF;
 import taxi.Taxi;
 import taxi.functions.amdp.PutCompletedPF;
 import taxi.functions.amdp.PutFailurePF;
+import taxi.hierarchies.tasks.NavigateActionType;
 import taxi.hierarchies.tasks.put.state.PutStateMapper;
 import taxi.hierarchies.tasks.put.state.TaxiPutAgent;
 import taxi.hierarchies.tasks.put.state.TaxiPutLocation;

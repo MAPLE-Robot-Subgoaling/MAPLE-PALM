@@ -32,9 +32,10 @@ public class TaxiRewardFunction implements RewardFunction{
 	 * use the default rewards
 	 */
 	public TaxiRewardFunction() {
-		stepReward = -1;
-		illegalActionReward = -10;
-		goalReward = 20;
+		// scaled to fit goal at 1.0
+		stepReward = -0.05;//-1;
+		illegalActionReward = -0.5;//-10;
+		goalReward = 1.0;//20;
 		tf = new TaxiTerminalFunction();
 	}
 	

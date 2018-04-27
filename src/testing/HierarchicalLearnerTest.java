@@ -82,12 +82,12 @@ public class HierarchicalLearnerTest {
 		}
 
 		List<Episode> episodes = new ArrayList<Episode>();
-		RmaxQLearningAgent rmaxq = new RmaxQLearningAgent(root, hs, initState, conf.rmax.vmax, conf.rmax.threshold, conf.rmax.max_delta_rmaxq, conf.rmax.max_delta);
+		RmaxQLearningAgent rmaxq = new RmaxQLearningAgent(root, hs, initState, conf.rmax.vmax, conf.gamma, conf.rmax.threshold, conf.rmax.max_delta_rmaxq, conf.rmax.max_delta, conf.rmax.max_iterations_in_model);
 		
 		for(int i = 1; i <= conf.episodes; i++){
 			Episode e = rmaxq.runLearningEpisode(env, conf.max_steps);
 			episodes.add(e);
-			System.out.println("Episode " + i + " time " + rmaxq.getTime() / 1000.0);
+			System.out.println("Episode " + i + " time " + rmaxq.getActualTimeElapsed() / 1000.0);
 			env.resetEnvironment();
 		}
 

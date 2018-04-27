@@ -1,9 +1,10 @@
-package taxi.hierarchies.tasks.get;
+package taxi.hierarchies.tasks;
 
 import burlap.mdp.core.oo.ObjectParameterizedAction;
 import burlap.mdp.core.oo.state.ObjectInstance;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.oo.ObjectParameterizedActionType;
+import taxi.hierarchies.tasks.get.TaxiGetDomain;
 import taxi.hierarchies.tasks.get.state.TaxiGetState;
 
 public class NavigateActionType extends ObjectParameterizedActionType {

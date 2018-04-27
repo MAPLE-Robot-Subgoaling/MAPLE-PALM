@@ -20,6 +20,7 @@ import hierarchy.framework.GoalFailTF;
 import taxi.Taxi;
 import taxi.functions.amdp.GetCompletedPF;
 import taxi.functions.amdp.GetFailurePF;
+import taxi.hierarchies.tasks.NavigateActionType;
 import taxi.hierarchies.tasks.get.state.GetStateMapper;
 import taxi.hierarchies.tasks.get.state.TaxiGetAgent;
 import taxi.hierarchies.tasks.get.state.TaxiGetLocation;
