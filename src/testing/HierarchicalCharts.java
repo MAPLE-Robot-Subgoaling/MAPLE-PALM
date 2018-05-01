@@ -97,12 +97,12 @@ public class HierarchicalCharts {
 				agents[i] = new LearningAgentFactory() {
 					@Override
 					public String getAgentName() {
-						return "R-MAXQ";
+						return "R-MAXQ with Hiergen";
 					}
 
 					@Override
 					public LearningAgent generateAgent() {
-						return new RmaxQLearningAgent(RMEXQRoot, hs, s, conf.rmax.vmax, conf.gamma, conf.rmax.threshold, conf.rmax.max_delta_rmaxq, conf.rmax.max_delta, conf.rmax.max_iterations_in_model);
+						return new RmaxQLearningAgent(RAMDPRoot, hs, s, conf.rmax.vmax, conf.gamma, conf.rmax.threshold, conf.rmax.max_delta_rmaxq, conf.rmax.max_delta, conf.rmax.max_iterations_in_model);
 					}
 				};
 			}
