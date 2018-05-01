@@ -11,19 +11,19 @@ import java.util.Map;
  */
 public class Task {
     Map<Object, Object> goal;
-    ArrayList<Object> actions;
-    ArrayList<String> variables;
+    ArrayList<String> actions;
+    ArrayList<Object> variables;
     ArrayList<Task> subTasks;
 
 
     public Task()
     {
         goal = null;
-        actions = new ArrayList<Object>();
-        variables = new ArrayList<String>();
+        actions = new ArrayList<String>();
+        variables = new ArrayList<Object>();
     }
 
-    public Task(Map<Object, Object> g, ArrayList<Object> a, ArrayList<String> v)
+    public Task(Map<Object, Object> g, ArrayList<String> a, ArrayList<Object> v)
     {
         goal = g;
         actions = a;
@@ -31,7 +31,7 @@ public class Task {
         subTasks = null;
     }
 
-    public Task(Map<Object, Object> g, ArrayList<Object> a, ArrayList<String> v, ArrayList<Task> subTasks)
+    public Task(Map<Object, Object> g, ArrayList<String> a, ArrayList<Object> v, ArrayList<Task> subTasks)
     {
         goal = g;
         actions = a;
@@ -48,8 +48,8 @@ public class Task {
     public String actionName()
     {
         String action = "";
-        for(String var: variables)
-            action += "var ";
+        for(Object var: variables)
+            action += var+ " ";
         return action + "\n";
     }
 }

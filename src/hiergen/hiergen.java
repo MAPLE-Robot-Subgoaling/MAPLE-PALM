@@ -17,60 +17,73 @@ public class hiergen {
 
     public static Task generate(Map<String, Map<String, VariableTree>> trees, ArrayList<CATrajectory> CATrajectories)
     {
+        System.out.println("Gen");
         Map<Object, Object> goalVars = determineGoal(CATrajectories);
         if(goalVars.isEmpty())
             return null;
-
+        ArrayList<Task> t = new ArrayList<>();
         if(CATrajectories.get(0).actionCount() > 1)
         {
-            builder(trees, CATrajectories);
+            t = builder(trees, CATrajectories);
         }
+        if(t == null || t.isEmpty())
+        {
+            return new Task();
+        }
+
         //List<String> actions = CATrajectories.get(0).getActions();
         return null;
     }
 
     public static ArrayList<Task> builder(Map<String, Map<String, VariableTree>> trees, ArrayList<CATrajectory> CATrajectories)
     {
+        System.out.println("Builder");
         Map<Object, Object> goal = hiergen.determineGoal(CATrajectories);
-        List<Task> finalTasks = new ArrayList<>();
+        ArrayList<Task> finalTasks = new ArrayList<>();
         List<Task> subTasks = new ArrayList<Task>();
-        List<String> actions = new ArrayList<>();
+        ArrayList<String> actions = new ArrayList<>();
         if(goal.isEmpty())
             return null;
         Set<Object> keys = goal.keySet();
         ArrayList<Object> relevantVars = new ArrayList<Object>(keys);
         List<List<SubCAT> > subCATs = new ArrayList<>();
-
         for(Object rv : relevantVars)
         {
             ArrayList<Object> curr = new ArrayList<>();
             curr.add(rv);
             List<SubCAT> temp = CATScan.scan(CATrajectories, curr);
-            subCATs.add(temp);
+            if(temp != null)
+                subCATs.add(temp);
         }
 
         List<SubCAT> unifiedSubCATs = new ArrayList<>();
 
-        for(int i = 0; i < subCATs.size(); i ++)
+        for(int i = 0;i < subCATs.size(); i ++)
         {
-            SubCAT unity = new SubCAT();
-            for(SubCAT sC : subCATs.get(i))
+            SubCAT unity = subCATs.get(i).get(0);
+            for(int j = 1; j < subCATs.get(i).size(); j++)
             {
-                SubCAT.Unify(unity,sC);
+                unity.Unify(subCATs.get(i).get(j));
             }
             unifiedSubCATs.add(unity);
         }
 
+        ArrayList<Integer> remove = new ArrayList<>();
+        int i = -1;
         if(!unifiedSubCATs.isEmpty())
         {
             for(SubCAT sub: unifiedSubCATs)
             {
-                ArrayList<CATrajectory> extractedCATrajectories = extract(CATrajectories, sub);
+                i++;
+                ArrayList<CATrajectory> extractedCATrajectories = extractPreceeding(CATrajectories, sub);
                 ArrayList<Task> Q = builder(trees, extractedCATrajectories);
                 if(Q != null && Q.size() > 0)
                 {
-                    Task q = generate(trees, extractedCATrajectories);
-                    List<String> variablesQ = q.variables;
+                    CATrajectory ct = CATrajectory.subCATToCAT(sub);
+                    ArrayList<CATrajectory> fin = new ArrayList<>();
+                    fin.add(ct);
+                    Task q = generate(trees, fin);
+                    List<Object> variablesQ = q.variables;
                     Map<Object, Object> goalQ = q.goal;
                     for(Task t: Q)
                     {
@@ -89,12 +102,25 @@ public class hiergen {
                     }
 
                     finalTasks.add(new Task(goal, actions, relevantVars));
+                    remove.add(i);
                 }
             }
         }
+
+        for(Integer s: remove)
+        {
+            subCATs.remove(s);
+            unifiedSubCATs.remove(s);
+        }
+
+        if(!subCATs.isEmpty())
+        {
+
+
+        }
         //ArrayList<Integer> indices = CATScan.scan(caTrajectories, goalVars);
 
-        return null;
+        return finalTasks;
     }
 
     public static Map<Object, Object> determineGoal(ArrayList<CATrajectory> CATrajectories)
@@ -103,7 +129,14 @@ public class hiergen {
         Map<Object, Object> goal = new HashMap<>();
         for(Object var: vars)
         {
-            Object obj = CATrajectories.get(0).getBaseTrajectory().state(CATrajectories.get(0).getBaseTrajectory().stateSequence.size()-1).get(var);
+            Object obj;
+            if(CATrajectories.get(0).getSub() != null)
+            {
+                obj = CATrajectories.get(0).getBaseTrajectory().state(CATrajectories.get(0).getSub().getEnd()).get(var);
+            }
+            else {
+                obj = CATrajectories.get(0).getBaseTrajectory().state(CATrajectories.get(0).getBaseTrajectory().stateSequence.size() - 1).get(var);
+            }
             goal.put(var, obj);
         }
         for(CATrajectory c: CATrajectories)
@@ -111,7 +144,14 @@ public class hiergen {
             List<Object> remove = new ArrayList<>();
             for(Object key: goal.keySet())
             {
-                Object obj = c.getBaseTrajectory().state(c.getBaseTrajectory().stateSequence.size()-1).get(key);
+                Object obj;
+                if(c.getSub() != null)
+                {
+                    obj = c.getBaseTrajectory().state(c.getSub().getEnd()).get(key);
+                }
+                else{
+                    obj = c.getBaseTrajectory().state(c.getBaseTrajectory().stateSequence.size() - 1).get(key);
+                }
                 if(!obj.equals(goal.get(key)))
                 {
                     remove.add(key);
@@ -126,10 +166,10 @@ public class hiergen {
         return goal;
     }
 
-    public static ArrayList<CATrajectory> extract(List<CATrajectory> CATs, SubCAT extractee)
+    public static ArrayList<CATrajectory> extractPreceeding(List<CATrajectory> CATs, SubCAT extractee)
     {
         ArrayList<CATrajectory> CATsExtracted = new ArrayList<>();
-
+        //to-do must work for converted sub-CATs
         for(CATrajectory c: CATs)
         {
                 CATrajectory temp = c;
@@ -141,5 +181,7 @@ public class hiergen {
         return CATsExtracted;
 
     }
+
+
 
 }

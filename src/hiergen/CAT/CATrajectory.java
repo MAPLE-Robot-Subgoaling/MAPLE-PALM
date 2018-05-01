@@ -5,15 +5,19 @@ import burlap.mdp.core.action.Action;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.model.FullModel;
 import burlap.mdp.singleagent.model.TransitionProb;
+import jdk.nashorn.internal.ir.CatchNode;
+import scpsolver.graph.Edge;
 
 import java.util.*;
 
 public class CATrajectory {
 
-    private List<String> actions;
-    private List<CausalEdge> edges;
-    private Set<String>[] checkedVariables, changedVariables;
-    private Episode baseTrajectory;
+    protected List<String> actions;
+    protected List<Integer> actionInds = null;
+    protected SubCAT sub = null;
+    protected List<CausalEdge> edges;
+    protected Set<String>[] checkedVariables, changedVariables;
+    protected Episode baseTrajectory;
 
     public CATrajectory() {
         this.actions = new ArrayList<String>();
@@ -117,6 +121,21 @@ public class CATrajectory {
         return ai;
     }
 
+    public List<CausalEdge> findCausalEdges(int start)
+    {
+        List<CausalEdge> ai = null;
+        for (CausalEdge edge : edges) {
+            if (edge.getStart() == start) {
+                if (ai == null)
+                    ai = new ArrayList<>();
+                ai.add(edge);
+            }
+
+        }
+
+        return ai;
+    }
+
     public List<Integer> reverseFindEdges(int end){
         List<Integer> ai = null;
         for (CausalEdge edge : edges) {
@@ -145,12 +164,23 @@ public class CATrajectory {
     public int actionCount() {
         if (baseTrajectory == null) {
             return 0;
-        } else {
-            return actions.size();
-            //return baseTrajectory.actionSequence.size();
+        }
+        else if(actionInds != null)
+        {
+            return actionInds.size();
+        }
+        else {
+            //return actions.size();
+            return baseTrajectory.actionSequence.size();
         }
     }
 
+    public int edges()
+    {
+        if(actions != null)
+            return actions.size();
+        return 0;
+    }
     @Override
     public String toString() {
         String out = "";
@@ -214,6 +244,51 @@ public class CATrajectory {
 
     public void setBaseTrajectory(Episode baseTrajectory) {
         this.baseTrajectory = baseTrajectory;
+    }
+
+    public List<Integer> getActionInds()
+    {
+        return actionInds;
+    }
+
+    public void setActionInds(List<Integer> actionInds)
+    {
+        this.actionInds = actionInds;
+    }
+
+    public SubCAT getSub() {
+        return sub;
+    }
+
+    public void setSub(SubCAT sub) {
+        this.sub = sub;
+    }
+
+    public static CATrajectory subCATToCAT(SubCAT sc)
+    {
+        CATrajectory traj = sc.getCAT();
+        traj.setSub(sc);
+        ArrayList<CausalEdge> convertEdges = new ArrayList<>();
+        for(Integer i : sc.getActionInds())
+        {
+            List<CausalEdge> tempEdges = traj.findCausalEdges(i);
+            for(CausalEdge ce: tempEdges)
+            {
+                convertEdges.add(ce);
+            }
+        }
+        traj.setEdges(convertEdges);
+        traj.setActionInds(sc.getActionInds());
+        return traj;
+    }
+
+    public CATrajectory getUltimateActions()
+    {
+        CATrajectory ultimate = this;
+        ArrayList<Integer> inds = new ArrayList<>();
+        inds.add(actionCount());
+
+        return ultimate;
     }
 
 
