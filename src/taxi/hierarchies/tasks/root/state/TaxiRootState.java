@@ -7,6 +7,8 @@ import taxi.hierarchies.tasks.root.TaxiRootDomain;
 
 import java.util.*;
 
+import static taxi.TaxiConstants.*;
+import static taxi.TaxiConstants.*;
 public class TaxiRootState implements MutableOOState {
 
 	//this state has passengers
@@ -50,7 +52,7 @@ public class TaxiRootState implements MutableOOState {
 
 	@Override
 	public List<ObjectInstance> objectsOfClass(String oclass) {
-		if(oclass.equals(Taxi.CLASS_PASSENGER))
+		if(oclass.equals(CLASS_PASSENGER))
 			return new ArrayList<ObjectInstance>(passengers.values());
 		throw new RuntimeException("No object class " + oclass);
 	}
@@ -84,7 +86,7 @@ public class TaxiRootState implements MutableOOState {
 
 	@Override
 	public MutableOOState addObject(ObjectInstance o) {
-		if(o instanceof TaxiRootPassenger || o.className().equals(Taxi.CLASS_PASSENGER)){
+		if(o instanceof TaxiRootPassenger || o.className().equals(CLASS_PASSENGER)){
 			touchPassengers().put(o.name(), (TaxiRootPassenger) o);
 		}else{
 			throw new RuntimeException("Can only add certain objects to state.");
@@ -140,7 +142,7 @@ public class TaxiRootState implements MutableOOState {
 			buf.append("P");
 			buf.append(passenger.name().charAt(passenger.name().length()-1));
 			buf.append(", at:");
-			String at = (String) passenger.get(TaxiRootDomain.ATT_CURRENT_LOCATION);
+			String at = (String) passenger.get(ATT_CURRENT_LOCATION);
 			if (at.contains("Location")) {
 				buf.append("L");
 				buf.append(at.charAt(at.length()-1));
@@ -148,7 +150,7 @@ public class TaxiRootState implements MutableOOState {
 				buf.append(at);
 			}
 			buf.append(", goal:");
-			String goal = (String) passenger.get(TaxiRootDomain.ATT_GOAL_LOCATION);
+			String goal = (String) passenger.get(ATT_GOAL_LOCATION);
 			if (goal.contains("Location")) {
 				buf.append("L");
 				buf.append(goal.charAt(goal.length()-1));

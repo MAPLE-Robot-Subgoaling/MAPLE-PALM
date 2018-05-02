@@ -5,6 +5,7 @@ import burlap.mdp.core.oo.propositional.PropositionalFunction;
 import burlap.mdp.core.oo.state.OOState;
 import taxi.Taxi;
 import taxi.hierGen.root.state.TaxiHierGenRootState;
+import static taxi.TaxiConstants.*;
 
 public class HierGenRootCompleted extends PropositionalFunction {
 
@@ -18,15 +19,15 @@ public class HierGenRootCompleted extends PropositionalFunction {
 
 		TaxiHierGenRootState st = (TaxiHierGenRootState) s;
 
-		int tx = (int) st.getTaxiAtt(Taxi.ATT_X);
-		int ty = (int) st.getTaxiAtt(Taxi.ATT_Y);
+		int tx = (int) st.getTaxiAtt(ATT_X);
+		int ty = (int) st.getTaxiAtt(ATT_Y);
 
 		for(String pname : st.getPassengers()){
-			int px = (int) st.getPassengerAtt(pname, Taxi.ATT_X);
-			int py = (int) st.getPassengerAtt(pname, Taxi.ATT_Y);
+			int px = (int) st.getPassengerAtt(pname, ATT_X);
+			int py = (int) st.getPassengerAtt(pname, ATT_Y);
 			int destX = (int) st.getPassengerAtt(pname, TaxiHierGenRootState.ATT_DESTINAION_X);
 			int destY = (int) st.getPassengerAtt(pname, TaxiHierGenRootState.ATT_DESTINAION_Y);
-			boolean inTaxi = (boolean) st.getPassengerAtt(pname, Taxi.ATT_IN_TAXI);
+			boolean inTaxi = (boolean) st.getPassengerAtt(pname, ATT_IN_TAXI);
 
 			if(inTaxi)
 				return false;

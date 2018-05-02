@@ -8,6 +8,7 @@ import taxi.state.TaxiState;
 
 import java.util.ArrayList;
 import java.util.List;
+import static taxi.TaxiConstants.*;
 
 public class RootStateMapper implements StateMapping {
 	@Override
@@ -16,17 +17,17 @@ public class RootStateMapper implements StateMapping {
 		TaxiState st = (TaxiState) s;
 
 		for(String passengerName : st.getPassengers()){
-			int px = (int) st.getPassengerAtt(passengerName, Taxi.ATT_X);
-			int py = (int) st.getPassengerAtt(passengerName, Taxi.ATT_Y);
-			String goalLocation = (String)st.getPassengerAtt(passengerName, Taxi.ATT_GOAL_LOCATION);
-			boolean inTaxi = (boolean) st.getPassengerAtt(passengerName, Taxi.ATT_IN_TAXI);
+			int px = (int) st.getPassengerAtt(passengerName, ATT_X);
+			int py = (int) st.getPassengerAtt(passengerName, ATT_Y);
+			String goalLocation = (String)st.getPassengerAtt(passengerName, ATT_GOAL_LOCATION);
+			boolean inTaxi = (boolean) st.getPassengerAtt(passengerName, ATT_IN_TAXI);
 
 			if(inTaxi) {
-				passengers.add(new TaxiRootPassenger(passengerName, TaxiRootDomain.IN_TAXI, goalLocation));
+				passengers.add(new TaxiRootPassenger(passengerName, IN_TAXI, goalLocation));
 			} else {
 				for(String locName : st.getLocations()){
-					int lx = (int) st.getLocationAtt(locName, Taxi.ATT_X);
-					int ly = (int) st.getLocationAtt(locName, Taxi.ATT_Y);
+					int lx = (int) st.getLocationAtt(locName, ATT_X);
+					int ly = (int) st.getLocationAtt(locName, ATT_Y);
 
 					if(px == lx && py == ly){
 						passengers.add(new TaxiRootPassenger(passengerName, locName, goalLocation));

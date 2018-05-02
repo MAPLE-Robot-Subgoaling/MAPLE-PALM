@@ -6,7 +6,7 @@ import java.util.List;
 import burlap.mdp.core.oo.state.ObjectInstance;
 import taxi.Taxi;
 import utilities.MutableObject;
-
+import static taxi.TaxiConstants.*;
 public class TaxiAgent extends MutableObject {
 
 	/**
@@ -14,9 +14,9 @@ public class TaxiAgent extends MutableObject {
 	 * if the state is normal
 	 */
 	private final static List<Object> keys = Arrays.<Object>asList(
-			Taxi.ATT_X,
-			Taxi.ATT_Y,
-			Taxi.ATT_TAXI_OCCUPIED
+			ATT_X,
+			ATT_Y,
+			ATT_TAXI_OCCUPIED
 			);
 
 	public TaxiAgent(String name, int x, int y) {
@@ -28,15 +28,15 @@ public class TaxiAgent extends MutableObject {
 	}
 	
 	private TaxiAgent(String name, Object x, Object y, Object taxiOccupied) {
-		this.set(Taxi.ATT_X, x);
-		this.set(Taxi.ATT_Y, y);
-		this.set(Taxi.ATT_TAXI_OCCUPIED, taxiOccupied);
+		this.set(ATT_X, x);
+		this.set(ATT_Y, y);
+		this.set(ATT_TAXI_OCCUPIED, taxiOccupied);
 		this.setName(name);
 	}
 	
 	@Override
 	public String className() {
-		return Taxi.CLASS_TAXI;
+		return CLASS_TAXI;
 	}
 
 	@Override
@@ -48,9 +48,9 @@ public class TaxiAgent extends MutableObject {
 	public ObjectInstance copyWithName(String objectName) {
 		return new TaxiAgent(
 				objectName,
-				get(Taxi.ATT_X),
-				get(Taxi.ATT_Y),
-				get(Taxi.ATT_TAXI_OCCUPIED)
+				get(ATT_X),
+				get(ATT_Y),
+				get(ATT_TAXI_OCCUPIED)
 				);
 	}
 

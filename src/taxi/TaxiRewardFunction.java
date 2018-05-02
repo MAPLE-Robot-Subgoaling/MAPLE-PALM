@@ -5,6 +5,7 @@ import burlap.mdp.core.action.Action;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.model.RewardFunction;
 import taxi.state.TaxiState;
+import static taxi.TaxiConstants.*;
 
 public class TaxiRewardFunction implements RewardFunction{
 
@@ -32,9 +33,10 @@ public class TaxiRewardFunction implements RewardFunction{
 	 * use the default rewards
 	 */
 	public TaxiRewardFunction() {
-		stepReward = -1;
-		illegalActionReward = -10;
-		goalReward = 20;
+		// scaled to fit goal at 1.0
+		stepReward = -0.05;//-1;
+		illegalActionReward = -0.5;//-10;
+		goalReward = 1.0;//20;
 		tf = new TaxiTerminalFunction();
 	}
 	
@@ -59,17 +61,17 @@ public class TaxiRewardFunction implements RewardFunction{
 		if(tf.isTerminal(sprime))
 			return goalReward + stepReward;
 		
-		boolean taxiOccupied = (boolean) state.getTaxiAtt(Taxi.ATT_TAXI_OCCUPIED);
-		int tx = (int) state.getTaxiAtt(Taxi.ATT_X);
-		int ty = (int) state.getTaxiAtt(Taxi.ATT_Y);
+		boolean taxiOccupied = (boolean) state.getTaxiAtt(ATT_TAXI_OCCUPIED);
+		int tx = (int) state.getTaxiAtt(ATT_X);
+		int ty = (int) state.getTaxiAtt(ATT_Y);
 		
 		//illegal pickup when no passenger at taxi's location
-		if(a.actionName().equals(Taxi.ACTION_PICKUP)){
+		if(a.actionName().equals(ACTION_PICKUP)){
 
 			boolean passengerAtTaxi = false;
 			for(String passengerName : state.getPassengers()){
-				int px = (int) state.getPassengerAtt(passengerName, Taxi.ATT_X);
-				int py = (int) state.getPassengerAtt(passengerName, Taxi.ATT_Y);
+				int px = (int) state.getPassengerAtt(passengerName, ATT_X);
+				int py = (int) state.getPassengerAtt(passengerName, ATT_Y);
 				if(px == tx && py == ty){
 					passengerAtTaxi = true;
 					break;
@@ -80,15 +82,15 @@ public class TaxiRewardFunction implements RewardFunction{
 				return stepReward + illegalActionReward;
 		}
 		//illegal dropoff if not at depot or passenger not in taxi
-		else if(a.actionName().startsWith(Taxi.ACTION_PUTDOWN)){
+		else if(a.actionName().startsWith(ACTION_PUTDOWN)){
 			if(!taxiOccupied)
 				return stepReward + illegalActionReward;
 			
 			// if taxi/passenger is not at depot
 			boolean taxiAtDepot = false;
 			for(String locName : state.getLocations()){
-				int lx = (int) state.getLocationAtt(locName, Taxi.ATT_X);
-				int ly = (int) state.getLocationAtt(locName, Taxi.ATT_Y);
+				int lx = (int) state.getLocationAtt(locName, ATT_X);
+				int ly = (int) state.getLocationAtt(locName, ATT_Y);
 				if(tx == lx && ty == ly){
 					taxiAtDepot = true;
 					break;

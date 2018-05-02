@@ -7,6 +7,7 @@ import burlap.mdp.core.oo.state.ObjectInstance;
 import taxi.Taxi;
 import taxi.hierarchies.tasks.nav.TaxiNavDomain;
 import utilities.MutableObject;
+import static taxi.TaxiConstants.*;
 
 public class TaxiNavWall extends MutableObject {
 
@@ -14,10 +15,10 @@ public class TaxiNavWall extends MutableObject {
 	 * contains startx and y and length and if it is horizontal
 	 */
 	private final static List<Object> keys = Arrays.<Object>asList(
-			TaxiNavDomain.ATT_START_X,
-			TaxiNavDomain.ATT_START_Y,
-			TaxiNavDomain.ATT_LENGTH,
-			TaxiNavDomain.ATT_IS_HORIZONTAL
+			ATT_START_X,
+			ATT_START_Y,
+			ATT_LENGTH,
+			ATT_IS_HORIZONTAL
 			);
 	
 	public TaxiNavWall(String name, int startX, int startY, int length, boolean isHorizontal) {
@@ -25,16 +26,16 @@ public class TaxiNavWall extends MutableObject {
 	}
 	
 	public TaxiNavWall(String name, Object startX, Object startY, Object length, Object isHorizontal) {
-		this.set(TaxiNavDomain.ATT_START_X, startX);
-		this.set(TaxiNavDomain.ATT_START_Y, startY);
-		this.set(TaxiNavDomain.ATT_LENGTH, length);
-		this.set(TaxiNavDomain.ATT_IS_HORIZONTAL, isHorizontal);
+		this.set(ATT_START_X, startX);
+		this.set(ATT_START_Y, startY);
+		this.set(ATT_LENGTH, length);
+		this.set(ATT_IS_HORIZONTAL, isHorizontal);
 		this.setName(name);
 	}
 		
 	@Override
 	public String className() {
-		return Taxi.CLASS_WALL;
+		return CLASS_WALL;
 	}
 
 	@Override
@@ -46,10 +47,10 @@ public class TaxiNavWall extends MutableObject {
 	public ObjectInstance copyWithName(String objectName) {
 		return new TaxiNavWall(
 				objectName,
-				get(TaxiNavDomain.ATT_START_X),
-				get(TaxiNavDomain.ATT_START_Y),
-				get(TaxiNavDomain.ATT_LENGTH),
-				get(TaxiNavDomain.ATT_IS_HORIZONTAL)
+				get(ATT_START_X),
+				get(ATT_START_Y),
+				get(ATT_LENGTH),
+				get(ATT_IS_HORIZONTAL)
 				);
 	}
 
@@ -59,10 +60,10 @@ public class TaxiNavWall extends MutableObject {
 	}
 
     public boolean blocksMovement(int tx, int ty, int dx, int dy) {
-		int wx = (int)get(TaxiNavDomain.ATT_START_X);
-		int wy = (int)get(TaxiNavDomain.ATT_START_Y);
-		int wl = (int)get(TaxiNavDomain.ATT_LENGTH);
-		boolean isHorizontal = (boolean)get(TaxiNavDomain.ATT_IS_HORIZONTAL);
+		int wx = (int)get(ATT_START_X);
+		int wy = (int)get(ATT_START_Y);
+		int wl = (int)get(ATT_LENGTH);
+		boolean isHorizontal = (boolean)get(ATT_IS_HORIZONTAL);
 		boolean betweenX = wx <= tx && tx < (wx+wl);
 		boolean betweenY = wy <= ty && ty < (wy+wl);
 		if (isHorizontal && dy > 0) { // going north

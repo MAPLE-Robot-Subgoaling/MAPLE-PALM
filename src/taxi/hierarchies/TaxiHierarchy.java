@@ -1,18 +1,14 @@
 package taxi.hierarchies;
 
 import burlap.mdp.auxiliary.StateMapping;
-import burlap.mdp.auxiliary.common.IdentityStateMapping;
 import burlap.mdp.core.action.ActionType;
 import burlap.mdp.core.action.UniversalActionType;
 import burlap.mdp.core.oo.propositional.PropositionalFunction;
 import burlap.mdp.singleagent.model.FactoredModel;
 import burlap.mdp.singleagent.oo.OOSADomain;
 import hierarchy.framework.*;
-import taxi.PickupActionType;
-import taxi.PutdownActionType;
 import taxi.Taxi;
 import taxi.functions.amdp.*;
-import taxi.functions.rmaxq.*;
 import taxi.hierGen.Task5.state.Task5StateMapper;
 import taxi.hierGen.Task7.state.Task7StateMapper;
 import taxi.hierGen.Task7.state.TaxiHierGenTask7State;
@@ -25,21 +21,21 @@ import taxi.hierGen.functions.HierGenTask5Completed;
 import taxi.hierGen.functions.HierGenTask7Completed;
 import taxi.hierGen.root.state.HierGenRootStateMapper;
 import taxi.hierGen.root.state.TaxiHierGenRootState;
-import taxi.hierarchies.tasks.bringon.BringonPickupActionType;
-import taxi.hierarchies.tasks.bringon.TaxiBringonDomain;
-import taxi.hierarchies.tasks.bringon.state.BringonStateMapper;
-import taxi.hierarchies.tasks.dropoff.DropoffPutdownActionType;
-import taxi.hierarchies.tasks.dropoff.TaxiDropoffDomain;
-import taxi.hierarchies.tasks.dropoff.state.DropoffStateMapper;
+import taxi.hierarchies.tasks.NavigateActionType;
+import taxi.hierarchies.tasks.get.GetPickupActionType;
 import taxi.hierarchies.tasks.get.TaxiGetDomain;
 import taxi.hierarchies.tasks.get.state.GetStateMapper;
 import taxi.hierarchies.tasks.nav.TaxiNavDomain;
 import taxi.hierarchies.tasks.nav.state.NavStateMapper;
+import taxi.hierarchies.tasks.put.PutPutdownActionType;
 import taxi.hierarchies.tasks.put.TaxiPutDomain;
 import taxi.hierarchies.tasks.put.state.PutStateMapper;
+import taxi.hierarchies.tasks.root.GetActionType;
+import taxi.hierarchies.tasks.root.PutActionType;
 import taxi.hierarchies.tasks.root.TaxiRootDomain;
 import taxi.hierarchies.tasks.root.state.RootStateMapper;
 import taxi.rmaxq.functions.BaseRootPF;
+import static taxi.TaxiConstants.*;
 
 public class TaxiHierarchy {
 
@@ -68,18 +64,16 @@ public class TaxiHierarchy {
 		OOSADomain getDomain = (new TaxiGetDomain()).generateDomain();
 		OOSADomain putDomain = (new TaxiPutDomain()).generateDomain();
 		OOSADomain navDomain = (new TaxiNavDomain()).generateDomain();
-		OOSADomain bringonDomain = (new TaxiBringonDomain()).generateDomain();
-		OOSADomain dropoffDomain = (new TaxiDropoffDomain()).generateDomain();
 		baseDomain = taxiDomain.generateDomain();
 
 		// Navigate Tasks (Primitives used for Put Nav and Get Nav later)
-		ActionType aNorth = navDomain.getAction(Taxi.ACTION_NORTH);
+		ActionType aNorth = navDomain.getAction(ACTION_NORTH);
 		PrimitiveTask north = new PrimitiveTask(aNorth, baseDomain);
-		ActionType aEast = navDomain.getAction(Taxi.ACTION_EAST);
+		ActionType aEast = navDomain.getAction(ACTION_EAST);
 		PrimitiveTask east = new PrimitiveTask(aEast, baseDomain);
-		ActionType aSouth = navDomain.getAction(Taxi.ACTION_SOUTH);
+		ActionType aSouth = navDomain.getAction(ACTION_SOUTH);
 		PrimitiveTask south = new PrimitiveTask(aSouth, baseDomain);
-		ActionType aWest = navDomain.getAction(Taxi.ACTION_WEST);
+		ActionType aWest = navDomain.getAction(ACTION_WEST);
 		PrimitiveTask west = new PrimitiveTask(aWest, baseDomain);
 		Task[] navTasks = {north, east, south, west};
 
@@ -87,7 +81,7 @@ public class TaxiHierarchy {
 		double noopReward = NonprimitiveTask.NOOP_REWARD;
 
 		// Nav (Task used by Get and Put)
-		ActionType aNavigate = putDomain.getAction(TaxiPutDomain.ACTION_NAV);
+		ActionType aNavigate = putDomain.getAction(ACTION_NAV);
 		NonprimitiveTask navigate = new NonprimitiveTask(
 				navTasks,
 				aNavigate,
@@ -100,28 +94,13 @@ public class TaxiHierarchy {
 		);
 		if (plan) { setupKnownTFRF(navigate); }
 
-		// Pickup (Primitive used by Bringon)
-		ActionType aPickup = bringonDomain.getAction(Taxi.ACTION_PICKUP);
+		// Pickup
+		ActionType aPickup = getDomain.getAction(ACTION_PICKUP);
 		PrimitiveTask pickup = new PrimitiveTask(aPickup, baseDomain);
 
-		// Bringon (Task used by Get)
-		ActionType aBringon = getDomain.getAction(TaxiGetDomain.ACTION_BRINGON);
-		Task[] bringonTasks = {pickup};
-		NonprimitiveTask bringon = new NonprimitiveTask(
-				bringonTasks,
-				aBringon,
-				bringonDomain,
-				new BringonStateMapper(),
-				new BringonFailurePF(),
-				new BringonCompletedPF(),
-				defaultReward,
-				noopReward
-		);
-		if (plan) { setupKnownTFRF(bringon); }
-
 		// Get (Task used by Root)
-		ActionType aGet = rootDomain.getAction(TaxiRootDomain.ACTION_GET);
-		Task[] getTasks = {bringon, navigate};
+		ActionType aGet = rootDomain.getAction(ACTION_GET);
+		Task[] getTasks = {pickup, navigate};
 		NonprimitiveTask get = new NonprimitiveTask(
 				getTasks,
 				aGet,
@@ -134,28 +113,13 @@ public class TaxiHierarchy {
 		);
 		if (plan) { setupKnownTFRF(get); }
 
-		// Putdown (Primitive used by Dropoff)
-		ActionType aPutdown = dropoffDomain.getAction(Taxi.ACTION_PUTDOWN);
+		// Putdown
+		ActionType aPutdown = putDomain.getAction(ACTION_PUTDOWN);
 		PrimitiveTask putdown = new PrimitiveTask(aPutdown, baseDomain);
 
-		// Dropoff (Task used by Put)
-		ActionType aDropoff = putDomain.getAction(TaxiPutDomain.ACTION_DROPOFF);
-		Task[] dropoffTasks = {putdown};
-		NonprimitiveTask dropoff = new NonprimitiveTask(
-				dropoffTasks,
-				aDropoff,
-				dropoffDomain,
-				new DropoffStateMapper(),
-				new DropoffFailurePF(),
-				new DropoffCompletedPF(),
-				defaultReward,
-				noopReward
-		);
-		if (plan) { setupKnownTFRF(dropoff); }
-
 		// Put (Task used by Root)
-		ActionType aPut = rootDomain.getAction(TaxiRootDomain.ACTION_PUT);
-		Task[] putTasks = {dropoff, navigate};
+		ActionType aPut = rootDomain.getAction(ACTION_PUT);
+		Task[] putTasks = {putdown, navigate};
 		NonprimitiveTask put = new NonprimitiveTask(
 				putTasks,
 				aPut,
@@ -211,18 +175,18 @@ public class TaxiHierarchy {
 
 		//action type domain - not for tasks
 		baseDomain = taxiDomain.generateDomain();
+		OOSADomain getDomain = taxiDomain.generateDomain();
+		OOSADomain putDomain = taxiDomain.generateDomain();
 
-		ActionType aNorth = baseDomain.getAction(Taxi.ACTION_NORTH);
-		ActionType aEast = baseDomain.getAction(Taxi.ACTION_EAST);
-		ActionType aSouth = baseDomain.getAction(Taxi.ACTION_SOUTH);
-		ActionType aWest = baseDomain.getAction(Taxi.ACTION_WEST);
-		ActionType aPickup = new PickupActionType(Taxi.ACTION_PICKUP, new String[]{Taxi.CLASS_PASSENGER});
-		ActionType aPutdown = new PutdownActionType(Taxi.ACTION_PUTDOWN, new String[]{Taxi.CLASS_PASSENGER});
-		ActionType aBrignonPickup = new BringonPickupActionType(Taxi.ACTION_PICKUP, new String[]{Taxi.CLASS_PASSENGER});
-		ActionType aDropoffPutdown = new DropoffPutdownActionType(Taxi.ACTION_PUTDOWN, new String[]{Taxi.CLASS_PASSENGER});
-		ActionType aNavigate = new BaseNavigateActionType("Nav", new String[]{Taxi.CLASS_LOCATION});
-		ActionType aGet = new BaseGetActionType();
-		ActionType aPut = new BasePutActionType();
+		ActionType aNorth = baseDomain.getAction(ACTION_NORTH);
+		ActionType aEast = baseDomain.getAction(ACTION_EAST);
+		ActionType aSouth = baseDomain.getAction(ACTION_SOUTH);
+		ActionType aWest = baseDomain.getAction(ACTION_WEST);
+		ActionType aPickup = new GetPickupActionType(ACTION_PICKUP, new String[]{CLASS_PASSENGER});
+		ActionType aPutdown = new PutPutdownActionType(ACTION_PUTDOWN, new String[]{CLASS_PASSENGER});//putDomain.getAction(ACTION_PUTDOWN);
+		ActionType aNavigate = new NavigateActionType(ACTION_NAV, new String[]{CLASS_LOCATION});
+		ActionType aGet = new GetActionType(ACTION_GET, new String[]{CLASS_PASSENGER});
+		ActionType aPut = new PutActionType(ACTION_PUT, new String[]{CLASS_PASSENGER});
 		ActionType aSolve = new SolveActionType();
 
 		//tasks
@@ -231,64 +195,61 @@ public class TaxiHierarchy {
 		PrimitiveTask south = new PrimitiveTask(aSouth, baseDomain);
 		PrimitiveTask wast = new PrimitiveTask(aWest, baseDomain);
 		PrimitiveTask pickup = new PrimitiveTask(aPickup, baseDomain);
-		PrimitiveTask dropoff = new PrimitiveTask(aPutdown, baseDomain);
+		PrimitiveTask putdown = new PrimitiveTask(aPutdown, baseDomain);
 
 		Task[] navTasks = new Task[]{north, east, south, wast};
-		Task[] bringonTasks = new Task[]{pickup};
-		Task[] dropoffTasks = new Task[]{dropoff};
 
 		double defaultReward = NonprimitiveTask.DEFAULT_REWARD;
 		double noopReward = NonprimitiveTask.NOOP_REWARD;
 
-        PropositionalFunction navFailPF = new BaseNavigateFailurePF();
-		PropositionalFunction navCompPF = new BaseNavigateCompletedPF();
-		NonprimitiveTask navigate = new NonprimitiveTask(navTasks, aNavigate, taxiDomain.generateNavigateDomain(),
-				new IdentityMap(), navFailPF, navCompPF, defaultReward, noopReward);
+        PropositionalFunction navFailPF = new NavFailurePF();
+		PropositionalFunction navCompPF = new NavCompletedPF();
+		OOSADomain navDomain = taxiDomain.generateNavigateDomain();
+		navDomain.setModel(null);
+		NonprimitiveTask navigate = new NonprimitiveTask(navTasks, aNavigate, navDomain,
+				new NavStateMapper(), navFailPF, navCompPF, defaultReward, noopReward);
 
 		Task[] getTasks = new Task[]{pickup, navigate};
-		Task[] putTasks = new Task[]{navigate, dropoff};
+		Task[] putTasks = new Task[]{navigate, putdown};
 
-		PropositionalFunction getFailPF = new BaseGetFailurePF();
-		PropositionalFunction getCompPF = new BaseGetCompletedPF();
-//		NonprimitiveTask get = new NonprimitiveTask(getTasks, aGet, getFailPF, getCompPF);
+		PropositionalFunction getFailPF = new GetFailurePF();
+		PropositionalFunction getCompPF = new GetCompletedPF();
+		getDomain.setModel(null);
 		NonprimitiveTask get = new NonprimitiveTask(
 				getTasks,
 				aGet,
-				baseDomain,
-				new IdentityStateMapping(),//new GetStateMapper(),
-				new GetFailurePF(),
-				new GetCompletedPF(),
+				getDomain,
+				new GetStateMapper(),
+				getFailPF,//new GetFailurePF(),
+				getCompPF,//new GetCompletedPF(),
 				defaultReward,
 				noopReward
 		);
 
-		PropositionalFunction putFailPF = new BasePutFailurePF();
-		PropositionalFunction putCompPF = new BasePutCompletedPF();
-//		NonprimitiveTask put = new NonprimitiveTask(putTasks, aPut, putFailPF, putCompPF);
+		PropositionalFunction putFailPF = new PutFailurePF();
+		PropositionalFunction putCompPF = new PutCompletedPF();
+		putDomain.setModel(null);
 		NonprimitiveTask put = new NonprimitiveTask(
 				putTasks,
 				aPut,
-				baseDomain,
-				new IdentityStateMapping(),//new PutStateMapper(),
-				new PutFailurePF(),
-				new PutCompletedPF(),
+				putDomain, new PutStateMapper(),
+				putFailPF,//new PutFailurePF(),
+				putCompPF,//new PutCompletedPF(),
 				defaultReward,
 				noopReward
 		);
 
 		Task[] rootTasks = {get, put};
 		PropositionalFunction rootPF = new BaseRootPF();
-		OOSADomain baseActual = taxiDomain.generateDomain();
-		baseActual.clearActionTypes();
-		baseActual.addActionTypes(
-				aNorth,
-				aEast,
-				aSouth,
-				aWest,
-				aPickup,
-				aPutdown
+		OOSADomain rootDomain = taxiDomain.generateDomain();
+		rootDomain.setModel(null);
+		Task root = new NonprimitiveTask(rootTasks, aSolve, rootDomain,
+				new RootStateMapper(),
+				new RootFailurePF(),
+				new RootCompletedPF(),
+				defaultReward,
+				noopReward
 		);
-		Task root = new NonprimitiveTask(rootTasks, aSolve, baseActual, new IdentityMap(), rootPF, rootPF, defaultReward, noopReward);
 
 		return root;
 //		throw new RuntimeException("need to be reimplemented");
@@ -319,12 +280,12 @@ public class TaxiHierarchy {
 
 		baseDomain = taxiDomain.generateDomain();
 
-		ActionType aNorth = baseDomain.getAction(Taxi.ACTION_NORTH);
-		ActionType aEast = baseDomain.getAction(Taxi.ACTION_EAST);
-		ActionType aSouth = baseDomain.getAction(Taxi.ACTION_SOUTH);
-		ActionType aWest = baseDomain.getAction(Taxi.ACTION_WEST);
-		ActionType aPickup = new HierGenPickupActiontype(Taxi.ACTION_PICKUP, new String[]{TaxiHierGenTask7State.CLASS_TASK7_PASSENGER});
-		ActionType aPutdown = new HierGenDropoffActiontype(Taxi.ACTION_PUTDOWN, new String[]{TaxiHierGenRootState.CLASS_ROOT_PASSENGER});
+		ActionType aNorth = baseDomain.getAction(ACTION_NORTH);
+		ActionType aEast = baseDomain.getAction(ACTION_EAST);
+		ActionType aSouth = baseDomain.getAction(ACTION_SOUTH);
+		ActionType aWest = baseDomain.getAction(ACTION_WEST);
+		ActionType aPickup = new HierGenPickupActiontype(ACTION_PICKUP, new String[]{TaxiHierGenTask7State.CLASS_TASK7_PASSENGER});
+		ActionType aPutdown = new HierGenDropoffActiontype(ACTION_PUTDOWN, new String[]{TaxiHierGenRootState.CLASS_ROOT_PASSENGER});
 		ActionType aTask5 = new HierGenTask5ActionType();;
 		ActionType aTask7 = new UniversalActionType("task_7");
 		ActionType asolve = new SolveActionType();
