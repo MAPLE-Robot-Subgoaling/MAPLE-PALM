@@ -11,6 +11,8 @@ import taxi.hierarchies.tasks.put.TaxiPutDomain;
 import taxi.state.TaxiState;
 
 import static taxi.TaxiConstants.*;
+import static taxi.TaxiConstants.ATT_VAL_ON_ROAD;
+
 public class PutStateMapper implements ParameterizedStateMapping {
 
 	//maps a base taxi state to L2
@@ -22,7 +24,7 @@ public class PutStateMapper implements ParameterizedStateMapping {
 		TaxiState st = (TaxiState) s;
 
 		// Get Taxi
-		String taxiLocation = ON_ROAD;
+		String taxiLocation = ATT_VAL_ON_ROAD;
 		int tx = (int)st.getTaxiAtt(ATT_X);
 		int ty = (int)st.getTaxiAtt(ATT_Y);
 		for (String locName : st.getLocations()) {
@@ -43,7 +45,7 @@ public class PutStateMapper implements ParameterizedStateMapping {
 			boolean inTaxi = (boolean) st.getPassengerAtt(passengerName, ATT_IN_TAXI);
 			String location = ERROR;
 			if (inTaxi) {
-				location = IN_TAXI;
+				location = ATT_VAL_IN_TAXI;
 			} else {
 				int px = (int)st.getPassengerAtt(passengerName, ATT_X);
 				int py = (int)st.getPassengerAtt(passengerName, ATT_Y);

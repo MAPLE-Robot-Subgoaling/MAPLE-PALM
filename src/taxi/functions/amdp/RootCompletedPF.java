@@ -22,7 +22,7 @@ public class RootCompletedPF extends PropositionalFunction {
 		TaxiRootState st = (TaxiRootState) s;
 
 		for(String passengerName : st.getPassengers()){
-			String locationName = (String) st.getPassengerAtt(passengerName, ATT_CURRENT_LOCATION);
+			String locationName = (String) st.getPassengerAtt(passengerName, ATT_LOCATION);
 			String goalLocation = (String) st.getPassengerAtt(passengerName, ATT_GOAL_LOCATION);
 		
 			if(!locationName.equals(goalLocation))

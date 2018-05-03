@@ -20,7 +20,7 @@ public class PutFailurePF extends PropositionalFunction{
 		MutableObject passenger = (MutableObject) s.object(passengerName);
 		if (passenger == null) { return false; }
 		String passengerLocation = (String) passenger.get(ATT_LOCATION);
-		return !passengerLocation.equals(IN_TAXI);
+		return !passengerLocation.equals(ATT_VAL_IN_TAXI);
 	}
 	
 }

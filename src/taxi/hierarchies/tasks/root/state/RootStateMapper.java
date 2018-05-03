@@ -23,7 +23,7 @@ public class RootStateMapper implements StateMapping {
 			boolean inTaxi = (boolean) st.getPassengerAtt(passengerName, ATT_IN_TAXI);
 
 			if(inTaxi) {
-				passengers.add(new TaxiRootPassenger(passengerName, IN_TAXI, goalLocation));
+				passengers.add(new TaxiRootPassenger(passengerName, ATT_VAL_IN_TAXI, goalLocation));
 			} else {
 				for(String locName : st.getLocations()){
 					int lx = (int) st.getLocationAtt(locName, ATT_X);

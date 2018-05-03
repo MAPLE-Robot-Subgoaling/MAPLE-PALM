@@ -10,21 +10,34 @@ import burlap.mdp.core.oo.state.ObjectInstance;
 import burlap.mdp.core.state.State;
 import burlap.statehashing.HashableState;
 import burlap.statehashing.WrappedHashableState;
+import utilities.DeepCopyForShallowCopyState;
 
 public class IDCachedHashableState extends WrappedHashableState {
 
+    protected Integer cachedHashCode = null;
+    protected boolean dirty = true;
+    protected boolean hashed = false;
+    protected int hashVal;
     public IDCachedHashableState() {
-        throw new RuntimeException("not implemented");
+        dirty = true;
     }
 
-    public IDCachedHashableState(State s) {
-        super(s);
-        throw new RuntimeException("not implemented");
+    public IDCachedHashableState(DeepCopyForShallowCopyState s) {
+        //super(s);
+        this.s = s.deepCopy();
+        dirty = true;
     }
 
     @Override
     public int hashCode() {
-        return computeHashCode(this.s);
+        if (dirty) {
+            int code = computeHashCode(this.s);
+            cachedHashCode = code;
+            dirty = false;
+            return code;
+        } else {
+            return cachedHashCode;
+        }
     }
 
     @Override
@@ -32,10 +45,13 @@ public class IDCachedHashableState extends WrappedHashableState {
         if(obj == this){
             return true;
         }
-        if(!(obj instanceof HashableState)){
+        if(!(obj instanceof IDCachedHashableState)){
             return false;
         }
-        return statesEqual(this.s, ((HashableState)obj).s());
+        int thisHashCode = this.hashCode();
+        int thatHashCode = obj.hashCode();
+        return thisHashCode == thatHashCode;
+//        return statesEqual(this.s, ((HashableState)obj).s());
     }
 
 
@@ -46,10 +62,15 @@ public class IDCachedHashableState extends WrappedHashableState {
      */
     protected final int computeHashCode(State s){
 
+        if(hashed)
+            return hashVal;
+        hashed = true;
         if(s instanceof OOState){
-            return computeOOHashCode((OOState)s);
+            hashVal = computeOOHashCode((OOState)s);
+        } else{
+            hashVal = computeFlatHashCode(s);
         }
-        return computeFlatHashCode(s);
+        return hashVal;
 
     }
 

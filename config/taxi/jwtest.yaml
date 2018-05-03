@@ -1,15 +1,15 @@
-state: medium-2passengers
+state: tiny-2passengers
 
 agents:
-  - ramdp
+  - rmaxq
 
-episodes: 200
-max_steps: 500
+episodes: 1000
+max_steps: 10000
 trials: 1
 gamma: 0.99
 
 stochastic:
-  seed: 1232100
+  seed: 123466
   correct_move: 1.0
   fickle: 0.0
   random_start: false
@@ -19,8 +19,9 @@ planning:
 
 rmax:
   vmax: 1.0
-  threshold: 10
-  max_delta: 0.0000001
+  threshold: 1
+  max_delta: 0.001
+  max_delta_rmaxq: 0.001
   max_iterations_in_model: 1000
   use_multitime_model: true
 

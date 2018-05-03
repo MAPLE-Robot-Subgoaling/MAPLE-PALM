@@ -38,14 +38,15 @@ import java.util.List;
 
 public class CleanupHierarchicalCharts {
 
-    public static void createCharts(final CleanupConfig conf, final State s, OOSADomain domain, final Task RAMDPRoot, final Task rmaxqRoot ){
+    public static void createCharts(final CleanupConfig conf, final State s, OOSADomain domain, final Task RAMDPRoot, final Task RMAXQRoot ){
         SimulatedEnvironment env;
         final HashableStateFactory hs;
-        final GroundedTask ramdpRoot;
+        final GroundedTask RAMDPGroundedRoot, RMAXQGroundedRoot;
 
 
         env = new SimulatedEnvironment(domain, s);
-        ramdpRoot = RAMDPRoot.getAllGroundedTasks(s).get(0);
+        RAMDPGroundedRoot = RAMDPRoot.getAllGroundedTasks(s).get(0);
+        RMAXQGroundedRoot = RMAXQRoot.getAllGroundedTasks(s).get(0);
 
 //        hs = new SimpleHashableStateFactory(true);
         hs = new CachedHashableStateFactory(true);
@@ -75,7 +76,7 @@ public class CleanupHierarchicalCharts {
 
                     @Override
                     public LearningAgent generateAgent() {
-                        return new RAMDPLearningAgent(ramdpRoot, conf.rmax.threshold, conf.gamma, conf.rmax.vmax, hs, conf.rmax.max_delta, conf.rmax.max_iterations_in_model, conf.rmax.use_multitime_model);
+                        return new RAMDPLearningAgent(RAMDPGroundedRoot, conf.rmax.threshold, conf.gamma, conf.rmax.vmax, hs, conf.rmax.max_delta, conf.rmax.max_iterations_in_model, conf.rmax.use_multitime_model);
                     }
                 };
             }
@@ -90,7 +91,7 @@ public class CleanupHierarchicalCharts {
 
                     @Override
                     public LearningAgent generateAgent() {
-                        return new RmaxQLearningAgent(rmaxqRoot, hs, s, conf.rmax.vmax, conf.gamma, conf.rmax.threshold, conf.rmax.max_delta_rmaxq, conf.rmax.max_delta,conf.rmax.max_iterations_in_model);
+                        return new RmaxQLearningAgent(RMAXQGroundedRoot, hs, s, conf.rmax.vmax, conf.gamma, conf.rmax.threshold, conf.rmax.max_delta_rmaxq, conf.rmax.max_delta,conf.rmax.max_iterations_in_model);
                     }
                 };
             }

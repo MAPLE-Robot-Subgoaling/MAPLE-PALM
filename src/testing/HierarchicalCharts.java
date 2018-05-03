@@ -33,22 +33,24 @@ import java.util.List;
 
 public class HierarchicalCharts {
 
-	public static void createCharts(final TaxiConfig conf, final State s, OOSADomain domain, final Task RAMDPRoot, final Task RMEXQRoot, final Task hierGenRoot) {
+	public static void createCharts(final TaxiConfig conf, final State s, OOSADomain domain, final Task RAMDPRoot, final Task RMAXQRoot, final Task hierGenRoot) {
 		SimulatedEnvironment env;
 		final HashableStateFactory hs;
-		final GroundedTask RAMDPGroot, hierGenGroot;
+		final GroundedTask RAMDPGroot, hierGenGroot, RMAXQGroot;
 
 		if(conf.stochastic.random_start) {
 			env = new SimulatedEnvironment(domain, new RandomPassengerTaxiState());
 			RAMDPGroot = RAMDPRoot.getAllGroundedTasks(env.currentObservation()).get(0);
+			RMAXQGroot = RMAXQRoot.getAllGroundedTasks(s).get(0);
 			hierGenGroot = hierGenRoot.getAllGroundedTasks(env.currentObservation()).get(0);
 		} else {
             env = new SimulatedEnvironment(domain, s);
 			RAMDPGroot = RAMDPRoot.getAllGroundedTasks(s).get(0);
+			RMAXQGroot = RMAXQRoot.getAllGroundedTasks(s).get(0);
 			hierGenGroot = hierGenRoot.getAllGroundedTasks(s).get(0);
 		}
 
-		hs = new SimpleHashableStateFactory(false); //new CachedHashableStateFactory(true); // new SimpleHashableStateFactory(true);
+		hs = new CachedHashableStateFactory(false);// new SimpleHashableStateFactory(false); //new CachedHashableStateFactory(true); // new SimpleHashableStateFactory(true);
 
 		if(conf.output.visualizer.enabled) {
 			VisualActionObserver obs = new VisualActionObserver(domain, TaxiVisualizer.getVisualizer(conf.output.visualizer.width, conf.output.visualizer.height));
@@ -92,8 +94,22 @@ public class HierarchicalCharts {
 				};
 			}
 
-			// RMAX
 			if(agent.equals("rmaxq")) {
+				agents[i] = new LearningAgentFactory() {
+					@Override
+					public String getAgentName() {
+						return "R-MAXQ";
+					}
+
+					@Override
+					public LearningAgent generateAgent() {
+						return new RmaxQLearningAgent(RMAXQGroot, hs, s, conf.rmax.vmax, conf.gamma, conf.rmax.threshold, conf.rmax.max_delta_rmaxq, conf.rmax.max_delta, conf.rmax.max_iterations_in_model);
+					}
+				};
+			}
+
+			// RMAX with Hiergen
+			if(agent.equals("rmaxq-h")) {
 				agents[i] = new LearningAgentFactory() {
 					@Override
 					public String getAgentName() {
@@ -102,7 +118,7 @@ public class HierarchicalCharts {
 
 					@Override
 					public LearningAgent generateAgent() {
-						return new RmaxQLearningAgent(RAMDPRoot, hs, s, conf.rmax.vmax, conf.gamma, conf.rmax.threshold, conf.rmax.max_delta_rmaxq, conf.rmax.max_delta, conf.rmax.max_iterations_in_model);
+						return new RmaxQLearningAgent(hierGenGroot, hs, s, conf.rmax.vmax, conf.gamma, conf.rmax.threshold, conf.rmax.max_delta_rmaxq, conf.rmax.max_delta, conf.rmax.max_iterations_in_model);
 					}
 				};
 			}
