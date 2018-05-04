@@ -9,6 +9,7 @@ import burlap.mdp.singleagent.environment.Environment;
 import burlap.mdp.singleagent.environment.EnvironmentOutcome;
 import burlap.statehashing.HashableState;
 import burlap.statehashing.HashableStateFactory;
+import burlap.statehashing.simple.SimpleHashableStateFactory;
 import hierarchy.framework.GroundedTask;
 
 import java.text.SimpleDateFormat;
@@ -567,6 +568,8 @@ public class RmaxQLearningAgent implements LearningAgent {
 		return delta;
 	}
 
+	private Map<GroundedTask, HashMap<HashableState,Double>> cachedGoalRewards = new HashMap<>();
+	private HashableStateFactory cachingHSF = new SimpleHashableStateFactory();
 	private double setV_eq2(GroundedTask task, HashableState hs) {
 		RMAXQStateData stateData = getStateData(task, hs);
 
@@ -580,7 +583,10 @@ public class RmaxQLearningAgent implements LearningAgent {
 //			newV = stateData.getStoredReward();
 			// or this line
 //			newV = task.getReward(null, task.getAction(), getMappedState(task, hs));
-			newV = task.getReward(null, task.getAction(), getMappedState(task, hs));
+			State abstractState = getMappedState(task, hs);
+			HashableState hashedAbstractState = cachingHSF.hashState(abstractState);
+			newV = cachedGoalRewards.computeIfAbsent(task, i -> new HashMap<>()).computeIfAbsent(hashedAbstractState, i -> task.getReward(null, task.getAction(), abstractState));
+
 
 
 		} else {

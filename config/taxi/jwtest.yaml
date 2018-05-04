@@ -1,4 +1,4 @@
-state: tiny-2passengers
+state: small-2passengers
 
 agents:
   - rmaxq
