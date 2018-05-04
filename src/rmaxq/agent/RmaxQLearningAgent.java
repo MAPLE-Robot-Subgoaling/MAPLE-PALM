@@ -76,7 +76,7 @@ public class RmaxQLearningAgent implements LearningAgent {
 //	private List<HashableState> reachableStates = new ArrayList<HashableState>();
 	private long actualTimeElapsed = 0;
 	private int numberPrimitivesExecuted;
-    private Map<GroundedTask,Integer> stepsByTask;
+    private Map<GroundedTask,Set<Integer>> stepsByTask;
 
     public RmaxQLearningAgent(GroundedTask rootSolve, HashableStateFactory hs, State initState, double vmax, double gamma, int threshold, double maxDeltaInPolicy, double maxDeltaInModel, int maxIterationsInModel){
 		this.rootSolve = rootSolve;
@@ -143,7 +143,7 @@ public class RmaxQLearningAgent implements LearningAgent {
 
 		System.out.println(tabLevel + ">>> " + task.getAction());
 
-		int k = 1;
+		int k;
 		if(task.isPrimitive()){
 			e = executePrimitive(e, task, hs);
 			return e;
@@ -160,6 +160,7 @@ public class RmaxQLearningAgent implements LearningAgent {
 				e = R_MaxQ(childTask, hs, e, maxSteps);
 				int stepsAfter = numberPrimitivesExecuted;
                 k = stepsAfter - stepsBefore;
+				updateNumberOfSteps(childTask, k);
 
 				tabLevel = tabLevel.substring(0, (tabLevel.length() - 1));
 
@@ -177,14 +178,14 @@ public class RmaxQLearningAgent implements LearningAgent {
 				envelopesByTask.get(task).add(hs);
 			} while(!isTerminal(task, hs) && (numberPrimitivesExecuted < maxSteps || maxSteps == -1));
 			System.out.println(tabLevel + "<<< " + task.getAction());
-			updateNumberOfSteps(task, k);
 			return e;
 		}
 	}
 
 	private void updateNumberOfSteps(GroundedTask task, int k) {
-	    int oldK = stepsByTask.computeIfAbsent(task, i -> 1);
-	    stepsByTask.put(task, Math.min(oldK, k));
+	    Set<Integer> steps = stepsByTask.computeIfAbsent(task, i -> new HashSet<>());
+	    steps.add(k);
+	    stepsByTask.put(task, steps);
     }
 
 	/**
@@ -383,6 +384,10 @@ public class RmaxQLearningAgent implements LearningAgent {
 		return getStoredTransitionProbability(task, hs, hsPrime, initialize);
 	}
 
+	private double P(GroundedTask task, HashableState hs, HashableState hsPrime, int steps, boolean initialize) {
+		return getStoredTransitionProbability(task, hs, hsPrime, steps, initialize);
+	}
+
 	private GroundedTask getStoredPolicy(GroundedTask task, HashableState hs) {
 		Map<HashableState, GroundedTask> storedPolicies = storedPoliciesByTask.computeIfAbsent(task, k -> new HashMap<>());
 		GroundedTask childTask = storedPolicies.get(hs);
@@ -422,29 +427,48 @@ public class RmaxQLearningAgent implements LearningAgent {
 	    return new ArrayList<>(getStoredTransitions(task, hs).keySet());
     }
 
+	private double getStoredTransitionProbability(GroundedTask task, HashableState hs, HashableState hsPrime, int steps, boolean initialize) {
+		Map<HashableState, HashMap<Integer,Double>> transitionsFromState = getStoredTransitions(task, hs);
+		Map<Integer, Double> stepsToProbability;
+		if (initialize) {
+			stepsToProbability = transitionsFromState.computeIfAbsent(hsPrime, k -> new HashMap<>());
+		} else {
+			stepsToProbability = transitionsFromState.get(hsPrime);
+			// here, if it is null then we know this transition is 0.0 and do not want to initialize it (for sparsity)
+			if (stepsToProbability == null) {
+				return 0.0;
+			}
+		}
+		Double transitionProbability = stepsToProbability.get(steps);
+		if (transitionProbability == null) { transitionProbability = 0.0; }
+		return transitionProbability;
+	}
+
 	private double getStoredTransitionProbability(GroundedTask task, HashableState hs, HashableState hsPrime, boolean initialize) {
 		Map<HashableState, HashMap<Integer,Double>> transitionsFromState = getStoredTransitions(task, hs);
-		if (!transitionsFromState.containsKey(hsPrime)) {
-			return 0.0;
+		Map<Integer, Double> stepsToProbability;
+		if (initialize) {
+			stepsToProbability = transitionsFromState.computeIfAbsent(hsPrime, k -> new HashMap<>());
+		} else {
+			stepsToProbability = transitionsFromState.get(hsPrime);
+			// here, if it is null then we know this transition is 0.0 and do not want to initialize it (for sparsity)
+			if (stepsToProbability == null) {
+				return 0.0;
+			}
 		}
-//		Map<Integer, Double> stepsToProbability;
-//		if (initialize) {
-//			stepsToProbability = transitionsFromState.computeIfAbsent(hsPrime, k -> new HashMap<>());
-//		} else {
-//			stepsToProbability = transitionsFromState.get(hsPrime);
-//			// here, if it is null then we know this transition is 0.0 and do not want to initialize it (for sparsity)
-//			if (stepsToProbability == null) {
-//				return 0.0;
-//			}
-//		}
-		Map<Integer, Double> stepsToProbability = transitionsFromState.get(hsPrime);
+		double transitionProbability = 0.0;
+		transitionProbability = getExpectedProbabilityOverSteps(stepsToProbability);
+		return transitionProbability;
+	}
+
+	private double getExpectedProbabilityOverSteps(Map<Integer,Double> stepsToProbability) {
 		double transitionProbability = 0.0;
 		for (Integer kSteps : stepsToProbability.keySet()) {
-            double discount = Math.pow(gamma, kSteps);
-		    double probability = stepsToProbability.get(kSteps);
-		    double product = discount * probability;
-		    transitionProbability += product;
-        }
+			double discount = Math.pow(gamma, kSteps);
+			double probability = stepsToProbability.get(kSteps);
+			double product = discount * probability;
+			transitionProbability += product;
+		}
 		return transitionProbability;
 	}
 
@@ -482,7 +506,7 @@ public class RmaxQLearningAgent implements LearningAgent {
 			}
 			for (HashableState taskTerminalState : taskTerminalStates) {
 				// update transitions
-				double deltaP = setT_eq5(task, hsPrime, taskTerminalState);
+				double deltaP = setP_eq5(task, hsPrime, taskTerminalState);
 				if (deltaP > maxDelta) {
 					maxDelta = deltaP;
 				}
@@ -522,28 +546,33 @@ public class RmaxQLearningAgent implements LearningAgent {
 		return delta;
 	}
 
-	private double setT_eq5(GroundedTask task, HashableState hs, HashableState hsX) {
+	private double setP_eq5(GroundedTask task, HashableState hs, HashableState hsX) {
 
-        // get the action (child / subtask) that would be selected by policy
-        GroundedTask childTask = pi(task, hs);
-		double childTerminalTransitionProbability = P(childTask, hs, hsX, true);
+		double oldP = P(task, hs, hsX, true);
+		double newP = 0.0;
 
-        List<HashableState> hsPrimes = getHSPrimes(task, hs);
-		double expectedTransitionProbability = 0.0;
-		for (HashableState hsPrime : hsPrimes) {
-			if (isTerminal(task, hsPrime)) {
-				continue;
+		GroundedTask childTask = pi(task, hs);
+//		List<Integer> steps = stepsByTask.computeIfAbsent(task, k->new ArrayList<>());
+		Set<Integer> possibleNumbersOfSteps = stepsByTask.computeIfAbsent(childTask, k->new HashSet<>());
+		for (Integer k : possibleNumbersOfSteps) {
+			// get the action (child / subtask) that would be selected by policy
+			double childTerminalTransitionProbability = P(childTask, hs, hsX, k, true);
+
+			List<HashableState> hsPrimes = getHSPrimes(task, hs);
+			double expectedTransitionProbability = 0.0;
+			for (HashableState hsPrime : hsPrimes) {
+				if (isTerminal(task, hsPrime)) {
+					continue;
+				}
+				double childTransitionProbability = P(childTask, hs, hsPrime, k, true);
+				double parentTerminalTransitionProbability = P(task, hsPrime, hsX, k, true);
+				expectedTransitionProbability += childTransitionProbability * parentTerminalTransitionProbability;
 			}
-			double childTransitionProbability = P(childTask, hs, hsPrime, true);
-			double parentTerminalTransitionProbability = P(task, hsPrime, hsX, true);
-			expectedTransitionProbability += childTransitionProbability * parentTerminalTransitionProbability;
+
+			newP += childTerminalTransitionProbability + expectedTransitionProbability;
+
+			storeTransitionProbability(task, hs, hsX, newP, k);
 		}
-
-        double oldP = P(task, hs, hsX, true);
-        double newP = childTerminalTransitionProbability + expectedTransitionProbability;
-
-		int numberOfSteps = stepsByTask.computeIfAbsent(task, k->1);
-		storeTransitionProbability(task, hs, hsX, newP, numberOfSteps);
 
 		double delta = Math.abs(newP - oldP);
 		return delta;
