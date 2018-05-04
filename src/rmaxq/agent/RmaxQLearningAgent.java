@@ -575,7 +575,14 @@ public class RmaxQLearningAgent implements LearningAgent {
 		double newV;
 //		if(!task.isPrimitive() && isTerminal(task, hs)) {
 		if(isTerminal(task, hs)) {
-			newV = stateData.getStoredReward();//task.getReward(null, task.getAction(), getMappedState(task, hs));
+
+			// unsure which this should be, either this line
+//			newV = stateData.getStoredReward();
+			// or this line
+//			newV = task.getReward(null, task.getAction(), getMappedState(task, hs));
+			newV = task.getReward(null, task.getAction(), getMappedState(task, hs));
+
+
 		} else {
 			List<GroundedTask> childTasks = task.getGroundedChildTasks(getMappedState(task, hs));
 			double maxQ = Integer.MIN_VALUE;
