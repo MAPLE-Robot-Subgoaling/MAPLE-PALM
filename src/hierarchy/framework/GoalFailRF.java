@@ -35,15 +35,12 @@ public class GoalFailRF implements RewardFunction {
     @Override
     public double reward(State state, Action action, State sPrime) {
         double r = rewardDefault;
-
-        if (state.equals(sPrime)) {
-            r += rewardNoop;
-        }
-
         if (tf.atGoal(sPrime)) {
             r += rewardGoal;
         } else if (tf.atFailure(sPrime)) {
             r += rewardFail;
+        } else if (state.equals(sPrime)) {
+            r += rewardNoop;
         } else {
             // neither goal nor failure
         }

@@ -1,4 +1,4 @@
-state: tiny3-2passengers
+state: tiny-2passengers
 
 agents:
   - rmaxq
@@ -9,7 +9,7 @@ trials: 1
 gamma: 0.99
 
 stochastic:
-  seed: 123466
+  seed: 62665532323
   correct_move: 1.0
   fickle: 0.0
   random_start: false
