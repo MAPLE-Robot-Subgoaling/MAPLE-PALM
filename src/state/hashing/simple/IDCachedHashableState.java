@@ -60,7 +60,7 @@ public class IDCachedHashableState extends WrappedHashableState {
      * @param s the input state for which a hash code is to be computed
      * @return the hash code
      */
-    protected final int computeHashCode(State s){
+    public final int computeHashCode(State s){
 
         if(hashed)
             return hashVal;
@@ -74,7 +74,7 @@ public class IDCachedHashableState extends WrappedHashableState {
 
     }
 
-    protected int computeOOHashCode(OOState s){
+    public int computeOOHashCode(OOState s){
 
         int [] hashCodes = new int[s.numObjects()];
         List<ObjectInstance> objects = s.objects();
@@ -83,21 +83,21 @@ public class IDCachedHashableState extends WrappedHashableState {
             int oHash = this.computeFlatHashCode(o);
             int classNameHash = o.className().hashCode();
             int nameHash = o.name().hashCode();
-            int totalHash = oHash + 31*classNameHash + 31*31*nameHash;
+            int totalHash = oHash + 61*classNameHash + 61*61*nameHash;
             hashCodes[i] = totalHash;
         }
 
         //sort for invariance to order
         Arrays.sort(hashCodes);
-        HashCodeBuilder hashCodeBuilder = new HashCodeBuilder(17, 31);
+        HashCodeBuilder hashCodeBuilder = new HashCodeBuilder(19, 73);
         hashCodeBuilder.append(hashCodes);
         return hashCodeBuilder.toHashCode();
 
     }
 
-    protected int computeFlatHashCode(State s){
+    public int computeFlatHashCode(State s){
 
-        HashCodeBuilder hashCodeBuilder = new HashCodeBuilder(17, 31);
+        HashCodeBuilder hashCodeBuilder = new HashCodeBuilder(23, 67);
 
         List<Object> keys = s.variableKeys();
         for(Object key : keys){

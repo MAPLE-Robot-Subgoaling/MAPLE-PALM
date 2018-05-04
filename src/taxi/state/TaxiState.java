@@ -73,18 +73,19 @@ public class TaxiState implements MutableOOState, PassengerParameterizable, Deep
 		return null;
 	}
 
-	public List<ObjectInstance> objectInstanceList = null;//new ArrayList<>();
+//	public List<ObjectInstance> objectInstanceList = null;//new ArrayList<>();
 	@Override
 	public List<ObjectInstance> objects() {
-		if (objectInstanceList == null) {
+//		if (objectInstanceList == null) {
 			List<ObjectInstance> objs = new ArrayList<ObjectInstance>();
 			objs.add(taxi);
 			objs.addAll(passengers.values());
 			objs.addAll(locations.values());
 			objs.addAll(walls.values());
-			objectInstanceList = objs;
-		}
-		return objectInstanceList;
+			return objs;
+//			objectInstanceList = objs;
+//		}
+//		return objectInstanceList;
 	}
 
 	@Override
@@ -392,8 +393,8 @@ public class TaxiState implements MutableOOState, PassengerParameterizable, Deep
 		copy.touchPassengers();
 		copy.touchLocations();
 		copy.touchWalls();
-		copy.objectInstanceList = null;
-		// now the copy has brand new objects inside it, with same values as "this"
+//		copy.objectInstanceList = null;
+//		this.objectInstanceList = null;
 		return copy;
 	}
 }

@@ -11,7 +11,7 @@ import java.util.HashSet;
 
 public class CachedHashableStateFactory implements HashableStateFactory {
 
-    protected HashMap<Integer, WrappedHashableState> states = new HashMap<Integer, WrappedHashableState>();
+    protected HashMap<Integer, WrappedHashableState> states = new HashMap<>();
 
     /**
      * Whether state evaluations of OO-MDPs are object identifier independent (the names of objects don't matter). By
@@ -57,7 +57,8 @@ public class CachedHashableStateFactory implements HashableStateFactory {
         if (!states.containsKey(hashCode)) {
             states.put(hashCode, hs);
         }
-        return states.get(hashCode);
+        hs = states.get(hashCode);
+        return hs;
     }
 
 

@@ -13,9 +13,13 @@ import burlap.statehashing.HashableState;
 import burlap.statehashing.HashableStateFactory;
 import hierarchy.framework.GroundedTask;
 import hierarchy.framework.Task;
+import state.hashing.simple.IDCachedHashableState;
+import taxi.state.TaxiState;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
+
+import static taxi.TaxiConstants.ATT_Y;
 
 public class RmaxQLearningAgent implements LearningAgent {
 
@@ -161,7 +165,15 @@ public class RmaxQLearningAgent implements LearningAgent {
 
 				State s = e.stateSequence.get(e.stateSequence.size() - 1);
 				hs = hashingFactory.hashState(s);
-				System.out.println(tabLevel + task.toString() + " just did " + childTask.toString() + ", " + ((OOState)hs.s()).object("Taxi")+ ", " + ((OOState)hs.s()).object("Passenger0")+ ", " + ((OOState)hs.s()).object("Passenger1"));
+				System.out.println(tabLevel + task.toString() + " just did " + childTask.toString() + ", " + ((OOState)hs.s()).object("Taxi0")+ ", " + ((OOState)hs.s()).object("Passenger0")+ ", " + ((OOState)hs.s()).object("Passenger1"));
+				if (((TaxiState)hs.s()).getTaxiAtt(ATT_Y) != ((TaxiState)s).getTaxiAtt(ATT_Y)) {
+					System.err.println("error: bug");
+					OOState sReal = (OOState)s;
+					OOState sStored = (OOState)hs.s();
+					int real = ((IDCachedHashableState)hs).computeOOHashCode(sReal);
+					int stored = ((IDCachedHashableState)hs).computeOOHashCode(sStored);
+					hs = hashingFactory.hashState(s);
+				}
 				envelopesByTask.get(task).add(hs);
 			} while(!isTerminal(task, hs) && (numberPrimitivesExecuted < maxSteps || maxSteps == -1));
 			System.out.println(tabLevel + "<<< " + task.getAction());
@@ -437,13 +449,13 @@ public class RmaxQLearningAgent implements LearningAgent {
 	}
 
 	private boolean isTerminal(GroundedTask task, HashableState hs) {
-        Map<HashableState, Boolean> taskTerminalCheck = cachedTerminalCheck.computeIfAbsent(task, k -> new HashMap<>());
-        Boolean terminal = taskTerminalCheck.get(hs);
-		if (terminal == null) {
+//        Map<HashableState, Boolean> taskTerminalCheck = cachedTerminalCheck.computeIfAbsent(task, k -> new HashMap<>());
+//        Boolean terminal = taskTerminalCheck.get(hs);
+//		if (terminal == null) {
 			State s = task.mapState(hs.s());
-			terminal = task.isComplete(s) || task.isFailure(s);// || rootSolve.isComplete(s);
-			taskTerminalCheck.put(hs, terminal);
-		}
+			Boolean terminal = task.isComplete(s) || task.isFailure(s);// || rootSolve.isComplete(s);
+//			taskTerminalCheck.put(hs, terminal);
+//		}
 		return terminal;
 	}
 
