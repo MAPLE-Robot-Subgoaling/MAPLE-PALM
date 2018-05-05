@@ -1,6 +1,5 @@
-package ramdp.agent;
+package palm.rmax.agent;
 
-import burlap.mdp.core.action.Action;
 import burlap.statehashing.HashableState;
 
 public class HashableStateActionPair {

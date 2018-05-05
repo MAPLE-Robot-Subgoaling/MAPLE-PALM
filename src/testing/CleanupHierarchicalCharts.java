@@ -6,29 +6,23 @@ import burlap.behavior.singleagent.auxiliary.performance.PerformanceMetric;
 import burlap.behavior.singleagent.auxiliary.performance.TrialMode;
 import burlap.behavior.singleagent.learning.LearningAgent;
 import burlap.behavior.singleagent.learning.LearningAgentFactory;
-import burlap.debugtools.RandomFactory;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.common.VisualActionObserver;
 import burlap.mdp.singleagent.environment.SimulatedEnvironment;
 import burlap.mdp.singleagent.oo.OOSADomain;
 import burlap.statehashing.HashableStateFactory;
-import burlap.statehashing.simple.SimpleHashableStateFactory;
 import cleanup.CleanupVisualizer;
-import cleanup.hierarchies.CleanupHierarchy;
 import cleanup.hierarchies.CleanupHierarchyRAMDP;
 import cleanup.hierarchies.CleanupHierarchyRMAXQ;
-import cleanup.state.CleanupRandomStateGenerator;
 import cleanup.state.CleanupState;
 import config.cleanup.CleanupConfig;
 import config.output.ChartConfig;
-import config.taxi.TaxiConfig;
 import hierarchy.framework.GroundedTask;
 import hierarchy.framework.Task;
-import ramdp.agent.RAMDPLearningAgent;
+import palm.agent.PALMLearningAgent;
+import palm.rmax.agent.PALMRmaxModelGenerator;
 import rmaxq.agent.RmaxQLearningAgent;
 import state.hashing.simple.CachedHashableStateFactory;
-import taxi.TaxiVisualizer;
-import taxi.stateGenerator.RandomPassengerTaxiState;
 import utilities.LearningAlgorithmExperimenter;
 
 import java.io.FileNotFoundException;
@@ -75,7 +69,10 @@ public class CleanupHierarchicalCharts {
 
                     @Override
                     public LearningAgent generateAgent() {
-                        return new RAMDPLearningAgent(ramdpRoot, conf.rmax.threshold, conf.gamma, conf.rmax.vmax, hs, conf.rmax.max_delta, conf.rmax.max_iterations_in_model, conf.rmax.use_multitime_model);
+                        PALMRmaxModelGenerator modelGen = new PALMRmaxModelGenerator(conf.rmax.threshold,
+                                conf.rmax.vmax,hs, conf.gamma,conf.rmax.use_multitime_model);
+                        return new PALMLearningAgent(ramdpRoot,modelGen, hs, conf.rmax.max_delta,
+                                conf.rmax.max_iterations_in_model);
                     }
                 };
             }

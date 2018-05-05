@@ -16,14 +16,13 @@ import config.output.ChartConfig;
 import config.taxi.TaxiConfig;
 import hierarchy.framework.GroundedTask;
 import hierarchy.framework.Task;
-import ramdp.agent.RAMDPLearningAgent;
+import palm.agent.PALMLearningAgent;
+import palm.rmax.agent.PALMRmaxModelGenerator;
 import rmaxq.agent.RmaxQLearningAgent;
-import state.hashing.simple.CachedHashableStateFactory;
 import taxi.TaxiVisualizer;
 import taxi.hierarchies.TaxiHierarchy;
 import taxi.state.TaxiState;
 import taxi.stateGenerator.RandomPassengerTaxiState;
-import taxi.stateGenerator.TaxiStateFactory;
 import utilities.LearningAlgorithmExperimenter;
 
 import java.io.FileNotFoundException;
@@ -63,36 +62,42 @@ public class HierarchicalCharts {
 			String agent = conf.agents.get(i);
 
 		    // RAMDP
-		    if(agent.equals("ramdp")) {
+		    if(agent.equals("palmExpert")) {
 				agents[i] = new LearningAgentFactory() {
 
 					@Override
 					public String getAgentName() {
-						return "R-AMDP";
+						return "PALM with expert AMDP";
 					}
 
 					@Override
 					public LearningAgent generateAgent() {
-						return new RAMDPLearningAgent(RAMDPGroot, conf.rmax.threshold, conf.gamma, conf.rmax.vmax, hs, conf.rmax.max_delta, conf.rmax.max_iterations_in_model, conf.rmax.use_multitime_model);
+                        PALMRmaxModelGenerator modelGen = new PALMRmaxModelGenerator(conf.rmax.threshold,
+                                conf.rmax.vmax,hs, conf.gamma,conf.rmax.use_multitime_model);
+                        return new PALMLearningAgent(RAMDPGroot,modelGen, hs, conf.rmax.max_delta,
+                                conf.rmax.max_iterations_in_model);
 					}
 				};
 			}
-			if(agent.equals("hiergen")){
+			if (agent.equals("palmHiergen")){
 				agents[i] = new LearningAgentFactory() {
 
 					@Override
 					public String getAgentName() {
-						return "HierGen R-AMDP";
+						return "PALM with HierGen AMDP";
 					}
 
 					@Override
 					public LearningAgent generateAgent() {
-						return new RAMDPLearningAgent(hierGenGroot, conf.rmax.threshold, conf.gamma, conf.rmax.vmax, hs, conf.rmax.max_delta, conf.rmax.max_iterations_in_model, conf.rmax.use_multitime_model);
+                        PALMRmaxModelGenerator modelGen = new PALMRmaxModelGenerator(conf.rmax.threshold,
+                                conf.rmax.vmax,hs, conf.gamma,conf.rmax.use_multitime_model);
+                        return new PALMLearningAgent(hierGenGroot,modelGen, hs, conf.rmax.max_delta,
+                                conf.rmax.max_iterations_in_model);
 					}
 				};
 			}
 
-			// RMAX
+			// RMAXQ
 			if(agent.equals("rmaxq")) {
 				agents[i] = new LearningAgentFactory() {
 					@Override

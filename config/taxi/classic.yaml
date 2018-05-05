@@ -1,17 +1,18 @@
-state: tiny
+state: classic
 
 agents:
-  - rmaxq
+  - palmExpert
+#  - palmHiergen
 
-episodes: 100
+episodes: 3100
 max_steps: 2000
-trials: 2
+trials: 5
 gamma: 0.99
 
 stochastic:
   seed: 2320942930
-  correct_move: 1.0
-  fickle: 0.00
+  correct_move: 0.8
+  fickle: 0.05
   random_start: false
 
 planning:
@@ -39,13 +40,14 @@ output:
     trial_mode: MOST_RECENT_AND_AVERAGE
 
     metrics:
+      - CUMULATIVE_REWARD_PER_EPISODE
       - STEPS_PER_EPISODE
       - CUMULATIVE_REWARD_PER_STEP
-      - CUMULATIVE_REWARD_PER_EPISODE
+
 
   visualizer:
-    enabled: false
-    episodes: true
+    enabled: true
+    episodes: false
     width: 5
     height: 5
     

@@ -1,4 +1,4 @@
-package ramdp.agent;
+package palm.agent;
 
 import burlap.mdp.core.action.Action;
 import burlap.mdp.singleagent.environment.EnvironmentOutcome;
@@ -163,6 +163,13 @@ public class PossibleOutcome {
         return true;
     }
 
+    public EnvironmentOutcome getPossibleOutpume(){
+        return outcome;
+    }
+
+    public TransitionProb getProbability(){
+        return transitionProb;
+    }
     @Override
     public int hashCode() {
         // hashes and collides on hashedState, action, hashedStatePrime

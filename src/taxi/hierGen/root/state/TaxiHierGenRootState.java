@@ -9,6 +9,7 @@ import taxi.Taxi;
 import taxi.hierarchies.interfaces.PassengerLocationParameterizable;
 import taxi.hierarchies.interfaces.PassengerParameterizable;
 import taxi.hierarchies.tasks.dropoff.TaxiDropoffDomain;
+import taxi.hierarchies.tasks.root.state.TaxiRootPassenger;
 
 import java.util.*;
 
@@ -44,7 +45,9 @@ public class TaxiHierGenRootState implements MutableOOState, PassengerParameteri
 
 	@Override
 	public MutableOOState removeObject(String oname) {
-		throw new RuntimeException("Not needed for HierGen");
+		touchPassenger(oname);
+		passengers.remove(oname);
+		return this;
 	}
 
 	@Override
@@ -133,6 +136,18 @@ public class TaxiHierGenRootState implements MutableOOState, PassengerParameteri
 			return READY;
 		else
 			return Taxi.ON_ROAD;
+	}
+
+	public TaxiHierGenRootPassenger touchPassenger(String passName){
+		TaxiHierGenRootPassenger p = passengers.get(passName).copy();
+		touchPassengers().remove(passName);
+		passengers.put(passName, p);
+		return p;
+	}
+
+	public Map<String, TaxiHierGenRootPassenger> touchPassengers(){
+		this.passengers = new HashMap<>(passengers);
+		return passengers;
 	}
 
 	public Object getTaxiAtt(String attName){

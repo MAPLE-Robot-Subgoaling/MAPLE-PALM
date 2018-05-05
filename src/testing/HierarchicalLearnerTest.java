@@ -1,15 +1,7 @@
 package testing;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-
 import burlap.behavior.singleagent.Episode;
 import burlap.behavior.singleagent.auxiliary.EpisodeSequenceVisualizer;
-import burlap.debugtools.RandomFactory;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.common.VisualActionObserver;
 import burlap.mdp.singleagent.environment.SimulatedEnvironment;
@@ -19,25 +11,30 @@ import burlap.statehashing.simple.SimpleHashableStateFactory;
 import config.taxi.TaxiConfig;
 import hierarchy.framework.GroundedTask;
 import hierarchy.framework.Task;
-import org.yaml.snakeyaml.Yaml;
-import org.yaml.snakeyaml.constructor.Constructor;
-import ramdp.agent.RAMDPLearningAgent;
+import palm.agent.PALMLearningAgent;
+import palm.rmax.agent.PALMRmaxModelGenerator;
 import rmaxq.agent.RmaxQLearningAgent;
 import taxi.TaxiVisualizer;
 import taxi.hierarchies.TaxiHierarchy;
 import taxi.state.TaxiState;
 import taxi.stateGenerator.RandomPassengerTaxiState;
-import taxi.stateGenerator.TaxiStateFactory;
+
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class HierarchicalLearnerTest {
 
 	public static void runRAMDPEpisodes(TaxiConfig conf, Task root, State initial, OOSADomain groundDomain) {
 		List<Episode> episodes = new ArrayList<Episode>();
 		GroundedTask rootgt = root.getAllGroundedTasks(initial).get(0);
-		
-		RAMDPLearningAgent ramdp = new RAMDPLearningAgent(rootgt, conf.rmax.threshold, conf.gamma, conf.rmax.vmax,
-				new SimpleHashableStateFactory(true), conf.rmax.max_delta,
-				conf.rmax.max_iterations_in_model, conf.rmax.use_multitime_model);
+		HashableStateFactory hs = new SimpleHashableStateFactory(true);
+
+		PALMRmaxModelGenerator modelGen = new PALMRmaxModelGenerator(conf.rmax.threshold,
+				conf.rmax.vmax,hs, conf.gamma,conf.rmax.use_multitime_model);
+		PALMLearningAgent palmRmax = new PALMLearningAgent(rootgt,modelGen, hs, conf.rmax.max_delta,
+				conf.rmax.max_iterations_in_model);
+
 		SimulatedEnvironment env;
 		if(conf.stochastic.random_start) {
 			env = new SimulatedEnvironment(groundDomain, new RandomPassengerTaxiState());
@@ -54,7 +51,7 @@ public class HierarchicalLearnerTest {
 		
 		for(int i = 1; i <= conf.episodes; i++){
 			long time = System.currentTimeMillis();
-			Episode e = ramdp.runLearningEpisode(env, conf.max_steps);
+			Episode e = palmRmax.runLearningEpisode(env, conf.max_steps);
 			time = System.currentTimeMillis() - time;
 			episodes.add(e);
 			System.out.println("Episode " + i + " time " + (double)time/1000 );
