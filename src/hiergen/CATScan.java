@@ -22,15 +22,9 @@ public class CATScan {
             for(Object v: variables)
             {
                 String var = v.toString();
-                //System.out.println("Variable: " + var);
                 for (CausalEdge e : edges)
                 {
-                    /*if(e.getRelavantVariable().equals("Passenger0:inTaxi")) {
-                        System.out.println(e.getRelavantVariable());
-                        System.out.println(e.getStart());
-                        System.out.println(ct.actionCount());
-                    }*/
-                    if (e.getEnd() == ct.actionCount()+1 && e.getRelavantVariable().equals(var) && !(actionIndicies.contains(e.getStart())))
+                    if (e.getEnd() == ct.lastAction && e.getRelavantVariable().equals(var) && !(actionIndicies.contains(e.getStart())))
                     {
                         System.out.println("Entered");
                         actionIndicies.add(e.getStart());
@@ -40,16 +34,12 @@ public class CATScan {
                 }
             }
 
-            //System.out.println("End: " + end);
             if(end == -1)
                 return null;
 
             start = end;
             int prevSize;
             List<String> actions = ct.getActions();
-            //for(String a:actions)
-             //   System.out.println(a);
-            //System.out.println(actions.size());
             //check all actions with outgoing edges to the subCAT, only have outgoing edges maintained in the subCAT
             do
             {
@@ -77,17 +67,33 @@ public class CATScan {
                     }
                 }
             }while(actionIndicies.size() != prevSize);
-            System.out.println("--------------------Sub-CAT--------------------------");
+            /*System.out.println("--------------------Sub-CAT--------------------------");
             System.out.println("Start: " + start);
             System.out.println("End: " + end);
             for(Integer ind: actionIndicies)
                 System.out.print(ind + " ");
-            System.out.println();
-            subCATs.add(new SubCAT(start, end, actionIndicies, ct));
+            System.out.println();*/
+            if(start != 0 || end != 0)
+                subCATs.add(new SubCAT(start, end, actionIndicies, variables, ct));
         }
 
         return subCATs;
     }
+
+    public static SubCAT scan(CATrajectory  trajectory, List<Object> variables)
+    {
+        ArrayList<CATrajectory> cats = new ArrayList<>();
+        cats.add(trajectory);
+        List<SubCAT> temp = scan(cats, variables);
+        if(!temp.isEmpty())
+        {
+            return temp.get(0);
+        }
+
+        return null;
+
+    }
+
 
 
 }

@@ -7,6 +7,7 @@ import hiergen.CAT.CATrajectory;
 import hiergen.CAT.SubCAT;
 import hiergen.CAT.VariableTree;
 
+import java.beans.SimpleBeanInfo;
 import java.lang.reflect.Array;
 import java.util.*;
 
@@ -25,11 +26,34 @@ public class hiergen {
         if(CATrajectories.get(0).actionCount() > 1)
         {
             t = builder(trees, CATrajectories);
+            if(t == null || t.isEmpty())
+            {
+                return new Task();
+            }
+
+            ArrayList<CATrajectory> ult = new ArrayList<>();
+            ArrayList<CATrajectory> nonUlt = new ArrayList<>();
+            for(CATrajectory c: CATrajectories)
+            {
+                ult.add(c.getUltimateActions());
+                nonUlt.add(c.getNonUltimateActions());
+            }
+
+            ArrayList<Task> Q = builder(trees, nonUlt);
+            if(Q != null || !Q.isEmpty())
+            {
+                Task fin = new Task();
+                ArrayList<Task> temp = builder(trees, ult);
+                t.get(0).subTasks.addAll(temp.get(0).subTasks);
+                fin.subTasks = t.get(0).subTasks;
+                for(Task sub : fin.subTasks)
+                {
+                    fin.actions.addAll(sub.actions);
+                }
+            }
+
         }
-        if(t == null || t.isEmpty())
-        {
-            return new Task();
-        }
+
 
         //List<String> actions = CATrajectories.get(0).getActions();
         return null;
@@ -60,12 +84,13 @@ public class hiergen {
 
         for(int i = 0;i < subCATs.size(); i ++)
         {
-            SubCAT unity = subCATs.get(i).get(0);
-            for(int j = 1; j < subCATs.get(i).size(); j++)
-            {
-                unity.Unify(subCATs.get(i).get(j));
+            if(!subCATs.get(i).isEmpty()) {
+                SubCAT unity = subCATs.get(i).get(0);
+                for (int j = 1; j < subCATs.get(i).size(); j++) {
+                    unity.Unify(subCATs.get(i).get(j));
+                }
+                unifiedSubCATs.add(unity);
             }
-            unifiedSubCATs.add(unity);
         }
 
         ArrayList<Integer> remove = new ArrayList<>();
@@ -115,10 +140,47 @@ public class hiergen {
 
         if(!subCATs.isEmpty())
         {
+            List<SubCAT> merged = merge(unifiedSubCATs);
+            if(merged != null || !merged.isEmpty()) {
+                ArrayList<CATrajectory> nonMerged = new ArrayList<>();
+                ArrayList<CATrajectory> ooSubCAT = new ArrayList<>();
+                for (SubCAT m : merged) {
+                    CATrajectory c = m.getCAT();
+                    c.setEdges(c.getEdges().subList(0, m.getStart()));
+                    c.setActions(c.getActions().subList(0, m.getStart()));
+                    nonMerged.add(c);
+                    ooSubCAT.add(m);
+                }
 
+                List<Task> Q = builder(trees, nonMerged);
+                if(Q == null || Q.isEmpty())
+                    return null;
+                else
+                {
 
+                    Task q = generate(trees, ooSubCAT);
+                    List<Object> variablesQ = q.variables;
+                    Map<Object, Object> goalQ = q.goal;
+                    for(Task t: Q)
+                    {
+                        subTasks.add(t);
+                    }
+
+                    for(String act:trees.keySet())
+                    {
+                        actions.add(act);
+                    }
+
+                    relevantVars.addAll(goal.keySet());
+
+                    for(Task s: Q) {
+                        relevantVars.addAll(s.variables);
+                    }
+
+                    finalTasks.add(new Task(goal, actions, relevantVars));
+                }
+            }
         }
-        //ArrayList<Integer> indices = CATScan.scan(caTrajectories, goalVars);
 
         return finalTasks;
     }
@@ -169,7 +231,6 @@ public class hiergen {
     public static ArrayList<CATrajectory> extractPreceeding(List<CATrajectory> CATs, SubCAT extractee)
     {
         ArrayList<CATrajectory> CATsExtracted = new ArrayList<>();
-        //to-do must work for converted sub-CATs
         for(CATrajectory c: CATs)
         {
                 CATrajectory temp = c;
@@ -180,6 +241,32 @@ public class hiergen {
 
         return CATsExtracted;
 
+    }
+
+    public static List<SubCAT> merge(List<SubCAT> subCats)
+    {
+        List<SubCAT> merged;
+        List<Object> relVars = new ArrayList<>();
+        ArrayList<CATrajectory> cats = new ArrayList<>();
+        //cats.addAll(subCats);
+
+        for(SubCAT c: subCats)
+        {
+            if(!cats.contains(c.getCAT()))
+            {
+                cats.add(c.getCAT());
+            }
+            for(Object v: c.getRelVars())
+            {
+                if(!relVars.contains(v))
+                {
+                    relVars.add(v);
+                }
+            }
+        }
+
+        merged = CATScan.scan(cats, relVars);
+        return merged;
     }
 
 

@@ -12,12 +12,14 @@ import java.util.*;
 
 public class CATrajectory {
 
+    protected int start, end;
     protected List<String> actions;
     protected List<Integer> actionInds = null;
     protected SubCAT sub = null;
     protected List<CausalEdge> edges;
     protected Set<String>[] checkedVariables, changedVariables;
     protected Episode baseTrajectory;
+    public int lastAction;
 
     public CATrajectory() {
         this.actions = new ArrayList<String>();
@@ -32,6 +34,7 @@ public class CATrajectory {
             actions.add(a.actionName());
         }
         actions.add("END");
+        lastAction = actions.size() - 1;
 
         checkedVariables = new Set[actions.size()];
         changedVariables = new Set[actions.size()];
@@ -98,20 +101,20 @@ public class CATrajectory {
         }
     }
 
-    public int findEdge(int start, String variable) {
+    public int findEdge(int s, String variable) {
         for (CausalEdge edge : edges) {
-            if (edge.getStart() == start && edge.getRelavantVariable().equals(variable)) {
+            if (edge.getStart() == s && edge.getRelavantVariable().equals(variable)) {
                 return edge.getEnd();
             }
         }
         return -1;
     }
 
-    public List<Integer> findEdges(int start)
+    public List<Integer> findEdges(int s)
     {
         List<Integer> ai = null;
         for (CausalEdge edge : edges) {
-            if (edge.getStart() == start) {
+            if (edge.getStart() == s) {
                 if (ai == null)
                     ai = new ArrayList<>();
                 ai.add(edge.getEnd());
@@ -121,11 +124,11 @@ public class CATrajectory {
         return ai;
     }
 
-    public List<CausalEdge> findCausalEdges(int start)
+    public List<CausalEdge> findCausalEdges(int s)
     {
         List<CausalEdge> ai = null;
         for (CausalEdge edge : edges) {
-            if (edge.getStart() == start) {
+            if (edge.getStart() == s) {
                 if (ai == null)
                     ai = new ArrayList<>();
                 ai.add(edge);
@@ -284,11 +287,23 @@ public class CATrajectory {
 
     public CATrajectory getUltimateActions()
     {
-        CATrajectory ultimate = this;
-        ArrayList<Integer> inds = new ArrayList<>();
-        inds.add(actionCount());
+        ArrayList<Integer> actionInds = new ArrayList<>();
+        actionInds.add(lastAction);
+        SubCAT last = new SubCAT(lastAction, lastAction+1, actionInds, null, this);
 
-        return ultimate;
+        return last;
+    }
+
+    public CATrajectory getNonUltimateActions()
+    {
+        ArrayList<Integer> actionInds = new ArrayList<>();
+        for(int i = 0; i < lastAction; i++)
+        {
+            actionInds.add(i);
+        }
+        SubCAT antiLast = new SubCAT(0, lastAction-1, actionInds, null, this);
+
+        return antiLast;
     }
 
 
