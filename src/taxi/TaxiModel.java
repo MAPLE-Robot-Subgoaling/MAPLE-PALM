@@ -122,23 +122,27 @@ public class TaxiModel implements FullStateModel{
 					dx = -1;
 				}
 			}
-			
-			int nx = tx + dx;
-			int ny = ty + dy;
-			TaxiAgent ntaxi = ns.touchTaxi();
-			ntaxi.set(ATT_X, nx);
-			ntaxi.set(ATT_Y, ny);
-			
-			//move any passenger that are in the taxi
-			for(String passengerName : s.getPassengers()){
-				boolean inTaxi = (boolean) s.getPassengerAtt(passengerName, ATT_IN_TAXI);
-				
-				if(inTaxi){
-					TaxiPassenger np = ns.touchPassenger(passengerName);
-					np.set(ATT_X, nx);
-					np.set(ATT_Y, ny);
+
+			boolean somethingChanged = dx != 0 || dy != 0;
+			if (somethingChanged) {
+				int nx = tx + dx;
+				int ny = ty + dy;
+				TaxiAgent ntaxi = ns.touchTaxi();
+				ntaxi.set(ATT_X, nx);
+				ntaxi.set(ATT_Y, ny);
+
+				//move any passenger that are in the taxi
+				for(String passengerName : s.getPassengers()){
+					boolean inTaxi = (boolean) s.getPassengerAtt(passengerName, ATT_IN_TAXI);
+
+					if(inTaxi){
+						TaxiPassenger np = ns.touchPassenger(passengerName);
+						np.set(ATT_X, nx);
+						np.set(ATT_Y, ny);
+					}
 				}
 			}
+
 			
 			if(fickle){
 				//find a passenger in the taxi
@@ -200,8 +204,8 @@ public class TaxiModel implements FullStateModel{
 			TaxiPassenger np = ns.touchPassenger(p);
 			np.set(ATT_IN_TAXI, true);
 
-			TaxiAgent ntaxi = ns.touchTaxi();
-			ntaxi.set(ATT_TAXI_OCCUPIED, true);
+//			TaxiAgent ntaxi = ns.touchTaxi();
+//			ntaxi.set(ATT_TAXI_OCCUPIED, true);
 		}
 		tps.add(new StateTransitionProb(ns, 1.));
 	}
@@ -227,19 +231,19 @@ public class TaxiModel implements FullStateModel{
 					np.set(ATT_IN_TAXI, false);
 
 					// iterate through every passenger except the one that was just dropped off and see if taxi is empty
-					boolean passengersInTaxi = false;
-					for (String passengerName : s.getPassengers()) {
-						boolean inTaxi = (boolean) s.getPassengerAtt(passengerName, ATT_IN_TAXI);
-						if ((!passengerName.equals(p)) && inTaxi) {
-							passengersInTaxi = true;
-							break;
-						}
-					}
-
-					if (!passengersInTaxi) {
-						TaxiAgent ntaxi = ns.touchTaxi();
-						ntaxi.set(ATT_TAXI_OCCUPIED, false);
-					}
+//					boolean passengersInTaxi = false;
+//					for (String passengerName : s.getPassengers()) {
+//						boolean inTaxi = (boolean) s.getPassengerAtt(passengerName, ATT_IN_TAXI);
+//						if ((!passengerName.equals(p)) && inTaxi) {
+//							passengersInTaxi = true;
+//							break;
+//						}
+//					}
+//
+//					if (!passengersInTaxi) {
+//						TaxiAgent ntaxi = ns.touchTaxi();
+//						ntaxi.set(ATT_TAXI_OCCUPIED, false);
+//					}
 
 					break;
 				}

@@ -12,7 +12,7 @@ import static taxi.TaxiConstants.*;
 public class TaxiPutAgent extends MutableObject {
 
 	private final static List<Object> keys = Arrays.<Object>asList(
-			ATT_TAXI_LOCATION
+			ATT_LOCATION
 			);
 
 	public TaxiPutAgent(String name, String location) {
@@ -20,7 +20,7 @@ public class TaxiPutAgent extends MutableObject {
 	}
 
 	private TaxiPutAgent(String name, Object location) {
-	    this.set(ATT_TAXI_LOCATION, location);
+	    this.set(ATT_LOCATION, location);
 		this.setName(name);
 	}
 	
@@ -31,7 +31,7 @@ public class TaxiPutAgent extends MutableObject {
 
 	@Override
 	public ObjectInstance copyWithName(String objectName) {
-		return new TaxiPutAgent( objectName, get(ATT_TAXI_LOCATION));
+		return new TaxiPutAgent( objectName, get(ATT_LOCATION));
 	}
 
 	@Override

@@ -72,7 +72,7 @@ public class TaxiStateFactory {
 		TaxiAgent agent = (TaxiAgent) classic.objectsOfClass(CLASS_TAXI).get(0);
 		agent.set(ATT_X, passenger.get(ATT_X));
 		agent.set(ATT_Y, passenger.get(ATT_Y));
-		agent.set(ATT_TAXI_OCCUPIED, inTaxi);
+//		agent.set(ATT_TAXI_OCCUPIED, inTaxi);
 		passenger.set(ATT_IN_TAXI, inTaxi);
 //		passenger.set(ATT_JUST_PICKED_UP, true);
 		return classic;
@@ -194,23 +194,47 @@ public class TaxiStateFactory {
 			
 		return new TaxiState(taxi, passengers, locations, walls);
 	}
-	
-	public static TaxiState createTinyState(){
+
+	public static TaxiState createTinyState() { return createTinyState(1); }
+	public static TaxiState createTinyState(int numPassengers){
 		TaxiAgent taxi = new TaxiAgent(CLASS_TAXI + 0, 0, 1);
-		
+
 		List<TaxiLocation> locations = new ArrayList<TaxiLocation>();
 		locations.add(new TaxiLocation(CLASS_LOCATION + 0, 0, 0, COLOR_RED));
 		locations.add(new TaxiLocation(CLASS_LOCATION + 1, 0, 1, COLOR_BLUE));
-		
+
 		List<TaxiPassenger> passenger = new ArrayList<TaxiPassenger>();
-		passenger.add(new TaxiPassenger(CLASS_PASSENGER + 0, 0, 0, CLASS_LOCATION + 1));
-		
+		for (int i = 0; i < numPassengers; i++) {
+			passenger.add(new TaxiPassenger(CLASS_PASSENGER + i, 0, 0, CLASS_LOCATION + 1));
+		}
+
 		List<TaxiWall> walls = new ArrayList<TaxiWall>();
 		walls.add(new TaxiWall(CLASS_WALL + 0, 0, 0, 1, true));
 		walls.add(new TaxiWall(CLASS_WALL + 1, 0, 0, 2, false));
 		walls.add(new TaxiWall(CLASS_WALL + 2, 0, 2, 1, true));
 		walls.add(new TaxiWall(CLASS_WALL + 3, 1, 0, 2, false));
-		
+
+		return new TaxiState(taxi, passenger, locations, walls);
+	}
+	public static TaxiState createTiny3State(int numPassengers){
+		TaxiAgent taxi = new TaxiAgent(CLASS_TAXI + 0, 0, 1);
+
+		List<TaxiLocation> locations = new ArrayList<TaxiLocation>();
+		locations.add(new TaxiLocation(CLASS_LOCATION + 0, 0, 0, COLOR_RED));
+		locations.add(new TaxiLocation(CLASS_LOCATION + 1, 0, 1, COLOR_BLUE));
+		locations.add(new TaxiLocation(CLASS_LOCATION + 2, 0, 2, COLOR_GREEN));
+
+		List<TaxiPassenger> passenger = new ArrayList<TaxiPassenger>();
+		for (int i = 0; i < numPassengers; i++) {
+			passenger.add(new TaxiPassenger(CLASS_PASSENGER + i, 0, 0, CLASS_LOCATION + 1));
+		}
+
+		List<TaxiWall> walls = new ArrayList<TaxiWall>();
+		walls.add(new TaxiWall(CLASS_WALL + 0, 0, 0, 1, true));
+		walls.add(new TaxiWall(CLASS_WALL + 1, 0, 0, 3, false));
+		walls.add(new TaxiWall(CLASS_WALL + 2, 0, 3, 1, true));
+		walls.add(new TaxiWall(CLASS_WALL + 3, 1, 0, 3, false));
+
 		return new TaxiState(taxi, passenger, locations, walls);
 	}
 }

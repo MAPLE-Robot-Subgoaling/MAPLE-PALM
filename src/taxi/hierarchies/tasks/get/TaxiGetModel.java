@@ -55,7 +55,7 @@ public class TaxiGetModel implements FullStateModel {
 		String passenger = a.getObjectParameters()[0];
 
 		TaxiGetPassenger np = ns.touchPassenger(passenger);
-		np.set(ATT_LOCATION, IN_TAXI);
+		np.set(ATT_LOCATION, ATT_VAL_IN_TAXI);
 
 		tps.add(new StateTransitionProb(ns, 1));
 	}

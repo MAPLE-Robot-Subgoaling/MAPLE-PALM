@@ -2,19 +2,18 @@ package taxi;
 
 public class TaxiConstants {
 
-    public static final String ATT_TAXI_LOCATION =			"taxiLocation";
-    public static final String ATT_LOCATION =				"location";
-
+    //actions
+    public static final int NUM_MOVE_ACTIONS = 				4;
+    public static final String ERROR = 						"ERROR";
     public static final String ACTION_NAV =					"nav";
-
-    public static final String ATT_CURRENT_LOCATION = 		"currentLocation";
-
-    public static final String IN_TAXI =					"inTaxi";
-
-    public static final String NOT_IN_TAXI =				"notInTaxi";
-
     public static final String ACTION_GET = 				"get";
     public static final String ACTION_PUT = 				"put";
+    public static final String ACTION_NORTH = 				"north";
+    public static final String ACTION_EAST =				"east";
+    public static final String ACTION_SOUTH =				"south";
+    public static final String ACTION_WEST = 				"west";
+    public static final String ACTION_PICKUP = 				"pickup";
+    public static final String ACTION_PUTDOWN = 			"putdown";
 
     public static final String CLASS_TAXI = 				"Taxi";
     public static final String CLASS_PASSENGER =			"Passenger";
@@ -23,15 +22,13 @@ public class TaxiConstants {
 
     public static final String ATT_X =						"x";
     public static final String ATT_Y =						"y";
-
-    public static final String ATT_TAXI_OCCUPIED = 			"taxiOccupied";
-
+    public static final String ATT_LOCATION =				"location";
     public static final String ATT_GOAL_LOCATION = 			"goalLocation";
     public static final String ATT_IN_TAXI = 				"inTaxi";
-    public static final String ATT_PICKED_UP_AT_LEAST_ONCE ="pickedUpAtLeastOnce";
-    public static final String ON_ROAD =				"onRoad";
+    public static final String ATT_VAL_IN_TAXI =			"inTaxi"; // possible value for "location"
+    public static final String ATT_VAL_NOT_IN_TAXI =		"notInTaxi";
+    public static final String ATT_VAL_ON_ROAD =			"onRoad";
     public static final String ATT_COLOR =					"color";
-
     //wall attributes
     public static final String ATT_START_X = 				"startX";
     public static final String ATT_START_Y = 				"startY";
@@ -47,23 +44,14 @@ public class TaxiConstants {
     public static final String COLOR_BLACK = 				"black";
     public static final String COLOR_GRAY =					"gray";
 
-    //actions
-    public static final int NUM_MOVE_ACTIONS = 				4;
-    public static final String ACTION_NORTH = 				"north";
-    public static final String ACTION_EAST =				"east";
-    public static final String ACTION_SOUTH =				"south";
-    public static final String ACTION_WEST = 				"west";
-    public static final String ACTION_PICKUP = 				"pickup";
-    public static final String ACTION_PUTDOWN = 			"putdown";
-    public static final String ERROR = 						"ERROR";
-
-
     //action indexes
-    public static final int IND_NORTH = 							0;
-    public static final int IND_EAST = 							1;
-    public static final int IND_SOUTH = 							2;
-    public static final int IND_WEST = 							3;
-    public static final int IND_PICKUP = 							4;
-    public static final int IND_PUTDOWN = 						5;
+    public static final int IND_NORTH = 0;
+    public static final int IND_EAST = 1;
+    public static final int IND_SOUTH = 2;
+    public static final int IND_WEST = 3;
+    public static final int IND_PICKUP = 4;
+    public static final int IND_PUTDOWN = 5;
+
+
 
 }

@@ -21,6 +21,6 @@ public class GetCompletedPF extends PropositionalFunction{
 		MutableObject passenger = (MutableObject) s.object(passengerName);
 		if (passenger == null) { return false; }
 		String pass_loc = (String) passenger.get(ATT_LOCATION);
-		return pass_loc.equals(IN_TAXI);
+		return pass_loc.equals(ATT_VAL_IN_TAXI);
 	}
 }

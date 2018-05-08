@@ -5,13 +5,14 @@ import burlap.mdp.core.oo.state.OOStateUtilities;
 import burlap.mdp.core.oo.state.OOVariableKey;
 import burlap.mdp.core.oo.state.ObjectInstance;
 import burlap.mdp.core.state.MutableState;
-import taxi.Taxi;
 import taxi.hierarchies.interfaces.PassengerParameterizable;
+import utilities.DeepCopyForShallowCopyState;
 
 import java.util.*;
 import static taxi.TaxiConstants.*;
+import static taxi.TaxiConstants.ATT_VAL_ON_ROAD;
 
-public class TaxiState implements MutableOOState, PassengerParameterizable{
+public class TaxiState implements MutableOOState, PassengerParameterizable, DeepCopyForShallowCopyState {
 
 	//contains a taxi, passengers, locations and walls
 	private TaxiAgent taxi;
@@ -72,14 +73,19 @@ public class TaxiState implements MutableOOState, PassengerParameterizable{
 		return null;
 	}
 
+//	public List<ObjectInstance> objectInstanceList = null;//new ArrayList<>();
 	@Override
 	public List<ObjectInstance> objects() {
-		List<ObjectInstance> objs = new ArrayList<ObjectInstance>();
-		objs.add(taxi);
-		objs.addAll(passengers.values());
-		objs.addAll(locations.values());
-		objs.addAll(walls.values());
-		return objs;
+//		if (objectInstanceList == null) {
+			List<ObjectInstance> objs = new ArrayList<ObjectInstance>();
+			objs.add(taxi);
+			objs.addAll(passengers.values());
+			objs.addAll(locations.values());
+			objs.addAll(walls.values());
+			return objs;
+//			objectInstanceList = objs;
+//		}
+//		return objectInstanceList;
 	}
 
 	@Override
@@ -217,7 +223,7 @@ public class TaxiState implements MutableOOState, PassengerParameterizable{
 			if(px == lx && py == ly)
 				return loc;
 		}
-		return ON_ROAD;
+		return ATT_VAL_ON_ROAD;
 	}
 //
 //	@Override
@@ -366,6 +372,30 @@ public class TaxiState implements MutableOOState, PassengerParameterizable{
 //		}
 //		return out;
 		return OOStateUtilities.ooStateToString(this);
+	}
+
+	// determine if at least one passenger is in the taxi
+    public boolean isTaxiOccupied() {
+		for (String passengerName : getPassengers()) {
+			boolean inTaxi = (boolean) getPassengerAtt(passengerName, ATT_IN_TAXI);
+			if (inTaxi) {
+				return true;
+			}
+		}
+        return false;
+    }
+
+
+	@Override
+	public MutableOOState deepCopy() {
+		TaxiState copy = this.copy();
+		copy.touchTaxi();
+		copy.touchPassengers();
+		copy.touchLocations();
+		copy.touchWalls();
+//		copy.objectInstanceList = null;
+//		this.objectInstanceList = null;
+		return copy;
 	}
 }
 

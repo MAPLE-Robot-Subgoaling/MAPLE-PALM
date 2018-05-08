@@ -11,6 +11,7 @@ import taxi.hierarchies.interfaces.PassengerParameterizable;
 
 import java.util.*;
 import static taxi.TaxiConstants.*;
+import static taxi.TaxiConstants.ATT_VAL_ON_ROAD;
 
 public class TaxiHierGenTask7State implements MutableOOState, PassengerParameterizable, PassengerLocationParameterizable{
 
@@ -130,7 +131,7 @@ public class TaxiHierGenTask7State implements MutableOOState, PassengerParameter
 		else if(tx == px && ty == py)
 			return REEADY_TO_PICKUP;
 		else
-			return ON_ROAD;
+			return ATT_VAL_ON_ROAD;
 
 	}
 

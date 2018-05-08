@@ -14,6 +14,7 @@ import burlap.mdp.core.oo.state.ObjectInstance;
 import burlap.mdp.core.state.State;
 import burlap.statehashing.HashableState;
 import burlap.statehashing.WrappedHashableState;
+import utilities.DeepCopyForShallowCopyState;
 
 
 public class IICachedHashableState extends WrappedHashableState {
@@ -26,8 +27,8 @@ public class IICachedHashableState extends WrappedHashableState {
         dirty = true;
     }
 
-    public IICachedHashableState(State s) {
-        super(s);
+    public IICachedHashableState(DeepCopyForShallowCopyState s) {
+        this.s = s.deepCopy();
         dirty = true;
     }
 

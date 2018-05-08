@@ -11,6 +11,8 @@ import taxi.hierarchies.interfaces.PassengerParameterizable;
 import java.util.*;
 
 import static taxi.TaxiConstants.*;
+import static taxi.TaxiConstants.ATT_VAL_ON_ROAD;
+
 public class TaxiHierGenRootState implements MutableOOState, PassengerParameterizable, PassengerLocationParameterizable {
 
 	public static final String CLASS_ROOT_PASSENGER = 		"rootPassenger";
@@ -127,11 +129,11 @@ public class TaxiHierGenRootState implements MutableOOState, PassengerParameteri
 		int py = (int) passengers.get(pname).get(ATT_Y);
 
 		if(!inTaxi)
-			return NOT_IN_TAXI;
+			return ATT_VAL_NOT_IN_TAXI;
 		else if(tx == px && ty == py)
 			return READY;
 		else
-			return ON_ROAD;
+			return ATT_VAL_ON_ROAD;
 	}
 
 	public Object getTaxiAtt(String attName){

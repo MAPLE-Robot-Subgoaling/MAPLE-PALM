@@ -15,22 +15,22 @@ public class TaxiAgent extends MutableObject {
 	 */
 	private final static List<Object> keys = Arrays.<Object>asList(
 			ATT_X,
-			ATT_Y,
-			ATT_TAXI_OCCUPIED
+			ATT_Y
+//			ATT_TAXI_OCCUPIED
 			);
 
-	public TaxiAgent(String name, int x, int y) {
-		this(name, x, y, false);
-	}
+//	public TaxiAgent(String name, int x, int y) {
+//		this(name, x, y, false);
+//	}
+//
+//	public TaxiAgent(String name, int x, int y, boolean taxiOccupied) {
+//		this(name, (Object) x, (Object) y, (Object) taxiOccupied);
+//	}
 	
-	public TaxiAgent(String name, int x, int y, boolean taxiOccupied) {
-		this(name, (Object) x, (Object) y, (Object) taxiOccupied);
-	}
-	
-	private TaxiAgent(String name, Object x, Object y, Object taxiOccupied) {
+	public TaxiAgent(String name, int x, int y) { //}, Object taxiOccupied) {
 		this.set(ATT_X, x);
 		this.set(ATT_Y, y);
-		this.set(ATT_TAXI_OCCUPIED, taxiOccupied);
+//		this.set(ATT_TAXI_OCCUPIED, taxiOccupied);
 		this.setName(name);
 	}
 	
@@ -48,9 +48,9 @@ public class TaxiAgent extends MutableObject {
 	public ObjectInstance copyWithName(String objectName) {
 		return new TaxiAgent(
 				objectName,
-				get(ATT_X),
-				get(ATT_Y),
-				get(ATT_TAXI_OCCUPIED)
+				(Integer) get(ATT_X),
+				(Integer) get(ATT_Y)
+//				get(ATT_TAXI_OCCUPIED)
 				);
 	}
 

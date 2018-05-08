@@ -23,12 +23,14 @@ public class GroundedTask {
 	/**
 	 * specific action in a task
 	 */
-	private Action action;
+	private final Action action;
 
 	/**
 	 * the general task node which this grounded task is part of
 	 */
 	private Task t;
+
+	protected final String formattedName;
 
 	/**
 	 * each grounded task has an action and task
@@ -37,6 +39,7 @@ public class GroundedTask {
 	 */
 	public GroundedTask(Action a, Task t){
 		this.action = a;
+		this.formattedName = StringFormat.parameterizedActionName(this.action);
 		this.t = t;
 	}
 
@@ -151,7 +154,7 @@ public class GroundedTask {
 
 	@Override
 	public String toString(){
-		return StringFormat.parameterizedActionName(action);
+		return formattedName;
 	}
 
 	/**
@@ -175,7 +178,7 @@ public class GroundedTask {
         }
 
         GroundedTask o = (GroundedTask) other;
-        if(!StringFormat.parameterizedActionName(this.action).equals(StringFormat.parameterizedActionName(o.action))){
+        if(!this.formattedName.equals(o.formattedName)){
             return false; 
         }
         
@@ -185,7 +188,7 @@ public class GroundedTask {
     @Override
     public int hashCode() {
         HashCodeBuilder hashCodeBuilder = new HashCodeBuilder(31, 7);
-        hashCodeBuilder.append(StringFormat.parameterizedActionName(this.action));
+        hashCodeBuilder.append(formattedName);
         return hashCodeBuilder.toHashCode();
     }
 

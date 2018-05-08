@@ -142,7 +142,7 @@ public class TaxiRootState implements MutableOOState {
 			buf.append("P");
 			buf.append(passenger.name().charAt(passenger.name().length()-1));
 			buf.append(", at:");
-			String at = (String) passenger.get(ATT_CURRENT_LOCATION);
+			String at = (String) passenger.get(ATT_LOCATION);
 			if (at.contains("Location")) {
 				buf.append("L");
 				buf.append(at.charAt(at.length()-1));

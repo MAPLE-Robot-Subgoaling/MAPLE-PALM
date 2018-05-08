@@ -51,7 +51,7 @@ public class TaxiRootModel implements FullStateModel {
 		TaxiRootState ns = s.copy();
 		String passengerName = a.getObjectParameters()[0];
 		TaxiRootPassenger np = ns.touchPassenger(passengerName);
-		np.set(ATT_CURRENT_LOCATION, IN_TAXI);
+		np.set(ATT_LOCATION, ATT_VAL_IN_TAXI);
 		tps.add(new StateTransitionProb(ns, 1));
 	}
 
@@ -67,7 +67,7 @@ public class TaxiRootModel implements FullStateModel {
 		TaxiRootPassenger np = ns.touchPassenger(passengerName);
 		String nameOfPassengerGoalLocation = (String) np.get(ATT_GOAL_LOCATION);
 		// put the passenger in their own goal location
-		np.set(ATT_CURRENT_LOCATION, nameOfPassengerGoalLocation);
+		np.set(ATT_LOCATION, nameOfPassengerGoalLocation);
 		tps.add(new StateTransitionProb(ns, 1));
 	}
 }

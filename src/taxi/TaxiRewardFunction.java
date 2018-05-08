@@ -61,7 +61,8 @@ public class TaxiRewardFunction implements RewardFunction{
 		if(tf.isTerminal(sprime))
 			return goalReward + stepReward;
 		
-		boolean taxiOccupied = (boolean) state.getTaxiAtt(ATT_TAXI_OCCUPIED);
+//		boolean taxiOccupied = (boolean) state.getTaxiAtt(ATT_TAXI_OCCUPIED);
+		boolean taxiOccupied = state.isTaxiOccupied();
 		int tx = (int) state.getTaxiAtt(ATT_X);
 		int ty = (int) state.getTaxiAtt(ATT_Y);
 		
