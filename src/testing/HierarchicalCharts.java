@@ -17,6 +17,8 @@ import config.taxi.TaxiConfig;
 import hierarchy.framework.GroundedTask;
 import hierarchy.framework.Task;
 import palm.agent.PALMLearningAgent;
+import palm.agent.PALMModelGenerator;
+import palm.rmax.agent.ExpertNavModelGenerator;
 import palm.rmax.agent.PALMRmaxModelGenerator;
 import rmaxq.agent.RmaxQLearningAgent;
 import taxi.TaxiVisualizer;
@@ -72,7 +74,7 @@ public class HierarchicalCharts {
 
 					@Override
 					public LearningAgent generateAgent() {
-                        PALMRmaxModelGenerator modelGen = new PALMRmaxModelGenerator(conf.rmax.threshold,
+                        PALMModelGenerator modelGen = new ExpertNavModelGenerator(conf.rmax.threshold,
                                 conf.rmax.vmax,hs, conf.gamma,conf.rmax.use_multitime_model);
                         return new PALMLearningAgent(RAMDPGroot,modelGen, hs, conf.rmax.max_delta,
                                 conf.rmax.max_iterations_in_model);
