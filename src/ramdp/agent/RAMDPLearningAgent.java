@@ -114,10 +114,18 @@ public class RAMDPLearningAgent implements LearningAgent{
 
 	@Override
 	public Episode runLearningEpisode(Environment env, int maxSteps) {
+		//runtime 
+		long start = System.nanoTime();
+		System.out.println("RAMDP episode start time: " + start);
+		
 		steps = 0;
 		e = new Episode(env.currentObservation());
 		solveTask(root, env, maxSteps);
 		System.out.println(e.actionSequence.size() + " " + e.actionSequence);
+		
+		//runtime
+		long estimated = System.nanoTime();
+		System.out.println("Estimated RAMDP episode time: " + estimated);
 		return e;
 	}
 

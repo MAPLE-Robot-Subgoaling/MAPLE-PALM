@@ -6,6 +6,7 @@ import burlap.behavior.singleagent.auxiliary.performance.PerformanceMetric;
 import burlap.behavior.singleagent.auxiliary.performance.TrialMode;
 import burlap.behavior.singleagent.learning.LearningAgent;
 import burlap.behavior.singleagent.learning.LearningAgentFactory;
+import burlap.behavior.singleagent.learning.tdmethods.QLearning;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.common.VisualActionObserver;
 import burlap.mdp.singleagent.environment.SimulatedEnvironment;
@@ -27,6 +28,8 @@ import taxi.stateGenerator.TaxiStateFactory;
 import utilities.LearningAlgorithmExperimenter;
 
 import java.io.FileNotFoundException;
+
+//------------------------------------
 import java.util.List;
 
 //import utilities.SimpleHashableStateFactory;
@@ -45,7 +48,7 @@ public class HierarchicalCharts {
 		} else {
             env = new SimulatedEnvironment(domain, s);
 			RAMDPGroot = RAMDPRoot.getAllGroundedTasks(s).get(0);
-			hierGenGroot = hierGenRoot.getAllGroundedTasks(s).get(0);
+			//hierGenGroot = hierGenRoot.getAllGroundedTasks(s).get(0);
 		}
 
 		hs = new SimpleHashableStateFactory(false); //new CachedHashableStateFactory(true); // new SimpleHashableStateFactory(true);
@@ -77,7 +80,7 @@ public class HierarchicalCharts {
 					}
 				};
 			}
-			if(agent.equals("hiergen")){
+			/*if(agent.equals("hiergen")){
 				agents[i] = new LearningAgentFactory() {
 
 					@Override
@@ -90,7 +93,7 @@ public class HierarchicalCharts {
 						return new RAMDPLearningAgent(hierGenGroot, conf.rmax.threshold, conf.gamma, conf.rmax.vmax, hs, conf.rmax.max_delta, conf.rmax.max_iterations_in_model, conf.rmax.use_multitime_model);
 					}
 				};
-			}
+			}*/
 
 			// RMAX
 			if(agent.equals("rmaxq")) {
@@ -105,6 +108,22 @@ public class HierarchicalCharts {
 						return new RmaxQLearningAgent(RMEXQRoot, hs, s, conf.rmax.vmax, conf.rmax.threshold, conf.rmax.max_delta_rmaxq, conf.rmax.max_delta);
 					}
 				};
+			}
+			
+			//QLearning
+			if(agent.equals("qlearning")){
+				agents[i] = new LearningAgentFactory(){
+					@Override
+					public String getAgentName(){
+						return "QLearning";
+					}
+					
+					@Override
+					public LearningAgent generateAgent(){
+						return new QLearning(domain, conf.gamma, hs, 0.0, 0.1);
+					}
+				};
+				
 			}
 		}
 
@@ -136,6 +155,15 @@ public class HierarchicalCharts {
 	}
 
 	public static void main(String[] args) {
+		
+		//output for the console
+		
+		//runtime
+		//get the starting time from execution
+		long startTime = System.nanoTime();
+		System.out.println("Current time: " + startTime);
+		
+		
 		String conffile = "config/taxi/classic.yaml";
 		if(args.length > 0) {
 			conffile = args[0];
@@ -152,9 +180,14 @@ public class HierarchicalCharts {
 
 		TaxiState s = conf.generateState();
 		Task RAMDProot = TaxiHierarchy.createAMDPHierarchy(conf.stochastic.correct_move, conf.stochastic.fickle, false);
-		Task hiergenRoot = TaxiHierarchy.createHierGenHierarchy(conf.stochastic.correct_move, conf.stochastic.fickle);
+		//needs to be reimplemented
+		//Task hiergenRoot = TaxiHierarchy.createHierGenHierarchy(conf.stochastic.correct_move, conf.stochastic.fickle);
 		OOSADomain base = TaxiHierarchy.getBaseDomain();
-		Task RMAXQroot = TaxiHierarchy.createRMAXQHierarchy(conf.stochastic.correct_move, conf.stochastic.fickle);
-		createCharts(conf, s, base, RAMDProot, RMAXQroot, hiergenRoot);
+		//needs to be reimplemented
+		//Task RMAXQroot = TaxiHierarchy.createRMAXQHierarchy(conf.stochastic.correct_move, conf.stochastic.fickle);
+		createCharts(conf, s, base, RAMDProot, /*RMAXQroot*/null, /*hiergenRoot*/null);
+		
+		long estimatedTime = System.nanoTime() - startTime;
+		System.out.println("The estimated elapsed time is" + estimatedTime);
 	}
 }
