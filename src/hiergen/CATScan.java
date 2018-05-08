@@ -12,12 +12,12 @@ public class CATScan {
 
     public static List<SubCAT> scan(ArrayList<CATrajectory > trajectories, List<Object> variables)
     {
-        System.out.println("Scan");
+        //System.out.println("Scan");
         List<SubCAT> subCATs = new ArrayList<SubCAT>();
-        ArrayList<Integer> actionIndicies = new ArrayList<>();
         int start, end = -1;
         for(CATrajectory ct : trajectories)
         {
+            ArrayList<Integer> actionIndicies = new ArrayList<>();
             List<CausalEdge> edges = ct.getEdges();
             for(Object v: variables)
             {
@@ -26,7 +26,7 @@ public class CATScan {
                 {
                     if (e.getEnd() == ct.lastAction && e.getRelavantVariable().equals(var) && !(actionIndicies.contains(e.getStart())))
                     {
-                        System.out.println("Entered");
+                        //System.out.println("Entered");
                         actionIndicies.add(e.getStart());
                         end = e.getStart();
                         break;

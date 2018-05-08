@@ -82,15 +82,18 @@ public class hiergen {
 
         List<SubCAT> unifiedSubCATs = new ArrayList<>();
 
-        for(int i = 0;i < subCATs.size(); i ++)
+        for(int i = 0;i < CATrajectories.size(); i ++)
         {
-            if(!subCATs.get(i).isEmpty()) {
-                SubCAT unity = subCATs.get(i).get(0);
-                for (int j = 1; j < subCATs.get(i).size(); j++) {
-                    unity.Unify(subCATs.get(i).get(j));
+            SubCAT unity = null;
+            for (int j = 0; j < subCATs.size(); j++) {
+                if(subCATs.get(j) != null && !subCATs.get(j).isEmpty()) {
+                    if(unity == null)
+                        unity = subCATs.get(j).get(i);
+                    else
+                        unity.Unify(subCATs.get(j).get(i));
                 }
-                unifiedSubCATs.add(unity);
             }
+            unifiedSubCATs.add(unity);
         }
 
         ArrayList<Integer> remove = new ArrayList<>();

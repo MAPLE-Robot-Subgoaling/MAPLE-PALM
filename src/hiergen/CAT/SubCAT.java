@@ -24,8 +24,8 @@ public class SubCAT extends CATrajectory {
     {
         start = s;
         end = e;
-        if(start == 0 && end == 0)
-            System.out.println("why???");
+        //if(start == 0 && end == 0)
+           // System.out.println("why???");
         lastAction = end;
         this.relVars = relVars;
         this.actionInds = actionInds;
@@ -55,7 +55,7 @@ public class SubCAT extends CATrajectory {
 
     public SubCAT Unify(SubCAT a)
     {
-        System.out.println("Unity");
+        //System.out.println("Unity");
         //System.out.println(a.CAT);
         SubCAT unification = new SubCAT(a.start, a.end, a.actionInds, relVars, c);
 
@@ -69,6 +69,30 @@ public class SubCAT extends CATrajectory {
             unification.start = a.start;
         if(this.end > a.end)
             unification.end = a.end;
+
+        unification.relVars.addAll(a.relVars);
+
+        return unification;
+    }
+
+    public static SubCAT Unify(SubCAT a, SubCAT b)
+    {
+        //System.out.println("Unity");
+        //System.out.println(a.CAT);
+        SubCAT unification = new SubCAT(a.start, a.end, a.actionInds, a.relVars, a.c);
+
+        for(Integer i:b.actionInds)
+        {
+            if(!unification.actionInds.contains(i))
+                unification.actionInds.add(i);
+        }
+
+        if(b.start < a.start)
+            unification.start = a.start;
+        if(b.end > a.end)
+            unification.end = a.end;
+
+        unification.relVars.addAll(a.relVars);
 
         return unification;
     }
