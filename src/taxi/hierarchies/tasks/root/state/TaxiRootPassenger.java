@@ -1,14 +1,11 @@
 package taxi.hierarchies.tasks.root.state;
 
 import burlap.mdp.core.oo.state.ObjectInstance;
-import taxi.Taxi;
-import taxi.hierarchies.tasks.root.TaxiRootDomain;
 import utilities.MutableObject;
 
 import java.util.Arrays;
 import java.util.List;
 
-import static taxi.TaxiConstants.*;
 import static taxi.TaxiConstants.*;
 public class TaxiRootPassenger extends MutableObject {
 

@@ -1,27 +1,5 @@
 package testing;
 
-import amdp.planning.AMDPPlanner;
-import burlap.behavior.singleagent.Episode;
-import burlap.behavior.singleagent.auxiliary.EpisodeSequenceVisualizer;
-import burlap.debugtools.RandomFactory;
-import burlap.mdp.auxiliary.StateGenerator;
-import burlap.mdp.core.state.State;
-import burlap.mdp.singleagent.oo.OOSADomain;
-import burlap.statehashing.HashableStateFactory;
-import burlap.statehashing.simple.SimpleHashableStateFactory;
-import cleanup.CleanupVisualizer;
-import cleanup.hierarchies.CleanupHierarchy;
-import cleanup.state.CleanupRandomStateGenerator;
-import cleanup.state.CleanupState;
-import hierarchy.framework.Task;
-import taxi.TaxiVisualizer;
-import taxi.hierarchies.TaxiHierarchy;
-import taxi.state.TaxiState;
-import taxi.stateGenerator.TaxiStateFactory;
-
-import java.util.ArrayList;
-import java.util.List;
-
 public class AMDPTestCleanup {
 
 //    public static void plan(Task root, State init, HashableStateFactory hs, OOSADomain baseDomain,

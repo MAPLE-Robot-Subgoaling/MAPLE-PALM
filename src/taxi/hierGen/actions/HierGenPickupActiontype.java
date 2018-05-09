@@ -3,8 +3,8 @@ package taxi.hierGen.actions;
 import burlap.mdp.core.oo.ObjectParameterizedAction;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.oo.ObjectParameterizedActionType;
-import taxi.Taxi;
 import taxi.hierGen.Task7.state.TaxiHierGenTask7State;
+
 import static taxi.TaxiConstants.*;
 
 public class HierGenPickupActiontype extends ObjectParameterizedActionType {

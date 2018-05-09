@@ -5,15 +5,20 @@ import burlap.mdp.core.oo.state.OOStateUtilities;
 import burlap.mdp.core.oo.state.ObjectInstance;
 import burlap.mdp.core.state.MutableState;
 import burlap.mdp.core.state.State;
-import taxi.Taxi;
 import taxi.hierarchies.interfaces.PassengerLocationParameterizable;
 import taxi.hierarchies.interfaces.PassengerParameterizable;
+import taxi.hierarchies.tasks.get.state.TaxiGetAgent;
+import taxi.hierarchies.tasks.get.state.TaxiGetPassenger;
+import taxi.hierarchies.tasks.put.state.TaxiPutAgent;
+import taxi.hierarchies.tasks.put.state.TaxiPutPassenger;
+import taxi.state.TaxiState;
+import utilities.DeepCopyForShallowCopyState;
 
 import java.util.*;
-import static taxi.TaxiConstants.*;
-import static taxi.TaxiConstants.ATT_VAL_ON_ROAD;
 
-public class TaxiHierGenTask7State implements MutableOOState, PassengerParameterizable, PassengerLocationParameterizable{
+import static taxi.TaxiConstants.*;
+
+public class TaxiHierGenTask7State implements MutableOOState, PassengerParameterizable, PassengerLocationParameterizable, DeepCopyForShallowCopyState {
 
 	public static final String CLASS_TASK7_PASSENGER = 		"task7Passenger";
 	public static final String CLASS_TASK7_Taxi =			"Task7axi";
@@ -43,7 +48,15 @@ public class TaxiHierGenTask7State implements MutableOOState, PassengerParameter
 
 	@Override
 	public MutableOOState removeObject(String oname) {
-		throw new RuntimeException("Not needed for HierGen");
+		ObjectInstance objectInstance = this.object(oname);
+		if (objectInstance instanceof TaxiPutAgent) {
+			touchTaxi();
+			taxi = null;
+		} else if (objectInstance instanceof TaxiPutPassenger) {
+			touchPassenger(oname);
+			passengers.remove(oname);
+		}
+		return this;
 	}
 
 	@Override
@@ -53,7 +66,9 @@ public class TaxiHierGenTask7State implements MutableOOState, PassengerParameter
 
 	@Override
 	public int numObjects() {
-		return 1 + this.passengers.size();
+		int total = taxi == null ? 0 : 1;
+		total += passengers.size();
+		return total;
 	}
 
 	@Override
@@ -66,7 +81,7 @@ public class TaxiHierGenTask7State implements MutableOOState, PassengerParameter
 	@Override
 	public List<ObjectInstance> objects() {
 		List<ObjectInstance> objects = new ArrayList<ObjectInstance>(passengers.values());
-		objects.add(taxi);
+		if (taxi != null) objects.add(taxi);
 		return objects;
 	}
 
@@ -95,7 +110,7 @@ public class TaxiHierGenTask7State implements MutableOOState, PassengerParameter
 	}
 
 	@Override
-	public State copy() {
+	public TaxiHierGenTask7State copy() {
 		return new TaxiHierGenTask7State(taxi, passengers);
 	}
 
@@ -145,5 +160,30 @@ public class TaxiHierGenTask7State implements MutableOOState, PassengerParameter
 
 	public Object getPassengerAtt(String passname, String attName){
 		return passengers.get(passname).get(attName);
+	}
+
+	public TaxiHierGenTask7Taxi touchTaxi() {
+		if (this.taxi != null) { this.taxi = taxi.copy(); }
+		return taxi;
+	}
+
+	public TaxiHierGenTask7Passenger touchPassenger(String name){
+		TaxiHierGenTask7Passenger p = passengers.get(name).copy();
+		touchPassengers().remove(name);
+		passengers.put(name, p);
+		return p;
+	}
+
+	public Map<String, TaxiHierGenTask7Passenger> touchPassengers(){
+		this.passengers = new HashMap<>(passengers);
+		return passengers;
+	}
+
+	@Override
+	public MutableOOState deepCopy() {
+		TaxiHierGenTask7State copy = this.copy();
+		copy.touchTaxi();
+		copy.touchPassengers();
+		return copy;
 	}
 }

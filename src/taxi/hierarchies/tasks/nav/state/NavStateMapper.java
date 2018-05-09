@@ -1,13 +1,12 @@
 package taxi.hierarchies.tasks.nav.state;
 
+import burlap.mdp.auxiliary.StateMapping;
+import burlap.mdp.core.state.State;
+import taxi.state.TaxiState;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import burlap.mdp.auxiliary.StateMapping;
-import burlap.mdp.core.state.State;
-import taxi.Taxi;
-import taxi.hierarchies.tasks.nav.TaxiNavDomain;
-import taxi.state.TaxiState;
 import static taxi.TaxiConstants.*;
 
 public class NavStateMapper implements StateMapping {

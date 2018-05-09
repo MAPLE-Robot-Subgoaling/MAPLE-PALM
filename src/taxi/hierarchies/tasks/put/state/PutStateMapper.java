@@ -1,17 +1,13 @@
 package taxi.hierarchies.tasks.put.state;
 
+import burlap.mdp.core.state.State;
+import taxi.hierarchies.interfaces.ParameterizedStateMapping;
+import taxi.state.TaxiState;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import burlap.mdp.auxiliary.StateMapping;
-import burlap.mdp.core.state.State;
-import taxi.Taxi;
-import taxi.hierarchies.interfaces.ParameterizedStateMapping;
-import taxi.hierarchies.tasks.put.TaxiPutDomain;
-import taxi.state.TaxiState;
-
 import static taxi.TaxiConstants.*;
-import static taxi.TaxiConstants.ATT_VAL_ON_ROAD;
 
 public class PutStateMapper implements ParameterizedStateMapping {
 

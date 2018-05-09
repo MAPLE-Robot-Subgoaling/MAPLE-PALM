@@ -1,15 +1,6 @@
 package cleanup.hierarchies.tasks.move;
 
-import burlap.mdp.core.oo.propositional.PropositionalFunction;
 import burlap.mdp.core.oo.state.OOState;
-import burlap.mdp.core.oo.state.ObjectInstance;
-import cleanup.state.CleanupAgent;
-import cleanup.state.CleanupState;
-
-import java.util.HashSet;
-
-import static cleanup.Cleanup.ATT_REGION;
-import static cleanup.hierarchies.tasks.move.BaseObjectToRegionActionType.getConnectedRegions;
 
 public class ObjectInRegionFailPF extends ObjectInRegionGoalPF {
 

@@ -1,6 +1,9 @@
 package cleanup.hierarchies.tasks.move;
 
-import cleanup.state.*;
+import cleanup.state.CleanupBlock;
+import cleanup.state.CleanupDoor;
+import cleanup.state.CleanupRoom;
+import cleanup.state.CleanupState;
 import utilities.MutableObject;
 
 import java.util.ArrayList;

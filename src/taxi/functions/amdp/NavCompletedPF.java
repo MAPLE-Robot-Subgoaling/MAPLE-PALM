@@ -2,9 +2,8 @@ package taxi.functions.amdp;
 
 import burlap.mdp.core.oo.propositional.PropositionalFunction;
 import burlap.mdp.core.oo.state.OOState;
-import taxi.Taxi;
-import taxi.hierarchies.tasks.nav.state.NavStateMapper;
 import taxi.hierarchies.tasks.nav.state.TaxiNavState;
+
 import static taxi.TaxiConstants.*;
 
 public class NavCompletedPF extends PropositionalFunction {

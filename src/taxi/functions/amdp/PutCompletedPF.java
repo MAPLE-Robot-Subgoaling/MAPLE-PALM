@@ -2,11 +2,9 @@ package taxi.functions.amdp;
 
 import burlap.mdp.core.oo.propositional.PropositionalFunction;
 import burlap.mdp.core.oo.state.OOState;
-import taxi.Taxi;
-import taxi.hierarchies.tasks.get.state.TaxiGetState;
-import taxi.hierarchies.tasks.put.TaxiPutDomain;
 import taxi.hierarchies.tasks.put.state.TaxiPutState;
 import utilities.MutableObject;
+
 import static taxi.TaxiConstants.*;
 
 public class PutCompletedPF extends PropositionalFunction{

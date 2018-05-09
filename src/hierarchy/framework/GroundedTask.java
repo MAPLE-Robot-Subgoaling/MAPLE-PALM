@@ -1,20 +1,15 @@
 package hierarchy.framework;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import burlap.behavior.valuefunction.ValueFunction;
-import burlap.mdp.auxiliary.common.GoalConditionTF;
-import burlap.mdp.auxiliary.stateconditiontest.StateConditionTest;
-import burlap.mdp.core.oo.ObjectParameterizedAction;
-import burlap.mdp.singleagent.common.GoalBasedRF;
-import burlap.mdp.singleagent.model.FactoredModel;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-
 import burlap.mdp.core.action.Action;
+import burlap.mdp.core.oo.ObjectParameterizedAction;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.model.FullModel;
 import burlap.mdp.singleagent.oo.OOSADomain;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class GroundedTask {
 

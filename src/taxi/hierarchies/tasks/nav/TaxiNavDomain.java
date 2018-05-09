@@ -5,15 +5,10 @@ import burlap.behavior.policy.PolicyUtils;
 import burlap.behavior.singleagent.Episode;
 import burlap.behavior.singleagent.planning.stochastic.valueiteration.ValueIteration;
 import burlap.mdp.auxiliary.DomainGenerator;
-import burlap.mdp.auxiliary.common.GoalConditionTF;
 import burlap.mdp.auxiliary.common.NullTermination;
-import burlap.mdp.auxiliary.common.SinglePFTF;
-import burlap.mdp.auxiliary.stateconditiontest.StateConditionTest;
 import burlap.mdp.core.TerminalFunction;
 import burlap.mdp.core.action.UniversalActionType;
-import burlap.mdp.core.oo.state.OOState;
 import burlap.mdp.core.state.State;
-import burlap.mdp.singleagent.common.GoalBasedRF;
 import burlap.mdp.singleagent.common.NullRewardFunction;
 import burlap.mdp.singleagent.environment.SimulatedEnvironment;
 import burlap.mdp.singleagent.model.FactoredModel;
@@ -23,13 +18,13 @@ import burlap.statehashing.HashableStateFactory;
 import burlap.statehashing.simple.SimpleHashableStateFactory;
 import hierarchy.framework.GoalFailRF;
 import hierarchy.framework.GoalFailTF;
-import taxi.Taxi;
 import taxi.functions.amdp.NavCompletedPF;
 import taxi.functions.amdp.NavFailurePF;
 import taxi.hierarchies.tasks.nav.state.NavStateMapper;
 import taxi.hierarchies.tasks.nav.state.TaxiNavAgent;
 import taxi.hierarchies.tasks.nav.state.TaxiNavLocation;
 import taxi.stateGenerator.TaxiStateFactory;
+
 import static taxi.TaxiConstants.*;
 
 public class TaxiNavDomain implements DomainGenerator {

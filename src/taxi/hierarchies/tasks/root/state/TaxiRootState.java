@@ -1,15 +1,20 @@
 package taxi.hierarchies.tasks.root.state;
 
-import burlap.mdp.core.oo.state.*;
+import burlap.mdp.core.oo.state.MutableOOState;
+import burlap.mdp.core.oo.state.OOStateUtilities;
+import burlap.mdp.core.oo.state.OOVariableKey;
+import burlap.mdp.core.oo.state.ObjectInstance;
 import burlap.mdp.core.state.MutableState;
-import taxi.Taxi;
-import taxi.hierarchies.tasks.root.TaxiRootDomain;
+import taxi.state.TaxiState;
+import utilities.DeepCopyForShallowCopyState;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static taxi.TaxiConstants.*;
-import static taxi.TaxiConstants.*;
-public class TaxiRootState implements MutableOOState {
+public class TaxiRootState implements MutableOOState, DeepCopyForShallowCopyState {
 
 	//this state has passengers
 	private Map<String, TaxiRootPassenger> passengers;
@@ -175,5 +180,13 @@ public class TaxiRootState implements MutableOOState {
 	@Override
 	public int hashCode() {
 		return passengers != null ? passengers.hashCode() : 0;
+	}
+
+
+	@Override
+	public MutableOOState deepCopy() {
+		TaxiRootState copy = this.copy();
+		copy.touchPassengers();
+		return copy;
 	}
 }

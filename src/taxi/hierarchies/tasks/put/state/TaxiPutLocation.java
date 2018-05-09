@@ -1,13 +1,12 @@
 package taxi.hierarchies.tasks.put.state;
 
 import burlap.mdp.core.oo.state.ObjectInstance;
-import taxi.Taxi;
-import taxi.hierarchies.tasks.put.TaxiPutDomain;
 import utilities.MutableObject;
 
 import java.util.Arrays;
 import java.util.List;
-import static taxi.TaxiConstants.*;
+
+import static taxi.TaxiConstants.CLASS_LOCATION;
 
 public class TaxiPutLocation extends MutableObject{
 

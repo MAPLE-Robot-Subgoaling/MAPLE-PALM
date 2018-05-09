@@ -2,12 +2,11 @@ package taxi.hierarchies.tasks.root.state;
 
 import burlap.mdp.auxiliary.StateMapping;
 import burlap.mdp.core.state.State;
-import taxi.Taxi;
-import taxi.hierarchies.tasks.root.TaxiRootDomain;
 import taxi.state.TaxiState;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import static taxi.TaxiConstants.*;
 
 public class RootStateMapper implements StateMapping {

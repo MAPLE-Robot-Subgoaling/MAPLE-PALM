@@ -5,14 +5,15 @@ import burlap.mdp.core.oo.state.OOStateUtilities;
 import burlap.mdp.core.oo.state.OOVariableKey;
 import burlap.mdp.core.oo.state.ObjectInstance;
 import burlap.mdp.core.state.MutableState;
-import taxi.Taxi;
 import taxi.hierarchies.TaxiGetPutState;
-import taxi.hierarchies.tasks.put.TaxiPutDomain;
+import taxi.state.TaxiState;
+import utilities.DeepCopyForShallowCopyState;
 
 import java.util.*;
+
 import static taxi.TaxiConstants.*;
 
-public class TaxiPutState extends TaxiGetPutState {
+public class TaxiPutState extends TaxiGetPutState implements DeepCopyForShallowCopyState {
 
 	//this state has passengers and depots
     private TaxiPutAgent taxi;
@@ -138,6 +139,7 @@ public class TaxiPutState extends TaxiGetPutState {
 	public MutableOOState removeObject(String oname) {
         ObjectInstance objectInstance = this.object(oname);
         if (objectInstance instanceof TaxiPutAgent) {
+        	touchTaxi();
             taxi = null;
         } else if (objectInstance instanceof TaxiPutPassenger) {
             touchPassenger(oname);
@@ -253,4 +255,12 @@ public class TaxiPutState extends TaxiGetPutState {
 		return result;
 	}
 
+	@Override
+	public MutableOOState deepCopy() {
+		TaxiPutState copy = this.copy();
+		copy.touchTaxi();
+		copy.touchPassengers();
+		copy.touchLocations();
+		return copy;
+	}
 }

@@ -1,12 +1,11 @@
 package utilities;
 
+import burlap.mdp.core.state.MutableState;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import burlap.mdp.core.state.MutableState;
-import burlap.mdp.core.state.State;
 
 public abstract class MutableObject implements MutableObjectInstance, Serializable {
 

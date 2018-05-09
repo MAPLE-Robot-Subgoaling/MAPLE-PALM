@@ -2,7 +2,6 @@ package taxi.hierGen.Task7.state;
 
 import burlap.mdp.auxiliary.StateMapping;
 import burlap.mdp.core.state.State;
-import taxi.Taxi;
 import taxi.state.TaxiState;
 
 import java.util.ArrayList;

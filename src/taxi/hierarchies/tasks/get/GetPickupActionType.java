@@ -6,7 +6,7 @@ import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.oo.ObjectParameterizedActionType;
 import taxi.hierarchies.tasks.get.state.TaxiGetState;
 
-import static taxi.TaxiConstants.*;
+import static taxi.TaxiConstants.ATT_LOCATION;
 
 public class GetPickupActionType extends ObjectParameterizedActionType {
     public GetPickupActionType(String name, String[] parameterClasses) {

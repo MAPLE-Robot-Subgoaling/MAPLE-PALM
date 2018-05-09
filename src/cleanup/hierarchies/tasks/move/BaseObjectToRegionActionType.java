@@ -11,11 +11,8 @@ import cleanup.state.CleanupState;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 
 import static cleanup.Cleanup.*;
-import static cleanup.Cleanup.ATT_BOTTOM;
-import static cleanup.Cleanup.ATT_TOP;
 import static cleanup.hierarchies.tasks.pick.PickRoomAgentMapper.rectanglesIntersect;
 
 

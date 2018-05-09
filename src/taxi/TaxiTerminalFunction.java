@@ -3,6 +3,7 @@ package taxi;
 import burlap.mdp.core.TerminalFunction;
 import burlap.mdp.core.state.State;
 import taxi.state.TaxiState;
+
 import static taxi.TaxiConstants.*;
 
 public class TaxiTerminalFunction implements TerminalFunction{

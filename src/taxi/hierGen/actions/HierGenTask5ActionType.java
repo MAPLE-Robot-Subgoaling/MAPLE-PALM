@@ -9,7 +9,6 @@ import taxi.hierarchies.interfaces.PassengerLocationParameterizable;
 
 import java.util.ArrayList;
 import java.util.List;
-import static taxi.TaxiConstants.*;
 
 public class HierGenTask5ActionType implements ActionType {
 

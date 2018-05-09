@@ -2,11 +2,8 @@ package taxi.functions.amdp;
 
 import burlap.mdp.core.oo.propositional.PropositionalFunction;
 import burlap.mdp.core.oo.state.OOState;
-import taxi.Taxi;
-import taxi.hierarchies.tasks.get.TaxiGetDomain;
-import utilities.MutableObject;
 
-import static taxi.TaxiConstants.*;
+import static taxi.TaxiConstants.CLASS_PASSENGER;
 public class GetFailurePF extends PropositionalFunction {
 	//get fails if any passenger if in taxi unless it is the right one
 	

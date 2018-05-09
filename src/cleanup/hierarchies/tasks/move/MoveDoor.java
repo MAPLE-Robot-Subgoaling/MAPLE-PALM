@@ -7,9 +7,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static cleanup.Cleanup.ATT_CONNECTED;
-import static cleanup.Cleanup.ATT_LOCKED;
-import static cleanup.Cleanup.CLASS_DOOR;
+import static cleanup.Cleanup.*;
 
 public class MoveDoor extends CleanupDoor {
 

@@ -5,13 +5,8 @@ import burlap.mdp.core.action.Action;
 import burlap.mdp.core.action.ActionType;
 import burlap.mdp.core.oo.ObjectParameterizedAction;
 import burlap.mdp.core.oo.propositional.PropositionalFunction;
-import burlap.mdp.core.oo.state.OOState;
 import burlap.mdp.core.state.State;
-import burlap.mdp.singleagent.model.RewardFunction;
 import burlap.mdp.singleagent.oo.OOSADomain;
-import ramdp.agent.RAMDPModel;
-
-import java.util.Arrays;
 
 public class NonprimitiveTask extends Task {
     //tasks which are not at the base of the hierarchy

@@ -3,8 +3,9 @@ package taxi;
 import burlap.mdp.core.oo.ObjectParameterizedAction;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.oo.ObjectParameterizedActionType;
-import taxi.state.TaxiState;
 import taxi.state.TaxiPassenger;
+import taxi.state.TaxiState;
+
 import static taxi.TaxiConstants.*;
 
 public class PickupActionType extends ObjectParameterizedActionType {

@@ -1,16 +1,14 @@
 package state.hashing.simple;
 
-import java.util.Arrays;
-import java.util.List;
-
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-
 import burlap.mdp.core.oo.state.OOState;
 import burlap.mdp.core.oo.state.ObjectInstance;
 import burlap.mdp.core.state.State;
-import burlap.statehashing.HashableState;
 import burlap.statehashing.WrappedHashableState;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import utilities.DeepCopyForShallowCopyState;
+
+import java.util.Arrays;
+import java.util.List;
 
 public class IDCachedHashableState extends WrappedHashableState {
 

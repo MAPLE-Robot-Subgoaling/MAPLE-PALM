@@ -11,6 +11,7 @@ import taxi.hierarchies.tasks.root.state.TaxiRootState;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import static taxi.TaxiConstants.*;
 
 public class TaxiRootModel implements FullStateModel {

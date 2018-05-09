@@ -1,23 +1,18 @@
 package taxi;
 
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.geom.Ellipse2D;
-import java.util.HashMap;
-import java.util.Map;
-
 import burlap.mdp.core.oo.state.OOState;
 import burlap.mdp.core.oo.state.ObjectInstance;
 import burlap.visualizer.OOStatePainter;
 import burlap.visualizer.ObjectPainter;
 import burlap.visualizer.StateRenderLayer;
 import burlap.visualizer.Visualizer;
-import taxi.state.TaxiAgent;
-import taxi.state.TaxiLocation;
-import taxi.state.TaxiPassenger;
-import taxi.state.TaxiState;
-import taxi.state.TaxiWall;
+import taxi.state.*;
+
+import java.awt.*;
+import java.awt.geom.Ellipse2D;
+import java.util.HashMap;
+import java.util.Map;
+
 import static taxi.TaxiConstants.*;
 
 public class TaxiVisualizer {

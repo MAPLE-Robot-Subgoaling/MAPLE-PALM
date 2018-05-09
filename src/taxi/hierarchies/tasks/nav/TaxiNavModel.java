@@ -1,17 +1,18 @@
 package taxi.hierarchies.tasks.nav;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import burlap.debugtools.RandomFactory;
 import burlap.mdp.core.StateTransitionProb;
 import burlap.mdp.core.action.Action;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.model.statemodel.FullStateModel;
+import taxi.hierarchies.tasks.nav.state.NavStateMapper;
 import taxi.hierarchies.tasks.nav.state.TaxiNavAgent;
 import taxi.hierarchies.tasks.nav.state.TaxiNavState;
-import taxi.hierarchies.tasks.nav.state.NavStateMapper;
 import taxi.hierarchies.tasks.nav.state.TaxiNavWall;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import static taxi.TaxiConstants.*;
 
 public class TaxiNavModel implements FullStateModel {

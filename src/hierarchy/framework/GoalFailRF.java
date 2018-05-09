@@ -1,7 +1,6 @@
 package hierarchy.framework;
 
 import burlap.mdp.core.action.Action;
-import burlap.mdp.core.oo.ObjectParameterizedAction;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.model.RewardFunction;
 

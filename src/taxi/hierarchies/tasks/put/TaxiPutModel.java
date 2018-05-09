@@ -12,6 +12,7 @@ import taxi.hierarchies.tasks.put.state.TaxiPutState;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import static taxi.TaxiConstants.*;
 
 public class TaxiPutModel implements FullStateModel {

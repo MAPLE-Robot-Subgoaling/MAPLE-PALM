@@ -9,8 +9,8 @@ import taxi.hierarchies.interfaces.PassengerParameterizable;
 import utilities.DeepCopyForShallowCopyState;
 
 import java.util.*;
+
 import static taxi.TaxiConstants.*;
-import static taxi.TaxiConstants.ATT_VAL_ON_ROAD;
 
 public class TaxiState implements MutableOOState, PassengerParameterizable, DeepCopyForShallowCopyState {
 
@@ -393,8 +393,6 @@ public class TaxiState implements MutableOOState, PassengerParameterizable, Deep
 		copy.touchPassengers();
 		copy.touchLocations();
 		copy.touchWalls();
-//		copy.objectInstanceList = null;
-//		this.objectInstanceList = null;
 		return copy;
 	}
 }

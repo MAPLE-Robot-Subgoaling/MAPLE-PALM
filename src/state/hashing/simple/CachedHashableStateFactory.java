@@ -7,7 +7,6 @@ import burlap.statehashing.WrappedHashableState;
 import utilities.DeepCopyForShallowCopyState;
 
 import java.util.HashMap;
-import java.util.HashSet;
 
 public class CachedHashableStateFactory implements HashableStateFactory {
 

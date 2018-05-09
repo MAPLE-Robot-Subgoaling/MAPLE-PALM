@@ -1,17 +1,13 @@
 package taxi.stateGenerator;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import burlap.debugtools.RandomFactory;
 import burlap.mdp.auxiliary.StateGenerator;
 import burlap.mdp.core.state.State;
-import taxi.Taxi;
-import taxi.state.TaxiAgent;
-import taxi.state.TaxiLocation;
-import taxi.state.TaxiPassenger;
-import taxi.state.TaxiState;
-import taxi.state.TaxiWall;
+import taxi.state.*;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import static taxi.TaxiConstants.*;
 
 public class RandomPassengerTaxiState implements StateGenerator{

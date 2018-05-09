@@ -1,11 +1,11 @@
 package taxi.state;
 
+import burlap.mdp.core.oo.state.ObjectInstance;
+import utilities.MutableObject;
+
 import java.util.Arrays;
 import java.util.List;
 
-import burlap.mdp.core.oo.state.ObjectInstance;
-import taxi.Taxi;
-import utilities.MutableObject;
 import static taxi.TaxiConstants.*;
 public class TaxiAgent extends MutableObject {
 

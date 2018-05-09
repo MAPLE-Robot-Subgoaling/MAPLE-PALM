@@ -2,8 +2,8 @@ package taxi.rmaxq.functions;
 
 import burlap.mdp.core.oo.propositional.PropositionalFunction;
 import burlap.mdp.core.oo.state.OOState;
-import taxi.Taxi;
 import taxi.state.TaxiState;
+
 import static taxi.TaxiConstants.*;
 
 public class BaseRootPF  extends PropositionalFunction{

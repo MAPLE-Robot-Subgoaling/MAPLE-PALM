@@ -2,11 +2,12 @@ package taxi.hierGen.functions;
 
 import burlap.mdp.core.oo.propositional.PropositionalFunction;
 import burlap.mdp.core.oo.state.OOState;
-import taxi.Taxi;
 import taxi.hierGen.Task5.state.TaxiHierGenTask5State;
 import taxi.hierGen.actions.HierGenTask5Action;
 import taxi.hierGen.actions.HierGenTask5ActionType;
-import static taxi.TaxiConstants.*;
+
+import static taxi.TaxiConstants.ATT_X;
+import static taxi.TaxiConstants.ATT_Y;
 
 public class HierGenTask5Completed extends PropositionalFunction {
 

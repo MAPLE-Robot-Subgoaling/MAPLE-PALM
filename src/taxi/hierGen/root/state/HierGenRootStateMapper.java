@@ -2,11 +2,11 @@ package taxi.hierGen.root.state;
 
 import burlap.mdp.auxiliary.StateMapping;
 import burlap.mdp.core.state.State;
-import taxi.Taxi;
 import taxi.state.TaxiState;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import static taxi.TaxiConstants.*;
 
 public class HierGenRootStateMapper implements StateMapping {

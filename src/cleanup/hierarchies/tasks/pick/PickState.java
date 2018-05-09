@@ -2,7 +2,9 @@ package cleanup.hierarchies.tasks.pick;
 
 import burlap.mdp.core.state.annotations.ShallowCopyState;
 import cleanup.hierarchies.tasks.move.MoveState;
-import cleanup.state.*;
+import cleanup.state.CleanupBlock;
+import cleanup.state.CleanupRoom;
+import cleanup.state.CleanupState;
 
 import java.util.ArrayList;
 import java.util.List;

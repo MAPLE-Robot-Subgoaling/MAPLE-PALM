@@ -1,15 +1,13 @@
 package taxi.hierarchies.tasks.get.state;
 
+import burlap.mdp.core.state.State;
+import taxi.hierarchies.interfaces.ParameterizedStateMapping;
+import taxi.state.TaxiState;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import burlap.mdp.core.state.State;
-import taxi.hierarchies.interfaces.ParameterizedStateMapping;
-import taxi.hierarchies.tasks.get.TaxiGetDomain;
-import taxi.state.TaxiState;
-import taxi.Taxi;
 import static taxi.TaxiConstants.*;
-import static taxi.TaxiConstants.ATT_VAL_ON_ROAD;
 
 public class GetStateMapper implements ParameterizedStateMapping {
 	//maps a base taxi state to L2

@@ -26,7 +26,6 @@ import taxi.hierarchies.tasks.get.state.TaxiGetLocation;
 import taxi.hierarchies.tasks.get.state.TaxiGetPassenger;
 import taxi.stateGenerator.TaxiStateFactory;
 
-
 import static taxi.TaxiConstants.*;
 
 public class TaxiGetDomain implements DomainGenerator {

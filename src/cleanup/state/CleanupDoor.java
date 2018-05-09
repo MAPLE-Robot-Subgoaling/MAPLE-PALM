@@ -1,11 +1,9 @@
 package cleanup.state;
 
-import burlap.mdp.core.oo.state.ObjectInstance;
 import burlap.mdp.core.state.annotations.DeepCopyState;
 import cleanup.Cleanup;
 import utilities.MutableObject;
 
-import java.awt.*;
 import java.util.Arrays;
 import java.util.List;
 

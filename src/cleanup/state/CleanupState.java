@@ -9,7 +9,6 @@ import burlap.mdp.core.state.annotations.ShallowCopyState;
 import cleanup.Cleanup;
 
 import java.util.*;
-import java.util.stream.Stream;
 
 import static cleanup.Cleanup.ATT_X;
 import static cleanup.Cleanup.ATT_Y;

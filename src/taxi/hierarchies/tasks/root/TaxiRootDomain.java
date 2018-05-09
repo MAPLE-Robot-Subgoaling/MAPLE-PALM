@@ -7,9 +7,7 @@ import burlap.behavior.singleagent.planning.stochastic.valueiteration.ValueItera
 import burlap.mdp.auxiliary.DomainGenerator;
 import burlap.mdp.auxiliary.common.NullTermination;
 import burlap.mdp.core.TerminalFunction;
-import burlap.mdp.core.action.ActionType;
 import burlap.mdp.core.state.State;
-import burlap.mdp.singleagent.common.GoalBasedRF;
 import burlap.mdp.singleagent.common.NullRewardFunction;
 import burlap.mdp.singleagent.environment.SimulatedEnvironment;
 import burlap.mdp.singleagent.model.FactoredModel;
@@ -19,7 +17,6 @@ import burlap.statehashing.HashableStateFactory;
 import burlap.statehashing.simple.SimpleHashableStateFactory;
 import hierarchy.framework.GoalFailRF;
 import hierarchy.framework.GoalFailTF;
-import taxi.Taxi;
 import taxi.functions.amdp.RootCompletedPF;
 import taxi.functions.amdp.RootFailurePF;
 import taxi.hierarchies.tasks.root.state.RootStateMapper;

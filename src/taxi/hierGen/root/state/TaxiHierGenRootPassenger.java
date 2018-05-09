@@ -1,11 +1,11 @@
 package taxi.hierGen.root.state;
 
 import burlap.mdp.core.oo.state.ObjectInstance;
-import taxi.Taxi;
 import utilities.MutableObject;
 
 import java.util.Arrays;
 import java.util.List;
+
 import static taxi.TaxiConstants.*;
 
 public class TaxiHierGenRootPassenger extends MutableObject {

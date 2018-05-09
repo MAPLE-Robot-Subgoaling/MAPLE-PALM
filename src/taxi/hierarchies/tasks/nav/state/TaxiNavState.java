@@ -1,18 +1,16 @@
 package taxi.hierarchies.tasks.nav.state;
 
-import java.util.*;
-
 import burlap.mdp.core.oo.state.MutableOOState;
 import burlap.mdp.core.oo.state.OOStateUtilities;
 import burlap.mdp.core.oo.state.ObjectInstance;
 import burlap.mdp.core.state.MutableState;
-import taxi.Taxi;
-import taxi.hierarchies.tasks.get.state.TaxiGetLocation;
-import taxi.hierarchies.tasks.get.state.TaxiGetPassenger;
-import taxi.hierarchies.tasks.nav.TaxiNavDomain;
+import taxi.state.TaxiState;
+import utilities.DeepCopyForShallowCopyState;
+
+import java.util.*;
 
 import static taxi.TaxiConstants.*;
-public class TaxiNavState implements MutableOOState{
+public class TaxiNavState implements MutableOOState, DeepCopyForShallowCopyState {
 	private TaxiNavAgent taxi;
 	private Map<String, TaxiNavLocation> locations;
 	private Map<String, TaxiNavWall> walls;
@@ -147,6 +145,7 @@ public class TaxiNavState implements MutableOOState{
 	public MutableOOState removeObject(String oname) {
         ObjectInstance objectInstance = this.object(oname);
         if (objectInstance instanceof TaxiNavAgent) {
+        	touchTaxi();
             taxi = null;
         } else if (objectInstance instanceof TaxiNavWall) {
             touchWall(oname);
@@ -232,5 +231,14 @@ public class TaxiNavState implements MutableOOState{
 		result = 31 * result + (locations != null ? locations.hashCode() : 0);
 		result = 31 * result + (walls != null ? walls.hashCode() : 0);
 		return result;
+	}
+
+	@Override
+	public MutableOOState deepCopy() {
+		TaxiNavState copy = this.copy();
+		copy.touchTaxi();
+		copy.touchLocations();
+		copy.touchWalls();
+		return copy;
 	}
 }

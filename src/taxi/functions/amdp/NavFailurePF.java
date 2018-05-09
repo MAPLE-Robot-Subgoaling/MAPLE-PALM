@@ -2,12 +2,8 @@ package taxi.functions.amdp;
 
 import burlap.mdp.core.oo.propositional.PropositionalFunction;
 import burlap.mdp.core.oo.state.OOState;
-import taxi.Taxi;
-import taxi.hierarchies.tasks.nav.TaxiNavDomain;
-import taxi.hierarchies.tasks.nav.state.NavStateMapper;
-import taxi.hierarchies.tasks.nav.state.TaxiNavState;
-import utilities.MutableObject;
-import static taxi.TaxiConstants.*;
+
+import static taxi.TaxiConstants.CLASS_LOCATION;
 
 public class NavFailurePF extends PropositionalFunction {
 	//nav is terminal when the taxi is at the desired location

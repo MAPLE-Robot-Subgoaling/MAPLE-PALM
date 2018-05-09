@@ -2,9 +2,10 @@ package taxi.hierGen.Task5.state;
 
 import burlap.mdp.auxiliary.StateMapping;
 import burlap.mdp.core.state.State;
-import taxi.Taxi;
 import taxi.state.TaxiState;
-import static taxi.TaxiConstants.*;
+
+import static taxi.TaxiConstants.ATT_X;
+import static taxi.TaxiConstants.ATT_Y;
 
 public class Task5StateMapper implements StateMapping {
 	@Override

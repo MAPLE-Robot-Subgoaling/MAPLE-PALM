@@ -1,8 +1,5 @@
 package taxi;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import burlap.debugtools.RandomFactory;
 import burlap.mdp.core.StateTransitionProb;
 import burlap.mdp.core.action.Action;
@@ -12,6 +9,9 @@ import burlap.mdp.singleagent.model.statemodel.FullStateModel;
 import taxi.state.TaxiAgent;
 import taxi.state.TaxiPassenger;
 import taxi.state.TaxiState;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static taxi.TaxiConstants.*;
 public class TaxiModel implements FullStateModel{

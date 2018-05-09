@@ -1,13 +1,13 @@
 package taxi.hierGen.Task7.state;
 
 import burlap.mdp.core.oo.state.ObjectInstance;
-import taxi.Taxi;
 import utilities.MutableObject;
 
 import java.util.Arrays;
 import java.util.List;
 
-import static taxi.TaxiConstants.*;
+import static taxi.TaxiConstants.ATT_X;
+import static taxi.TaxiConstants.ATT_Y;
 
 public class TaxiHierGenTask7Taxi extends MutableObject{
 

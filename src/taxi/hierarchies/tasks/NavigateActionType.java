@@ -5,10 +5,8 @@ import burlap.mdp.core.oo.state.ObjectInstance;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.oo.ObjectParameterizedActionType;
 import taxi.hierarchies.TaxiGetPutState;
-import taxi.hierarchies.tasks.get.TaxiGetDomain;
-import taxi.hierarchies.tasks.get.state.TaxiGetState;
 
-import static taxi.TaxiConstants.*;
+import static taxi.TaxiConstants.ATT_LOCATION;
 public class NavigateActionType extends ObjectParameterizedActionType {
 
 	public NavigateActionType(String name, String[] parameterClasses) {

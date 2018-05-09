@@ -1,8 +1,5 @@
 package taxi.hierarchies.tasks.get;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import burlap.debugtools.RandomFactory;
 import burlap.mdp.core.StateTransitionProb;
 import burlap.mdp.core.action.Action;
@@ -12,6 +9,9 @@ import burlap.mdp.singleagent.model.statemodel.FullStateModel;
 import taxi.hierarchies.tasks.get.state.TaxiGetAgent;
 import taxi.hierarchies.tasks.get.state.TaxiGetPassenger;
 import taxi.hierarchies.tasks.get.state.TaxiGetState;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static taxi.TaxiConstants.*;
 
