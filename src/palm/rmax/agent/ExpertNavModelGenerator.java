@@ -39,8 +39,8 @@ public class ExpertNavModelGenerator implements PALMModelGenerator {
             TaxiNavDomain nav_gen = new TaxiNavDomain(locName);
             OODomain nav_domain = nav_gen.generateDomain();
             FactoredModel nav_model = (FactoredModel) ((OOSADomain) nav_domain).getModel();
-            PALMModel nav_palm_model = new ExpertPALMModel(nav_model);
-            PALMModel nav = new ExpertPALMModel(nav_palm_model);
+//            PALMModel nav_palm_model = new ExpertPALMModel(nav_model);
+            PALMModel nav = new ExpertPALMModel(nav_model, gamma);
             return  nav;
         }else{
             return new HierarchicalRmaxModel(t, this.threshold, this.rmax,

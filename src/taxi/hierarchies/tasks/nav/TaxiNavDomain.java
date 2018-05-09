@@ -89,7 +89,7 @@ public class TaxiNavDomain implements DomainGenerator {
 		OOSADomain domain = taxiBuild.generateDomain();
 
 		HashableStateFactory hs = new SimpleHashableStateFactory();
-		ValueIteration vi = new ValueIteration(domain, 0.5, hs, 0.01, 10);
+		ValueIteration vi = new ValueIteration(domain, 0.99, hs, 0.0001, 1000);
 
 		State base = TaxiStateFactory.createClassicState();
 		NavStateMapper map = new NavStateMapper();

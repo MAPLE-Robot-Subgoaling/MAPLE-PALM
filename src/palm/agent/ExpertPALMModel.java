@@ -11,9 +11,11 @@ import java.util.List;
 public class ExpertPALMModel extends PALMModel {
 
     private FactoredModel baseModel;
+    private Double gamma;
 
-    public ExpertPALMModel(FactoredModel baseModel){
+    public ExpertPALMModel(FactoredModel baseModel, double gamma){
         this.baseModel = baseModel;
+        this.gamma = gamma;
     }
 
     @Override
@@ -31,6 +33,10 @@ public class ExpertPALMModel extends PALMModel {
 
     @Override
     public double gamma() {
-        return 0;
+        if (gamma == null) {
+            throw new RuntimeException("Warning: must specify a gamma / discount factor");
+        } else {
+            return gamma;
+        }
     }
 }

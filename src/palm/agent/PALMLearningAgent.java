@@ -208,7 +208,8 @@ public class PALMLearningAgent implements LearningAgent{
 		OOSADomain domain = task.getDomain(model);
 		double discount = model.gamma();
         ValueIteration planner = new ValueIteration(domain, discount, hashingFactory, maxDelta, maxIterationsInModelPlanner);
-        planner.toggleReachabiltiyTerminalStatePruning(true);
+		planner.toggleReachabiltiyTerminalStatePruning(true);
+//		planner.toggleReachabiltiyTerminalStatePruning(false);
 		ValueFunction valueFunction = task.valueFunction;
 		if (valueFunction != null) {
 			planner.setValueFunctionInitialization(valueFunction);

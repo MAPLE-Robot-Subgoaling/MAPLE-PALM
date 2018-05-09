@@ -3,7 +3,7 @@ state: classic
 agents:
 #  - rmaxq
   - palmExpert
-#  - palmExpertWithNavGiven
+  - palmExpertWithNavGiven
   - palmHiergen
 
 episodes: 200
