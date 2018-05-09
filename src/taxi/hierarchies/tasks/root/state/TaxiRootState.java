@@ -1,13 +1,20 @@
 package taxi.hierarchies.tasks.root.state;
 
-import burlap.mdp.core.oo.state.*;
+import burlap.mdp.core.oo.state.MutableOOState;
+import burlap.mdp.core.oo.state.OOStateUtilities;
+import burlap.mdp.core.oo.state.OOVariableKey;
+import burlap.mdp.core.oo.state.ObjectInstance;
 import burlap.mdp.core.state.MutableState;
-import taxi.Taxi;
-import taxi.hierarchies.tasks.root.TaxiRootDomain;
+import taxi.state.TaxiState;
+import utilities.DeepCopyForShallowCopyState;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-public class TaxiRootState implements MutableOOState {
+import static taxi.TaxiConstants.*;
+public class TaxiRootState implements MutableOOState, DeepCopyForShallowCopyState {
 
 	//this state has passengers
 	private Map<String, TaxiRootPassenger> passengers;
@@ -50,7 +57,7 @@ public class TaxiRootState implements MutableOOState {
 
 	@Override
 	public List<ObjectInstance> objectsOfClass(String oclass) {
-		if(oclass.equals(Taxi.CLASS_PASSENGER))
+		if(oclass.equals(CLASS_PASSENGER))
 			return new ArrayList<ObjectInstance>(passengers.values());
 		throw new RuntimeException("No object class " + oclass);
 	}
@@ -84,7 +91,7 @@ public class TaxiRootState implements MutableOOState {
 
 	@Override
 	public MutableOOState addObject(ObjectInstance o) {
-		if(o instanceof TaxiRootPassenger || o.className().equals(Taxi.CLASS_PASSENGER)){
+		if(o instanceof TaxiRootPassenger || o.className().equals(CLASS_PASSENGER)){
 			touchPassengers().put(o.name(), (TaxiRootPassenger) o);
 		}else{
 			throw new RuntimeException("Can only add certain objects to state.");
@@ -140,7 +147,7 @@ public class TaxiRootState implements MutableOOState {
 			buf.append("P");
 			buf.append(passenger.name().charAt(passenger.name().length()-1));
 			buf.append(", at:");
-			String at = (String) passenger.get(TaxiRootDomain.ATT_CURRENT_LOCATION);
+			String at = (String) passenger.get(ATT_LOCATION);
 			if (at.contains("Location")) {
 				buf.append("L");
 				buf.append(at.charAt(at.length()-1));
@@ -148,7 +155,7 @@ public class TaxiRootState implements MutableOOState {
 				buf.append(at);
 			}
 			buf.append(", goal:");
-			String goal = (String) passenger.get(TaxiRootDomain.ATT_GOAL_LOCATION);
+			String goal = (String) passenger.get(ATT_GOAL_LOCATION);
 			if (goal.contains("Location")) {
 				buf.append("L");
 				buf.append(goal.charAt(goal.length()-1));
@@ -173,5 +180,13 @@ public class TaxiRootState implements MutableOOState {
 	@Override
 	public int hashCode() {
 		return passengers != null ? passengers.hashCode() : 0;
+	}
+
+
+	@Override
+	public MutableOOState deepCopy() {
+		TaxiRootState copy = this.copy();
+		copy.touchPassengers();
+		return copy;
 	}
 }

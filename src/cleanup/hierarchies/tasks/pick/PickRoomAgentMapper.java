@@ -10,7 +10,6 @@ import java.util.HashSet;
 import java.util.List;
 
 import static cleanup.Cleanup.*;
-import static cleanup.Cleanup.ATT_SHAPE;
 
 public class PickRoomAgentMapper implements StateMapping {
 

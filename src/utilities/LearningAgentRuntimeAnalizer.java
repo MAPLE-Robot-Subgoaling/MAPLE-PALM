@@ -1,37 +1,29 @@
 package utilities;
 
-import java.awt.Color;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
+import burlap.behavior.singleagent.learning.LearningAgent;
+import burlap.behavior.singleagent.learning.LearningAgentFactory;
+import burlap.mdp.singleagent.environment.Environment;
+import org.apache.commons.math3.distribution.TDistribution;
+import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.DefaultDrawingSupplier;
+import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.xy.DeviationRenderer;
+import org.jfree.data.xy.XYSeries;
+import org.jfree.data.xy.XYSeriesCollection;
+import org.jfree.data.xy.YIntervalSeries;
+import org.jfree.data.xy.YIntervalSeriesCollection;
+
+import javax.swing.*;
+import java.awt.*;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
-
-import org.apache.commons.math3.distribution.TDistribution;
-import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
-import org.jfree.chart.ChartFactory;
-import org.jfree.chart.ChartPanel;
-import org.jfree.chart.JFreeChart;
-import org.jfree.chart.axis.ValueAxis;
-import org.jfree.chart.plot.DefaultDrawingSupplier;
-import org.jfree.chart.plot.XYPlot;
-import org.jfree.chart.renderer.xy.DeviationRenderer;
-import org.jfree.data.Range;
-import org.jfree.data.xy.XYSeries;
-import org.jfree.data.xy.XYSeriesCollection;
-import org.jfree.data.xy.YIntervalSeries;
-import org.jfree.data.xy.YIntervalSeriesCollection;
-
-import burlap.behavior.singleagent.learning.LearningAgent;
-import burlap.behavior.singleagent.learning.LearningAgentFactory;
-import burlap.mdp.singleagent.environment.Environment;
 
 public class LearningAgentRuntimeAnalizer {
 

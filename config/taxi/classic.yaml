@@ -1,18 +1,20 @@
-state: small
+state: classic
 
 agents:
+#  - rmaxq
   - palmExpert
-#  - palmHiergen
+#  - palmExpertWithNavGiven
+  - palmHiergen
 
-episodes: 5000
-max_steps: 10000
+episodes: 200
+max_steps: 1000
 trials: 1
 gamma: 0.99
 
 stochastic:
   seed: 2320942930
   correct_move: 1.0
-  fickle: 0.00
+  fickle: 0.05
   random_start: false
 
 planning:
@@ -22,6 +24,7 @@ rmax:
   vmax: 1.0
   threshold: 10
   max_delta: 0.0000001
+  max_delta_rmaxq: 0.0001
   max_iterations_in_model: 1000
   use_multitime_model: true
 

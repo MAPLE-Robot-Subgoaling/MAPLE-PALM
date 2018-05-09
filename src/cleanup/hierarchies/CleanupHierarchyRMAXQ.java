@@ -25,8 +25,6 @@ import config.cleanup.CleanupConfig;
 import hierarchy.framework.*;
 
 import static cleanup.Cleanup.*;
-import static cleanup.Cleanup.CLASS_BLOCK;
-import static cleanup.Cleanup.CLASS_ROOM;
 
 public class CleanupHierarchyRMAXQ extends CleanupHierarchy {
 

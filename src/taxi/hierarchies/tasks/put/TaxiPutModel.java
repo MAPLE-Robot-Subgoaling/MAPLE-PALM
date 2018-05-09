@@ -13,6 +13,8 @@ import taxi.hierarchies.tasks.put.state.TaxiPutState;
 import java.util.ArrayList;
 import java.util.List;
 
+import static taxi.TaxiConstants.*;
+
 public class TaxiPutModel implements FullStateModel {
 
 	@Override
@@ -34,9 +36,9 @@ public class TaxiPutModel implements FullStateModel {
 		List<StateTransitionProb> tps = new ArrayList<StateTransitionProb>();
 		TaxiPutState state = (TaxiPutState) s;
 
-		if(a.actionName().startsWith(TaxiPutDomain.ACTION_DROPOFF)) {
-			dropoff(state, (ObjectParameterizedAction)a, tps);
-		} else if(a.actionName().startsWith(TaxiPutDomain.ACTION_NAV)) {
+		if(a.actionName().startsWith(ACTION_PUTDOWN)) {
+			putdown(state, (ObjectParameterizedAction)a, tps);
+		} else if(a.actionName().startsWith(ACTION_NAV)) {
 			navigate(state, (ObjectParameterizedAction)a, tps);
 		}
 		return tps;
@@ -48,13 +50,13 @@ public class TaxiPutModel implements FullStateModel {
 	 * @param a the get action type
 	 * @param tps the list of transition probabilities
 	 */
-	public void dropoff(TaxiPutState s, ObjectParameterizedAction a, List<StateTransitionProb> tps) {
+	public void putdown(TaxiPutState s, ObjectParameterizedAction a, List<StateTransitionProb> tps) {
 		TaxiPutState ns = s.copy();
 		String passenger = a.getObjectParameters()[0];
 
         TaxiPutPassenger np = ns.touchPassenger(passenger);
-        String taxiLocation = (String) ns.getTaxiAtt(TaxiPutDomain.ATT_TAXI_LOCATION);
-        np.set(TaxiPutDomain.ATT_LOCATION, taxiLocation);
+        String taxiLocation = (String) ns.getTaxiAtt(ATT_LOCATION);
+        np.set(ATT_LOCATION, taxiLocation);
 
 		tps.add(new StateTransitionProb(ns, 1));
 	}
@@ -70,7 +72,7 @@ public class TaxiPutModel implements FullStateModel {
 		String goal = a.getObjectParameters()[0];
 
 		TaxiPutAgent nt = ns.touchTaxi();
-		nt.set(TaxiPutDomain.ATT_TAXI_LOCATION, goal);
+		nt.set(ATT_LOCATION, goal);
 
 		tps.add(new StateTransitionProb(ns, 1));
 	}

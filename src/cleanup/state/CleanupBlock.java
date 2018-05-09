@@ -1,6 +1,5 @@
 package cleanup.state;
 
-import burlap.mdp.core.oo.state.ObjectInstance;
 import burlap.mdp.core.state.annotations.DeepCopyState;
 import cleanup.Cleanup;
 import utilities.MutableObject;

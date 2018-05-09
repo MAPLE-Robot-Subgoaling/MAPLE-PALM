@@ -1,30 +1,41 @@
 package state.hashing.simple;
 
-import java.util.Arrays;
-import java.util.List;
-
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-
 import burlap.mdp.core.oo.state.OOState;
 import burlap.mdp.core.oo.state.ObjectInstance;
 import burlap.mdp.core.state.State;
-import burlap.statehashing.HashableState;
 import burlap.statehashing.WrappedHashableState;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import utilities.DeepCopyForShallowCopyState;
+
+import java.util.Arrays;
+import java.util.List;
 
 public class IDCachedHashableState extends WrappedHashableState {
 
+    protected Integer cachedHashCode = null;
+    protected boolean dirty = true;
+    protected boolean hashed = false;
+    protected int hashVal;
     public IDCachedHashableState() {
-        throw new RuntimeException("not implemented");
+        dirty = true;
     }
 
-    public IDCachedHashableState(State s) {
-        super(s);
-        throw new RuntimeException("not implemented");
+    public IDCachedHashableState(DeepCopyForShallowCopyState s) {
+        //super(s);
+        this.s = s.deepCopy();
+        dirty = true;
     }
 
     @Override
     public int hashCode() {
-        return computeHashCode(this.s);
+        if (dirty) {
+            int code = computeHashCode(this.s);
+            cachedHashCode = code;
+            dirty = false;
+            return code;
+        } else {
+            return cachedHashCode;
+        }
     }
 
     @Override
@@ -32,10 +43,13 @@ public class IDCachedHashableState extends WrappedHashableState {
         if(obj == this){
             return true;
         }
-        if(!(obj instanceof HashableState)){
+        if(!(obj instanceof IDCachedHashableState)){
             return false;
         }
-        return statesEqual(this.s, ((HashableState)obj).s());
+        int thisHashCode = this.hashCode();
+        int thatHashCode = obj.hashCode();
+        return thisHashCode == thatHashCode;
+//        return statesEqual(this.s, ((HashableState)obj).s());
     }
 
 
@@ -44,16 +58,21 @@ public class IDCachedHashableState extends WrappedHashableState {
      * @param s the input state for which a hash code is to be computed
      * @return the hash code
      */
-    protected final int computeHashCode(State s){
+    public final int computeHashCode(State s){
 
+        if(hashed)
+            return hashVal;
+        hashed = true;
         if(s instanceof OOState){
-            return computeOOHashCode((OOState)s);
+            hashVal = computeOOHashCode((OOState)s);
+        } else{
+            hashVal = computeFlatHashCode(s);
         }
-        return computeFlatHashCode(s);
+        return hashVal;
 
     }
 
-    protected int computeOOHashCode(OOState s){
+    public int computeOOHashCode(OOState s){
 
         int [] hashCodes = new int[s.numObjects()];
         List<ObjectInstance> objects = s.objects();
@@ -62,21 +81,21 @@ public class IDCachedHashableState extends WrappedHashableState {
             int oHash = this.computeFlatHashCode(o);
             int classNameHash = o.className().hashCode();
             int nameHash = o.name().hashCode();
-            int totalHash = oHash + 31*classNameHash + 31*31*nameHash;
+            int totalHash = oHash + 61*classNameHash + 61*61*nameHash;
             hashCodes[i] = totalHash;
         }
 
         //sort for invariance to order
         Arrays.sort(hashCodes);
-        HashCodeBuilder hashCodeBuilder = new HashCodeBuilder(17, 31);
+        HashCodeBuilder hashCodeBuilder = new HashCodeBuilder(19, 73);
         hashCodeBuilder.append(hashCodes);
         return hashCodeBuilder.toHashCode();
 
     }
 
-    protected int computeFlatHashCode(State s){
+    public int computeFlatHashCode(State s){
 
-        HashCodeBuilder hashCodeBuilder = new HashCodeBuilder(17, 31);
+        HashCodeBuilder hashCodeBuilder = new HashCodeBuilder(23, 67);
 
         List<Object> keys = s.variableKeys();
         for(Object key : keys){

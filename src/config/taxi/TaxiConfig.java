@@ -53,6 +53,10 @@ public class TaxiConfig {
                 return TaxiStateFactory.createClassicState(2);
             case "tiny":
                 return TaxiStateFactory.createTinyState();
+            case "tiny-2passengers":
+                return TaxiStateFactory.createTinyState(2);
+            case "tiny3-2passengers":
+                return TaxiStateFactory.createTiny3State(2);
             case "small":
                 return TaxiStateFactory.createSmallState();
             case "small-2passengers":

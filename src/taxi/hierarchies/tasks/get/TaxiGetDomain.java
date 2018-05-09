@@ -17,26 +17,19 @@ import burlap.statehashing.HashableStateFactory;
 import burlap.statehashing.simple.SimpleHashableStateFactory;
 import hierarchy.framework.GoalFailRF;
 import hierarchy.framework.GoalFailTF;
-import taxi.Taxi;
 import taxi.functions.amdp.GetCompletedPF;
 import taxi.functions.amdp.GetFailurePF;
+import taxi.hierarchies.tasks.NavigateActionType;
 import taxi.hierarchies.tasks.get.state.GetStateMapper;
 import taxi.hierarchies.tasks.get.state.TaxiGetAgent;
 import taxi.hierarchies.tasks.get.state.TaxiGetLocation;
 import taxi.hierarchies.tasks.get.state.TaxiGetPassenger;
 import taxi.stateGenerator.TaxiStateFactory;
 
+import static taxi.TaxiConstants.*;
+
 public class TaxiGetDomain implements DomainGenerator {
 
-	public static final String IN_TAXI =					"inTaxi";
-	public static final String ON_ROAD =					"onRoad";
-
-	// attributes
-	public static final String ATT_LOCATION = 				"location";
-
-	// actions
-	public static final String ACTION_NAV =					"nav";
-	public static final String ACTION_BRINGON =				"bringon";
 
 	private RewardFunction rf;
 	private TerminalFunction tf;
@@ -69,9 +62,9 @@ public class TaxiGetDomain implements DomainGenerator {
 	public OOSADomain generateDomain() {
 		OOSADomain domain = new OOSADomain();
 		
-		domain.addStateClass(Taxi.CLASS_PASSENGER, TaxiGetPassenger.class)
-			.addStateClass(Taxi.CLASS_TAXI, TaxiGetAgent.class)
-			.addStateClass(Taxi.CLASS_LOCATION, TaxiGetLocation.class);
+		domain.addStateClass(CLASS_PASSENGER, TaxiGetPassenger.class)
+			.addStateClass(CLASS_TAXI, TaxiGetAgent.class)
+			.addStateClass(CLASS_LOCATION, TaxiGetLocation.class);
 
 		TaxiGetModel tmodel = new TaxiGetModel();
         if (tf == null) {
@@ -86,8 +79,8 @@ public class TaxiGetDomain implements DomainGenerator {
 		domain.setModel(model);
 		
 		domain.addActionTypes(
-				new NavigateActionType(ACTION_NAV, new String[]{Taxi.CLASS_LOCATION}),
-				new BringonActionType(ACTION_BRINGON, new String[]{Taxi.CLASS_PASSENGER})
+				new NavigateActionType(ACTION_NAV, new String[]{CLASS_LOCATION}),
+				new GetPickupActionType(ACTION_PICKUP, new String[]{CLASS_PASSENGER})
 		);
 		
 		return domain;
@@ -95,7 +88,7 @@ public class TaxiGetDomain implements DomainGenerator {
 
 	public static void main(String[] args) {
 
-	    String goalPassengerName = Taxi.CLASS_PASSENGER+"0";
+	    String goalPassengerName = CLASS_PASSENGER+"0";
 		TaxiGetDomain taxiBuild = new TaxiGetDomain(goalPassengerName);
 		OOSADomain domain = taxiBuild.generateDomain();
 		

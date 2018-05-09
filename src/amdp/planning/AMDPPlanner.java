@@ -1,9 +1,5 @@
 package amdp.planning;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import burlap.behavior.policy.Policy;
 import burlap.behavior.policy.PolicyUtils;
 import burlap.behavior.singleagent.Episode;
@@ -19,6 +15,10 @@ import burlap.statehashing.HashableState;
 import burlap.statehashing.HashableStateFactory;
 import hierarchy.framework.*;
 import utilities.BoundedRTDP;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class AMDPPlanner {
 

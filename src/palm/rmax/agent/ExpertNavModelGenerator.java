@@ -9,8 +9,9 @@ import hierarchy.framework.GroundedTask;
 import palm.agent.ExpertPALMModel;
 import palm.agent.PALMModel;
 import palm.agent.PALMModelGenerator;
-import taxi.hierarchies.tasks.get.TaxiGetDomain;
 import taxi.hierarchies.tasks.nav.TaxiNavDomain;
+
+import static taxi.TaxiConstants.ACTION_NAV;
 
 public class ExpertNavModelGenerator implements PALMModelGenerator {
 
@@ -31,7 +32,7 @@ public class ExpertNavModelGenerator implements PALMModelGenerator {
 
     @Override
     public PALMModel getModelForTask(GroundedTask t) {
-        if (t.getAction().actionName().startsWith(TaxiGetDomain.ACTION_NAV)) {
+        if (t.getAction().actionName().startsWith(ACTION_NAV)) {
             ObjectParameterizedAction nav_action = (ObjectParameterizedAction) t.getAction();
             String[] params = nav_action.getObjectParameters();
             String locName = params[0];

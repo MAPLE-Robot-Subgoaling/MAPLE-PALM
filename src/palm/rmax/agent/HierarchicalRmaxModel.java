@@ -1,7 +1,5 @@
 package palm.rmax.agent;
 
-import java.util.*;
-
 import burlap.debugtools.RandomFactory;
 import burlap.mdp.core.action.Action;
 import burlap.mdp.core.oo.state.MutableOOState;
@@ -15,6 +13,11 @@ import hierarchy.framework.GroundedTask;
 import hierarchy.framework.StringFormat;
 import palm.agent.PALMModel;
 import palm.agent.PossibleOutcome;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class HierarchicalRmaxModel extends PALMModel {
 

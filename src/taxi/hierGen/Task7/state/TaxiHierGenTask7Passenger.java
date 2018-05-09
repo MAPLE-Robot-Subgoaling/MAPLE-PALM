@@ -1,18 +1,19 @@
 package taxi.hierGen.Task7.state;
 
 import burlap.mdp.core.oo.state.ObjectInstance;
-import taxi.Taxi;
 import utilities.MutableObject;
 
 import java.util.Arrays;
 import java.util.List;
 
+import static taxi.TaxiConstants.*;
+
 public class TaxiHierGenTask7Passenger extends MutableObject {
 
 	private final static List<Object> keys = Arrays.<Object>asList(
-			Taxi.ATT_X,
-			Taxi.ATT_Y,
-			Taxi.ATT_IN_TAXI
+			ATT_X,
+			ATT_Y,
+			ATT_IN_TAXI
 	);
 
 	public TaxiHierGenTask7Passenger(String name, int x, int y,  boolean inTaxi){
@@ -20,9 +21,9 @@ public class TaxiHierGenTask7Passenger extends MutableObject {
 	}
 
 	private TaxiHierGenTask7Passenger(String name, Object x, Object y, Object inTaxi){
-		this.set(Taxi.ATT_X, x);
-		this.set(Taxi.ATT_Y, y);
-		this.set(Taxi.ATT_IN_TAXI, inTaxi);
+		this.set(ATT_X, x);
+		this.set(ATT_Y, y);
+		this.set(ATT_IN_TAXI, inTaxi);
 		this.setName(name);
 	}
 
@@ -35,9 +36,9 @@ public class TaxiHierGenTask7Passenger extends MutableObject {
 	public ObjectInstance copyWithName(String objectName) {
 		return new TaxiHierGenTask7Passenger(
 				objectName,
-				get(Taxi.ATT_X),
-				get(Taxi.ATT_Y),
-				get(Taxi.ATT_IN_TAXI)
+				get(ATT_X),
+				get(ATT_Y),
+				get(ATT_IN_TAXI)
 		);
 	}
 

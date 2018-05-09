@@ -1,11 +1,11 @@
 package hierarchy.framework;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import burlap.mdp.core.action.Action;
 import burlap.mdp.core.action.ActionType;
 import burlap.mdp.core.state.State;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class SolveActionType implements ActionType{
 

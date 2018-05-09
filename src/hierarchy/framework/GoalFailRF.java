@@ -1,7 +1,6 @@
 package hierarchy.framework;
 
 import burlap.mdp.core.action.Action;
-import burlap.mdp.core.oo.ObjectParameterizedAction;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.model.RewardFunction;
 
@@ -35,15 +34,12 @@ public class GoalFailRF implements RewardFunction {
     @Override
     public double reward(State state, Action action, State sPrime) {
         double r = rewardDefault;
-
-        if (state.equals(sPrime)) {
-            r += rewardNoop;
-        }
-
         if (tf.atGoal(sPrime)) {
             r += rewardGoal;
         } else if (tf.atFailure(sPrime)) {
             r += rewardFail;
+        } else if (state.equals(sPrime)) {
+            r += rewardNoop;
         } else {
             // neither goal nor failure
         }

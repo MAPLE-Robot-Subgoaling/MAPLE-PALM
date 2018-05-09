@@ -8,7 +8,6 @@ import burlap.mdp.auxiliary.DomainGenerator;
 import burlap.mdp.auxiliary.common.NullTermination;
 import burlap.mdp.core.TerminalFunction;
 import burlap.mdp.core.state.State;
-import burlap.mdp.singleagent.common.GoalBasedRF;
 import burlap.mdp.singleagent.common.NullRewardFunction;
 import burlap.mdp.singleagent.environment.SimulatedEnvironment;
 import burlap.mdp.singleagent.model.FactoredModel;
@@ -18,28 +17,18 @@ import burlap.statehashing.HashableStateFactory;
 import burlap.statehashing.simple.SimpleHashableStateFactory;
 import hierarchy.framework.GoalFailRF;
 import hierarchy.framework.GoalFailTF;
-import taxi.Taxi;
 import taxi.functions.amdp.PutCompletedPF;
 import taxi.functions.amdp.PutFailurePF;
+import taxi.hierarchies.tasks.NavigateActionType;
 import taxi.hierarchies.tasks.put.state.PutStateMapper;
 import taxi.hierarchies.tasks.put.state.TaxiPutAgent;
 import taxi.hierarchies.tasks.put.state.TaxiPutLocation;
 import taxi.hierarchies.tasks.put.state.TaxiPutPassenger;
 import taxi.stateGenerator.TaxiStateFactory;
 
+import static taxi.TaxiConstants.*;
+
 public class TaxiPutDomain implements DomainGenerator {
-
-	public static final String ON_ROAD =					"onRoad";
-	public static final String IN_TAXI = 					"inTaxi";
-
-	// attributes
-	public static final String ATT_GOAL_LOCATION =			"goalLocation";
-	public static final String ATT_TAXI_LOCATION =			"taxiLocation";
-	public static final String ATT_LOCATION =				"location";
-
-	//actions
-    public static final String ACTION_NAV =					"nav";
-	public static final String ACTION_DROPOFF = 			"dropoff";
 
 	private RewardFunction rf;
 	private TerminalFunction tf;
@@ -72,9 +61,9 @@ public class TaxiPutDomain implements DomainGenerator {
 	public OOSADomain generateDomain() {
 		OOSADomain domain = new OOSADomain();
 		
-		domain.addStateClass(Taxi.CLASS_PASSENGER, TaxiPutPassenger.class)
-			.addStateClass(Taxi.CLASS_TAXI, TaxiPutAgent.class)
-			.addStateClass(Taxi.CLASS_LOCATION, TaxiPutLocation.class);
+		domain.addStateClass(CLASS_PASSENGER, TaxiPutPassenger.class)
+			.addStateClass(CLASS_TAXI, TaxiPutAgent.class)
+			.addStateClass(CLASS_LOCATION, TaxiPutLocation.class);
 
 		TaxiPutModel tmodel = new TaxiPutModel();
 		if (tf == null) {
@@ -89,8 +78,8 @@ public class TaxiPutDomain implements DomainGenerator {
 		domain.setModel(model);
 		
 		domain.addActionTypes(
-				new NavigateActionType(ACTION_NAV, new String[]{Taxi.CLASS_LOCATION}),
-				new DropoffActionType(ACTION_DROPOFF, new String[]{Taxi.CLASS_PASSENGER})
+				new NavigateActionType(ACTION_NAV, new String[]{CLASS_LOCATION}),
+				new PutPutdownActionType(ACTION_PUTDOWN, new String[]{CLASS_PASSENGER})
 		);
 		
 		return domain;
@@ -98,7 +87,7 @@ public class TaxiPutDomain implements DomainGenerator {
 
 	public static void main(String[] args) {
 
-		String goalPassengerName = Taxi.CLASS_PASSENGER+"0";
+		String goalPassengerName = CLASS_PASSENGER+"0";
 		TaxiPutDomain taxiBuild = new TaxiPutDomain(goalPassengerName);
 		OOSADomain domain = taxiBuild.generateDomain();
 		

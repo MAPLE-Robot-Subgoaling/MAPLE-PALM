@@ -2,9 +2,7 @@ package cleanup.hierarchies.tasks.pick;
 
 import cleanup.hierarchies.tasks.move.MoveBlock;
 
-import static cleanup.Cleanup.ATT_COLOR;
-import static cleanup.Cleanup.ATT_REGION;
-import static cleanup.Cleanup.ATT_SHAPE;
+import static cleanup.Cleanup.*;
 
 public class PickBlock extends MoveBlock {
     public PickBlock(String name, String shape, String color, String blockInRegion) {

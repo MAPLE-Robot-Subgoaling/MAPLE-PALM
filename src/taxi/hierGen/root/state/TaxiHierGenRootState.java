@@ -5,15 +5,21 @@ import burlap.mdp.core.oo.state.OOStateUtilities;
 import burlap.mdp.core.oo.state.ObjectInstance;
 import burlap.mdp.core.state.MutableState;
 import burlap.mdp.core.state.State;
-import taxi.Taxi;
+import taxi.hierGen.Task7.state.TaxiHierGenTask7Passenger;
+import taxi.hierGen.Task7.state.TaxiHierGenTask7State;
+import taxi.hierGen.Task7.state.TaxiHierGenTask7Taxi;
 import taxi.hierarchies.interfaces.PassengerLocationParameterizable;
 import taxi.hierarchies.interfaces.PassengerParameterizable;
-import taxi.hierarchies.tasks.dropoff.TaxiDropoffDomain;
-import taxi.hierarchies.tasks.root.state.TaxiRootPassenger;
+import taxi.hierarchies.tasks.put.state.TaxiPutAgent;
+import taxi.hierarchies.tasks.put.state.TaxiPutLocation;
+import taxi.hierarchies.tasks.put.state.TaxiPutPassenger;
+import utilities.DeepCopyForShallowCopyState;
 
 import java.util.*;
 
-public class TaxiHierGenRootState implements MutableOOState, PassengerParameterizable, PassengerLocationParameterizable {
+import static taxi.TaxiConstants.*;
+
+public class TaxiHierGenRootState implements MutableOOState, PassengerParameterizable, PassengerLocationParameterizable, DeepCopyForShallowCopyState {
 
 	public static final String CLASS_ROOT_PASSENGER = 		"rootPassenger";
 	public static final String CLASS_ROOT_Taxi =			"rootTaxi";
@@ -45,8 +51,14 @@ public class TaxiHierGenRootState implements MutableOOState, PassengerParameteri
 
 	@Override
 	public MutableOOState removeObject(String oname) {
-		touchPassenger(oname);
-		passengers.remove(oname);
+		ObjectInstance objectInstance = this.object(oname);
+		if (objectInstance instanceof TaxiHierGenRootTaxi) {
+			touchTaxi();
+			taxi = null;
+		} else if (objectInstance instanceof TaxiHierGenRootPassenger) {
+			touchPassenger(oname);
+			passengers.remove(oname);
+		}
 		return this;
 	}
 
@@ -57,7 +69,9 @@ public class TaxiHierGenRootState implements MutableOOState, PassengerParameteri
 
 	@Override
 	public int numObjects() {
-		return 1 + this.passengers.size();
+		int total = taxi == null ? 0 : 1;
+		total += passengers.size();
+		return total;
 	}
 
 	@Override
@@ -70,7 +84,7 @@ public class TaxiHierGenRootState implements MutableOOState, PassengerParameteri
 	@Override
 	public List<ObjectInstance> objects() {
 		List<ObjectInstance> objects = new ArrayList<ObjectInstance>(passengers.values());
-		objects.add(taxi);
+		if (taxi != null) objects.add(taxi);
 		return objects;
 	}
 
@@ -99,7 +113,7 @@ public class TaxiHierGenRootState implements MutableOOState, PassengerParameteri
 	}
 
 	@Override
-	public State copy() {
+	public TaxiHierGenRootState copy() {
 		return new TaxiHierGenRootState(taxi, passengers);
 	}
 
@@ -124,24 +138,41 @@ public class TaxiHierGenRootState implements MutableOOState, PassengerParameteri
 
 	@Override
 	public String getPassengerLocation(String pname) {
-		boolean inTaxi = (boolean) passengers.get(pname).get(Taxi.ATT_IN_TAXI);
-		int tx = (int) taxi.get(Taxi.ATT_X);
-		int ty = (int) taxi.get(Taxi.ATT_Y);
-		int px = (int) passengers.get(pname).get(Taxi.ATT_X);
-		int py = (int) passengers.get(pname).get(Taxi.ATT_Y);
+		boolean inTaxi = (boolean) passengers.get(pname).get(ATT_IN_TAXI);
+		int tx = (int) taxi.get(ATT_X);
+		int ty = (int) taxi.get(ATT_Y);
+		int px = (int) passengers.get(pname).get(ATT_X);
+		int py = (int) passengers.get(pname).get(ATT_Y);
 
 		if(!inTaxi)
-			return TaxiDropoffDomain.NOT_IN_TAXI;
+			return ATT_VAL_NOT_IN_TAXI;
 		else if(tx == px && ty == py)
 			return READY;
 		else
-			return Taxi.ON_ROAD;
+			return ATT_VAL_ON_ROAD;
 	}
 
-	public TaxiHierGenRootPassenger touchPassenger(String passName){
-		TaxiHierGenRootPassenger p = passengers.get(passName).copy();
-		touchPassengers().remove(passName);
-		passengers.put(passName, p);
+	public Object getTaxiAtt(String attName){
+		if (taxi == null) {
+			return null;
+		}
+		return taxi.get(attName);
+	}
+
+	public Object getPassengerAtt(String passname, String attName){
+		return passengers.get(passname).get(attName);
+	}
+
+
+	public TaxiHierGenRootTaxi touchTaxi() {
+		if (this.taxi != null) { this.taxi = taxi.copy(); }
+		return taxi;
+	}
+
+	public TaxiHierGenRootPassenger touchPassenger(String name){
+		TaxiHierGenRootPassenger p = passengers.get(name).copy();
+		touchPassengers().remove(name);
+		passengers.put(name, p);
 		return p;
 	}
 
@@ -150,11 +181,11 @@ public class TaxiHierGenRootState implements MutableOOState, PassengerParameteri
 		return passengers;
 	}
 
-	public Object getTaxiAtt(String attName){
-		return taxi.get(attName);
-	}
-
-	public Object getPassengerAtt(String passname, String attName){
-		return passengers.get(passname).get(attName);
+	@Override
+	public MutableOOState deepCopy() {
+		TaxiHierGenRootState copy = this.copy();
+		copy.touchTaxi();
+		copy.touchPassengers();
+		return copy;
 	}
 }

@@ -5,13 +5,15 @@ import burlap.mdp.core.oo.state.OOStateUtilities;
 import burlap.mdp.core.oo.state.OOVariableKey;
 import burlap.mdp.core.oo.state.ObjectInstance;
 import burlap.mdp.core.state.MutableState;
-import taxi.Taxi;
 import taxi.hierarchies.TaxiGetPutState;
-import taxi.hierarchies.tasks.put.TaxiPutDomain;
+import taxi.state.TaxiState;
+import utilities.DeepCopyForShallowCopyState;
 
 import java.util.*;
 
-public class TaxiPutState extends TaxiGetPutState {
+import static taxi.TaxiConstants.*;
+
+public class TaxiPutState extends TaxiGetPutState implements DeepCopyForShallowCopyState {
 
 	//this state has passengers and depots
     private TaxiPutAgent taxi;
@@ -78,11 +80,11 @@ public class TaxiPutState extends TaxiGetPutState {
 
 	@Override
 	public List<ObjectInstance> objectsOfClass(String oclass) {
-	    if(oclass.equals(Taxi.CLASS_TAXI))
+	    if(oclass.equals(CLASS_TAXI))
             return taxi == null ? new ArrayList<ObjectInstance>() : Arrays.<ObjectInstance>asList(taxi);
-		if(oclass.equals(Taxi.CLASS_PASSENGER))
+		if(oclass.equals(CLASS_PASSENGER))
 			return new ArrayList<ObjectInstance>(passengers.values());
-		if(oclass.equals(Taxi.CLASS_LOCATION))
+		if(oclass.equals(CLASS_LOCATION))
 			return new ArrayList<ObjectInstance>(locations.values());
 		throw new RuntimeException("No object class " + oclass);
 	}
@@ -120,11 +122,11 @@ public class TaxiPutState extends TaxiGetPutState {
 
 	@Override
 	public MutableOOState addObject(ObjectInstance o) {
-	    if(o instanceof TaxiPutAgent || o.className().equals(Taxi.CLASS_TAXI)) {
+	    if(o instanceof TaxiPutAgent || o.className().equals(CLASS_TAXI)) {
 	    	taxi = (TaxiPutAgent)o;
-		} else if(o instanceof TaxiPutPassenger || o.className().equals(Taxi.CLASS_PASSENGER)){
+		} else if(o instanceof TaxiPutPassenger || o.className().equals(CLASS_PASSENGER)){
 			touchPassengers().put(o.name(), (TaxiPutPassenger) o);
-		} else if(o instanceof TaxiPutLocation || o.className().equals(Taxi.CLASS_LOCATION)){
+		} else if(o instanceof TaxiPutLocation || o.className().equals(CLASS_LOCATION)){
 			touchLocations().put(o.name(), (TaxiPutLocation) o);
 		} else {
 			throw new RuntimeException("Can only add certain objects to state.");
@@ -137,6 +139,7 @@ public class TaxiPutState extends TaxiGetPutState {
 	public MutableOOState removeObject(String oname) {
         ObjectInstance objectInstance = this.object(oname);
         if (objectInstance instanceof TaxiPutAgent) {
+        	touchTaxi();
             taxi = null;
         } else if (objectInstance instanceof TaxiPutPassenger) {
             touchPassenger(oname);
@@ -252,4 +255,12 @@ public class TaxiPutState extends TaxiGetPutState {
 		return result;
 	}
 
+	@Override
+	public MutableOOState deepCopy() {
+		TaxiPutState copy = this.copy();
+		copy.touchTaxi();
+		copy.touchPassengers();
+		copy.touchLocations();
+		return copy;
+	}
 }

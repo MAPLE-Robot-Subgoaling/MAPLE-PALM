@@ -11,7 +11,6 @@ import burlap.mdp.singleagent.common.VisualActionObserver;
 import burlap.mdp.singleagent.environment.SimulatedEnvironment;
 import burlap.mdp.singleagent.oo.OOSADomain;
 import burlap.statehashing.HashableStateFactory;
-import burlap.statehashing.simple.SimpleHashableStateFactory;
 import config.output.ChartConfig;
 import config.taxi.TaxiConfig;
 import hierarchy.framework.GroundedTask;
@@ -35,22 +34,28 @@ import java.util.List;
 
 public class HierarchicalCharts {
 
-	public static void createCharts(final TaxiConfig conf, final State s, OOSADomain domain, final Task RAMDPRoot, final Task RMEXQRoot, final Task hierGenRoot) {
+	public static HashableStateFactory initializeHashableStateFactory() {
+		// use the hashable state factory that caches states
+		return new CachedHashableStateFactory(false);
+	}
+
+	public static void createCharts(final TaxiConfig conf, final State s, OOSADomain domain, final Task RAMDPRoot, final Task RMAXQRoot, final Task hierGenRoot) {
 		SimulatedEnvironment env;
-		final HashableStateFactory hs;
-		final GroundedTask RAMDPGroot, hierGenGroot;
+		final GroundedTask RAMDPGroot, hierGenGroot, RMAXQGroot;
 
 		if(conf.stochastic.random_start) {
 			env = new SimulatedEnvironment(domain, new RandomPassengerTaxiState());
 			RAMDPGroot = RAMDPRoot.getAllGroundedTasks(env.currentObservation()).get(0);
+			RMAXQGroot = RMAXQRoot.getAllGroundedTasks(s).get(0);
 			hierGenGroot = hierGenRoot.getAllGroundedTasks(env.currentObservation()).get(0);
 		} else {
             env = new SimulatedEnvironment(domain, s);
 			RAMDPGroot = RAMDPRoot.getAllGroundedTasks(s).get(0);
+			RMAXQGroot = RMAXQRoot.getAllGroundedTasks(s).get(0);
 			hierGenGroot = hierGenRoot.getAllGroundedTasks(s).get(0);
 		}
 
-		hs = new CachedHashableStateFactory(false);//new SimpleHashableStateFactory(false); //new CachedHashableStateFactory(true); // new SimpleHashableStateFactory(true);
+		// new SimpleHashableStateFactory(false); //new CachedHashableStateFactory(true); // new SimpleHashableStateFactory(true);
 
 		if(conf.output.visualizer.enabled) {
 			VisualActionObserver obs = new VisualActionObserver(domain, TaxiVisualizer.getVisualizer(conf.output.visualizer.width, conf.output.visualizer.height));
@@ -65,7 +70,7 @@ public class HierarchicalCharts {
 			String agent = conf.agents.get(i);
 
 		    // RAMDP
-		    if(agent.equals("palmExpert")) {
+			if(agent.equals("palmExpert")) {
 				agents[i] = new LearningAgentFactory() {
 
 					@Override
@@ -75,10 +80,29 @@ public class HierarchicalCharts {
 
 					@Override
 					public LearningAgent generateAgent() {
-                        PALMModelGenerator modelGen = new ExpertNavModelGenerator(conf.rmax.threshold,
-                                conf.rmax.vmax,hs, conf.gamma,conf.rmax.use_multitime_model);
-                        return new PALMLearningAgent(RAMDPGroot,modelGen, hs, conf.rmax.max_delta,
-                                conf.rmax.max_iterations_in_model);
+						HashableStateFactory hs = initializeHashableStateFactory();
+						PALMRmaxModelGenerator modelGen = new PALMRmaxModelGenerator(conf.rmax.threshold,
+								conf.rmax.vmax,hs, conf.gamma, conf.rmax.use_multitime_model);
+						return new PALMLearningAgent(RAMDPGroot, modelGen, hs, conf.rmax.max_delta,
+								conf.rmax.max_iterations_in_model);
+					}
+				};
+			}
+			if(agent.equals("palmExpertWithNavGiven")) {
+				agents[i] = new LearningAgentFactory() {
+
+					@Override
+					public String getAgentName() {
+						return "PALM expert, given a Nav Model";
+					}
+
+					@Override
+					public LearningAgent generateAgent() {
+						HashableStateFactory hs = initializeHashableStateFactory();
+						PALMModelGenerator modelGen = new ExpertNavModelGenerator(conf.rmax.threshold,
+								conf.rmax.vmax,hs, conf.gamma, conf.rmax.use_multitime_model);
+						return new PALMLearningAgent(RAMDPGroot, modelGen, hs, conf.rmax.max_delta,
+								conf.rmax.max_iterations_in_model);
 					}
 				};
 			}
@@ -92,9 +116,10 @@ public class HierarchicalCharts {
 
 					@Override
 					public LearningAgent generateAgent() {
+						HashableStateFactory hs = initializeHashableStateFactory();
                         PALMRmaxModelGenerator modelGen = new PALMRmaxModelGenerator(conf.rmax.threshold,
-                                conf.rmax.vmax,hs, conf.gamma,conf.rmax.use_multitime_model);
-                        return new PALMLearningAgent(hierGenGroot,modelGen, hs, conf.rmax.max_delta,
+                                conf.rmax.vmax,hs, conf.gamma, conf.rmax.use_multitime_model);
+                        return new PALMLearningAgent(hierGenGroot, modelGen, hs, conf.rmax.max_delta,
                                 conf.rmax.max_iterations_in_model);
 					}
 				};
@@ -110,7 +135,24 @@ public class HierarchicalCharts {
 
 					@Override
 					public LearningAgent generateAgent() {
-						return new RmaxQLearningAgent(RMEXQRoot, hs, s, conf.rmax.vmax, conf.rmax.threshold, conf.rmax.max_delta_rmaxq, conf.rmax.max_delta);
+						HashableStateFactory hs = initializeHashableStateFactory();
+						return new RmaxQLearningAgent(RMAXQGroot, hs, s, conf.rmax.vmax, conf.gamma, conf.rmax.threshold, conf.rmax.max_delta_rmaxq, conf.rmax.max_delta, conf.rmax.max_iterations_in_model);
+					}
+				};
+			}
+
+			// RMAX with Hiergen
+			if(agent.equals("rmaxq-h")) {
+				agents[i] = new LearningAgentFactory() {
+					@Override
+					public String getAgentName() {
+						return "R-MAXQ with Hiergen";
+					}
+
+					@Override
+					public LearningAgent generateAgent() {
+						HashableStateFactory hs = initializeHashableStateFactory();
+						return new RmaxQLearningAgent(hierGenGroot, hs, s, conf.rmax.vmax, conf.gamma, conf.rmax.threshold, conf.rmax.max_delta_rmaxq, conf.rmax.max_delta, conf.rmax.max_iterations_in_model);
 					}
 				};
 			}

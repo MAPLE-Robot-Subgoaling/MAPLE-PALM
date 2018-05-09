@@ -1,17 +1,12 @@
 package cleanup.hierarchies.tasks.move;
 
-import burlap.mdp.core.action.Action;
-import burlap.mdp.core.action.ActionType;
 import burlap.mdp.core.oo.ObjectParameterizedAction;
 import burlap.mdp.core.oo.state.OOState;
 import burlap.mdp.core.oo.state.ObjectInstance;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.oo.ObjectParameterizedActionType;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
 
 import static cleanup.Cleanup.ATT_CONNECTED;
 import static cleanup.Cleanup.ATT_REGION;

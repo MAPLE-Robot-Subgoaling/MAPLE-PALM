@@ -1,13 +1,13 @@
 package taxi.hierarchies.tasks.get.state;
 
+import burlap.mdp.core.state.State;
+import taxi.hierarchies.interfaces.ParameterizedStateMapping;
+import taxi.state.TaxiState;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import burlap.mdp.core.state.State;
-import taxi.hierarchies.interfaces.ParameterizedStateMapping;
-import taxi.hierarchies.tasks.get.TaxiGetDomain;
-import taxi.state.TaxiState;
-import taxi.Taxi;
+import static taxi.TaxiConstants.*;
 
 public class GetStateMapper implements ParameterizedStateMapping {
 	//maps a base taxi state to L2
@@ -18,12 +18,12 @@ public class GetStateMapper implements ParameterizedStateMapping {
 		TaxiState st = (TaxiState) s;
 
 		// Get Taxi
-        String taxiLocation = TaxiGetDomain.ON_ROAD;
-		int tx = (int)st.getTaxiAtt(Taxi.ATT_X);
-		int ty = (int)st.getTaxiAtt(Taxi.ATT_Y);
+        String taxiLocation = ATT_VAL_ON_ROAD;
+		int tx = (int)st.getTaxiAtt(ATT_X);
+		int ty = (int)st.getTaxiAtt(ATT_Y);
 		for (String locName : st.getLocations()) {
-			int lx = (int) st.getLocationAtt(locName, Taxi.ATT_X);
-			int ly = (int) st.getLocationAtt(locName, Taxi.ATT_Y);
+			int lx = (int) st.getLocationAtt(locName, ATT_X);
+			int ly = (int) st.getLocationAtt(locName, ATT_Y);
 
 			locations.add(new TaxiGetLocation(locName));
 
@@ -31,20 +31,20 @@ public class GetStateMapper implements ParameterizedStateMapping {
 				taxiLocation = locName;
 			}
 		}
-		TaxiGetAgent taxi = new TaxiGetAgent(Taxi.CLASS_TAXI, taxiLocation);
+		TaxiGetAgent taxi = new TaxiGetAgent(CLASS_TAXI, taxiLocation);
 
 		// Get Passengers
 		for(String passengerName : params){
 //		for(String passengerName : st.getPassengers()) {
-			int px = (int) st.getPassengerAtt(passengerName, Taxi.ATT_X);
-			int py = (int) st.getPassengerAtt(passengerName, Taxi.ATT_Y);
-			boolean inTaxi = (boolean) st.getPassengerAtt(passengerName, Taxi.ATT_IN_TAXI);
-			String passengerLocation = TaxiGetDomain.IN_TAXI;
+			int px = (int) st.getPassengerAtt(passengerName, ATT_X);
+			int py = (int) st.getPassengerAtt(passengerName, ATT_Y);
+			boolean inTaxi = (boolean) st.getPassengerAtt(passengerName, ATT_IN_TAXI);
+			String passengerLocation = ATT_VAL_IN_TAXI;
 
 			if(!inTaxi) {
 				for (String locName : st.getLocations()) {
-					int lx = (int) st.getLocationAtt(locName, Taxi.ATT_X);
-					int ly = (int) st.getLocationAtt(locName, Taxi.ATT_Y);
+					int lx = (int) st.getLocationAtt(locName, ATT_X);
+					int ly = (int) st.getLocationAtt(locName, ATT_Y);
 
 					if (px == lx && py == ly) {
 						passengerLocation = locName;

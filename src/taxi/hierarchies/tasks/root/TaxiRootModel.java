@@ -12,6 +12,8 @@ import taxi.hierarchies.tasks.root.state.TaxiRootState;
 import java.util.ArrayList;
 import java.util.List;
 
+import static taxi.TaxiConstants.*;
+
 public class TaxiRootModel implements FullStateModel {
 
 	@Override
@@ -33,9 +35,9 @@ public class TaxiRootModel implements FullStateModel {
 		List<StateTransitionProb> tps = new ArrayList<StateTransitionProb>();
 		TaxiRootState state = (TaxiRootState) s;
 
-		if(a.actionName().startsWith(TaxiRootDomain.ACTION_GET)) {
+		if(a.actionName().startsWith(ACTION_GET)) {
 			get(state, (ObjectParameterizedAction) a, tps);
-		} else if(a.actionName().startsWith(TaxiRootDomain.ACTION_PUT)) {
+		} else if(a.actionName().startsWith(ACTION_PUT)) {
 			put(state, (ObjectParameterizedAction) a, tps);
 		}
 		return tps;
@@ -50,7 +52,7 @@ public class TaxiRootModel implements FullStateModel {
 		TaxiRootState ns = s.copy();
 		String passengerName = a.getObjectParameters()[0];
 		TaxiRootPassenger np = ns.touchPassenger(passengerName);
-		np.set(TaxiRootDomain.ATT_CURRENT_LOCATION, TaxiRootDomain.IN_TAXI);
+		np.set(ATT_LOCATION, ATT_VAL_IN_TAXI);
 		tps.add(new StateTransitionProb(ns, 1));
 	}
 
@@ -64,9 +66,9 @@ public class TaxiRootModel implements FullStateModel {
 		String passengerName = a.getObjectParameters()[0];
 //		MutableObject passenger = (MutableObject) s.object(passengerName);
 		TaxiRootPassenger np = ns.touchPassenger(passengerName);
-		String nameOfPassengerGoalLocation = (String) np.get(TaxiRootDomain.ATT_GOAL_LOCATION);
+		String nameOfPassengerGoalLocation = (String) np.get(ATT_GOAL_LOCATION);
 		// put the passenger in their own goal location
-		np.set(TaxiRootDomain.ATT_CURRENT_LOCATION, nameOfPassengerGoalLocation);
+		np.set(ATT_LOCATION, nameOfPassengerGoalLocation);
 		tps.add(new StateTransitionProb(ns, 1));
 	}
 }
