@@ -21,6 +21,7 @@ import palm.agent.PALMModelGenerator;
 import palm.rmax.agent.ExpertNavModelGenerator;
 import palm.rmax.agent.PALMRmaxModelGenerator;
 import rmaxq.agent.RmaxQLearningAgent;
+import state.hashing.simple.CachedHashableStateFactory;
 import taxi.TaxiVisualizer;
 import taxi.hierarchies.TaxiHierarchy;
 import taxi.state.TaxiState;
@@ -49,7 +50,7 @@ public class HierarchicalCharts {
 			hierGenGroot = hierGenRoot.getAllGroundedTasks(s).get(0);
 		}
 
-		hs = new SimpleHashableStateFactory(false); //new CachedHashableStateFactory(true); // new SimpleHashableStateFactory(true);
+		hs = new CachedHashableStateFactory(false);//new SimpleHashableStateFactory(false); //new CachedHashableStateFactory(true); // new SimpleHashableStateFactory(true);
 
 		if(conf.output.visualizer.enabled) {
 			VisualActionObserver obs = new VisualActionObserver(domain, TaxiVisualizer.getVisualizer(conf.output.visualizer.width, conf.output.visualizer.height));
