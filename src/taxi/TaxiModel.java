@@ -1,8 +1,5 @@
 package taxi;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import burlap.debugtools.RandomFactory;
 import burlap.mdp.core.StateTransitionProb;
 import burlap.mdp.core.action.Action;
@@ -13,6 +10,10 @@ import taxi.state.TaxiAgent;
 import taxi.state.TaxiPassenger;
 import taxi.state.TaxiState;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import static taxi.TaxiConstants.*;
 public class TaxiModel implements FullStateModel{
 
 	/**
@@ -72,11 +73,11 @@ public class TaxiModel implements FullStateModel{
 		int action = actionInd(a);
 		TaxiState taxiS = (TaxiState) s;
 		
-		if(action <= Taxi.IND_WEST){
+		if(action <= IND_WEST){
 			movement(taxiS, action, tps);
-		}else if(action == Taxi.IND_PUTDOWN){
+		}else if(action == IND_PUTDOWN){
 			putdown(taxiS, (ObjectParameterizedAction)a, tps);
-		}else if(action == Taxi.IND_PICKUP){
+		}else if(action == IND_PICKUP){
 			pickup(taxiS, (ObjectParameterizedAction)a, tps);
 		}
 		
@@ -92,8 +93,8 @@ public class TaxiModel implements FullStateModel{
 	public void movement(TaxiState s, int action, List<StateTransitionProb> tps){
 		double[] moveProbabilities = this.moveProbability[action];
 		
-		int tx = (int) s.getTaxiAtt(Taxi.ATT_X);
-		int ty = (int) s.getTaxiAtt(Taxi.ATT_Y);
+		int tx = (int) s.getTaxiAtt(ATT_X);
+		int ty = (int) s.getTaxiAtt(ATT_Y);
 		
 		for(int outcome = 0; outcome < moveProbabilities.length; outcome++){
 			double p = moveProbabilities[outcome];
@@ -104,52 +105,56 @@ public class TaxiModel implements FullStateModel{
 			TaxiState ns = s.copy();
 			
 			//move in the given direction unless there are walls in the way
-			if(outcome == Taxi.IND_NORTH){
+			if(outcome == IND_NORTH){
 				if(!ns.wallNorth()){
 					dy = +1;
 				}
-			}else if(outcome == Taxi.IND_EAST){
+			}else if(outcome == IND_EAST){
 				if(!ns.wallEast()){
 					dx = +1;
 				}
-			}else if(outcome == Taxi.IND_SOUTH){
+			}else if(outcome == IND_SOUTH){
 				if(!ns.wallSouth()){
 					dy = -1;
 				}
-			}else if(outcome == Taxi.IND_WEST){
+			}else if(outcome == IND_WEST){
 				if(!ns.wallWest()){
 					dx = -1;
 				}
 			}
-			
-			int nx = tx + dx;
-			int ny = ty + dy;
-			TaxiAgent ntaxi = ns.touchTaxi();
-			ntaxi.set(Taxi.ATT_X, nx);
-			ntaxi.set(Taxi.ATT_Y, ny);
-			
-			//move any passenger that are in the taxi
-			for(String passengerName : s.getPassengers()){
-				boolean inTaxi = (boolean) s.getPassengerAtt(passengerName, Taxi.ATT_IN_TAXI);
-				
-				if(inTaxi){
-					TaxiPassenger np = ns.touchPassenger(passengerName);
-					np.set(Taxi.ATT_X, nx);
-					np.set(Taxi.ATT_Y, ny);
+
+			boolean somethingChanged = dx != 0 || dy != 0;
+			if (somethingChanged) {
+				int nx = tx + dx;
+				int ny = ty + dy;
+				TaxiAgent ntaxi = ns.touchTaxi();
+				ntaxi.set(ATT_X, nx);
+				ntaxi.set(ATT_Y, ny);
+
+				//move any passenger that are in the taxi
+				for(String passengerName : s.getPassengers()){
+					boolean inTaxi = (boolean) s.getPassengerAtt(passengerName, ATT_IN_TAXI);
+
+					if(inTaxi){
+						TaxiPassenger np = ns.touchPassenger(passengerName);
+						np.set(ATT_X, nx);
+						np.set(ATT_Y, ny);
+					}
 				}
 			}
+
 			
 			if(fickle){
 				//find a passenger in the taxi
 				boolean passengerChanged = false;
 				for(String passengerName : s.getPassengers()){
-					boolean inTaxi = (boolean) s.getPassengerAtt(passengerName, Taxi.ATT_IN_TAXI);
+					boolean inTaxi = (boolean) s.getPassengerAtt(passengerName, ATT_IN_TAXI);
 					String passGoal = (String) s.getPassengerAtt(passengerName,
-							Taxi.ATT_GOAL_LOCATION);					
+							ATT_GOAL_LOCATION);					
 					if(inTaxi){
 						passengerChanged = true;
 						//TaxiPassenger np = ns.touchPassenger(passengerName);
-						//np.set(Taxi.ATT_JUST_PICKED_UP, false);
+						//np.set(ATT_JUST_PICKED_UP, false);
 						// may change goal
 						for(String locName : s.getLocations()){
 							TaxiState nfickles = ns.copy();
@@ -161,7 +166,7 @@ public class TaxiModel implements FullStateModel{
 							}else{
 								//set goal to loc
 								TaxiPassenger npf = nfickles.touchPassenger(passengerName);
-								npf.set(Taxi.ATT_GOAL_LOCATION, locName);
+								npf.set(ATT_GOAL_LOCATION, locName);
 								tps.add(new StateTransitionProb(nfickles, p * (fickleChangeGoalProbaility
 										/ (s.getLocations().length - 1))));
 							}
@@ -188,19 +193,19 @@ public class TaxiModel implements FullStateModel{
 	    String p = a.getObjectParameters()[0];
 		TaxiState ns = s.copy();
 
-		int tx = (int) s.getTaxiAtt(Taxi.ATT_X);
-		int ty = (int) s.getTaxiAtt(Taxi.ATT_Y);
+		int tx = (int) s.getTaxiAtt(ATT_X);
+		int ty = (int) s.getTaxiAtt(ATT_Y);
 
-		int px = (int) s.getPassengerAtt(p, Taxi.ATT_X);
-		int py = (int) s.getPassengerAtt(p, Taxi.ATT_Y);
-		boolean inTaxi = (boolean) s.getPassengerAtt(p, Taxi.ATT_IN_TAXI);
+		int px = (int) s.getPassengerAtt(p, ATT_X);
+		int py = (int) s.getPassengerAtt(p, ATT_Y);
+		boolean inTaxi = (boolean) s.getPassengerAtt(p, ATT_IN_TAXI);
 
 		if (tx == px && ty == py && !inTaxi) {
 			TaxiPassenger np = ns.touchPassenger(p);
-			np.set(Taxi.ATT_IN_TAXI, true);
+			np.set(ATT_IN_TAXI, true);
 
-			TaxiAgent ntaxi = ns.touchTaxi();
-			ntaxi.set(Taxi.ATT_TAXI_OCCUPIED, true);
+//			TaxiAgent ntaxi = ns.touchTaxi();
+//			ntaxi.set(ATT_TAXI_OCCUPIED, true);
 		}
 		tps.add(new StateTransitionProb(ns, 1.));
 	}
@@ -214,31 +219,31 @@ public class TaxiModel implements FullStateModel{
 	public void putdown(TaxiState s, ObjectParameterizedAction a, List<StateTransitionProb> tps){
 	    String p = a.getObjectParameters()[0];
 		TaxiState ns = s.copy();
-		int tx = (int) s.getTaxiAtt(Taxi.ATT_X);
-		int ty = (int) s.getTaxiAtt(Taxi.ATT_Y);
+		int tx = (int) s.getTaxiAtt(ATT_X);
+		int ty = (int) s.getTaxiAtt(ATT_Y);
 
-		if((boolean) s.getPassengerAtt(p, Taxi.ATT_IN_TAXI)) {
+		if((boolean) s.getPassengerAtt(p, ATT_IN_TAXI)) {
 			for (String locName : s.getLocations()) {
-				int lx = (int) s.getLocationAtt(locName, Taxi.ATT_X);
-				int ly = (int) s.getLocationAtt(locName, Taxi.ATT_Y);
+				int lx = (int) s.getLocationAtt(locName, ATT_X);
+				int ly = (int) s.getLocationAtt(locName, ATT_Y);
 				if (tx == lx && ty == ly) {
 					TaxiPassenger np = ns.touchPassenger(p);
-					np.set(Taxi.ATT_IN_TAXI, false);
+					np.set(ATT_IN_TAXI, false);
 
 					// iterate through every passenger except the one that was just dropped off and see if taxi is empty
-					boolean passengersInTaxi = false;
-					for (String passengerName : s.getPassengers()) {
-						boolean inTaxi = (boolean) s.getPassengerAtt(passengerName, Taxi.ATT_IN_TAXI);
-						if ((!passengerName.equals(p)) && inTaxi) {
-							passengersInTaxi = true;
-							break;
-						}
-					}
-
-					if (!passengersInTaxi) {
-						TaxiAgent ntaxi = ns.touchTaxi();
-						ntaxi.set(Taxi.ATT_TAXI_OCCUPIED, false);
-					}
+//					boolean passengersInTaxi = false;
+//					for (String passengerName : s.getPassengers()) {
+//						boolean inTaxi = (boolean) s.getPassengerAtt(passengerName, ATT_IN_TAXI);
+//						if ((!passengerName.equals(p)) && inTaxi) {
+//							passengersInTaxi = true;
+//							break;
+//						}
+//					}
+//
+//					if (!passengersInTaxi) {
+//						TaxiAgent ntaxi = ns.touchTaxi();
+//						ntaxi.set(ATT_TAXI_OCCUPIED, false);
+//					}
 
 					break;
 				}
@@ -255,18 +260,18 @@ public class TaxiModel implements FullStateModel{
 	 */
 	public int actionInd(Action a){
 		String aname = a.actionName();
-		if(aname.startsWith(Taxi.ACTION_NORTH))
-			return Taxi.IND_NORTH;
-		else if(aname.startsWith(Taxi.ACTION_EAST))
-			return Taxi.IND_EAST;
-		else if(aname.startsWith(Taxi.ACTION_SOUTH))
-			return Taxi.IND_SOUTH;
-		else if(aname.startsWith(Taxi.ACTION_WEST))
-			return Taxi.IND_WEST;
-		else if(aname.startsWith(Taxi.ACTION_PICKUP))
-			return Taxi.IND_PICKUP;
-		else if(aname.startsWith(Taxi.ACTION_PUTDOWN))
-			return Taxi.IND_PUTDOWN;
+		if(aname.startsWith(ACTION_NORTH))
+			return IND_NORTH;
+		else if(aname.startsWith(ACTION_EAST))
+			return IND_EAST;
+		else if(aname.startsWith(ACTION_SOUTH))
+			return IND_SOUTH;
+		else if(aname.startsWith(ACTION_WEST))
+			return IND_WEST;
+		else if(aname.startsWith(ACTION_PICKUP))
+			return IND_PICKUP;
+		else if(aname.startsWith(ACTION_PUTDOWN))
+			return IND_PUTDOWN;
 		throw new RuntimeException("Invalid action " + aname);
 	}
 }

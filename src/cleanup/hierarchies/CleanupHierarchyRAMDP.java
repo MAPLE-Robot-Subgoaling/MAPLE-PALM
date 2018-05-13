@@ -23,8 +23,6 @@ import hierarchy.framework.SolveActionType;
 import hierarchy.framework.Task;
 
 import static cleanup.Cleanup.*;
-import static cleanup.Cleanup.CLASS_BLOCK;
-import static cleanup.Cleanup.CLASS_ROOM;
 
 public class CleanupHierarchyRAMDP extends CleanupHierarchy {
 

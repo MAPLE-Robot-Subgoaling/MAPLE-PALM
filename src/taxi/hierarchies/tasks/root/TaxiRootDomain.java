@@ -7,9 +7,7 @@ import burlap.behavior.singleagent.planning.stochastic.valueiteration.ValueItera
 import burlap.mdp.auxiliary.DomainGenerator;
 import burlap.mdp.auxiliary.common.NullTermination;
 import burlap.mdp.core.TerminalFunction;
-import burlap.mdp.core.action.ActionType;
 import burlap.mdp.core.state.State;
-import burlap.mdp.singleagent.common.GoalBasedRF;
 import burlap.mdp.singleagent.common.NullRewardFunction;
 import burlap.mdp.singleagent.environment.SimulatedEnvironment;
 import burlap.mdp.singleagent.model.FactoredModel;
@@ -19,24 +17,15 @@ import burlap.statehashing.HashableStateFactory;
 import burlap.statehashing.simple.SimpleHashableStateFactory;
 import hierarchy.framework.GoalFailRF;
 import hierarchy.framework.GoalFailTF;
-import taxi.Taxi;
 import taxi.functions.amdp.RootCompletedPF;
 import taxi.functions.amdp.RootFailurePF;
 import taxi.hierarchies.tasks.root.state.RootStateMapper;
 import taxi.hierarchies.tasks.root.state.TaxiRootPassenger;
 import taxi.stateGenerator.TaxiStateFactory;
 
+import static taxi.TaxiConstants.*;
+
 public class TaxiRootDomain implements DomainGenerator {
-
-	//passenger attributes
-	public static final String ATT_GOAL_LOCATION =			"goalLocation";
-	public static final String ATT_CURRENT_LOCATION = 		"currentLocation";
-
-	public static final String IN_TAXI =					"inTaxi";
-
-	//actions
-	public static final String ACTION_GET = 				"get";
-	public static final String ACTION_PUT = 				"put";
 
 	private RewardFunction rf;
 	private TerminalFunction tf;
@@ -64,7 +53,7 @@ public class TaxiRootDomain implements DomainGenerator {
 	public OOSADomain generateDomain() {
 		OOSADomain domain = new OOSADomain();
 		
-		domain.addStateClass(Taxi.CLASS_PASSENGER, TaxiRootPassenger.class);
+		domain.addStateClass(CLASS_PASSENGER, TaxiRootPassenger.class);
 
 		TaxiRootModel tmodel = new TaxiRootModel();
 		if (tf == null) {
@@ -79,8 +68,8 @@ public class TaxiRootDomain implements DomainGenerator {
 		domain.setModel(model);
 		
 		domain.addActionTypes(
-				new GetActionType(ACTION_GET, new String[]{Taxi.CLASS_PASSENGER}),
-				new PutActionType(ACTION_PUT, new String[]{Taxi.CLASS_PASSENGER})
+				new GetActionType(ACTION_GET, new String[]{CLASS_PASSENGER}),
+				new PutActionType(ACTION_PUT, new String[]{CLASS_PASSENGER})
 		);
 		
 		return domain;

@@ -1,9 +1,5 @@
 package testing;
 
-import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.List;
-
 import amdp.planning.AMDPPlanner;
 import burlap.behavior.singleagent.Episode;
 import burlap.behavior.singleagent.auxiliary.EpisodeSequenceVisualizer;
@@ -17,7 +13,10 @@ import hierarchy.framework.Task;
 import taxi.TaxiVisualizer;
 import taxi.hierarchies.TaxiHierarchy;
 import taxi.state.TaxiState;
-import taxi.stateGenerator.TaxiStateFactory;
+
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class AMDPPlanTest {
 	

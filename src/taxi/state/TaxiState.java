@@ -5,12 +5,14 @@ import burlap.mdp.core.oo.state.OOStateUtilities;
 import burlap.mdp.core.oo.state.OOVariableKey;
 import burlap.mdp.core.oo.state.ObjectInstance;
 import burlap.mdp.core.state.MutableState;
-import taxi.Taxi;
 import taxi.hierarchies.interfaces.PassengerParameterizable;
+import utilities.DeepCopyForShallowCopyState;
 
 import java.util.*;
 
-public class TaxiState implements MutableOOState, PassengerParameterizable{
+import static taxi.TaxiConstants.*;
+
+public class TaxiState implements MutableOOState, PassengerParameterizable, DeepCopyForShallowCopyState {
 
 	//contains a taxi, passengers, locations and walls
 	private TaxiAgent taxi;
@@ -71,25 +73,30 @@ public class TaxiState implements MutableOOState, PassengerParameterizable{
 		return null;
 	}
 
+//	public List<ObjectInstance> objectInstanceList = null;//new ArrayList<>();
 	@Override
 	public List<ObjectInstance> objects() {
-		List<ObjectInstance> objs = new ArrayList<ObjectInstance>();
-		objs.add(taxi);
-		objs.addAll(passengers.values());
-		objs.addAll(locations.values());
-		objs.addAll(walls.values());
-		return objs;
+//		if (objectInstanceList == null) {
+			List<ObjectInstance> objs = new ArrayList<ObjectInstance>();
+			objs.add(taxi);
+			objs.addAll(passengers.values());
+			objs.addAll(locations.values());
+			objs.addAll(walls.values());
+			return objs;
+//			objectInstanceList = objs;
+//		}
+//		return objectInstanceList;
 	}
 
 	@Override
 	public List<ObjectInstance> objectsOfClass(String oclass) {
-		if(oclass.equals(Taxi.CLASS_TAXI))
+		if(oclass.equals(CLASS_TAXI))
 			return Arrays.<ObjectInstance>asList(taxi);
-		else if(oclass.equals(Taxi.CLASS_PASSENGER))
+		else if(oclass.equals(CLASS_PASSENGER))
 			return new ArrayList<ObjectInstance>(passengers.values());
-		else if(oclass.equals(Taxi.CLASS_LOCATION))
+		else if(oclass.equals(CLASS_LOCATION))
 			return new ArrayList<ObjectInstance>(locations.values());
-		else if(oclass.equals(Taxi.CLASS_WALL))
+		else if(oclass.equals(CLASS_WALL))
 			return new ArrayList<ObjectInstance>(walls.values());
 		throw new RuntimeException("No object class " + oclass);
 	}
@@ -129,14 +136,14 @@ public class TaxiState implements MutableOOState, PassengerParameterizable{
 
 	@Override
 	public MutableOOState addObject(ObjectInstance o) {
-		if(o instanceof TaxiAgent || o.className().equals(Taxi.CLASS_TAXI)){
+		if(o instanceof TaxiAgent || o.className().equals(CLASS_TAXI)){
 			touchTaxi();
 			taxi = (TaxiAgent) o;
-		}else if(o instanceof TaxiPassenger || o.className().equals(Taxi.CLASS_PASSENGER)){
+		}else if(o instanceof TaxiPassenger || o.className().equals(CLASS_PASSENGER)){
 			touchPassengers().put(o.name(), (TaxiPassenger) o);			
-		}else if(o instanceof TaxiLocation || o.className().equals(Taxi.CLASS_LOCATION)){
+		}else if(o instanceof TaxiLocation || o.className().equals(CLASS_LOCATION)){
 			touchLocations().put(o.name(), (TaxiLocation) o);
-		}else if(o instanceof TaxiWall || o.className().equals(Taxi.CLASS_WALL)){
+		}else if(o instanceof TaxiWall || o.className().equals(CLASS_WALL)){
 			touchWalls().put(o.name(), (TaxiWall) o);
 		}else{
 			throw new RuntimeException("Can only add certain objects to state.");
@@ -207,26 +214,26 @@ public class TaxiState implements MutableOOState, PassengerParameterizable{
 
 	@Override
 	public String getPassengerLocation(String pname) {
-		int px = (int) passengers.get(pname).get(Taxi.ATT_X);
-		int py = (int) passengers.get(pname).get(Taxi.ATT_Y);
+		int px = (int) passengers.get(pname).get(ATT_X);
+		int py = (int) passengers.get(pname).get(ATT_Y);
 
 		for(String loc : getLocations()){
-			int lx = (int) locations.get(loc).get(Taxi.ATT_X);
-			int ly = (int) locations.get(loc).get(Taxi.ATT_Y);
+			int lx = (int) locations.get(loc).get(ATT_X);
+			int ly = (int) locations.get(loc).get(ATT_Y);
 			if(px == lx && py == ly)
 				return loc;
 		}
-		return Taxi.ON_ROAD;
+		return ATT_VAL_ON_ROAD;
 	}
 //
 //	@Override
 //	public String getTaxiLocation() {
-//		int tx = (int) taxi.get(Taxi.ATT_X);
-//		int ty = (int) taxi.get(Taxi.ATT_Y);
+//		int tx = (int) taxi.get(ATT_X);
+//		int ty = (int) taxi.get(ATT_Y);
 //
 //		for(String loc : getLocations()){
-//			int lx = (int) getLocationAtt(loc, Taxi.ATT_X);
-//			int ly = (int) getLocationAtt(loc, Taxi.ATT_Y);
+//			int lx = (int) getLocationAtt(loc, ATT_X);
+//			int ly = (int) getLocationAtt(loc, ATT_Y);
 //			if(lx == tx && ly == ty)
 //				return loc;
 //		}
@@ -271,13 +278,13 @@ public class TaxiState implements MutableOOState, PassengerParameterizable{
 	
 	//test to see if there is a wall on either side of the taxi
 	public boolean wallNorth(){
-		int tx = (int) taxi.get(Taxi.ATT_X);
-		int ty = (int) taxi.get(Taxi.ATT_Y);
+		int tx = (int) taxi.get(ATT_X);
+		int ty = (int) taxi.get(ATT_Y);
 		for(TaxiWall w : walls.values()){
-			boolean ish = (boolean) w.get(Taxi.ATT_IS_HORIZONTAL);
-			int wx = (int) w.get(Taxi.ATT_START_X);
-			int wy = (int) w.get(Taxi.ATT_START_Y);
-			int wlen = (int) w.get(Taxi.ATT_LENGTH);
+			boolean ish = (boolean) w.get(ATT_IS_HORIZONTAL);
+			int wx = (int) w.get(ATT_START_X);
+			int wy = (int) w.get(ATT_START_Y);
+			int wlen = (int) w.get(ATT_LENGTH);
 			if(ish){
 				//wall in above line
 				if(ty == wy - 1){
@@ -293,13 +300,13 @@ public class TaxiState implements MutableOOState, PassengerParameterizable{
 	}
 	
 	public boolean wallEast(){
-		int tx = (int) taxi.get(Taxi.ATT_X);
-		int ty = (int) taxi.get(Taxi.ATT_Y);
+		int tx = (int) taxi.get(ATT_X);
+		int ty = (int) taxi.get(ATT_Y);
 		for(TaxiWall w : walls.values()){
-			boolean ish = (boolean) w.get(Taxi.ATT_IS_HORIZONTAL);
-			int wx = (int) w.get(Taxi.ATT_START_X);
-			int wy = (int) w.get(Taxi.ATT_START_Y);
-			int wlen = (int) w.get(Taxi.ATT_LENGTH);
+			boolean ish = (boolean) w.get(ATT_IS_HORIZONTAL);
+			int wx = (int) w.get(ATT_START_X);
+			int wy = (int) w.get(ATT_START_Y);
+			int wlen = (int) w.get(ATT_LENGTH);
 			if(!ish){
 				if(tx == wx - 1){
 					if(ty >= wy && ty < wy + wlen){
@@ -313,13 +320,13 @@ public class TaxiState implements MutableOOState, PassengerParameterizable{
 	}
 	
 	public boolean wallSouth(){
-		int tx = (int) taxi.get(Taxi.ATT_X);
-		int ty = (int) taxi.get(Taxi.ATT_Y);
+		int tx = (int) taxi.get(ATT_X);
+		int ty = (int) taxi.get(ATT_Y);
 		for(TaxiWall w : walls.values()){
-			boolean ish = (boolean) w.get(Taxi.ATT_IS_HORIZONTAL);
-			int wx = (int) w.get(Taxi.ATT_START_X);
-			int wy = (int) w.get(Taxi.ATT_START_Y);
-			int wlen = (int) w.get(Taxi.ATT_LENGTH);
+			boolean ish = (boolean) w.get(ATT_IS_HORIZONTAL);
+			int wx = (int) w.get(ATT_START_X);
+			int wy = (int) w.get(ATT_START_Y);
+			int wlen = (int) w.get(ATT_LENGTH);
 			if(ish){
 				if(ty == wy){
 					if(tx >= wx && tx < wx + wlen){
@@ -333,13 +340,13 @@ public class TaxiState implements MutableOOState, PassengerParameterizable{
 	}
 	
 	public boolean wallWest(){
-		int tx = (int) taxi.get(Taxi.ATT_X);
-		int ty = (int) taxi.get(Taxi.ATT_Y);
+		int tx = (int) taxi.get(ATT_X);
+		int ty = (int) taxi.get(ATT_Y);
 		for(TaxiWall w : walls.values()){
-			boolean ish = (boolean) w.get(Taxi.ATT_IS_HORIZONTAL);
-			int wx = (int) w.get(Taxi.ATT_START_X);
-			int wy = (int) w.get(Taxi.ATT_START_Y);
-			int wlen = (int) w.get(Taxi.ATT_LENGTH);
+			boolean ish = (boolean) w.get(ATT_IS_HORIZONTAL);
+			int wx = (int) w.get(ATT_START_X);
+			int wy = (int) w.get(ATT_START_Y);
+			int wlen = (int) w.get(ATT_LENGTH);
 			if(!ish){
 				if(tx == wx){
 					if(ty >= wy && ty < wy + wlen){
@@ -365,6 +372,28 @@ public class TaxiState implements MutableOOState, PassengerParameterizable{
 //		}
 //		return out;
 		return OOStateUtilities.ooStateToString(this);
+	}
+
+	// determine if at least one passenger is in the taxi
+    public boolean isTaxiOccupied() {
+		for (String passengerName : getPassengers()) {
+			boolean inTaxi = (boolean) getPassengerAtt(passengerName, ATT_IN_TAXI);
+			if (inTaxi) {
+				return true;
+			}
+		}
+        return false;
+    }
+
+
+	@Override
+	public MutableOOState deepCopy() {
+		TaxiState copy = this.copy();
+		copy.touchTaxi();
+		copy.touchPassengers();
+		copy.touchLocations();
+		copy.touchWalls();
+		return copy;
 	}
 }
 

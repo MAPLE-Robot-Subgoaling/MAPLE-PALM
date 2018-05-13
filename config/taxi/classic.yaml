@@ -1,18 +1,24 @@
 state: classic
 
 agents:
-  - ramdp
+
+  - rmaxq
+  - palmExpert
+  - palmExpertWithNavGiven
+  - palmHiergen
   - qlearning
 
-episodes: 100
-max_steps: 2000
-trials: 2
+episodes: 200
+max_steps: 1000
+trials: 1
 gamma: 0.99
 
 stochastic:
   seed: 2320942930
   correct_move: 1.0
-  fickle: 0.00
+
+  fickle: 0.05
+
   random_start: false
 
 planning:
@@ -21,14 +27,17 @@ planning:
 rmax:
   vmax: 1.0
   threshold: 10
-  max_delta: 0.01
+
+  max_delta: 0.0000001
+  max_delta_rmaxq: 0.0001
   max_iterations_in_model: 1000
-  use_multitime_model: false
+  use_multitime_model: true
+
 
 output:
   csv:
     enabled: true
-    output: results/ramdp-classic.csv
+    output: results/ramdp-jwtest.csv
 
   chart:
     enabled: true
@@ -40,6 +49,7 @@ output:
     trial_mode: MOST_RECENT_AND_AVERAGE
 
     metrics:
+                                     
       - STEPS_PER_EPISODE
       - CUMULATIVE_REWARD_PER_STEP
       - CUMULATIVE_REWARD_PER_EPISODE
@@ -50,3 +60,4 @@ output:
     width: 20
     height: 20
     
+

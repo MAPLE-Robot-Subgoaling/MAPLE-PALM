@@ -4,13 +4,14 @@ import burlap.mdp.core.oo.state.MutableOOState;
 import burlap.mdp.core.oo.state.OOStateUtilities;
 import burlap.mdp.core.oo.state.ObjectInstance;
 import burlap.mdp.core.state.MutableState;
-import burlap.mdp.core.state.State;
+import taxi.hierarchies.tasks.put.state.TaxiPutAgent;
+import utilities.DeepCopyForShallowCopyState;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class TaxiHierGenTask5State implements MutableOOState{
+public class TaxiHierGenTask5State implements MutableOOState, DeepCopyForShallowCopyState {
 
 	public static final String CLASS_ROOT_Taxi =			"tas5Taxi";
 	public static final String ACTION_Task5_Action = 		"task5Action";
@@ -28,7 +29,12 @@ public class TaxiHierGenTask5State implements MutableOOState{
 
 	@Override
 	public MutableOOState removeObject(String oname) {
-		throw new RuntimeException("Not needed for HierGen");
+		ObjectInstance objectInstance = this.object(oname);
+		if (objectInstance instanceof TaxiPutAgent) {
+			touchTaxi();
+			taxi = null;
+		}
+		return this;
 	}
 
 	@Override
@@ -38,7 +44,8 @@ public class TaxiHierGenTask5State implements MutableOOState{
 
 	@Override
 	public int numObjects() {
-		return 1;
+		int total = taxi == null ? 0 : 1;
+		return total;
 	}
 
 	@Override
@@ -51,7 +58,7 @@ public class TaxiHierGenTask5State implements MutableOOState{
 	@Override
 	public List<ObjectInstance> objects() {
 		List<ObjectInstance> objects = new ArrayList<ObjectInstance>();
-		objects.add(taxi);
+		if (taxi != null) objects.add(taxi);
 		return objects;
 	}
 
@@ -78,7 +85,7 @@ public class TaxiHierGenTask5State implements MutableOOState{
 	}
 
 	@Override
-	public State copy() {
+	public TaxiHierGenTask5State copy() {
 		return new TaxiHierGenTask5State(taxi);
 	}
 
@@ -90,4 +97,17 @@ public class TaxiHierGenTask5State implements MutableOOState{
 	public String getTaxiName(){
 		return taxi.name();
 	}
+
+	public TaxiHierGenTask5Taxi touchTaxi() {
+		if (this.taxi != null) { this.taxi = taxi.copy(); }
+		return taxi;
+	}
+
+	@Override
+	public MutableOOState deepCopy() {
+		TaxiHierGenTask5State copy = this.copy();
+		copy.touchTaxi();
+		return copy;
+	}
+
 }

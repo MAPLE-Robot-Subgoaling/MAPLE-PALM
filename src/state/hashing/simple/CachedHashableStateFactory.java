@@ -4,13 +4,13 @@ import burlap.mdp.core.state.State;
 import burlap.statehashing.HashableState;
 import burlap.statehashing.HashableStateFactory;
 import burlap.statehashing.WrappedHashableState;
+import utilities.DeepCopyForShallowCopyState;
 
 import java.util.HashMap;
-import java.util.HashSet;
 
 public class CachedHashableStateFactory implements HashableStateFactory {
 
-    protected HashMap<Integer, WrappedHashableState> states = new HashMap<Integer, WrappedHashableState>();
+    protected HashMap<Integer, WrappedHashableState> states = new HashMap<>();
 
     /**
      * Whether state evaluations of OO-MDPs are object identifier independent (the names of objects don't matter). By
@@ -41,15 +41,23 @@ public class CachedHashableStateFactory implements HashableStateFactory {
             return (HashableState)s;
         }
 
-        if(identifierIndependent){
-            WrappedHashableState hs = new IICachedHashableState(s);
-            Integer hashCode = hs.hashCode();
-            if (!states.containsKey(hashCode)) {
-                states.put(hashCode, hs);
-            }
-            return states.get(hashCode);
+        if (!(s instanceof DeepCopyForShallowCopyState)) {
+            throw new RuntimeException("Error: to use CachedHashing, the state must implement DeepCopyForShallowCopyState");
         }
-        return new IDCachedHashableState(s);
+        DeepCopyForShallowCopyState dcfscs = (DeepCopyForShallowCopyState) s;
+
+        WrappedHashableState hs;
+        if(identifierIndependent){
+            hs = new IICachedHashableState(dcfscs);
+        } else {
+            hs = new IDCachedHashableState(dcfscs);
+        }
+        Integer hashCode = hs.hashCode();
+        if (!states.containsKey(hashCode)) {
+            states.put(hashCode, hs);
+        }
+        hs = states.get(hashCode);
+        return hs;
     }
 
 

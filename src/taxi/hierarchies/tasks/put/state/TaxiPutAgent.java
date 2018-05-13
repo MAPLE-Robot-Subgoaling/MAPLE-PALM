@@ -1,17 +1,18 @@
 package taxi.hierarchies.tasks.put.state;
 
 import burlap.mdp.core.oo.state.ObjectInstance;
-import taxi.Taxi;
-import taxi.hierarchies.tasks.put.TaxiPutDomain;
 import utilities.MutableObject;
 
 import java.util.Arrays;
 import java.util.List;
 
+import static taxi.TaxiConstants.ATT_LOCATION;
+import static taxi.TaxiConstants.CLASS_TAXI;
+
 public class TaxiPutAgent extends MutableObject {
 
 	private final static List<Object> keys = Arrays.<Object>asList(
-			TaxiPutDomain.ATT_TAXI_LOCATION
+			ATT_LOCATION
 			);
 
 	public TaxiPutAgent(String name, String location) {
@@ -19,18 +20,18 @@ public class TaxiPutAgent extends MutableObject {
 	}
 
 	private TaxiPutAgent(String name, Object location) {
-	    this.set(TaxiPutDomain.ATT_TAXI_LOCATION, location);
+	    this.set(ATT_LOCATION, location);
 		this.setName(name);
 	}
 	
 	@Override
 	public String className() {
-		return Taxi.CLASS_TAXI;
+		return CLASS_TAXI;
 	}
 
 	@Override
 	public ObjectInstance copyWithName(String objectName) {
-		return new TaxiPutAgent( objectName, get(TaxiPutDomain.ATT_TAXI_LOCATION));
+		return new TaxiPutAgent( objectName, get(ATT_LOCATION));
 	}
 
 	@Override

@@ -1,7 +1,5 @@
 package utilities;
 
-import java.util.*;
-
 import burlap.behavior.policy.GreedyQPolicy;
 import burlap.behavior.singleagent.planning.Planner;
 import burlap.behavior.singleagent.planning.stochastic.DynamicProgramming;
@@ -13,8 +11,8 @@ import burlap.mdp.singleagent.model.FullModel;
 import burlap.mdp.singleagent.model.TransitionProb;
 import burlap.statehashing.HashableState;
 import burlap.statehashing.HashableStateFactory;
-import ramdp.agent.RAMDPModel;
-import taxi.hierarchies.tasks.root.state.TaxiRootState;
+
+import java.util.*;
 
 
 /**

@@ -1,6 +1,5 @@
 package cleanup.hierarchies.tasks.move;
 
-import burlap.mdp.auxiliary.DomainGenerator;
 import burlap.mdp.core.TerminalFunction;
 import burlap.mdp.singleagent.model.RewardFunction;
 import cleanup.Cleanup;

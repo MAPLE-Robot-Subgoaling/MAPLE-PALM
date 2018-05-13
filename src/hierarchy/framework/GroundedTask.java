@@ -1,20 +1,15 @@
 package hierarchy.framework;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import burlap.behavior.valuefunction.ValueFunction;
-import burlap.mdp.auxiliary.common.GoalConditionTF;
-import burlap.mdp.auxiliary.stateconditiontest.StateConditionTest;
-import burlap.mdp.core.oo.ObjectParameterizedAction;
-import burlap.mdp.singleagent.common.GoalBasedRF;
-import burlap.mdp.singleagent.model.FactoredModel;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-
 import burlap.mdp.core.action.Action;
+import burlap.mdp.core.oo.ObjectParameterizedAction;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.model.FullModel;
 import burlap.mdp.singleagent.oo.OOSADomain;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class GroundedTask {
 
@@ -23,12 +18,14 @@ public class GroundedTask {
 	/**
 	 * specific action in a task
 	 */
-	private Action action;
+	private final Action action;
 
 	/**
 	 * the general task node which this grounded task is part of
 	 */
 	private Task t;
+
+	protected final String formattedName;
 
 	/**
 	 * each grounded task has an action and task
@@ -37,6 +34,7 @@ public class GroundedTask {
 	 */
 	public GroundedTask(Action a, Task t){
 		this.action = a;
+		this.formattedName = StringFormat.parameterizedActionName(this.action);
 		this.t = t;
 	}
 
@@ -151,7 +149,7 @@ public class GroundedTask {
 
 	@Override
 	public String toString(){
-		return StringFormat.parameterizedActionName(action);
+		return formattedName;
 	}
 
 	/**
@@ -175,7 +173,7 @@ public class GroundedTask {
         }
 
         GroundedTask o = (GroundedTask) other;
-        if(!StringFormat.parameterizedActionName(this.action).equals(StringFormat.parameterizedActionName(o.action))){
+        if(!this.formattedName.equals(o.formattedName)){
             return false; 
         }
         
@@ -185,7 +183,7 @@ public class GroundedTask {
     @Override
     public int hashCode() {
         HashCodeBuilder hashCodeBuilder = new HashCodeBuilder(31, 7);
-        hashCodeBuilder.append(StringFormat.parameterizedActionName(this.action));
+        hashCodeBuilder.append(formattedName);
         return hashCodeBuilder.toHashCode();
     }
 

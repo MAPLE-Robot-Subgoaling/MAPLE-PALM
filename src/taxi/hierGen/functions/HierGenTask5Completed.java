@@ -2,10 +2,12 @@ package taxi.hierGen.functions;
 
 import burlap.mdp.core.oo.propositional.PropositionalFunction;
 import burlap.mdp.core.oo.state.OOState;
-import taxi.Taxi;
 import taxi.hierGen.Task5.state.TaxiHierGenTask5State;
 import taxi.hierGen.actions.HierGenTask5Action;
 import taxi.hierGen.actions.HierGenTask5ActionType;
+
+import static taxi.TaxiConstants.ATT_X;
+import static taxi.TaxiConstants.ATT_Y;
 
 public class HierGenTask5Completed extends PropositionalFunction {
 
@@ -21,8 +23,8 @@ public class HierGenTask5Completed extends PropositionalFunction {
 		HierGenTask5ActionType navType = new HierGenTask5ActionType();
 		HierGenTask5Action action = (HierGenTask5Action) navType.associatedAction(params[0]);
 
-		int tx = (int) st.getTaxiAtt(Taxi.ATT_X);
-		int ty = (int) st.getTaxiAtt(Taxi.ATT_Y);
+		int tx = (int) st.getTaxiAtt(ATT_X);
+		int ty = (int) st.getTaxiAtt(ATT_Y);
 		int goalX = action.getGoalX();
 		int goalY = action.getGoalY();
 

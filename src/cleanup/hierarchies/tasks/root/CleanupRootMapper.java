@@ -2,14 +2,16 @@ package cleanup.hierarchies.tasks.root;
 
 import burlap.mdp.auxiliary.StateMapping;
 import burlap.mdp.core.state.State;
-import cleanup.hierarchies.tasks.pick.*;
+import cleanup.hierarchies.tasks.pick.PickAgent;
+import cleanup.hierarchies.tasks.pick.PickBlock;
+import cleanup.hierarchies.tasks.pick.PickRoom;
+import cleanup.hierarchies.tasks.pick.PickState;
 import cleanup.state.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static cleanup.Cleanup.*;
-import static cleanup.Cleanup.ATT_COLOR;
 
 public class CleanupRootMapper implements StateMapping {
 

@@ -3,7 +3,6 @@ package cleanup.hierarchies.tasks.move;
 import burlap.mdp.core.oo.propositional.PropositionalFunction;
 import burlap.mdp.core.oo.state.OOState;
 import burlap.mdp.core.oo.state.ObjectInstance;
-import cleanup.state.CleanupState;
 
 import static cleanup.Cleanup.*;
 

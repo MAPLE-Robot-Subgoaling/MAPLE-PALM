@@ -28,64 +28,10 @@ import taxi.stateGenerator.TaxiStateFactory;
 import java.util.ArrayList;
 import java.util.List;
 
+import static taxi.TaxiConstants.*;
+
 public class Taxi implements DomainGenerator{
 
-	//public constants for general use
-	//object classes
-	public static final String CLASS_TAXI = 				"Taxi";
-	public static final String CLASS_PASSENGER =			"Passenger";
-	public static final String CLASS_LOCATION = 			"Location";
-	public static final String CLASS_WALL = 				"Wall";
-	
-	//common attributes
-	public static final String ATT_X =						"x";
-	public static final String ATT_Y =						"y";
-	
-	//taxi attributes
-	public static final String ATT_TAXI_OCCUPIED = 			"taxiOccupied";
-	
-	//passenger attributes
-	public static final String ATT_GOAL_LOCATION = 			"goalLocation";
-	public static final String ATT_IN_TAXI = 				"inTaxi";
-	public static final String ATT_PICKED_UP_AT_LEAST_ONCE ="pickedUpAtLeastOnce";
-//	public static final String ATT_JUST_PICKED_UP =			"justPickedUp";
-	public static final String ON_ROAD =				"onRoad";
-	//location attributes 
-	public static final String ATT_COLOR =					"color";
-	
-	//wall attributes
-	public static final String ATT_START_X = 				"startX";
-	public static final String ATT_START_Y = 				"startY";
-	public static final String ATT_LENGTH = 				"length";
-	public static final String ATT_IS_HORIZONTAL =			"isHorizontal";
-	
-	//colors
-	public static final String COLOR_RED = 					"red";
-	public static final String COLOR_YELLOW = 				"yellow";
-	public static final String COLOR_GREEN = 				"green";
-	public static final String COLOR_BLUE = 				"blue";
-	public static final String COLOR_MAGENTA =				"magenta";
-	public static final String COLOR_BLACK = 				"black";
-	public static final String COLOR_GRAY =					"gray";
-	
-	//actions
-	public static final int NUM_MOVE_ACTIONS = 				4;
-	public static final String ACTION_NORTH = 				"north";
-	public static final String ACTION_EAST =				"east";
-	public static final String ACTION_SOUTH =				"south";
-	public static final String ACTION_WEST = 				"west";
-	public static final String ACTION_PICKUP = 				"pickup";
-	public static final String ACTION_PUTDOWN = 			"putdown";
-    public static final String ERROR = 						"ERROR";
-
-    //action indexes
-	public static int IND_NORTH = 							0;
-	public static int IND_EAST = 							1;
-	public static int IND_SOUTH = 							2;
-	public static int IND_WEST = 							3;
-	public static int IND_PICKUP = 							4;
-	public static int IND_PUTDOWN = 						5;
-	
 	//parameters dictating probabilities of the model
 	private RewardFunction rf;
 	private TerminalFunction tf;
@@ -192,15 +138,6 @@ public class Taxi implements DomainGenerator{
 		return domain;
 	}
 	
-	//for the taxi hierarchy, each node has a different set of actions, 
-	//these mothods remove all actions besides the subtask for each task  
-	public OOSADomain generateBringOnDomain(){
-		OOSADomain d = generateDomain();
-		d.clearActionTypes();
-		d.addActionType(new PickupActionType(ACTION_PICKUP, new String[]{CLASS_PASSENGER}));
-		return d;
-	}
-	
 	public OOSADomain generateNavigateDomain(){
 		OOSADomain d = generateDomain();
 		d.clearActionTypes();
@@ -210,13 +147,6 @@ public class Taxi implements DomainGenerator{
                 new UniversalActionType(ACTION_EAST),
                 new UniversalActionType(ACTION_WEST)
                 );
-		return d;
-	}
-	
-	public OOSADomain generateDropOffDomain(){
-		OOSADomain d = generateDomain();
-		d.clearActionTypes();
-		d.addActionType(new PutdownActionType(ACTION_PUTDOWN, new String[]{CLASS_PASSENGER}));
 		return d;
 	}
 				

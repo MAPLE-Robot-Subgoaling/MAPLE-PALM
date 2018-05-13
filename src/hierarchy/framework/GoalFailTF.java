@@ -1,8 +1,6 @@
 package hierarchy.framework;
 
 import burlap.mdp.core.TerminalFunction;
-import burlap.mdp.core.action.Action;
-import burlap.mdp.core.oo.ObjectParameterizedAction;
 import burlap.mdp.core.oo.propositional.PropositionalFunction;
 import burlap.mdp.core.oo.state.OOState;
 import burlap.mdp.core.state.State;

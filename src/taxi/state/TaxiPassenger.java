@@ -1,11 +1,12 @@
 package taxi.state;
 
+import burlap.mdp.core.oo.state.ObjectInstance;
+import utilities.MutableObject;
+
 import java.util.Arrays;
 import java.util.List;
 
-import burlap.mdp.core.oo.state.ObjectInstance;
-import taxi.Taxi;
-import utilities.MutableObject;
+import static taxi.TaxiConstants.*;
 
 public class TaxiPassenger extends MutableObject{
 
@@ -13,10 +14,10 @@ public class TaxiPassenger extends MutableObject{
 	 * x, y, whether in taxi, goal, whether they have been picked up, whether they wer just picked up
 	 */
 	private final static List<Object> keys = Arrays.<Object>asList(
-			Taxi.ATT_X,
-			Taxi.ATT_Y,
-			Taxi.ATT_IN_TAXI,
-			Taxi.ATT_GOAL_LOCATION
+			ATT_X,
+			ATT_Y,
+			ATT_IN_TAXI,
+			ATT_GOAL_LOCATION
 			);
 	
 	public TaxiPassenger(String name, int x, int y, String goalLocation){
@@ -33,11 +34,11 @@ public class TaxiPassenger extends MutableObject{
 	}
 	
 	private TaxiPassenger(String name, Object x, Object y, Object goalLocation, Object inTaxi){
-		this.set(Taxi.ATT_X, x);
-		this.set(Taxi.ATT_Y, y);
-		this.set(Taxi.ATT_GOAL_LOCATION, goalLocation);
-		this.set(Taxi.ATT_IN_TAXI, inTaxi);
-//		this.set(Taxi.ATT_JUST_PICKED_UP, justpickedUp);
+		this.set(ATT_X, x);
+		this.set(ATT_Y, y);
+		this.set(ATT_GOAL_LOCATION, goalLocation);
+		this.set(ATT_IN_TAXI, inTaxi);
+//		this.set(ATT_JUST_PICKED_UP, justpickedUp);
 		this.setName(name);
 	}
 	
@@ -46,10 +47,10 @@ public class TaxiPassenger extends MutableObject{
 	public ObjectInstance copyWithName(String objectName) {
 		return new TaxiPassenger(
 				objectName,
-				get(Taxi.ATT_X),
-				get(Taxi.ATT_Y),
-				get(Taxi.ATT_GOAL_LOCATION),
-				get(Taxi.ATT_IN_TAXI)
+				get(ATT_X),
+				get(ATT_Y),
+				get(ATT_GOAL_LOCATION),
+				get(ATT_IN_TAXI)
 				);
 	}
 	
@@ -60,7 +61,7 @@ public class TaxiPassenger extends MutableObject{
 	
 	@Override
 	public String className() {
-		return Taxi.CLASS_PASSENGER;
+		return CLASS_PASSENGER;
 	}
 
 	@Override

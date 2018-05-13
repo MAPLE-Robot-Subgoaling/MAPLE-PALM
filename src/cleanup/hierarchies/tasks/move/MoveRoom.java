@@ -6,9 +6,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
-import static cleanup.Cleanup.ATT_COLOR;
-import static cleanup.Cleanup.ATT_CONNECTED;
-import static cleanup.Cleanup.CLASS_ROOM;
+import static cleanup.Cleanup.*;
 
 
 public class MoveRoom extends CleanupRoom {

@@ -10,8 +10,8 @@ import burlap.statehashing.HashableStateFactory;
 import burlap.statehashing.simple.SimpleHashableStateFactory;
 import hierarchy.framework.GroundedTask;
 import hierarchy.framework.Task;
-import ramdp.agent.RAMDPLearningAgent;
-import rmaxq.agent.RmaxQLearningAgent;
+import palm.agent.PALMLearningAgent;
+import palm.rmax.agent.PALMRmaxModelGenerator;
 import taxi.hierarchies.TaxiHierarchy;
 import taxi.state.TaxiState;
 import taxi.stateGenerator.TaxiStateFactory;
@@ -54,7 +54,10 @@ public class RuntimeTest {
 
 			@Override
 			public LearningAgent generateAgent() {
-				return new RAMDPLearningAgent(RAMDPGroot, threshold, discount, rmax, hs, maxDelta, maxIterationsInModel, useMultitimeModel);
+				PALMRmaxModelGenerator modelGen = new PALMRmaxModelGenerator(threshold,
+						rmax, hs, discount, useMultitimeModel);
+				return new PALMLearningAgent(RAMDPGroot,modelGen, hs, maxDelta,
+						maxIterationsInModel);
 			}
 		};
 
