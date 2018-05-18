@@ -560,9 +560,9 @@ public class RmaxQLearningAgent implements LearningAgent {
 			RMAXQStateData taskHsPrimePair = getStateData(task, hsPrime);
 			double parentValueAtStatePrime = getStoredValue(taskHsPrimePair);
 			expectedValue += childTransitionProbability * parentValueAtStatePrime;
-			if (childReward + expectedValue > 1.0) {
-				System.err.println("invalid value computed");
-			}
+//			if (childReward + expectedValue > 1.0) {
+//				System.err.println("invalid value computed");
+//			}
 		}
 
 		double newQ = childReward + expectedValue;
