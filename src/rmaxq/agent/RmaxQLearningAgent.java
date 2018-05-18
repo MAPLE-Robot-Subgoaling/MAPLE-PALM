@@ -78,6 +78,9 @@ public class RmaxQLearningAgent implements LearningAgent {
 		e = R_MaxQ(rootSolve, hs, e, maxSteps);
 		actualTimeElapsed = System.currentTimeMillis() - actualTimeElapsed;
 
+		//to see the number of actions in the episode
+		System.out.println("Number of actions in episode:" + e.numActions());
+
 		return e;
 	}
 

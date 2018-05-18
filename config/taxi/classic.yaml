@@ -1,8 +1,7 @@
-state: classic
+state: classic20
 
 agents:
 
-  - rmaxq
   - palmExpert
   - palmExpertWithNavGiven
   - palmHiergen
@@ -17,7 +16,7 @@ stochastic:
   seed: 2320942930
   correct_move: 1.0
 
-  fickle: 0.05
+  fickle: 0.00
 
   random_start: false
 

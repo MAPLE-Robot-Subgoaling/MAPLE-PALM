@@ -213,7 +213,7 @@ public class Taxi implements DomainGenerator{
 			/**
 			 * one issue is that the minimum and maximum determinations do not account for failure or proper termination conditions
 			 **/
-			//System.out.println("Minimum number of actions taken as of episode" + j + ": "+ minActions);
+			System.out.println("Minimum number of actions taken as of episode" + j + ": "+ minActions);
 			//System.out.println("Maximum number of actions taken as of episode" + j + ": "+ maxActions);
 		}
 		

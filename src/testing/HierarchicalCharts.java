@@ -130,6 +130,7 @@ public class HierarchicalCharts {
 				};
 			}
 
+
 			// RMAXQ
 			if(agent.equals("rmaxq")) {
 				agents[i] = new LearningAgentFactory() {
@@ -145,6 +146,7 @@ public class HierarchicalCharts {
 					}
 				};
 			}
+
 
 			// RMAX with Hiergen
 			if(agent.equals("rmaxq-h")) {
@@ -214,7 +216,7 @@ public class HierarchicalCharts {
 		//runtime
 		//get the starting time from execution
 		long startTime = System.nanoTime();
-		System.out.println("Trial current time: " + startTime);
+		System.out.println("Trial start time: " + startTime);
 		
 		
 		String conffile = "config/taxi/classic.yaml";

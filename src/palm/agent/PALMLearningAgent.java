@@ -95,11 +95,21 @@ public class PALMLearningAgent implements LearningAgent{
 		long start = System.nanoTime();
 		System.out.println("PALM episode start time: " + start);
 
+		//List <Integer> numberOfActions =  new ArrayList<>(1000);
+
 		steps = 0;
 		e = new Episode(env.currentObservation());
 		solveTask(root, env, maxSteps);
+
 		System.out.println(e.actionSequence.size() + " " + e.actionSequence);
 
+
+		//Get number of actions in episode
+		System.out.println("Number of actions in episode:" + e.numActions());
+
+		//array list for obtaining optimum numbers of total actions
+		//numberOfActions.add(e.numActions());
+		//----------------------------------------------------------------------------
 		//runtime
 		long estimated = System.nanoTime();
 		System.out.println("Estimated PALM episode time: " + estimated);
