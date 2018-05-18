@@ -100,9 +100,9 @@ public class RmaxQLearningAgent implements LearningAgent {
 		} else {
 			do {
 
-				computePolicy(taskStatePair);
+				computePolicy(currentTaskStatePair);
 
-				GroundedTask childTask = getStoredPolicy(taskStatePair);
+				GroundedTask childTask = getStoredPolicy(currentTaskStatePair);
 
 				tabLevel += "\t";
 
@@ -117,13 +117,13 @@ public class RmaxQLearningAgent implements LearningAgent {
 
 				State s = e.stateSequence.get(e.stateSequence.size() - 1);
 				currentState = hashingFactory.hashState(s);
-				currentTaskStatePair = getStateData(taskStatePair.getTask(), currentState);
+				currentTaskStatePair = getStateData(currentTaskStatePair.getTask(), currentState);
 				addToEnvelope(currentTaskStatePair);
 			} while (
-					!isTerminal(taskStatePair)
+					!isTerminal(currentTaskStatePair)
 				 && (numberPrimitivesExecuted < maxSteps || maxSteps == -1))
 			;
-			System.out.println(tabLevel + "<<< " + taskStatePair.getTask().getAction());
+			System.out.println(tabLevel + "<<< " + currentTaskStatePair.getTask().getAction());
 			return e;
 		}
 	}
@@ -540,6 +540,9 @@ public class RmaxQLearningAgent implements LearningAgent {
 			RMAXQStateData taskHsPrimePair = getStateData(task, hsPrime);
 			double parentValueAtStatePrime = getStoredValue(taskHsPrimePair);
 			expectedValue += childTransitionProbability * parentValueAtStatePrime;
+			if (childReward + expectedValue > 1.0) {
+				System.err.println("invalid value computed");
+			}
 		}
 
 		double newQ = childReward + expectedValue;
@@ -560,6 +563,7 @@ public class RmaxQLearningAgent implements LearningAgent {
 //		if(!task.isPrimitive() && isTerminal(task, hs)) {
 		if(isTerminal(taskStatePair)) {
 
+//			newV = 0.0;
 			// unsure which this should be, either this line
 //			newV = stateData.getStoredReward();
 			// or this line
@@ -569,16 +573,17 @@ public class RmaxQLearningAgent implements LearningAgent {
 			GroundedTask task = taskStatePair.getTask();
 			newV = cachedGoalRewards.computeIfAbsent(task, i -> new HashMap<>()).computeIfAbsent(hashedAbstractState, i -> task.getReward(null, task.getAction(), abstractState));
 
-
 		} else {
 			GroundedTask task = taskStatePair.getTask();
 			HashableState hs = taskStatePair.getHs();
 			List<GroundedTask> childTasks = task.getGroundedChildTasks(getMappedState(taskStatePair));
 			double maxQ = Double.NEGATIVE_INFINITY;
+			GroundedTask maxAction = null;
 			for (GroundedTask childTask : childTasks) {
 				double qValue = getStoredQ(taskStatePair, childTask);
 				if (qValue > maxQ) {
 					maxQ = qValue;
+					maxAction = childTask;
 				}
 			}
 			newV = maxQ;

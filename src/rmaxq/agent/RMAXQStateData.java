@@ -8,6 +8,8 @@ import java.util.Map;
 
 public class RMAXQStateData {
 
+    public static double DEFAULT_INITIAL_Q_VALUE = 0.0;
+
     //R^a(s) for non-primitive tasks
     private Double storedReward;
 
@@ -147,8 +149,11 @@ public class RMAXQStateData {
     }
 
     public double getQValue(GroundedTask childTask) {
-        double qValue = this.storedQValues.computeIfAbsent(childTask, i -> 0.0);
-        return qValue;
+//        double qValue = this.storedQValues.computeIfAbsent(childTask, i -> 0.0);
+        if (storedQValues.containsKey(childTask)) {
+            return storedQValues.get(childTask);
+        }
+        return DEFAULT_INITIAL_Q_VALUE;
     }
 
     public int getTotalTransitionCount(HashableState hsPrime) {
