@@ -17,6 +17,8 @@ public class RMAXQTaskData {
 
     private Set<HashableState> envelope;
 
+    private boolean computedPolicy = false;
+
     // "timesteps" tracker from RMAXQ algorithm, used to clear the planning envelope
     private Integer taskTimesteps;
 
@@ -66,5 +68,13 @@ public class RMAXQTaskData {
 
     public GroundedTask getTask() {
         return task;
+    }
+
+    public boolean isComputedPolicy() {
+        return computedPolicy;
+    }
+
+    public void setComputedPolicy(boolean computedPolicy) {
+        this.computedPolicy = computedPolicy;
     }
 }
