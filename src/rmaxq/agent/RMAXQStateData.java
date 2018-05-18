@@ -65,25 +65,25 @@ public class RMAXQStateData {
         return storedTransitionsBySteps;
     }
 
-    public Double getStoredTransitionProbabilityForSteps(HashableState hsPrime, int k, boolean initialize) {
-        if (initialize) {
+    public Double getStoredTransitionProbabilityForSteps(HashableState hsPrime, int k) {
+//        if (initialize) {
             Map<Integer,Double> map = storedTransitionsBySteps.computeIfAbsent(hsPrime, i -> new HashMap<>());
             Double probability = map.get(k);
             if (probability == null) {
                 return 0.0;
             }
             return probability;
-        } else {
-            Map<Integer,Double> map = storedTransitionsBySteps.get(hsPrime);
-            if (map == null) {
-                return 0.0;
-            }
-            Double probability = map.get(k);
-            if (probability == null) {
-                probability = 0.0;
-            }
-            return probability;
-        }
+//        } else {
+//            Map<Integer,Double> map = storedTransitionsBySteps.get(hsPrime);
+//            if (map == null) {
+//                return 0.0;
+//            }
+//            Double probability = map.get(k);
+//            if (probability == null) {
+//                probability = 0.0;
+//            }
+//            return probability;
+//        }
     }
 
     public void setStoredTransitionsBySteps(HashMap<HashableState, HashMap<Integer, Double>> storedTransitionsBySteps) {
@@ -152,7 +152,11 @@ public class RMAXQStateData {
     }
 
     public int getTotalTransitionCount(HashableState hsPrime) {
-        return totalTransitionCount.computeIfAbsent(hsPrime, i -> 0);
+//        return totalTransitionCount.computeIfAbsent(hsPrime, i -> 0);
+        if (totalTransitionCount.containsKey(hsPrime)) {
+            return totalTransitionCount.get(hsPrime);
+        }
+        return 0;
     }
 
     public void setTotalTransitionCount(HashableState hsPrime, int transitionCount) {
