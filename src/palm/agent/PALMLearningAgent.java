@@ -66,6 +66,11 @@ public class PALMLearningAgent implements LearningAgent{
 
 	private PALMModelGenerator modelGenerator;
 
+	//-----------------
+	//for the sake of graphing runtime
+	List <Integer> episodeLengths = new ArrayList<>(200);
+	//-----------------
+
 	/**
 	 * create a RAMDP agent on a given task
 	 * @param root the root of the hierarchy to learn
@@ -111,8 +116,8 @@ public class PALMLearningAgent implements LearningAgent{
 		//numberOfActions.add(e.numActions());
 		//----------------------------------------------------------------------------
 		//runtime
-		long estimated = System.nanoTime();
-		System.out.println("Estimated PALM episode time: " + estimated);
+		long end = System.nanoTime();
+		System.out.println("Estimated PALM episode time: " + (end - start));
 
 		return e;
 	}

@@ -42,20 +42,20 @@ public class HierarchicalCharts {
 		return new CachedHashableStateFactory(false);
 	}
 
-	public static void createCharts(final TaxiConfig conf, final State s, OOSADomain domain, final Task RAMDPRoot, final Task RMAXQRoot, final Task hierGenRoot) {
+	public static void createCharts(final TaxiConfig conf, final State s, OOSADomain domain, final Task RAMDPRoot, /*final Task RMAXQRoot,*/ final Task hierGenRoot) {
 		SimulatedEnvironment env;
 		final GroundedTask RAMDPGroot, hierGenGroot, RMAXQGroot;
 
 		if(conf.stochastic.random_start) {
 			env = new SimulatedEnvironment(domain, new RandomPassengerTaxiState());
 			RAMDPGroot = RAMDPRoot.getAllGroundedTasks(env.currentObservation()).get(0);
-			RMAXQGroot = RMAXQRoot.getAllGroundedTasks(s).get(0);
+			//RMAXQGroot = RMAXQRoot.getAllGroundedTasks(s).get(0);
 			hierGenGroot = hierGenRoot.getAllGroundedTasks(env.currentObservation()).get(0);
 		} else {
             env = new SimulatedEnvironment(domain, s);
 			RAMDPGroot = RAMDPRoot.getAllGroundedTasks(s).get(0);
 
-			RMAXQGroot = RMAXQRoot.getAllGroundedTasks(s).get(0);
+			//RMAXQGroot = RMAXQRoot.getAllGroundedTasks(s).get(0);
 			hierGenGroot = hierGenRoot.getAllGroundedTasks(s).get(0);
 		}
 
@@ -130,7 +130,7 @@ public class HierarchicalCharts {
 				};
 			}
 
-
+			/*
 			// RMAXQ
 			if(agent.equals("rmaxq")) {
 				agents[i] = new LearningAgentFactory() {
@@ -163,7 +163,7 @@ public class HierarchicalCharts {
 					}
 				};
 			}
-			
+			*/
 			//QLearning
 			if(agent.equals("qlearning")){
 				agents[i] = new LearningAgentFactory(){
@@ -238,7 +238,7 @@ public class HierarchicalCharts {
 		Task hiergenRoot = TaxiHierarchy.createHierGenHierarchy(conf.stochastic.correct_move, conf.stochastic.fickle);
 		OOSADomain base = TaxiHierarchy.getBaseDomain();
 		Task RMAXQroot = TaxiHierarchy.createRMAXQHierarchy(conf.stochastic.correct_move, conf.stochastic.fickle);
-		createCharts(conf, s, base, RAMDProot, RMAXQroot, hiergenRoot);
+		createCharts(conf, s, base, RAMDProot, /*RMAXQroot,*/ hiergenRoot);
 		
 		long estimatedTime = System.nanoTime() - startTime;
 		System.out.println("The estimated elapsed trial time is" + estimatedTime);
