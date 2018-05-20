@@ -31,6 +31,8 @@ import utilities.LearningAlgorithmExperimenter;
 import java.io.FileNotFoundException;
 
 //------------------------------------
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 //import utilities.SimpleHashableStateFactory;
@@ -209,13 +211,15 @@ public class HierarchicalCharts {
 	}
 
 	public static void main(String[] args) {
-		
-		//output for the console
-		
+
 		//runtime
 		//get the starting time from execution
+		long actualTimeElapsed = System.currentTimeMillis();
+		SimpleDateFormat sdf = new SimpleDateFormat("MMM dd,yyyy HH:mm:ss");
+		Date resultdate = new Date(actualTimeElapsed);
+		System.out.println(sdf.format(resultdate));
 		long startTime = System.nanoTime();
-		System.out.println("Trial current time: " + startTime);
+		System.out.println("Trial current nano time: " + startTime);
 		
 		
 		String conffile = "config/taxi/classic.yaml";
@@ -240,6 +244,8 @@ public class HierarchicalCharts {
 		createCharts(conf, s, base, RAMDProot, RMAXQroot, hiergenRoot);
 		
 		long estimatedTime = System.nanoTime() - startTime;
-		System.out.println("The estimated elapsed trial time is" + estimatedTime);
+		System.out.println("The estimated elapsed trial time is " + estimatedTime);
+		actualTimeElapsed = System.currentTimeMillis() - actualTimeElapsed;
+		System.out.println("Estimated trial clock time elapsed: " + actualTimeElapsed);
 	}
 }

@@ -73,6 +73,9 @@ public class RmaxQLearningAgent implements LearningAgent {
 			taskDataMap.get(task).clearTimesteps();
 		}
 
+		//for a chart of runtime
+		long startTime = System.nanoTime();
+
 		actualTimeElapsed = System.currentTimeMillis();
 		SimpleDateFormat sdf = new SimpleDateFormat("MMM dd,yyyy HH:mm:ss");
 		Date resultdate = new Date(actualTimeElapsed);
@@ -80,7 +83,16 @@ public class RmaxQLearningAgent implements LearningAgent {
 		HashableState hs = hashingFactory.hashState(env.currentObservation());
 		RMAXQStateData taskStatePair = getStateData(rootSolve, hs);
 		e = R_MaxQ(taskStatePair, e, maxSteps);
+
+		//to see the number of actions
+		System.out.println("Number of actions in episode: " + e.numActions());
+
+		//for a chart of runtime
+		long estimatedTime = System.nanoTime() - startTime;
+		System.out.println("Estimated RMAXQ episode nano time: " + estimatedTime);
+
 		actualTimeElapsed = System.currentTimeMillis() - actualTimeElapsed;
+		System.out.println("Clock time elapsed: " + actualTimeElapsed);
 
 		return e;
 	}
