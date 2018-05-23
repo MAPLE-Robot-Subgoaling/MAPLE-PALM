@@ -24,12 +24,25 @@ public class CATScan {
                 String var = v.toString();
                 for (CausalEdge e : edges)
                 {
-                    if (e.getEnd() == ct.lastAction && e.getRelavantVariable().equals(var) && !(actionIndicies.contains(e.getStart())))
+
+                    //if(e.getEnd()== ct.getEnd())
+                    //    System.out.println(e.getRelavantVariable());
+                    if (e.getStart() !=0 && e.getRelavantVariable().equals(var) && !(actionIndicies.contains(e.getStart())))
                     {
                         //System.out.println("Entered");
-                        actionIndicies.add(e.getStart());
-                        end = e.getStart();
-                        break;
+                        if(ct.getSub() == null) {
+                            if(e.getEnd()== ct.getEnd()) {
+                                actionIndicies.add(e.getStart());
+                                end = e.getStart();
+                           }
+                        }
+                        else{
+                            if(e.getEnd() > ct.getEnd() && e.getStart() <= ct.getEnd() && !(actionIndicies.contains(e.getStart())))
+                            {
+                                actionIndicies.add(e.getStart());
+                                end = e.getStart();
+                            }
+                        }
                     }
                 }
             }
@@ -51,12 +64,14 @@ public class CATScan {
                     boolean contained = false;
                     if(!(actionIndicies.contains(i)))
                     {
-                        List<Integer> prevEdges = ct.findEdges(i);
-                        if(prevEdges != null) {
-                            for (Integer e : prevEdges) {
-                                for (Integer k : actionIndicies)
-                                    if (k.equals(e))
-                                        contained = true;
+                        List<Integer> nextEdges = ct.findEdges(i);
+                        if(nextEdges != null) {
+                            contained = true;
+                            for (Integer e : nextEdges) {
+                                    if (!actionIndicies.contains(e)) {
+                                        contained = false;
+                                        break;
+                                    }
                             }
                         }
                     }
@@ -71,7 +86,7 @@ public class CATScan {
             System.out.println("Start: " + start);
             System.out.println("End: " + end);
             for(Integer ind: actionIndicies)
-                System.out.print(ind + " ");
+                System.out.print(ind + " " );
             System.out.println();*/
             if(start != 0 || end != 0)
                 subCATs.add(new SubCAT(start, end, actionIndicies, variables, ct));

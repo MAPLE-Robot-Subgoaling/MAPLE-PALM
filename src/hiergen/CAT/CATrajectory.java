@@ -99,6 +99,13 @@ public class CATrajectory {
                 }
             }
         }
+        end = actions.size() - 1;
+        lastAction = actions.size() - 1;
+        actionInds = new ArrayList<>();
+        for(int i = 0;i < actions.size();i++)
+        {
+            actionInds.add(i);
+        }
     }
 
     public int findEdge(int s, String variable) {
@@ -176,6 +183,17 @@ public class CATrajectory {
             //return actions.size();
             return baseTrajectory.actionSequence.size();
         }
+    }
+
+    public List<String> uniqueActions()
+    {
+        List<String> uniqActs = new ArrayList<>();
+        for(String a: actions)
+        {
+            if(!uniqActs.contains(a))
+                uniqActs.add(a);
+        }
+        return uniqActs;
     }
 
     public int edges()
@@ -285,13 +303,19 @@ public class CATrajectory {
         return traj;
     }
 
-    public CATrajectory getUltimateActions()
+    public CATrajectory getUltimateActions(Map<Object, Object> goal)
     {
         ArrayList<Integer> actionInds = new ArrayList<>();
-        actionInds.add(lastAction);
-        SubCAT last = new SubCAT(lastAction, lastAction+1, actionInds, null, this);
-
-        return last;
+        if(lastAction == 0)
+            return null;
+        if(sub != null) {
+            actionInds.add(lastAction);
+            return new SubCAT(lastAction, lastAction, actionInds, new ArrayList<>(goal.keySet()), this);
+        }
+        else{
+            actionInds.add(lastAction-1);
+            return new SubCAT(lastAction-1, lastAction-1, actionInds, new ArrayList<>(goal.keySet()), this);
+        }
     }
 
     public CATrajectory getNonUltimateActions()
@@ -306,5 +330,20 @@ public class CATrajectory {
         return antiLast;
     }
 
+    public void setEnd(int end) {
+        this.end = end;
+        this.lastAction = end;
+    }
 
+    public void setStart(int start){
+        this.start = start;
+    }
+
+    public int getEnd() {
+        return end;
+    }
+
+    public int getStart() {
+        return start;
+    }
 }

@@ -22,52 +22,93 @@ public class hiergen {
         Map<Object, Object> goalVars = determineGoal(CATrajectories);
         if(goalVars.isEmpty())
             return null;
-        ArrayList<Task> t = new ArrayList<>();
-        if(CATrajectories.get(0).actionCount() > 1)
+        ArrayList<Task> tasks = new ArrayList<>();
+        boolean mult = true;
+        ArrayList<String> uniqActions = new ArrayList<>();
+
+        for(CATrajectory c: CATrajectories)
         {
-            t = builder(trees, CATrajectories);
-            if(t == null || t.isEmpty())
+            List<String> uniq = c.uniqueActions();
+            for(String u: uniq)
             {
-                return new Task();
+                if(!uniqActions.contains(u))
+                    uniqActions.add(u);
+            }
+        }
+
+        if(uniqActions.size() > 1)
+        {
+            tasks = builder(trees, CATrajectories);
+            if(tasks != null && !tasks.isEmpty())
+            {
+                ArrayList<String> actions = new ArrayList<>();
+                ArrayList<Object> vars = new ArrayList<>();
+                for(Task t: tasks)
+                {
+                    for(Object var : t.variables) {
+                        if(!vars.contains(var))
+                            vars.add(var);
+                    }
+                    for(String a : t.actions) {
+                        if(!actions.contains(a))
+                            actions.add(a);
+                    }
+                }
+                return new Task(goalVars, actions, vars, tasks);
             }
 
             ArrayList<CATrajectory> ult = new ArrayList<>();
             ArrayList<CATrajectory> nonUlt = new ArrayList<>();
             for(CATrajectory c: CATrajectories)
             {
-                ult.add(c.getUltimateActions());
-                nonUlt.add(c.getNonUltimateActions());
+                ult.add(c.getUltimateActions(goalVars));
+                nonUlt.add(extractPreceeding((SubCAT)ult.get(ult.size()-1)));
             }
 
             ArrayList<Task> Q = builder(trees, nonUlt);
-            if(Q != null || !Q.isEmpty())
+            if(Q != null && !Q.isEmpty())
             {
-                Task fin = new Task();
-                ArrayList<Task> temp = builder(trees, ult);
-                t.get(0).subTasks.addAll(temp.get(0).subTasks);
-                fin.subTasks = t.get(0).subTasks;
-                for(Task sub : fin.subTasks)
+                Task fin = generate(trees, ult);
+                Map<Object, Object> goalQ = fin.goal;
+
+                Set<Object> k = goalQ.keySet();
+                ArrayList<Object> rv = new ArrayList<Object>(k);
+                for(Object v:rv)
                 {
-                    fin.actions.addAll(sub.actions);
+                    if(!fin.actions.contains(v))
+                        fin.variables.add(v);
                 }
+
+                for(Task s: Q) {
+                    fin.subTasks.add(s);
+                    for(Object var : s.variables) {
+                        if(!fin.variables.contains(var))
+                            fin.variables.add(var);
+                    }
+                    for(String a:s.actions) {
+                        if(!fin.actions.contains(a))
+                            fin.actions.add(a);
+                    }
+                }
+                return fin;
             }
 
         }
 
-
-        //List<String> actions = CATrajectories.get(0).getActions();
-        return null;
+        Set<Object> k = goalVars.keySet();
+        ArrayList<Object> rv = new ArrayList<Object>(k);
+        return new Task(goalVars, uniqActions, rv);
     }
 
     public static ArrayList<Task> builder(Map<String, Map<String, VariableTree>> trees, ArrayList<CATrajectory> CATrajectories)
     {
-        System.out.println("Builder");
+        //System.out.println("Builder");
+
         Map<Object, Object> goal = hiergen.determineGoal(CATrajectories);
         ArrayList<Task> finalTasks = new ArrayList<>();
-        List<Task> subTasks = new ArrayList<Task>();
-        ArrayList<String> actions = new ArrayList<>();
         if(goal.isEmpty())
             return null;
+
         Set<Object> keys = goal.keySet();
         ArrayList<Object> relevantVars = new ArrayList<Object>(keys);
         List<List<SubCAT> > subCATs = new ArrayList<>();
@@ -80,6 +121,8 @@ public class hiergen {
                 subCATs.add(temp);
         }
 
+        if(subCATs.isEmpty())
+            return null;
         List<SubCAT> unifiedSubCATs = new ArrayList<>();
 
         for(int i = 0;i < CATrajectories.size(); i ++)
@@ -88,9 +131,9 @@ public class hiergen {
             for (int j = 0; j < subCATs.size(); j++) {
                 if(subCATs.get(j) != null && !subCATs.get(j).isEmpty()) {
                     if(unity == null)
-                        unity = subCATs.get(j).get(i);
+                        unity = new SubCAT(subCATs.get(j).get(i));
                     else
-                        unity.Unify(subCATs.get(j).get(i));
+                        unity = unity.Unify(subCATs.get(j).get(i));
                 }
             }
             unifiedSubCATs.add(unity);
@@ -103,33 +146,41 @@ public class hiergen {
             for(SubCAT sub: unifiedSubCATs)
             {
                 i++;
-                ArrayList<CATrajectory> extractedCATrajectories = extractPreceeding(CATrajectories, sub);
-                ArrayList<Task> Q = builder(trees, extractedCATrajectories);
+                ArrayList<CATrajectory> extractedCATrajectories = new ArrayList<>();
+                CATrajectory temp = extractPreceeding(sub);
+                if(temp != null)
+                    extractedCATrajectories.add(temp);
+                ArrayList<Task> Q = null;
+                if(extractedCATrajectories != null && !extractedCATrajectories.isEmpty())
+                    Q = builder(trees, extractedCATrajectories);
                 if(Q != null && Q.size() > 0)
                 {
                     CATrajectory ct = CATrajectory.subCATToCAT(sub);
                     ArrayList<CATrajectory> fin = new ArrayList<>();
                     fin.add(ct);
                     Task q = generate(trees, fin);
-                    List<Object> variablesQ = q.variables;
                     Map<Object, Object> goalQ = q.goal;
-                    for(Task t: Q)
+
+                    Set<Object> k = goalQ.keySet();
+                    ArrayList<Object> rv = new ArrayList<Object>(k);
+                    for(Object v:rv)
                     {
-                        subTasks.add(t);
+                        if(!q.actions.contains(v))
+                                q.variables.add(v);
                     }
 
-                    for(String act:trees.keySet())
-                    {
-                        actions.add(act);
+                    for(Task s:Q) {
+                        q.subTasks.add(s);
+                        for(Object var : s.variables) {
+                            if(!q.variables.contains(var))
+                                q.variables.add(var);
+                        }
+                        for(String a:s.actions) {
+                            if(!q.actions.contains(a))
+                                q.actions.add(a);
+                        }
                     }
-
-                    relevantVars.addAll(goal.keySet());
-
-                    for(Task s: Q) {
-                        relevantVars.addAll(s.variables);
-                    }
-
-                    finalTasks.add(new Task(goal, actions, relevantVars));
+                    finalTasks.add(q);
                     remove.add(i);
                 }
             }
@@ -148,39 +199,46 @@ public class hiergen {
                 ArrayList<CATrajectory> nonMerged = new ArrayList<>();
                 ArrayList<CATrajectory> ooSubCAT = new ArrayList<>();
                 for (SubCAT m : merged) {
-                    CATrajectory c = m.getCAT();
-                    c.setEdges(c.getEdges().subList(0, m.getStart()));
-                    c.setActions(c.getActions().subList(0, m.getStart()));
-                    nonMerged.add(c);
-                    ooSubCAT.add(m);
+                    if(merged != null) {
+                        CATrajectory temp = extractPreceeding(m);
+                        if(temp != null)
+                            nonMerged.add(temp);
+                        ooSubCAT.add(m);
+                    }
                 }
 
-                List<Task> Q = builder(trees, nonMerged);
+                List<Task> Q = null;
+                if(!nonMerged.isEmpty())
+                    {Q = builder(trees, nonMerged);}
                 if(Q == null || Q.isEmpty())
                     return null;
                 else
                 {
 
                     Task q = generate(trees, ooSubCAT);
-                    List<Object> variablesQ = q.variables;
                     Map<Object, Object> goalQ = q.goal;
-                    for(Task t: Q)
-                    {
-                        subTasks.add(t);
-                    }
 
-                    for(String act:trees.keySet())
+                    Set<Object> k = goalQ.keySet();
+                    ArrayList<Object> rv = new ArrayList<Object>(k);
+                    for(Object v:rv)
                     {
-                        actions.add(act);
+                        if(!q.actions.contains(v))
+                            q.variables.add(v);
                     }
-
-                    relevantVars.addAll(goal.keySet());
 
                     for(Task s: Q) {
-                        relevantVars.addAll(s.variables);
-                    }
+                        q.subTasks.add(s);
 
-                    finalTasks.add(new Task(goal, actions, relevantVars));
+                        for (Object var : s.variables) {
+                            if (!q.variables.contains(var))
+                                q.variables.add(var);
+                        }
+
+                        for (String a : s.actions) {
+                            if (!q.actions.contains(a))
+                                q.actions.add(a);
+                        }
+                    }
                 }
             }
         }
@@ -197,7 +255,7 @@ public class hiergen {
             Object obj;
             if(CATrajectories.get(0).getSub() != null)
             {
-                obj = CATrajectories.get(0).getBaseTrajectory().state(CATrajectories.get(0).getSub().getEnd()).get(var);
+                obj = CATrajectories.get(0).getBaseTrajectory().state(CATrajectories.get(0).getSub().getEnd()-1).get(var);
             }
             else {
                 obj = CATrajectories.get(0).getBaseTrajectory().state(CATrajectories.get(0).getBaseTrajectory().stateSequence.size() - 1).get(var);
@@ -212,7 +270,7 @@ public class hiergen {
                 Object obj;
                 if(c.getSub() != null)
                 {
-                    obj = c.getBaseTrajectory().state(c.getSub().getEnd()).get(key);
+                    obj = c.getBaseTrajectory().state(c.getSub().getEnd()-1).get(key);
                 }
                 else{
                     obj = c.getBaseTrajectory().state(c.getBaseTrajectory().stateSequence.size() - 1).get(key);
@@ -233,17 +291,33 @@ public class hiergen {
 
     public static ArrayList<CATrajectory> extractPreceeding(List<CATrajectory> CATs, SubCAT extractee)
     {
+        if(extractee == null || extractee.getStart() == 0)
+            return null;
         ArrayList<CATrajectory> CATsExtracted = new ArrayList<>();
         for(CATrajectory c: CATs)
         {
+            if(c.getBaseTrajectory() == extractee.getBaseTrajectory()) {
                 CATrajectory temp = c;
-                c.setEdges(c.getEdges().subList(0,extractee.getStart()));
-                c.setActions(c.getActions().subList(0,extractee.getStart()));
-                CATsExtracted.add(c);
+                //c.setEdges(c.getEdges().subList(0,extractee.getStart()));
+                temp.setEnd(extractee.getStart());
+                CATsExtracted.add(temp);
+            }
         }
 
         return CATsExtracted;
 
+    }
+
+    public static CATrajectory extractPreceeding(SubCAT extractee)
+    {
+        if(extractee.getStart() <= 1)
+            return null;
+        List<Integer> inds  = new ArrayList<>();
+
+        for(int  i = 0; i < extractee.getStart();i++)
+            inds.add(i);
+
+        return new SubCAT(0, extractee.getStart()-1, inds, extractee.getRelVars(), extractee.getCAT());
     }
 
     public static List<SubCAT> merge(List<SubCAT> subCats)

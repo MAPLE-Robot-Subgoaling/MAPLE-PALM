@@ -27,10 +27,32 @@ public class SubCAT extends CATrajectory {
         //if(start == 0 && end == 0)
            // System.out.println("why???");
         lastAction = end;
-        this.relVars = relVars;
-        this.actionInds = actionInds;
+        this.relVars = new ArrayList<>();
+        this.actionInds = new ArrayList<>();
+        this.relVars.addAll(relVars);
+        this.actionInds.addAll(actionInds);
         this.actions = CAT.actions;
         c = CAT;
+        sub = this;
+        checkedVariables = c.checkedVariables;
+        changedVariables = c.changedVariables;
+        baseTrajectory = c.baseTrajectory;
+        edges = c.edges;
+    }
+
+    public SubCAT(SubCAT s)
+    {
+        start = s.start;
+        end = s.end;
+        //if(start == 0 && end == 0)
+        // System.out.println("why???");
+        lastAction = end;
+        this.relVars = new ArrayList<>();
+        this.actionInds = new ArrayList<>();
+        this.relVars.addAll(s.relVars);
+        this.actionInds.addAll(s.actionInds);
+        this.actions = s.actions;
+        c = s.getCAT();
         sub = this;
         checkedVariables = c.checkedVariables;
         changedVariables = c.changedVariables;
@@ -70,7 +92,11 @@ public class SubCAT extends CATrajectory {
         if(this.end > a.end)
             unification.end = a.end;
 
-        unification.relVars.addAll(a.relVars);
+        for(Object var: a.relVars)
+        {
+            if(!unification.relVars.contains(var))
+                unification.relVars.add(var);
+        }
 
         return unification;
     }
@@ -97,15 +123,15 @@ public class SubCAT extends CATrajectory {
         return unification;
     }
 
-    public CATrajectory getUltimateActions()
+    /*public CATrajectory getUltimateActions()
     {
-        SubCAT ultimate = this;
+        SubCAT ultimate = new SubCAT(this);
         ArrayList<Integer> inds = new ArrayList<>();
         inds.add(end);
         ultimate.actionInds = inds;
         ultimate.start = end;
         return ultimate;
-    }
+    }*/
 
     public List<Object> getRelVars()
     {

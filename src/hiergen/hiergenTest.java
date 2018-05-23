@@ -21,7 +21,7 @@ import java.util.Map;
 public class hiergenTest {
     public static void main(String [] args){
         Taxi test = new Taxi();
-        int numTrajectories = 20;
+        int numTrajectories = 5;
         double gamma = 0.01;
         OOSADomain domain = test.generateDomain();
         List<Episode> episodes = TrajectoryGenerator.generateQLearnedTrajectories(new RandomPassengerTaxiState(), numTrajectories, domain, gamma, new SimpleHashableStateFactory());
@@ -43,6 +43,6 @@ public class hiergenTest {
             CATs.add(temp);
         }
 
-        hiergen.generate(actionModels, CATs);
+        hiergen.generate(actionModels, CATs).toString();
     }
 }

@@ -23,8 +23,7 @@ public class Task {
         variables = new ArrayList<Object>();
     }
 
-    public Task(Map<Object, Object> g, ArrayList<String> a, ArrayList<Object> v)
-    {
+    public Task(Map<Object, Object> g, ArrayList<String> a, ArrayList<Object> v) {
         goal = g;
         actions = a;
         variables = v;
@@ -41,8 +40,9 @@ public class Task {
 
     public String toString()
     {
+
         return "\n--------------Task----------\n" +
-                actions.toString();
+                actions.toString() + variables.toString();
     }
 
     public String actionName()
