@@ -14,7 +14,9 @@ import burlap.mdp.singleagent.oo.OOSADomain;
 import burlap.statehashing.HashableStateFactory;
 import hierarchy.framework.GroundedTask;
 import hierarchy.framework.StringFormat;
+import utilities.DiscountProvider;
 import utilities.ValueIteration;
+import utilities.ValueIterationMultiStep;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -224,8 +226,9 @@ public class PALMLearningAgent implements LearningAgent{
 	protected Action nextAction(GroundedTask task, State s){
         PALMModel model = getModel(task);
 		OOSADomain domain = task.getDomain(model);
-		double discount = model.gamma();
-        ValueIteration planner = new ValueIteration(domain, discount, hashingFactory, maxDelta, maxIterationsInModelPlanner);
+//		double discount = model.gamma();
+		DiscountProvider discountProvider = model.getDiscountProvider();
+		ValueIterationMultiStep planner = new ValueIterationMultiStep(domain, hashingFactory, maxDelta, maxIterationsInModelPlanner, discountProvider);
 		planner.toggleReachabiltiyTerminalStatePruning(true);
 //		planner.toggleReachabiltiyTerminalStatePruning(false);
 		ValueFunction valueFunction = task.valueFunction;

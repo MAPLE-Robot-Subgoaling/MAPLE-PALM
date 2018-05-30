@@ -5,17 +5,19 @@ import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.environment.EnvironmentOutcome;
 import burlap.mdp.singleagent.model.FactoredModel;
 import burlap.mdp.singleagent.model.TransitionProb;
+import utilities.ConstantDiscountProvider;
+import utilities.DiscountProvider;
 
 import java.util.List;
 
 public class ExpertPALMModel extends PALMModel {
 
     private FactoredModel baseModel;
-    private Double gamma;
+    protected DiscountProvider discountProvider;
 
     public ExpertPALMModel(FactoredModel baseModel, double gamma){
         this.baseModel = baseModel;
-        this.gamma = gamma;
+        this.discountProvider = new ConstantDiscountProvider(gamma);
     }
 
     @Override
@@ -32,11 +34,8 @@ public class ExpertPALMModel extends PALMModel {
     public void updateModel(EnvironmentOutcome result, int stepsTaken) {}
 
     @Override
-    public double gamma() {
-        if (gamma == null) {
-            throw new RuntimeException("Warning: must specify a gamma / discount factor");
-        } else {
-            return gamma;
-        }
+    public DiscountProvider getDiscountProvider() {
+        return discountProvider;
     }
+
 }

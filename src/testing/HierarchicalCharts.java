@@ -18,6 +18,7 @@ import hierarchy.framework.GroundedTask;
 import hierarchy.framework.Task;
 import palm.agent.PALMLearningAgent;
 import palm.agent.PALMModelGenerator;
+import palm.rmax.agent.ExpectedRmaxModelGenerator;
 import palm.rmax.agent.ExpertNavModelGenerator;
 import palm.rmax.agent.PALMRmaxModelGenerator;
 import rmaxq.agent.RmaxQLearningAgent;
@@ -89,6 +90,25 @@ public class HierarchicalCharts {
 					public LearningAgent generateAgent() {
 						HashableStateFactory hs = initializeHashableStateFactory();
 						PALMRmaxModelGenerator modelGen = new PALMRmaxModelGenerator(conf.rmax.threshold,
+								conf.rmax.vmax,hs, conf.gamma, conf.rmax.use_multitime_model);
+						PALMLearningAgent agent = new PALMLearningAgent(RAMDPGroot, modelGen, hs, conf.rmax.max_delta,
+								conf.rmax.max_iterations_in_model);
+						return agent;
+					}
+				};
+			}
+			if(agent.equals("expectedStateTest")) {
+				agents[i] = new LearningAgentFactory() {
+
+					@Override
+					public String getAgentName() {
+						return "ExpStateTest";
+					}
+
+					@Override
+					public LearningAgent generateAgent() {
+						HashableStateFactory hs = initializeHashableStateFactory();
+						ExpectedRmaxModelGenerator modelGen = new ExpectedRmaxModelGenerator(conf.rmax.threshold,
 								conf.rmax.vmax,hs, conf.gamma, conf.rmax.use_multitime_model);
 						PALMLearningAgent agent = new PALMLearningAgent(RAMDPGroot, modelGen, hs, conf.rmax.max_delta,
 								conf.rmax.max_iterations_in_model);

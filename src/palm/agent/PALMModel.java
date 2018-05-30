@@ -6,6 +6,7 @@ import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.environment.EnvironmentOutcome;
 import burlap.mdp.singleagent.model.FactoredModel;
 import burlap.mdp.singleagent.model.TransitionProb;
+import utilities.DiscountProvider;
 
 import java.util.List;
 
@@ -34,6 +35,5 @@ public abstract class PALMModel extends FactoredModel {
 
     public abstract void updateModel(EnvironmentOutcome result, int stepsTaken);
 
-    public abstract double gamma();
-
+    public abstract DiscountProvider getDiscountProvider();
 }

@@ -72,6 +72,12 @@ public class TaxiConfig {
                 return TaxiStateFactory.createThreeDepots();
             case "3depots-2passengers":
                 return TaxiStateFactory.createThreeDepots(2);
+            case "steptest":
+                return TaxiStateFactory.createStepTest(1);
+            case "steptest-2passengers":
+                return TaxiStateFactory.createStepTest(2);
+            case "steptest-10passengers":
+                return TaxiStateFactory.createStepTest(5);
             default:
                 throw new RuntimeException("ERROR: invalid state passed to generateState in TaxiConfig: " + state);
         }
