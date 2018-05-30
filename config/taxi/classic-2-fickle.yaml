@@ -1,7 +1,7 @@
 state: classic-2passengers
 
 agents:
-  - ramdp
+  - palmExpert
 
 episodes: 100
 max_steps: 2000
@@ -27,7 +27,7 @@ rmax:
 output:
   csv:
     enabled: true
-    output: results/ramdp-classic-2-fickle.csv
+    output: results/pex-classic-2-fickle.csv
 
   chart:
     enabled: true

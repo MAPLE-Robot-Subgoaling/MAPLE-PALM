@@ -90,8 +90,9 @@ public class HierarchicalCharts {
 						HashableStateFactory hs = initializeHashableStateFactory();
 						PALMRmaxModelGenerator modelGen = new PALMRmaxModelGenerator(conf.rmax.threshold,
 								conf.rmax.vmax,hs, conf.gamma, conf.rmax.use_multitime_model);
-						return new PALMLearningAgent(RAMDPGroot, modelGen, hs, conf.rmax.max_delta,
+						PALMLearningAgent agent = new PALMLearningAgent(RAMDPGroot, modelGen, hs, conf.rmax.max_delta,
 								conf.rmax.max_iterations_in_model);
+						return agent;
 					}
 				};
 			}

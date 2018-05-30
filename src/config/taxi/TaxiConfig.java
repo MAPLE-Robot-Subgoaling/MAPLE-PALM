@@ -51,7 +51,7 @@ public class TaxiConfig {
                 return TaxiStateFactory.createClassicState();
             //added classic20 for the 20x20 map
             case "classic20":
-            	return TaxiStateFactory.createClassic20State();
+            	return TaxiStateFactory.createClassic20State(1);
             case "classic-2passengers":
                 return TaxiStateFactory.createClassicState(2);
             case "tiny":
