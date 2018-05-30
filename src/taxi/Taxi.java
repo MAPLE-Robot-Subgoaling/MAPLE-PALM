@@ -19,6 +19,12 @@ import taxi.state.TaxiPassenger;
 import taxi.state.TaxiWall;
 import taxi.stateGenerator.TaxiStateFactory;
 
+/**
+ * 1. run AMDP tests vs. MDP tests
+ * 2. run runtime tests
+ */
+//import ramdp.agent.*; //in order to run RAMDP tests
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -155,15 +161,64 @@ public class Taxi implements DomainGenerator{
 		SimulatedEnvironment env = new SimulatedEnvironment(domain, s);
 
 		List<Episode> eps = new ArrayList<Episode>();
-		QLearning qagent = new QLearning(domain, 0.95, hs, 0, 0.1);
+		QLearning qagent = new QLearning(domain, 0.95, hs, 0, 0.1); //gamma = 0.99 to match the RAMDP parameters
+		
+		//initialize the min and max
+		//int maxNumActions = 0;
+		//int minNumActions = 5000;
+		List <Integer> numberOfActions = new ArrayList <Integer>(1000);
 		
 		for(int i = 0; i < 1000; i++){
 			Episode e = qagent.runLearningEpisode(env, 5000);
 			eps.add(e);
+			
+			//System.out.println("e.numActions() is" + ": "+ e.numActions());
+			//to see how the number of actions changes depending on the map dimensions and additions
+			System.out.println("Number of actions in episode:" + i + ": "+ e.numActions());
+			
+			//array list for obtaining optimum numbers of total actions
+			numberOfActions.add(e.numActions());
+			
+			if (e.actionSequence.contains(ACTION_PUTDOWN)){
+				System.out.println("This episode contains a putdown action.");
+			}
+			/*
+			//get the maximum number of actions across all episodes
+			if (e.numActions() > maxNumActions){
+				maxNumActions = e.numActions();
+			}
+			//get the minimum number of actions across all episodes
+			if (e.numActions() < minNumActions){
+				minNumActions = e.numActions();
+			}
+			*/
 			env.resetEnvironment();
 		}
 		
-		EpisodeSequenceVisualizer v = new EpisodeSequenceVisualizer(TaxiVisualizer.getVisualizer(5, 5),
+		//method for getting the min and max number of actions
+		//int maxActions = numberOfActions.get(0);
+		int minActions = numberOfActions.get(0);
+		for (int j = 0; j < numberOfActions.size(); j++){
+			//get the maximum number of actions across all episodes
+			//if (numberOfActions.get(j) > maxActions){
+				//maxActions = numberOfActions.get(j);
+			//}
+			//get the minimum number of actions across all episodes
+			if (numberOfActions.get(j) < minActions){
+				minActions = numberOfActions.get(j);
+			}
+			
+			
+			//show the min and max number of actions
+			/**
+			 * one issue is that the minimum and maximum determinations do not account for failure or proper termination conditions
+			 **/
+			//System.out.println("Minimum number of actions taken as of episode" + j + ": "+ minActions);
+			//System.out.println("Maximum number of actions taken as of episode" + j + ": "+ maxActions);
+		}
+		
+		
+		EpisodeSequenceVisualizer v = new EpisodeSequenceVisualizer(TaxiVisualizer.getVisualizer(20, 20),
 				domain, eps);
 		v.setDefaultCloseOperation(v.EXIT_ON_CLOSE);
 		v.initGUI();

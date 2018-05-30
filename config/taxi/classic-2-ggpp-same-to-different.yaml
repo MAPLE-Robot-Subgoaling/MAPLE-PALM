@@ -1,7 +1,7 @@
 state: classic-2passengers
 
 agents:
-  - ramdp
+  - palmExpert
 
 episodes: 100
 max_steps: 500
@@ -27,7 +27,7 @@ rmax:
 output:
   csv:
     enabled: true
-    output: results/ramdp-classic-2-ggpp-s2d.csv
+    output: results/pex-classic-2-ggpp-s2d.csv
 
   chart:
     enabled: true

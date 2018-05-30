@@ -1,3 +1,4 @@
+
 package palm.agent;
 
 import burlap.behavior.policy.Policy;
@@ -15,10 +16,8 @@ import hierarchy.framework.GroundedTask;
 import hierarchy.framework.StringFormat;
 import utilities.ValueIteration;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 public class PALMLearningAgent implements LearningAgent{
 
@@ -65,6 +64,8 @@ public class PALMLearningAgent implements LearningAgent{
 
 	private PALMModelGenerator modelGenerator;
 
+	private long actualTimeElapsed = 0;
+
 	/**
 	 * create a RAMDP agent on a given task
 	 * @param root the root of the hierarchy to learn
@@ -89,10 +90,27 @@ public class PALMLearningAgent implements LearningAgent{
 
 	@Override
 	public Episode runLearningEpisode(Environment env, int maxSteps) {
+
+		//runtime
+		long start = System.nanoTime();
+		System.out.println("PALM episode start time: " + start);
+		actualTimeElapsed = System.currentTimeMillis();
+		SimpleDateFormat sdf = new SimpleDateFormat("MMM dd,yyyy HH:mm:ss");
+		Date resultdate = new Date(actualTimeElapsed);
+		System.out.println(sdf.format(resultdate));
+
 		steps = 0;
 		e = new Episode(env.currentObservation());
 		solveTask(root, env, maxSteps);
 		System.out.println(e.actionSequence.size() + " " + e.actionSequence);
+
+		///for a chart of runtime
+		long estimatedTime = System.nanoTime() - start;
+		System.out.println("Estimated PALM episode nano time: " + estimatedTime);
+
+		actualTimeElapsed = System.currentTimeMillis() - actualTimeElapsed;
+		System.out.println("Clock time elapsed: " + actualTimeElapsed);
+
 		return e;
 	}
 
@@ -249,3 +267,4 @@ public class PALMLearningAgent implements LearningAgent{
 		return model;
 	}
 }
+

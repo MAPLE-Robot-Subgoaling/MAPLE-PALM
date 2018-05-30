@@ -1,7 +1,7 @@
 state: classic
 
 agents:
-  - ramdp
+  - palmExpert
 
 episodes: 10
 max_steps: 1000
@@ -27,7 +27,7 @@ rmax:
 output:
   csv:
     enabled: true
-    output: results/ramdp-classic.csv
+    output: results/pex-classic.csv
 
   chart:
     enabled: true

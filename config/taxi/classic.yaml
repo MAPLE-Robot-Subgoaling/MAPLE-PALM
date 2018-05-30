@@ -1,20 +1,24 @@
 state: classic
 
 agents:
-#  - rmaxq
+
+  - rmaxq
   - palmExpert
   - palmExpertWithNavGiven
   - palmHiergen
+  - qlearning
 
 episodes: 200
-max_steps: 1000
+max_steps: 100000
 trials: 1
 gamma: 0.99
 
 stochastic:
   seed: 2320942930
   correct_move: 1.0
-  fickle: 0.05
+
+  fickle: 0.00
+
   random_start: false
 
 planning:
@@ -22,11 +26,13 @@ planning:
 
 rmax:
   vmax: 1.0
-  threshold: 10
+  threshold: 3
+
   max_delta: 0.0000001
   max_delta_rmaxq: 0.0001
   max_iterations_in_model: 1000
   use_multitime_model: true
+
 
 output:
   csv:
@@ -51,7 +57,7 @@ output:
   visualizer:
     enabled: false
     episodes: true
-    width: 5
-    height: 5
+    width: 20
+    height: 20
     
 

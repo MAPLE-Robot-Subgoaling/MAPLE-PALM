@@ -1,15 +1,15 @@
 state: classic-2passengers
 
 agents:
-  - ramdp
+  - palmExpert
 
-episodes: 300
-max_steps: 500
+episodes: 250
+max_steps: 10000
 trials: 1
 gamma: 0.99
 
 stochastic:
-  seed: 3727891
+  seed: 1232100
   correct_move: 0.85
   fickle: 0.0
   random_start: false
@@ -19,7 +19,7 @@ planning:
 
 rmax:
   vmax: 1.0
-  threshold: 20
+  threshold: 3
   max_delta: 0.0000001
   max_iterations_in_model: 1000
   use_multitime_model: true
@@ -27,7 +27,7 @@ rmax:
 output:
   csv:
     enabled: true
-    output: results/ramdp-classic-2-ggpp-d2s-slippery.csv
+    output: results/pex-classic-2-ggpp-d2s.csv
 
   chart:
     enabled: true
