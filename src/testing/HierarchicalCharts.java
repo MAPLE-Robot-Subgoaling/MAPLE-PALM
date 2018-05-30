@@ -109,7 +109,7 @@ public class HierarchicalCharts {
 					public LearningAgent generateAgent() {
 						HashableStateFactory hs = initializeHashableStateFactory();
 						ExpectedRmaxModelGenerator modelGen = new ExpectedRmaxModelGenerator(conf.rmax.threshold,
-								conf.rmax.vmax,hs, conf.gamma, conf.rmax.use_multitime_model);
+								conf.rmax.vmax,hs, conf.gamma);
 						PALMLearningAgent agent = new PALMLearningAgent(RAMDPGroot, modelGen, hs, conf.rmax.max_delta,
 								conf.rmax.max_iterations_in_model);
 						return agent;
