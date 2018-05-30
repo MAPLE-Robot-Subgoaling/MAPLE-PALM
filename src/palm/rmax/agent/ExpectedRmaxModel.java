@@ -23,6 +23,7 @@ import java.util.Map;
 
 public class ExpectedRmaxModel extends RmaxModel {
 
+    private static final double DEFAULT_INTERNAL_DISCOUNT = 1.0; // would be < 1.0 if using Multi-time model
 
     /**
      * creates a rmax model
@@ -42,7 +43,7 @@ public class ExpectedRmaxModel extends RmaxModel {
 
     @Override
     public double getInternalDiscount(EnvironmentOutcome eo, int k) {
-        return 1.0;
+        return DEFAULT_INTERNAL_DISCOUNT;
     }
 
     public double getExpectedNumberOfSteps(State s, Action action, State sPrime) {

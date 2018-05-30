@@ -1,7 +1,7 @@
 state: steptest-2passengers
 
 agents:
-  - palmExpert
+  - expectedStateTest
 
 episodes: 300
 max_steps: 1000
@@ -10,7 +10,7 @@ gamma: 0.99
 
 stochastic:
   seed: 4917419
-  correct_move: 0.5
+  correct_move: 1.0
   fickle: 0.0
   random_start: false
 
@@ -22,7 +22,7 @@ rmax:
   threshold: 5
   max_delta: 0.00001
   max_iterations_in_model: 1000
-  use_multitime_model: false
+  use_multitime_model: true
 
 output:
   csv:

@@ -77,7 +77,7 @@ public class TaxiConfig {
             case "steptest-2passengers":
                 return TaxiStateFactory.createStepTest(2);
             case "steptest-10passengers":
-                return TaxiStateFactory.createStepTest(5);
+                return TaxiStateFactory.createStepTest(10);
             default:
                 throw new RuntimeException("ERROR: invalid state passed to generateState in TaxiConfig: " + state);
         }

@@ -1,8 +1,8 @@
 state: steptest-10passengers
 
 agents:
-#  - expectedStateTest
-  - palmExpert
+  - expectedStateTest
+#  - palmExpert
 
 episodes: 250
 max_steps: 1000
