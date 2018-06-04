@@ -11,37 +11,37 @@ import static taxi.TaxiConstants.CLASS_TAXI;
 
 public class TaxiGetAgent extends MutableObject {
 
-	private final static List<Object> keys = Arrays.<Object>asList(
-			ATT_LOCATION
-			);
+    private final static List<Object> keys = Arrays.<Object>asList(
+            ATT_LOCATION
+            );
 
-	public TaxiGetAgent(String name, String location) {
-		this(name, (Object)location);
-	}
+    public TaxiGetAgent(String name, String location) {
+        this(name, (Object)location);
+    }
 
-	private TaxiGetAgent(String name, Object location) {
-	    this.set(ATT_LOCATION, location);
-		this.setName(name);
-	}
-	
-	@Override
-	public String className() {
-		return CLASS_TAXI;
-	}
+    private TaxiGetAgent(String name, Object location) {
+        this.set(ATT_LOCATION, location);
+        this.setName(name);
+    }
 
-	@Override
-	public ObjectInstance copyWithName(String objectName) {
-		return new TaxiGetAgent( objectName, get(ATT_LOCATION));
-	}
+    @Override
+    public String className() {
+        return CLASS_TAXI;
+    }
 
-	@Override
-	public TaxiGetAgent copy() {
-		return (TaxiGetAgent) copyWithName(name());
-	}
+    @Override
+    public ObjectInstance copyWithName(String objectName) {
+        return new TaxiGetAgent( objectName, get(ATT_LOCATION));
+    }
 
-	@Override
-	public List<Object> variableKeys() {
-		return keys;
-	}
+    @Override
+    public TaxiGetAgent copy() {
+        return (TaxiGetAgent) copyWithName(name());
+    }
+
+    @Override
+    public List<Object> variableKeys() {
+        return keys;
+    }
 
 }

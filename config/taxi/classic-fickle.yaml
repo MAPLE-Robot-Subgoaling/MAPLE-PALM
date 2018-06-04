@@ -1,4 +1,8 @@
-state: classic
+domain: !!config.taxi.TaxiConfig
+  state: classic
+  correct_move: 1.0
+  fickle: 0.04
+  random_start: false
 
 agents:
   - palmExpert
@@ -7,12 +11,6 @@ episodes: 200
 max_steps: 2000
 trials: 1
 gamma: 0.99
-
-stochastic:
-  seed: 424121779
-  correct_move: 1.0
-  fickle: 0.333
-  random_start: false
 
 planning:
   rollouts: 1000

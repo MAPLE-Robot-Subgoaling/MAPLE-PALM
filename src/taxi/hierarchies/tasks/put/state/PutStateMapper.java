@@ -11,53 +11,56 @@ import static taxi.TaxiConstants.*;
 
 public class PutStateMapper implements ParameterizedStateMapping {
 
-	//maps a base taxi state to L2
-	@Override
-	public State mapState(State s, String... params) {
-		List<TaxiPutPassenger> passengers = new ArrayList<TaxiPutPassenger>();
-		List<TaxiPutLocation> locations = new ArrayList<>();
+//    public static final String PUT_PASSENGER_ALIAS = "**PUT_PASSENGER_ALIAS**";
 
-		TaxiState st = (TaxiState) s;
+    //maps a base taxi state to L2
+    @Override
+    public State mapState(State s, String... params) {
+        List<TaxiPutPassenger> passengers = new ArrayList<TaxiPutPassenger>();
+        List<TaxiPutLocation> locations = new ArrayList<>();
 
-		// Get Taxi
-		String taxiLocation = ATT_VAL_ON_ROAD;
-		int tx = (int)st.getTaxiAtt(ATT_X);
-		int ty = (int)st.getTaxiAtt(ATT_Y);
-		for (String locName : st.getLocations()) {
-			int lx = (int) st.getLocationAtt(locName, ATT_X);
-			int ly = (int) st.getLocationAtt(locName, ATT_Y);
+        TaxiState st = (TaxiState) s;
 
-			locations.add(new TaxiPutLocation(locName));
+        // Get Taxi
+        String taxiLocation = ATT_VAL_ON_ROAD;
+        int tx = (int)st.getTaxiAtt(ATT_X);
+        int ty = (int)st.getTaxiAtt(ATT_Y);
+        for (String locName : st.getLocations()) {
+            int lx = (int) st.getLocationAtt(locName, ATT_X);
+            int ly = (int) st.getLocationAtt(locName, ATT_Y);
 
-			if (tx == lx && ty == ly) {
-				taxiLocation = locName;
-			}
-		}
-		TaxiPutAgent taxi = new TaxiPutAgent(CLASS_TAXI, taxiLocation);
+            locations.add(new TaxiPutLocation(locName));
 
-		for(String passengerName : params){
+            if (tx == lx && ty == ly) {
+                taxiLocation = locName;
+            }
+        }
+        TaxiPutAgent taxi = new TaxiPutAgent(CLASS_TAXI, taxiLocation);
+
+        for(String passengerName : params){
 //		for(String passengerName : st.getPassengers()) {
-			String goal = (String) st.getPassengerAtt(passengerName, ATT_GOAL_LOCATION);
-			boolean inTaxi = (boolean) st.getPassengerAtt(passengerName, ATT_IN_TAXI);
-			String location = ERROR;
-			if (inTaxi) {
-				location = ATT_VAL_IN_TAXI;
-			} else {
-				int px = (int)st.getPassengerAtt(passengerName, ATT_X);
-				int py = (int)st.getPassengerAtt(passengerName, ATT_Y);
-				for (String locName : st.getLocations()) {
-					int lx = (int) st.getLocationAtt(locName, ATT_X);
-					int ly = (int) st.getLocationAtt(locName, ATT_Y);
-					if (px == lx && py == ly) {
-						location = locName;
-					}
-				}
-			}
-			if (location.equals(ERROR)) { throw new RuntimeException("Error: passenger at invalid location in mapper"); }
-			passengers.add(new TaxiPutPassenger(passengerName, goal, location));
-		}
+            String goal = (String) st.getPassengerAtt(passengerName, ATT_GOAL_LOCATION);
+            boolean inTaxi = (boolean) st.getPassengerAtt(passengerName, ATT_IN_TAXI);
+            String location = ERROR;
+            if (inTaxi) {
+                location = ATT_VAL_IN_TAXI;
+            } else {
+                int px = (int)st.getPassengerAtt(passengerName, ATT_X);
+                int py = (int)st.getPassengerAtt(passengerName, ATT_Y);
+                for (String locName : st.getLocations()) {
+                    int lx = (int) st.getLocationAtt(locName, ATT_X);
+                    int ly = (int) st.getLocationAtt(locName, ATT_Y);
+                    if (px == lx && py == ly) {
+                        location = locName;
+                    }
+                }
+            }
+            if (location.equals(ERROR)) { throw new RuntimeException("Error: passenger at invalid location in mapper"); }
+//            passengers.add(new TaxiPutPassenger(PUT_PASSENGER_ALIAS, goal, location));
+            passengers.add(new TaxiPutPassenger(passengerName, goal, location));
+        }
 
-		return new TaxiPutState(taxi, passengers, locations);
-	}
+        return new TaxiPutState(taxi, passengers, locations);
+    }
 
 }

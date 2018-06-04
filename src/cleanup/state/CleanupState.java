@@ -7,6 +7,7 @@ import burlap.mdp.core.oo.state.ObjectInstance;
 import burlap.mdp.core.state.MutableState;
 import burlap.mdp.core.state.annotations.ShallowCopyState;
 import cleanup.Cleanup;
+import utilities.DeepCopyForShallowCopyState;
 
 import java.util.*;
 
@@ -14,7 +15,7 @@ import static cleanup.Cleanup.ATT_X;
 import static cleanup.Cleanup.ATT_Y;
 
 @ShallowCopyState
-public class CleanupState implements MutableOOState {
+public class CleanupState implements MutableOOState, DeepCopyForShallowCopyState {
 
     protected static final int DEFAULT_MIN_X = 0;
     protected static final int DEFAULT_MIN_Y = 0;
@@ -414,4 +415,14 @@ public class CleanupState implements MutableOOState {
         this.doors = doors;
     }
 
+    @Override
+    public MutableOOState deepCopy() {
+        CleanupState copy = this.copy();
+        copy.touchAgent();
+        copy.touchBlocks();
+        copy.touchDoors();
+        copy.touchRooms();
+        return copy;
+
+    }
 }

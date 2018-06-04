@@ -18,73 +18,73 @@ import taxi.stateGenerator.TaxiStateFactory;
 import utilities.LearningAgentRuntimeAnalizer;
 
 public class RuntimeTest {
-	public static void createCrarts(final State s, OOSADomain domain, final Task RAMDPRoot, final Task RMEXQRoot,
-									final double rmax, final int threshold, final double maxDelta, final double discount,
-									int numEpisode, int maxSteps, int numTrial, int maxIterationsInModel,
-									boolean useMultitimeModel){
-		final HashableStateFactory hs = new SimpleHashableStateFactory(true);
-		final GroundedTask RAMDPGroot = RAMDPRoot.getAllGroundedTasks(s).get(0);
+    public static void createCrarts(final State s, OOSADomain domain, final Task RAMDPRoot, final Task RMEXQRoot,
+                                    final double rmax, final int threshold, final double maxDelta, final double discount,
+                                    int numEpisode, int maxSteps, int numTrial, int maxIterationsInModel,
+                                    boolean useMultitimeModel){
+        final HashableStateFactory hs = new SimpleHashableStateFactory(true);
+        final GroundedTask RAMDPGroot = RAMDPRoot.getAllGroundedTasks(s).get(0);
 
-		SimulatedEnvironment env = new SimulatedEnvironment(domain, s);
+        SimulatedEnvironment env = new SimulatedEnvironment(domain, s);
 //		VisualActionObserver obs = new VisualActionObserver(domain, TaxiVisualizer.getVisualizer(5, 5));
 //        obs.initGUI();
 //        obs.setDefaultCloseOperation(obs.EXIT_ON_CLOSE);
 //        env.addObservers(obs);
 
-		LearningAgentFactory rmaxq = new LearningAgentFactory() {
+        LearningAgentFactory rmaxq = new LearningAgentFactory() {
 
-			@Override
-			public String getAgentName() {
-				return "R-MAXQ";
-			}
+            @Override
+            public String getAgentName() {
+                return "R-MAXQ";
+            }
 
-			@Override
-			public LearningAgent generateAgent() {
-				throw new RuntimeException("not fixed on this branch");
+            @Override
+            public LearningAgent generateAgent() {
+                throw new RuntimeException("not fixed on this branch");
 //				return new RmaxQLearningAgent(RMEXQRoot, hs, s, rmax, threshold, maxDelta);
-			}
-		};
+            }
+        };
 
-		LearningAgentFactory ramdp = new LearningAgentFactory() {
+        LearningAgentFactory ramdp = new LearningAgentFactory() {
 
-			@Override
-			public String getAgentName() {
-				return "R-AMDP";
-			}
+            @Override
+            public String getAgentName() {
+                return "R-AMDP";
+            }
 
-			@Override
-			public LearningAgent generateAgent() {
-				PALMRmaxModelGenerator modelGen = new PALMRmaxModelGenerator(threshold,
-						rmax, hs, discount, useMultitimeModel);
-				return new PALMLearningAgent(RAMDPGroot,modelGen, hs, maxDelta,
-						maxIterationsInModel);
-			}
-		};
+            @Override
+            public LearningAgent generateAgent() {
+                PALMRmaxModelGenerator modelGen = new PALMRmaxModelGenerator(threshold,
+                        rmax, hs, discount, useMultitimeModel);
+                return new PALMLearningAgent(RAMDPGroot,modelGen, hs, maxDelta,
+                        maxIterationsInModel);
+            }
+        };
 
-		LearningAgentRuntimeAnalizer timer = new LearningAgentRuntimeAnalizer(500, 300, ramdp, rmaxq);
-		timer.runRuntimeAnalysis(numTrial, numEpisode, maxSteps, env);
-		timer.writeDataToCSV("C:\\Users\\mland\\Box Sync\\Maple\\hierarchical learning data\\determintistic runtime ramdp");
-	}
+        LearningAgentRuntimeAnalizer timer = new LearningAgentRuntimeAnalizer(500, 300, ramdp, rmaxq);
+        timer.runRuntimeAnalysis(numTrial, numEpisode, maxSteps, env);
+        timer.writeDataToCSV("C:\\Users\\mland\\Box Sync\\Maple\\hierarchical learning data\\determintistic runtime ramdp");
+    }
 
 
-	public static void main(String[] args) {
-		double correctMoveprob = 1;
-		double fickleProb = 0;
-		int numEpisodes = 30;
-		int maxSteps = 2000;
-		int rmaxThreshold = 1;
-		int numTrials = 5;
-		double gamma = 0.9;
-		double rmax = 20;
-		double maxDelta = 0.01;
-		int maxIterationsInModel = 10000;
-		boolean useMultitimeModel = true;
+    public static void main(String[] args) {
+        double correctMoveprob = 1;
+        double fickleProb = 0;
+        int numEpisodes = 30;
+        int maxSteps = 2000;
+        int rmaxThreshold = 1;
+        int numTrials = 5;
+        double gamma = 0.9;
+        double rmax = 20;
+        double maxDelta = 0.01;
+        int maxIterationsInModel = 10000;
+        boolean useMultitimeModel = true;
 
-		TaxiState s = TaxiStateFactory.createTinyState();
-		Task RAMDProot = TaxiHierarchy.createAMDPHierarchy(correctMoveprob, fickleProb,  false);
-		OOSADomain base = TaxiHierarchy.getBaseDomain();
-		Task RMAXQroot = TaxiHierarchy.createRMAXQHierarchy(correctMoveprob,  fickleProb);
-		createCrarts(s, base, RAMDProot, RMAXQroot, rmax, rmaxThreshold, maxDelta, gamma,
-				numEpisodes, maxSteps, numTrials, maxIterationsInModel, useMultitimeModel);
-	}
+        TaxiState s = TaxiStateFactory.createTinyState();
+        Task RAMDProot = TaxiHierarchy.createAMDPHierarchy(correctMoveprob, fickleProb,  false);
+        OOSADomain base = TaxiHierarchy.getBaseDomain();
+        Task RMAXQroot = TaxiHierarchy.createRMAXQHierarchy(correctMoveprob,  fickleProb);
+        createCrarts(s, base, RAMDProot, RMAXQroot, rmax, rmaxThreshold, maxDelta, gamma,
+                numEpisodes, maxSteps, numTrials, maxIterationsInModel, useMultitimeModel);
+    }
 }

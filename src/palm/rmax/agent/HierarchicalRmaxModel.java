@@ -31,75 +31,75 @@ public class HierarchicalRmaxModel extends PALMModel {
      */
     protected Map<HashableStateActionPair, Map<HashableState, PossibleOutcome>> approximateTransitions;
 
-	/**
-	 * the rmax sample parameter
-	 */
-	private int mThreshold;
-	
-	/**
-	 * the provided hashing factory
-	 */
-	private HashableStateFactory hashingFactory;
-	
+    /**
+     * the rmax sample parameter
+     */
+    private int mThreshold;
 
-	/**
-	 * the grounded task that is being modeled
-	 */
-	private GroundedTask task;
-	
-	/**
-	 * the max rewardTotal for the domain
-	 */
-	private double rmax;
+    /**
+     * the provided hashing factory
+     */
+    private HashableStateFactory hashingFactory;
 
-	private double gamma;
 
-	private boolean useMultitimeModel;
-	
-	/**
-	 * creates a rmax model
-	 * @param task the grounded task to model
-	 * @param threshold rmax sample threshold
-	 * @param rmax max rewardTotal in domain
-	 * @param hs provided hashing factory
-	 */
-	public HierarchicalRmaxModel( GroundedTask task, int threshold, double rmax, HashableStateFactory hs,
+    /**
+     * the grounded task that is being modeled
+     */
+    private GroundedTask task;
+
+    /**
+     * the max rewardTotal for the domain
+     */
+    private double rmax;
+
+    private double gamma;
+
+    private boolean useMultitimeModel;
+
+    /**
+     * creates a rmax model
+     * @param task the grounded task to model
+     * @param threshold rmax sample threshold
+     * @param rmax max rewardTotal in domain
+     * @param hs provided hashing factory
+     */
+    public HierarchicalRmaxModel( GroundedTask task, int threshold, double rmax, HashableStateFactory hs,
                                   double gamma, boolean useMultitimeModel) {
-		this.hashingFactory = hs;
-		this.mThreshold = threshold;
+        this.hashingFactory = hs;
+        this.mThreshold = threshold;
         this.approximateTransitions = new HashMap<HashableStateActionPair, Map<HashableState, PossibleOutcome>>();
-		this.task = task;
-		this.rmax = rmax;
-		this.gamma = gamma;
-		this.useMultitimeModel = useMultitimeModel;
-	}
+        this.task = task;
+        this.rmax = rmax;
+        this.gamma = gamma;
+        this.useMultitimeModel = useMultitimeModel;
+    }
 
-	@Override
-	public EnvironmentOutcome sample(State s, Action a) {
-		List<TransitionProb> tps = transitions(s, a);
-		double sample = RandomFactory.getMapped(0).nextDouble();
-		double sum = 0;
-		for(TransitionProb tp : tps){
-			sum += tp.p;
-			if(sample < sum){
-				return tp.eo;
-			}
-		}
+    @Override
+    public EnvironmentOutcome sample(State s, Action a) {
+        List<TransitionProb> tps = transitions(s, a);
+        double sample = RandomFactory.getMapped(0).nextDouble();
+        double sum = 0;
+        for(TransitionProb tp : tps){
+            sum += tp.p;
+            if(sample < sum){
+                return tp.eo;
+            }
+        }
 
-		throw new RuntimeException("Probabilities don't sum to 1.0: " + sum);
-	}
+        throw new RuntimeException("Probabilities don't sum to 1.0: " + sum);
+    }
 
-	//the model is terminal if the task is completed or if it fails, or is the imagined state
-	@Override
-	public boolean terminal(State s) {
+    //the model is terminal if the task is completed or if it fails, or is the imagined state
+    @Override
+    public boolean terminal(State s) {
         boolean failOrComplete = task.isFailure(s) || task.isComplete(s);
         if (failOrComplete) { return true; }
         if (hImaginedState == null) { return false; }
-	    HashableState hs = hashingFactory.hashState(s);
+        HashableState hs = hashingFactory.hashState(s);
         boolean isImaginedState = hImaginedState.equals(hs);
         if (isImaginedState) { return true; }
         return false;
-	}
+    }
 
     // the transitions come from the recorded rewards and probabilities in the maps
     @Override
@@ -133,21 +133,21 @@ public class HierarchicalRmaxModel extends PALMModel {
     }
 
     /**
-	 * updates the model counts, rewards and probabilities given the
-	 * information in the outcome
-	 * @param result the outcome of the latest action specific to the task rewards and abstractions
-	 */
-	public void updateModel(EnvironmentOutcome result, int stepsTaken){
+     * updates the model counts, rewards and probabilities given the
+     * information in the outcome
+     * @param result the outcome of the latest action specific to the task rewards and abstractions
+     */
+    public void updateModel(EnvironmentOutcome result, int stepsTaken){
 
-		HashableState hs = this.hashingFactory.hashState(result.o);
-		double reward = result.r;
-		Action a = result.a;
-		HashableState hsPrime = this.hashingFactory.hashState(result.op);
+        HashableState hs = this.hashingFactory.hashState(result.o);
+        double reward = result.r;
+        Action a = result.a;
+        HashableState hsPrime = this.hashingFactory.hashState(result.op);
         Map<HashableState, PossibleOutcome> hsPrimeToOutcomes = getHsPrimeToOutcomes(hs, a);
 
-		//add to the transitionCount the information in the outcome and restore
+        //add to the transitionCount the information in the outcome and restore
         PossibleOutcome outcome = getPossibleOutcome(hsPrimeToOutcomes, hs, a, hsPrime);
-		int newTransitionCountSASP = outcome.getTransitionCount(stepsTaken) + 1;
+        int newTransitionCountSASP = outcome.getTransitionCount(stepsTaken) + 1;
         double newRewardTotalSASP = outcome.getRewardTotal(stepsTaken) + reward;
 
         // update the totals for this transition
@@ -155,14 +155,14 @@ public class HierarchicalRmaxModel extends PALMModel {
         outcome.setRewardTotal(stepsTaken, newRewardTotalSASP);
 
         int stateActionCount = getStateActionCount(hsPrimeToOutcomes, hs, a);
-		if (stateActionCount >= mThreshold) {
+        if (stateActionCount >= mThreshold) {
             updateApproximationModels(hsPrimeToOutcomes, hs, a, hsPrime, outcome, gamma, stateActionCount);
         } else {
             hsPrimeToOutcomes = getHsPrimeToOutcomes(hs, a);
-		    double imaginedR = 0.0;
-		    double equalP = 1.0 / (1.0 * hsPrimeToOutcomes.size());
-		    outcome.setReward(imaginedR);
-		    outcome.setTransitionProbability(equalP);
+            double imaginedR = 0.0;
+            double equalP = 1.0 / (1.0 * hsPrimeToOutcomes.size());
+            outcome.setReward(imaginedR);
+            outcome.setTransitionProbability(equalP);
             for(HashableState otherHsPrime : hsPrimeToOutcomes.keySet()) {
                 if (otherHsPrime.equals(hsPrime)) {
                     // this is the transition we just updated, so skip it
@@ -173,11 +173,11 @@ public class HierarchicalRmaxModel extends PALMModel {
                 otherOutcome.setTransitionProbability(equalP);
             }
         }
-	}
+    }
 
-	protected void updateApproximationModels(Map<HashableState, PossibleOutcome> hsPrimeToOutcomes, HashableState hs, Action a, HashableState thisHsPrime, PossibleOutcome thisOutcome, double gamma, int stateActionCount) {
+    protected void updateApproximationModels(Map<HashableState, PossibleOutcome> hsPrimeToOutcomes, HashableState hs, Action a, HashableState thisHsPrime, PossibleOutcome thisOutcome, double gamma, int stateActionCount) {
 
-	    updateApproximateModelFor(thisOutcome, gamma, stateActionCount);
+        updateApproximateModelFor(thisOutcome, gamma, stateActionCount);
 
         // update the approximate model for the other known possible transitions
         for(HashableState hsPrime : hsPrimeToOutcomes.keySet()) {

@@ -11,37 +11,37 @@ import static taxi.TaxiConstants.CLASS_PASSENGER;
 
 public class TaxiGetPassenger extends MutableObject {
 
-	/**
-	 * current location, whether they are in taxi, the goal, whether they haven been picked up
-	 * whether they have just been picked up and haven't changed goal
-	 */
-	private final static List<Object> keys = Arrays.<Object>asList( ATT_LOCATION );
-	
-	public TaxiGetPassenger(String name, String currentLocation) {
-		this(name, (Object) currentLocation);
-	}
+    /**
+     * current location, whether they are in taxi, the goal, whether they haven been picked up
+     * whether they have just been picked up and haven't changed goal
+     */
+    private final static List<Object> keys = Arrays.<Object>asList( ATT_LOCATION );
 
-	private TaxiGetPassenger(String name, Object currentLocation){
-		this.set(ATT_LOCATION, currentLocation);
-		this.setName(name);
-	}
-	
-	@Override
-	public String className() {
-		return CLASS_PASSENGER;
-	}
+    public TaxiGetPassenger(String name, String currentLocation) {
+        this(name, (Object) currentLocation);
+    }
 
-	@Override
-	public TaxiGetPassenger copy() {
-		return (TaxiGetPassenger) copyWithName(name());
-	}
+    private TaxiGetPassenger(String name, Object currentLocation){
+        this.set(ATT_LOCATION, currentLocation);
+        this.setName(name);
+    }
 
-	@Override
-	public ObjectInstance copyWithName(String objectName) {
-		return new TaxiGetPassenger( objectName, get(ATT_LOCATION) );
-	}
+    @Override
+    public String className() {
+        return CLASS_PASSENGER;
+    }
 
-	@Override
-	public List<Object> variableKeys() {
-		return keys;
-	}}
+    @Override
+    public TaxiGetPassenger copy() {
+        return (TaxiGetPassenger) copyWithName(name());
+    }
+
+    @Override
+    public ObjectInstance copyWithName(String objectName) {
+        return new TaxiGetPassenger( objectName, get(ATT_LOCATION) );
+    }
+
+    @Override
+    public List<Object> variableKeys() {
+        return keys;
+    }}
