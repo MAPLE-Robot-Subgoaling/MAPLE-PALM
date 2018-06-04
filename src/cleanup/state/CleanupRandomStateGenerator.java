@@ -9,13 +9,13 @@ import burlap.mdp.core.oo.state.ObjectInstance;
 import burlap.mdp.core.state.State;
 import cleanup.Cleanup;
 import cleanup.CleanupGoalDescription;
+import utilities.BurlapConstants;
 
 import java.util.*;
 
 public class CleanupRandomStateGenerator implements StateGenerator {
 
     private static final int DEBUG_CODE = 932891293;
-    public static int DEFAULT_RNG_INDEX = 0;
     private int numBlocks = 2;
     private int minX = 0;
     private int minY = 0;
@@ -58,7 +58,7 @@ public class CleanupRandomStateGenerator implements StateGenerator {
 
     public State generateTaxiInCleanup(int numBlocks) {
 
-        Random rng = RandomFactory.getMapped(DEFAULT_RNG_INDEX);
+        Random rng = RandomFactory.getMapped(BurlapConstants.DEFAULT_RNG_INDEX);
 
         int numRooms = 1;
         int numDoors = 4;
@@ -132,7 +132,7 @@ public class CleanupRandomStateGenerator implements StateGenerator {
 
     public State generateCentralRoomWithClosetsAndBeacon(int numBlocks) {
 
-        Random rng = RandomFactory.getMapped(DEFAULT_RNG_INDEX);
+        Random rng = RandomFactory.getMapped(BurlapConstants.DEFAULT_RNG_INDEX);
 
         int numRooms = 5;
         int numDoors = 5;
@@ -189,7 +189,7 @@ public class CleanupRandomStateGenerator implements StateGenerator {
 
     public State generateCentralRoomWithFourDoors(int numBlocks) {
 
-        Random rng = RandomFactory.getMapped(DEFAULT_RNG_INDEX);
+        Random rng = RandomFactory.getMapped(BurlapConstants.DEFAULT_RNG_INDEX);
 
         int numRooms = 1;
         int numDoors = 4;
@@ -264,7 +264,7 @@ public class CleanupRandomStateGenerator implements StateGenerator {
 
     public State generateTwoRoomsWithFourDoors(int numBlocks) {
 
-        Random rng = RandomFactory.getMapped(DEFAULT_RNG_INDEX);
+        Random rng = RandomFactory.getMapped(BurlapConstants.DEFAULT_RNG_INDEX);
 
         int numRooms = 2;
         int numDoors = 4;
@@ -343,7 +343,7 @@ public class CleanupRandomStateGenerator implements StateGenerator {
 
     public State generateCentralRoomWithClosets(int numBlocks) {
 
-        Random rng = RandomFactory.getMapped(DEFAULT_RNG_INDEX);
+        Random rng = RandomFactory.getMapped(BurlapConstants.DEFAULT_RNG_INDEX);
 
         int numRooms = 5;
         int numDoors = 4;
@@ -434,7 +434,7 @@ public class CleanupRandomStateGenerator implements StateGenerator {
 
     public State generateFourRooms() {
 
-        Random rng = RandomFactory.getMapped(DEFAULT_RNG_INDEX);
+        Random rng = RandomFactory.getMapped(BurlapConstants.DEFAULT_RNG_INDEX);
 
         int numRooms = 4;
         int numDoors = 4;
@@ -513,7 +513,7 @@ public class CleanupRandomStateGenerator implements StateGenerator {
     }
 
     public static CleanupGoalDescription[] getRandomGoalDescription(CleanupState s, int numGoals, PropositionalFunction pf) {
-        return getRandomGoalDescription(s, numGoals, pf, RandomFactory.getMapped(DEFAULT_RNG_INDEX));
+        return getRandomGoalDescription(s, numGoals, pf, RandomFactory.getMapped(BurlapConstants.DEFAULT_RNG_INDEX));
     }
 
     public static CleanupGoalDescription[] getRandomGoalDescription(CleanupState s, int numGoals, PropositionalFunction pf, Random rng) {
@@ -637,7 +637,7 @@ public class CleanupRandomStateGenerator implements StateGenerator {
 
     public OOState generateTwoRoomsOneDoor() {
 
-        Random rng = RandomFactory.getMapped(DEFAULT_RNG_INDEX);
+        Random rng = RandomFactory.getMapped(BurlapConstants.DEFAULT_RNG_INDEX);
 
         int numBlocks = 0;
         int numRooms = 2;
@@ -702,7 +702,7 @@ public class CleanupRandomStateGenerator implements StateGenerator {
 
     public OOState generateThreeRooms(int numBlocks) {
 
-        Random rng = RandomFactory.getMapped(DEFAULT_RNG_INDEX);
+        Random rng = RandomFactory.getMapped(BurlapConstants.DEFAULT_RNG_INDEX);
 
         int numRooms = 3;
         int numDoors = 3;
@@ -767,7 +767,7 @@ public class CleanupRandomStateGenerator implements StateGenerator {
 
     public OOState generateTwoRooms(int numBlocks) {
 
-        Random rng = RandomFactory.getMapped(DEFAULT_RNG_INDEX);
+        Random rng = RandomFactory.getMapped(BurlapConstants.DEFAULT_RNG_INDEX);
 
         int numRooms = 2;
         int numDoors = 1;
@@ -821,7 +821,7 @@ public class CleanupRandomStateGenerator implements StateGenerator {
 
     public OOState generateOneRoomOneDoor() {
 
-        Random rng = RandomFactory.getMapped(DEFAULT_RNG_INDEX);
+        Random rng = RandomFactory.getMapped(BurlapConstants.DEFAULT_RNG_INDEX);
 
         int numBlocks = 0;
         int numRooms = 1;
@@ -884,7 +884,7 @@ public class CleanupRandomStateGenerator implements StateGenerator {
 
     public OOState generateNoRoomsOneDoor(int numBlocks) {
 
-        Random rng = RandomFactory.getMapped(DEFAULT_RNG_INDEX);
+        Random rng = RandomFactory.getMapped(BurlapConstants.DEFAULT_RNG_INDEX);
 
         int numRooms = 0;
         int numDoors = 1;

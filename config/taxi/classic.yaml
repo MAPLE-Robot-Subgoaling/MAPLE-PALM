@@ -1,7 +1,7 @@
-state: classic
+domain: !!config.taxi.TaxiConfig
+    state: classic
 
 agents:
-
   - rmaxq
   - palmExpert
   - palmExpertWithNavGiven

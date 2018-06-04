@@ -12,6 +12,7 @@ import burlap.mdp.singleagent.common.VisualActionObserver;
 import burlap.mdp.singleagent.environment.SimulatedEnvironment;
 import burlap.mdp.singleagent.oo.OOSADomain;
 import burlap.statehashing.HashableStateFactory;
+import config.ExperimentConfig;
 import config.output.ChartConfig;
 import config.taxi.TaxiConfig;
 import hierarchy.framework.GroundedTask;
@@ -39,214 +40,214 @@ import java.util.List;
 
 public class HierarchicalCharts {
 
-	public static HashableStateFactory initializeHashableStateFactory() {
-		// use the hashable state factory that caches states
-		return new CachedHashableStateFactory(false);
-	}
+    public static HashableStateFactory initializeHashableStateFactory() {
+        // use the hashable state factory that caches states
+        return new CachedHashableStateFactory(false);
+    }
 
-	public static void createCharts(final TaxiConfig conf, final State s, OOSADomain domain, final Task RAMDPRoot, final Task RMAXQRoot, final Task hierGenRoot) {
-		SimulatedEnvironment env;
-		final GroundedTask RAMDPGroot, hierGenGroot, RMAXQGroot;
+    public static void createCharts(final ExperimentConfig conf, final State s, OOSADomain domain, final Task RAMDPRoot, final Task RMAXQRoot, final Task hierGenRoot) {
+        SimulatedEnvironment env;
+        final GroundedTask RAMDPGroot, hierGenGroot, RMAXQGroot;
 
-		if(conf.stochastic.random_start) {
-			env = new SimulatedEnvironment(domain, new RandomPassengerTaxiState());
-			RAMDPGroot = RAMDPRoot.getAllGroundedTasks(env.currentObservation()).get(0);
-			RMAXQGroot = RMAXQRoot.getAllGroundedTasks(s).get(0);
-			hierGenGroot = hierGenRoot.getAllGroundedTasks(env.currentObservation()).get(0);
-		} else {
+        if(conf.stochastic.random_start) {
+            env = new SimulatedEnvironment(domain, new RandomPassengerTaxiState());
+            RAMDPGroot = RAMDPRoot.getAllGroundedTasks(env.currentObservation()).get(0);
+            RMAXQGroot = RMAXQRoot.getAllGroundedTasks(s).get(0);
+            hierGenGroot = hierGenRoot.getAllGroundedTasks(env.currentObservation()).get(0);
+        } else {
             env = new SimulatedEnvironment(domain, s);
-			RAMDPGroot = RAMDPRoot.getAllGroundedTasks(s).get(0);
+            RAMDPGroot = RAMDPRoot.getAllGroundedTasks(s).get(0);
 
-			RMAXQGroot = RMAXQRoot.getAllGroundedTasks(s).get(0);
-			hierGenGroot = hierGenRoot.getAllGroundedTasks(s).get(0);
-		}
+            RMAXQGroot = RMAXQRoot.getAllGroundedTasks(s).get(0);
+            hierGenGroot = hierGenRoot.getAllGroundedTasks(s).get(0);
+        }
 
-		// new SimpleHashableStateFactory(false); //new CachedHashableStateFactory(true); // new SimpleHashableStateFactory(true);
+        // new SimpleHashableStateFactory(false); //new CachedHashableStateFactory(true); // new SimpleHashableStateFactory(true);
 
-		if(conf.output.visualizer.enabled) {
-			VisualActionObserver obs = new VisualActionObserver(domain, TaxiVisualizer.getVisualizer(conf.output.visualizer.width, conf.output.visualizer.height));
-			obs.setFrameDelay(0);
-			obs.initGUI();
-			obs.setDefaultCloseOperation(obs.EXIT_ON_CLOSE);
-			env.addObservers(obs);
-		}
+        if(conf.output.visualizer.enabled) {
+            VisualActionObserver obs = new VisualActionObserver(domain, TaxiVisualizer.getVisualizer(conf.output.visualizer.width, conf.output.visualizer.height));
+            obs.setFrameDelay(0);
+            obs.initGUI();
+            obs.setDefaultCloseOperation(obs.EXIT_ON_CLOSE);
+            env.addObservers(obs);
+        }
 
-		// Loop to keep order of agents defined in YAML
-		LearningAgentFactory[] agents = new LearningAgentFactory[conf.agents.size()];
-		for(int i = 0; i < conf.agents.size(); i++) {
-			String agent = conf.agents.get(i);
+        // Loop to keep order of agents defined in YAML
+        LearningAgentFactory[] agents = new LearningAgentFactory[conf.agents.size()];
+        for(int i = 0; i < conf.agents.size(); i++) {
+            String agent = conf.agents.get(i);
 
-		    // RAMDP
-			if(agent.equals("palmExpert")) {
-				agents[i] = new LearningAgentFactory() {
+            // RAMDP
+            if(agent.equals("palmExpert")) {
+                agents[i] = new LearningAgentFactory() {
 
-					@Override
-					public String getAgentName() {
-						return "PALM with expert AMDP";
-					}
+                    @Override
+                    public String getAgentName() {
+                        return "PALM with expert AMDP";
+                    }
 
-					@Override
-					public LearningAgent generateAgent() {
-						HashableStateFactory hs = initializeHashableStateFactory();
-						PALMRmaxModelGenerator modelGen = new PALMRmaxModelGenerator(conf.rmax.threshold,
-								conf.rmax.vmax,hs, conf.gamma, conf.rmax.use_multitime_model);
-						PALMLearningAgent agent = new PALMLearningAgent(RAMDPGroot, modelGen, hs, conf.rmax.max_delta,
-								conf.rmax.max_iterations_in_model);
-						return agent;
-					}
-				};
-			}
-			if(agent.equals("palmExpertWithNavGiven")) {
-				agents[i] = new LearningAgentFactory() {
+                    @Override
+                    public LearningAgent generateAgent() {
+                        HashableStateFactory hs = initializeHashableStateFactory();
+                        PALMRmaxModelGenerator modelGen = new PALMRmaxModelGenerator(conf.rmax.threshold,
+                                conf.rmax.vmax,hs, conf.gamma, conf.rmax.use_multitime_model);
+                        PALMLearningAgent agent = new PALMLearningAgent(RAMDPGroot, modelGen, hs, conf.rmax.max_delta,
+                                conf.rmax.max_iterations_in_model);
+                        return agent;
+                    }
+                };
+            }
+            if(agent.equals("palmExpertWithNavGiven")) {
+                agents[i] = new LearningAgentFactory() {
 
-					@Override
-					public String getAgentName() {
-						return "PALM expert, given a Nav Model";
-					}
+                    @Override
+                    public String getAgentName() {
+                        return "PALM expert, given a Nav Model";
+                    }
 
-					@Override
-					public LearningAgent generateAgent() {
-						HashableStateFactory hs = initializeHashableStateFactory();
-						PALMModelGenerator modelGen = new ExpertNavModelGenerator(conf.rmax.threshold,
-								conf.rmax.vmax,hs, conf.gamma, conf.rmax.use_multitime_model);
-						return new PALMLearningAgent(RAMDPGroot, modelGen, hs, conf.rmax.max_delta,
-								conf.rmax.max_iterations_in_model);
-					}
-				};
-			}
-			if (agent.equals("palmHiergen")){
+                    @Override
+                    public LearningAgent generateAgent() {
+                        HashableStateFactory hs = initializeHashableStateFactory();
+                        PALMModelGenerator modelGen = new ExpertNavModelGenerator(conf.rmax.threshold,
+                                conf.rmax.vmax,hs, conf.gamma, conf.rmax.use_multitime_model);
+                        return new PALMLearningAgent(RAMDPGroot, modelGen, hs, conf.rmax.max_delta,
+                                conf.rmax.max_iterations_in_model);
+                    }
+                };
+            }
+            if (agent.equals("palmHiergen")){
 
-				agents[i] = new LearningAgentFactory() {
+                agents[i] = new LearningAgentFactory() {
 
-					@Override
-					public String getAgentName() {
-						return "PALM with HierGen AMDP";
-					}
+                    @Override
+                    public String getAgentName() {
+                        return "PALM with HierGen AMDP";
+                    }
 
-					@Override
-					public LearningAgent generateAgent() {
-						HashableStateFactory hs = initializeHashableStateFactory();
+                    @Override
+                    public LearningAgent generateAgent() {
+                        HashableStateFactory hs = initializeHashableStateFactory();
                         PALMRmaxModelGenerator modelGen = new PALMRmaxModelGenerator(conf.rmax.threshold,
                                 conf.rmax.vmax,hs, conf.gamma, conf.rmax.use_multitime_model);
                         return new PALMLearningAgent(hierGenGroot, modelGen, hs, conf.rmax.max_delta,
                                 conf.rmax.max_iterations_in_model);
-					}
-				};
-			}
+                    }
+                };
+            }
 
-			// RMAXQ
-			if(agent.equals("rmaxq")) {
-				agents[i] = new LearningAgentFactory() {
-					@Override
-					public String getAgentName() {
-						return "R-MAXQ";
-					}
+            // RMAXQ
+            if(agent.equals("rmaxq")) {
+                agents[i] = new LearningAgentFactory() {
+                    @Override
+                    public String getAgentName() {
+                        return "R-MAXQ";
+                    }
 
-					@Override
-					public LearningAgent generateAgent() {
-						HashableStateFactory hs = initializeHashableStateFactory();
-						return new RmaxQLearningAgent(RMAXQGroot, hs, s, conf.rmax.vmax, conf.gamma, conf.rmax.threshold, conf.rmax.max_delta_rmaxq, conf.rmax.max_delta, conf.rmax.max_iterations_in_model);
-					}
-				};
-			}
+                    @Override
+                    public LearningAgent generateAgent() {
+                        HashableStateFactory hs = initializeHashableStateFactory();
+                        return new RmaxQLearningAgent(RMAXQGroot, hs, s, conf.rmax.vmax, conf.gamma, conf.rmax.threshold, conf.rmax.max_delta_rmaxq, conf.rmax.max_delta, conf.rmax.max_iterations_in_model);
+                    }
+                };
+            }
 
-			// RMAX with Hiergen
-			if(agent.equals("rmaxq-h")) {
-				agents[i] = new LearningAgentFactory() {
-					@Override
-					public String getAgentName() {
-						return "R-MAXQ with Hiergen";
-					}
+            // RMAX with Hiergen
+            if(agent.equals("rmaxq-h")) {
+                agents[i] = new LearningAgentFactory() {
+                    @Override
+                    public String getAgentName() {
+                        return "R-MAXQ with Hiergen";
+                    }
 
-					@Override
-					public LearningAgent generateAgent() {
-						HashableStateFactory hs = initializeHashableStateFactory();
-						return new RmaxQLearningAgent(hierGenGroot, hs, s, conf.rmax.vmax, conf.gamma, conf.rmax.threshold, conf.rmax.max_delta_rmaxq, conf.rmax.max_delta, conf.rmax.max_iterations_in_model);
-					}
-				};
-			}
-			
-			//QLearning
-			if(agent.equals("qlearning")){
-				agents[i] = new LearningAgentFactory(){
-					@Override
-					public String getAgentName(){
-						return "QLearning";
-					}
-					
-					@Override
-					public LearningAgent generateAgent(){
-						HashableStateFactory hs = initializeHashableStateFactory();
-						return new QLearning(domain, conf.gamma, hs, 0.0, 0.1);
-					}
-				};
-				
-			}
-		}
+                    @Override
+                    public LearningAgent generateAgent() {
+                        HashableStateFactory hs = initializeHashableStateFactory();
+                        return new RmaxQLearningAgent(hierGenGroot, hs, s, conf.rmax.vmax, conf.gamma, conf.rmax.threshold, conf.rmax.max_delta_rmaxq, conf.rmax.max_delta, conf.rmax.max_iterations_in_model);
+                    }
+                };
+            }
 
-		LearningAlgorithmExperimenter exp = new LearningAlgorithmExperimenter(env, conf.trials, conf.episodes, conf.max_steps, agents);
-		if(conf.output.chart.enabled) {
-			ChartConfig cc = conf.output.chart;
+            //QLearning
+            if(agent.equals("qlearning")){
+                agents[i] = new LearningAgentFactory(){
+                    @Override
+                    public String getAgentName(){
+                        return "QLearning";
+                    }
 
-			PerformanceMetric[] metrics = new PerformanceMetric[cc.metrics.size()];
-			for(int i = 0; i < cc.metrics.size(); i++) {
-				metrics[i] = PerformanceMetric.valueOf(cc.metrics.get(i));
-			}
+                    @Override
+                    public LearningAgent generateAgent(){
+                        HashableStateFactory hs = initializeHashableStateFactory();
+                        return new QLearning(domain, conf.gamma, hs, 0.0, 0.1);
+                    }
+                };
 
-			exp.setUpPlottingConfiguration(cc.width, cc.height, cc.columns, cc.max_height,
-					TrialMode.valueOf(cc.trial_mode), metrics
-			);
-		}
-		
-		List<Episode> episodes = exp.startExperiment();
-		if(conf.output.csv.enabled) {
-			exp.writeEpisodeDataToCSV(conf.output.csv.output);
-		}
+            }
+        }
 
-		if (conf.output.visualizer.episodes){
+        LearningAlgorithmExperimenter exp = new LearningAlgorithmExperimenter(env, conf.trials, conf.episodes, conf.max_steps, agents);
+        if(conf.output.chart.enabled) {
+            ChartConfig cc = conf.output.chart;
+
+            PerformanceMetric[] metrics = new PerformanceMetric[cc.metrics.size()];
+            for(int i = 0; i < cc.metrics.size(); i++) {
+                metrics[i] = PerformanceMetric.valueOf(cc.metrics.get(i));
+            }
+
+            exp.setUpPlottingConfiguration(cc.width, cc.height, cc.columns, cc.max_height,
+                    TrialMode.valueOf(cc.trial_mode), metrics
+            );
+        }
+
+        List<Episode> episodes = exp.startExperiment();
+        if(conf.output.csv.enabled) {
+            exp.writeEpisodeDataToCSV(conf.output.csv.output);
+        }
+
+        if (conf.output.visualizer.episodes){
             EpisodeSequenceVisualizer ev = new EpisodeSequenceVisualizer
                     (TaxiVisualizer.getVisualizer(conf.output.visualizer.width, conf.output.visualizer.height), domain, episodes);;
             ev.setDefaultCloseOperation(ev.EXIT_ON_CLOSE);
             ev.initGUI();
         }
-	}
+    }
 
-	public static void main(String[] args) {
+    public static void main(String[] args) {
 
-		//runtime
-		//get the starting time from execution
-		long actualTimeElapsed = System.currentTimeMillis();
-		SimpleDateFormat sdf = new SimpleDateFormat("MMM dd,yyyy HH:mm:ss");
-		Date resultdate = new Date(actualTimeElapsed);
-		System.out.println(sdf.format(resultdate));
-		long startTime = System.nanoTime();
-		System.out.println("Trial current nano time: " + startTime);
-		
-		
-		String conffile = "config/taxi/classic.yaml";
-		if(args.length > 0) {
-			conffile = args[0];
-		}
+        //runtime
+        //get the starting time from execution
+        long actualTimeElapsed = System.currentTimeMillis();
+        SimpleDateFormat sdf = new SimpleDateFormat("MMM dd,yyyy HH:mm:ss");
+        Date resultdate = new Date(actualTimeElapsed);
+        System.out.println(sdf.format(resultdate));
+        long startTime = System.nanoTime();
+        System.out.println("Trial current nano time: " + startTime);
 
-		TaxiConfig conf = new TaxiConfig();
-		try {
-			System.out.println("Using configuration: " + conffile);
-			conf = TaxiConfig.load(conffile);
-		} catch (FileNotFoundException ex) {
-			System.err.println("Could not find configuration file");
-			System.exit(404);
-		}
 
-		TaxiState s = conf.generateState();
-		Task RAMDProot = TaxiHierarchy.createAMDPHierarchy(conf.stochastic.correct_move, conf.stochastic.fickle, false);
-		Task hiergenRoot = TaxiHierarchy.createHierGenHierarchy(conf.stochastic.correct_move, conf.stochastic.fickle);
-		OOSADomain base = TaxiHierarchy.getBaseDomain();
-		Task RMAXQroot = TaxiHierarchy.createRMAXQHierarchy(conf.stochastic.correct_move, conf.stochastic.fickle);
-		createCharts(conf, s, base, RAMDProot, RMAXQroot, hiergenRoot);
-		
-		long estimatedTime = System.nanoTime() - startTime;
-		System.out.println("The estimated elapsed trial time is " + estimatedTime);
-		actualTimeElapsed = System.currentTimeMillis() - actualTimeElapsed;
-		System.out.println("Estimated trial clock time elapsed: " + actualTimeElapsed);
-	}
+        String conffile = "config/taxi/classic.yaml";
+        if(args.length > 0) {
+            conffile = args[0];
+        }
+
+        ExperimentConfig conf = new ExperimentConfig();
+        try {
+            System.out.println("Using configuration: " + conffile);
+            conf = ExperimentConfig.load(conffile);
+        } catch (FileNotFoundException ex) {
+            System.err.println("Could not find configuration file");
+            System.exit(404);
+        }
+
+        State s = conf.generateState();
+        Task RAMDProot = TaxiHierarchy.createAMDPHierarchy(conf.stochastic.correct_move, conf.stochastic.fickle, false);
+        Task hiergenRoot = TaxiHierarchy.createHierGenHierarchy(conf.stochastic.correct_move, conf.stochastic.fickle);
+        OOSADomain base = TaxiHierarchy.getBaseDomain();
+        Task RMAXQroot = TaxiHierarchy.createRMAXQHierarchy(conf.stochastic.correct_move, conf.stochastic.fickle);
+        createCharts(conf, s, base, RAMDProot, RMAXQroot, hiergenRoot);
+
+        long estimatedTime = System.nanoTime() - startTime;
+        System.out.println("The estimated elapsed trial time is " + estimatedTime);
+        actualTimeElapsed = System.currentTimeMillis() - actualTimeElapsed;
+        System.out.println("Estimated trial clock time elapsed: " + actualTimeElapsed);
+    }
 }

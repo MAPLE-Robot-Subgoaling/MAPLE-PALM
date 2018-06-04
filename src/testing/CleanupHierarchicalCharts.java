@@ -15,6 +15,7 @@ import cleanup.CleanupVisualizer;
 import cleanup.hierarchies.CleanupHierarchyRAMDP;
 import cleanup.hierarchies.CleanupHierarchyRMAXQ;
 import cleanup.state.CleanupState;
+import config.ExperimentConfig;
 import config.cleanup.CleanupConfig;
 import config.output.ChartConfig;
 import hierarchy.framework.GroundedTask;
@@ -32,7 +33,7 @@ import java.util.List;
 
 public class CleanupHierarchicalCharts {
 
-    public static void createCharts(final CleanupConfig conf, final State s, OOSADomain domain, final Task RAMDPRoot, final Task RMAXQRoot ){
+    public static void createCharts(final ExperimentConfig conf, final State s, OOSADomain domain, final Task RAMDPRoot, final Task RMAXQRoot ){
         SimulatedEnvironment env;
         final HashableStateFactory hs;
         final GroundedTask RAMDPGroundedRoot, RMAXQGroundedRoot;
@@ -45,9 +46,10 @@ public class CleanupHierarchicalCharts {
 //        hs = new SimpleHashableStateFactory(true);
         hs = new CachedHashableStateFactory(true);
 
+        CleanupConfig cleanup = (CleanupConfig) conf.domain;
         if(conf.output.visualizer.enabled) {
-            int width = conf.maxX - conf.minX;
-            int height = conf.maxY - conf.minY;
+            int width = cleanup.maxX - cleanup.minX;
+            int height = cleanup.maxY - cleanup.minY;
             VisualActionObserver obs = new VisualActionObserver(domain, CleanupVisualizer.getVisualizer(width, height), conf.output.visualizer.width, conf.output.visualizer.height);
             obs.setFrameDelay(1L);
             obs.initGUI();
@@ -128,22 +130,22 @@ public class CleanupHierarchicalCharts {
             conffile = args[0];
         }
 
-        CleanupConfig config = new CleanupConfig();
+        ExperimentConfig config = new ExperimentConfig();
         try {
             System.out.println("Using configuration: " + conffile);
-            config = CleanupConfig.load(conffile);
+            config = ExperimentConfig.load(conffile);
         } catch (FileNotFoundException ex) {
             System.err.println("Could not find configuration file");
             System.exit(404);
         }
 
-        CleanupState initialState = config.generateState();
+        State initialState = config.generateState();
         CleanupHierarchyRAMDP ramdpHierarchy = new CleanupHierarchyRAMDP();
         CleanupHierarchyRMAXQ rmaxqHierarchy = new CleanupHierarchyRMAXQ();
-        Task ramdpRoot = ramdpHierarchy.createAMDPHierarchy(config);
-        Task rmaxqRoot = rmaxqHierarchy.createRMAXQHierarchy(config);
-        OOSADomain baseDomain = ramdpHierarchy.getBaseDomain();
-        createCharts(config, initialState, baseDomain, ramdpRoot, rmaxqRoot);
+//        Task ramdpRoot = ramdpHierarchy.createAMDPHierarchy(config);
+//        Task rmaxqRoot = rmaxqHierarchy.createRMAXQHierarchy(config);
+//        OOSADomain baseDomain = ramdpHierarchy.getBaseDomain();
+//        createCharts(config, initialState, baseDomain, ramdpRoot, rmaxqRoot);
 
     }
 }

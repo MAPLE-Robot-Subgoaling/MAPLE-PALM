@@ -1,6 +1,8 @@
 package config.taxi;
 
 import burlap.debugtools.RandomFactory;
+import config.DomainConfig;
+import config.ExperimentConfig;
 import config.output.OutputConfig;
 import config.planning.PlanningConfig;
 import config.rmax.RmaxConfig;
@@ -15,35 +17,7 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.List;
 
-public class TaxiConfig {
-    public String state;
-    public List<String> agents;
-    public int episodes;
-    public int max_steps;
-    public int trials;
-    public double gamma;
-
-    public StochasticTaxiConfig stochastic;
-    public PlanningConfig planning;
-    public RmaxConfig rmax;
-    public OutputConfig output;
-
-    public static TaxiConfig load(String conffile) throws FileNotFoundException {
-        Yaml yaml = new Yaml(new Constructor(TaxiConfig.class));
-        InputStream input = new FileInputStream(new File(conffile));
-
-        TaxiConfig config = (TaxiConfig) yaml.load(input);
-
-        long seed = config.stochastic.seed;
-        if (seed == 0) {
-            seed = System.nanoTime();
-            System.err.println("Warning: using a randomly generated RNG seed: " + seed);
-        }
-        RandomFactory.seedMapped(0, seed);
-        System.out.println("Using seed: " + config.stochastic.seed);
-
-        return config;
-    }
+public class TaxiConfig extends DomainConfig {
 
     public TaxiState generateState() {
         switch (state) {

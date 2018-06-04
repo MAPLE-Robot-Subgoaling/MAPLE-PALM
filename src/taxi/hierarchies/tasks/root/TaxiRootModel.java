@@ -16,9 +16,9 @@ import static taxi.TaxiConstants.*;
 
 public class TaxiRootModel implements FullStateModel {
 
-	@Override
-	public State sample(State s, Action a) {
-		List<StateTransitionProb> stpList = this.stateTransitions(s,a);
+    @Override
+    public State sample(State s, Action a) {
+        List<StateTransitionProb> stpList = this.stateTransitions(s,a);
         double roll = RandomFactory.getMapped(0).nextDouble();
         double curSum = 0.;
         for(int i = 0; i < stpList.size(); i++){
@@ -28,47 +28,47 @@ public class TaxiRootModel implements FullStateModel {
             }
         }
         throw new RuntimeException("Probabilities don't sum to 1.0: " + curSum);
-	}
+    }
 
-	@Override
-	public List<StateTransitionProb> stateTransitions(State s, Action a) {
-		List<StateTransitionProb> tps = new ArrayList<StateTransitionProb>();
-		TaxiRootState state = (TaxiRootState) s;
+    @Override
+    public List<StateTransitionProb> stateTransitions(State s, Action a) {
+        List<StateTransitionProb> tps = new ArrayList<StateTransitionProb>();
+        TaxiRootState state = (TaxiRootState) s;
 
-		if(a.actionName().startsWith(ACTION_GET)) {
-			get(state, (ObjectParameterizedAction) a, tps);
-		} else if(a.actionName().startsWith(ACTION_PUT)) {
-			put(state, (ObjectParameterizedAction) a, tps);
-		}
-		return tps;
-	}
+        if(a.actionName().startsWith(ACTION_GET)) {
+            get(state, (ObjectParameterizedAction) a, tps);
+        } else if(a.actionName().startsWith(ACTION_PUT)) {
+            put(state, (ObjectParameterizedAction) a, tps);
+        }
+        return tps;
+    }
 
-	/**
-	 * get the requested passenger into the taxi
-	 * @param s the current state
-	 * @param tps the list of transition probabilities
-	 */
-	public void get(TaxiRootState s, ObjectParameterizedAction a, List<StateTransitionProb> tps){
-		TaxiRootState ns = s.copy();
-		String passengerName = a.getObjectParameters()[0];
-		TaxiRootPassenger np = ns.touchPassenger(passengerName);
-		np.set(ATT_LOCATION, ATT_VAL_IN_TAXI);
-		tps.add(new StateTransitionProb(ns, 1));
-	}
+    /**
+     * get the requested passenger into the taxi
+     * @param s the current state
+     * @param tps the list of transition probabilities
+     */
+    public void get(TaxiRootState s, ObjectParameterizedAction a, List<StateTransitionProb> tps){
+        TaxiRootState ns = s.copy();
+        String passengerName = a.getObjectParameters()[0];
+        TaxiRootPassenger np = ns.touchPassenger(passengerName);
+        np.set(ATT_LOCATION, ATT_VAL_IN_TAXI);
+        tps.add(new StateTransitionProb(ns, 1));
+    }
 
-	/**
-	 * put the requested passenger into the taxi
-	 * @param s the current state
-	 * @param tps the list of transition probabilities
-	 */
-	public void put(TaxiRootState s, ObjectParameterizedAction a, List<StateTransitionProb> tps){
-		TaxiRootState ns = s.copy();
-		String passengerName = a.getObjectParameters()[0];
+    /**
+     * put the requested passenger into the taxi
+     * @param s the current state
+     * @param tps the list of transition probabilities
+     */
+    public void put(TaxiRootState s, ObjectParameterizedAction a, List<StateTransitionProb> tps){
+        TaxiRootState ns = s.copy();
+        String passengerName = a.getObjectParameters()[0];
 //		MutableObject passenger = (MutableObject) s.object(passengerName);
-		TaxiRootPassenger np = ns.touchPassenger(passengerName);
-		String nameOfPassengerGoalLocation = (String) np.get(ATT_GOAL_LOCATION);
-		// put the passenger in their own goal location
-		np.set(ATT_LOCATION, nameOfPassengerGoalLocation);
-		tps.add(new StateTransitionProb(ns, 1));
-	}
+        TaxiRootPassenger np = ns.touchPassenger(passengerName);
+        String nameOfPassengerGoalLocation = (String) np.get(ATT_GOAL_LOCATION);
+        // put the passenger in their own goal location
+        np.set(ATT_LOCATION, nameOfPassengerGoalLocation);
+        tps.add(new StateTransitionProb(ns, 1));
+    }
 }

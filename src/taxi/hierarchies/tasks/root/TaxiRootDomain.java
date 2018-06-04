@@ -27,70 +27,70 @@ import static taxi.TaxiConstants.*;
 
 public class TaxiRootDomain implements DomainGenerator {
 
-	private RewardFunction rf;
-	private TerminalFunction tf;
+    private RewardFunction rf;
+    private TerminalFunction tf;
 
-	/**
-	 * creates a abstraction 2 taxi domain
-	 * @param rf rewardTotal function
-	 * @param tf terminal function
-	 */
-	public TaxiRootDomain(RewardFunction rf, TerminalFunction tf) {
-		this.rf = rf;
-		this.tf = tf;
-	}
-	
-	/**
-	 * creates a abstraction 2 taxi domain
-	 */
-	public TaxiRootDomain() {
+    /**
+     * creates a abstraction 2 taxi domain
+     * @param rf rewardTotal function
+     * @param tf terminal function
+     */
+    public TaxiRootDomain(RewardFunction rf, TerminalFunction tf) {
+        this.rf = rf;
+        this.tf = tf;
+    }
+
+    /**
+     * creates a abstraction 2 taxi domain
+     */
+    public TaxiRootDomain() {
         this.tf = new GoalFailTF(new RootCompletedPF(), null, new RootFailurePF(), null);
         this.rf = new GoalFailRF((GoalFailTF) tf);
-	}
+    }
 
 
-	@Override
-	public OOSADomain generateDomain() {
-		OOSADomain domain = new OOSADomain();
-		
-		domain.addStateClass(CLASS_PASSENGER, TaxiRootPassenger.class);
+    @Override
+    public OOSADomain generateDomain() {
+        OOSADomain domain = new OOSADomain();
 
-		TaxiRootModel tmodel = new TaxiRootModel();
-		if (tf == null) {
-			System.err.println("Warning: initializing " + this.getClass().getSimpleName() + " with Null TF");
-			tf = new NullTermination();
-		}
-		if (rf == null) {
-			System.err.println("Warning: initializing " + this.getClass().getSimpleName() + " with Null RF");
-			rf = new NullRewardFunction();
-		}
-		FactoredModel model = new FactoredModel(tmodel, rf, tf);
-		domain.setModel(model);
-		
-		domain.addActionTypes(
-				new GetActionType(ACTION_GET, new String[]{CLASS_PASSENGER}),
-				new PutActionType(ACTION_PUT, new String[]{CLASS_PASSENGER})
-		);
-		
-		return domain;
-	}
+        domain.addStateClass(CLASS_PASSENGER, TaxiRootPassenger.class);
 
-	public static void main(String[] args) {
+        TaxiRootModel tmodel = new TaxiRootModel();
+        if (tf == null) {
+            System.err.println("Warning: initializing " + this.getClass().getSimpleName() + " with Null TF");
+            tf = new NullTermination();
+        }
+        if (rf == null) {
+            System.err.println("Warning: initializing " + this.getClass().getSimpleName() + " with Null RF");
+            rf = new NullRewardFunction();
+        }
+        FactoredModel model = new FactoredModel(tmodel, rf, tf);
+        domain.setModel(model);
 
-		TaxiRootDomain taxiBuild = new TaxiRootDomain();
-		OOSADomain domain = taxiBuild.generateDomain();
-		
-		HashableStateFactory hs = new SimpleHashableStateFactory();
-		ValueIteration vi = new ValueIteration(domain, 0.5, hs, 0.01, 10);
-		
-		State base = TaxiStateFactory.createClassicState(2);
-		RootStateMapper map = new RootStateMapper();
-		State L2s = map.mapState(base);
+        domain.addActionTypes(
+                new GetActionType(ACTION_GET, new String[]{CLASS_PASSENGER}),
+                new PutActionType(ACTION_PUT, new String[]{CLASS_PASSENGER})
+        );
 
-		SimulatedEnvironment env = new SimulatedEnvironment(domain, L2s);
-		Policy p = vi.planFromState(L2s);
-		Episode e = PolicyUtils.rollout(p, env);
-		System.out.println(e.actionSequence);
-	}
+        return domain;
+    }
+
+    public static void main(String[] args) {
+
+        TaxiRootDomain taxiBuild = new TaxiRootDomain();
+        OOSADomain domain = taxiBuild.generateDomain();
+
+        HashableStateFactory hs = new SimpleHashableStateFactory();
+        ValueIteration vi = new ValueIteration(domain, 0.5, hs, 0.01, 10);
+
+        State base = TaxiStateFactory.createClassicState(2);
+        RootStateMapper map = new RootStateMapper();
+        State L2s = map.mapState(base);
+
+        SimulatedEnvironment env = new SimulatedEnvironment(domain, L2s);
+        Policy p = vi.planFromState(L2s);
+        Episode e = PolicyUtils.rollout(p, env);
+        System.out.println(e.actionSequence);
+    }
 
 }

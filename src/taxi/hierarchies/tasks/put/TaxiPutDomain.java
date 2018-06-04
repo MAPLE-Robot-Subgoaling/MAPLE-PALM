@@ -30,78 +30,78 @@ import static taxi.TaxiConstants.*;
 
 public class TaxiPutDomain implements DomainGenerator {
 
-	private RewardFunction rf;
-	private TerminalFunction tf;
+    private RewardFunction rf;
+    private TerminalFunction tf;
 
-	/**
-	 * creates a abstraction 2 taxi domain
-	 * @param rf rewardTotal function
-	 * @param tf terminal function
-	 */
-	public TaxiPutDomain(RewardFunction rf, TerminalFunction tf) {
-		this.rf = rf;
-		this.tf = tf;
-	}
-	
-	/**
-	 * creates a abstraction 2 taxi domain
-	 */
-	public TaxiPutDomain() {
+    /**
+     * creates a abstraction 2 taxi domain
+     * @param rf rewardTotal function
+     * @param tf terminal function
+     */
+    public TaxiPutDomain(RewardFunction rf, TerminalFunction tf) {
+        this.rf = rf;
+        this.tf = tf;
+    }
+
+    /**
+     * creates a abstraction 2 taxi domain
+     */
+    public TaxiPutDomain() {
 //		tf = new NullTermination();
 //		rf = new NullRewardFunction();
-	}
+    }
 
-	public TaxiPutDomain(String goalPassengerName) {
-		String[] params = new String[]{goalPassengerName};
-		this.tf = new GoalFailTF(new PutCompletedPF(), params, new PutFailurePF(), params);
-		this.rf = new GoalFailRF((GoalFailTF) tf);
-	}
+    public TaxiPutDomain(String goalPassengerName) {
+        String[] params = new String[]{goalPassengerName};
+        this.tf = new GoalFailTF(new PutCompletedPF(), params, new PutFailurePF(), params);
+        this.rf = new GoalFailRF((GoalFailTF) tf);
+    }
 
-	@Override
-	public OOSADomain generateDomain() {
-		OOSADomain domain = new OOSADomain();
-		
-		domain.addStateClass(CLASS_PASSENGER, TaxiPutPassenger.class)
-			.addStateClass(CLASS_TAXI, TaxiPutAgent.class)
-			.addStateClass(CLASS_LOCATION, TaxiPutLocation.class);
+    @Override
+    public OOSADomain generateDomain() {
+        OOSADomain domain = new OOSADomain();
 
-		TaxiPutModel tmodel = new TaxiPutModel();
-		if (tf == null) {
-			System.err.println("Warning: initializing " + this.getClass().getSimpleName() + " with Null TF");
-			tf = new NullTermination();
-		}
-		if (rf == null) {
-			System.err.println("Warning: initializing " + this.getClass().getSimpleName() + " with Null RF");
-			rf = new NullRewardFunction();
-		}
-		FactoredModel model = new FactoredModel(tmodel, rf, tf);
-		domain.setModel(model);
-		
-		domain.addActionTypes(
-				new NavigateActionType(ACTION_NAV, new String[]{CLASS_LOCATION}),
-				new PutPutdownActionType(ACTION_PUTDOWN, new String[]{CLASS_PASSENGER})
-		);
-		
-		return domain;
-	}
+        domain.addStateClass(CLASS_PASSENGER, TaxiPutPassenger.class)
+            .addStateClass(CLASS_TAXI, TaxiPutAgent.class)
+            .addStateClass(CLASS_LOCATION, TaxiPutLocation.class);
 
-	public static void main(String[] args) {
+        TaxiPutModel tmodel = new TaxiPutModel();
+        if (tf == null) {
+            System.err.println("Warning: initializing " + this.getClass().getSimpleName() + " with Null TF");
+            tf = new NullTermination();
+        }
+        if (rf == null) {
+            System.err.println("Warning: initializing " + this.getClass().getSimpleName() + " with Null RF");
+            rf = new NullRewardFunction();
+        }
+        FactoredModel model = new FactoredModel(tmodel, rf, tf);
+        domain.setModel(model);
 
-		String goalPassengerName = CLASS_PASSENGER+"0";
-		TaxiPutDomain taxiBuild = new TaxiPutDomain(goalPassengerName);
-		OOSADomain domain = taxiBuild.generateDomain();
-		
-		HashableStateFactory hs = new SimpleHashableStateFactory();
-		ValueIteration vi = new ValueIteration(domain, 0.5, hs, 0.01, 10);
-		
-		State base = TaxiStateFactory.createClassicStateHalfpoint(true);
-		PutStateMapper map = new PutStateMapper();
-		State L2s = map.mapState(base, new String[]{goalPassengerName});
+        domain.addActionTypes(
+                new NavigateActionType(ACTION_NAV, new String[]{CLASS_LOCATION}),
+                new PutPutdownActionType(ACTION_PUTDOWN, new String[]{CLASS_PASSENGER})
+        );
 
-		SimulatedEnvironment env = new SimulatedEnvironment(domain, L2s);
-		Policy p = vi.planFromState(L2s);
-		Episode e = PolicyUtils.rollout(p, env);
-		System.out.println(e.actionSequence);
-	}
+        return domain;
+    }
+
+    public static void main(String[] args) {
+
+        String goalPassengerName = CLASS_PASSENGER+"0";
+        TaxiPutDomain taxiBuild = new TaxiPutDomain(goalPassengerName);
+        OOSADomain domain = taxiBuild.generateDomain();
+
+        HashableStateFactory hs = new SimpleHashableStateFactory();
+        ValueIteration vi = new ValueIteration(domain, 0.5, hs, 0.01, 10);
+
+        State base = TaxiStateFactory.createClassicStateHalfpoint(true);
+        PutStateMapper map = new PutStateMapper();
+        State L2s = map.mapState(base, new String[]{goalPassengerName});
+
+        SimulatedEnvironment env = new SimulatedEnvironment(domain, L2s);
+        Policy p = vi.planFromState(L2s);
+        Episode e = PolicyUtils.rollout(p, env);
+        System.out.println(e.actionSequence);
+    }
 
 }

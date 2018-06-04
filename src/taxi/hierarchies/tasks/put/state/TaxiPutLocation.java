@@ -10,30 +10,30 @@ import static taxi.TaxiConstants.CLASS_LOCATION;
 
 public class TaxiPutLocation extends MutableObject{
 
-	private final static List<Object> keys = Arrays.<Object>asList( );
+    private final static List<Object> keys = Arrays.<Object>asList( );
 
-	public TaxiPutLocation(String name) {
-		this.setName(name);;
-	}
-
-	@Override
-	public String className() {
-		return CLASS_LOCATION;
-	}
-
-	@Override
-	public ObjectInstance copyWithName(String objectName) {
-		return new TaxiPutLocation( objectName);
+    public TaxiPutLocation(String name) {
+        this.setName(name);;
     }
 
-	@Override
-	public TaxiPutLocation copy() {
-		return (TaxiPutLocation) copyWithName(name());
-	}
+    @Override
+    public String className() {
+        return CLASS_LOCATION;
+    }
 
-	@Override
-	public List<Object> variableKeys() {
-		return keys;
-	}
+    @Override
+    public ObjectInstance copyWithName(String objectName) {
+        return new TaxiPutLocation( objectName);
+    }
+
+    @Override
+    public TaxiPutLocation copy() {
+        return (TaxiPutLocation) copyWithName(name());
+    }
+
+    @Override
+    public List<Object> variableKeys() {
+        return keys;
+    }
 
 }

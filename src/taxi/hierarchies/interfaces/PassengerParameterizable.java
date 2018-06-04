@@ -2,9 +2,9 @@ package taxi.hierarchies.interfaces;
 
 public interface PassengerParameterizable {
 
-	String[] getPassengers();
+    String[] getPassengers();
 
-	String getPassengerLocation(String pname);
+    String getPassengerLocation(String pname);
 
 
 }

@@ -29,76 +29,76 @@ import static taxi.TaxiConstants.*;
 
 public class TaxiNavDomain implements DomainGenerator {
 
-	private RewardFunction rf;
-	private TerminalFunction tf;
+    private RewardFunction rf;
+    private TerminalFunction tf;
 
-	/**
-	 * creates a taxi abstraction 1 domain generator
-	 * @param r rewardTotal function
-	 * @param t terminal function
-	 */
-	public TaxiNavDomain(RewardFunction r, TerminalFunction t) {
-		rf = r;
-		tf = t;
-	}
+    /**
+     * creates a taxi abstraction 1 domain generator
+     * @param r rewardTotal function
+     * @param t terminal function
+     */
+    public TaxiNavDomain(RewardFunction r, TerminalFunction t) {
+        rf = r;
+        tf = t;
+    }
 
-	/**
-	 * create a non fickle taxi abstraction 1 domain
-	 */
-	public TaxiNavDomain() {
+    /**
+     * create a non fickle taxi abstraction 1 domain
+     */
+    public TaxiNavDomain() {
 //		tf = new NullTermination();
 //		rf = new NullRewardFunction();
-	}
+    }
 
-	public TaxiNavDomain(String goalLocationName) {
+    public TaxiNavDomain(String goalLocationName) {
         tf = new GoalFailTF(new NavCompletedPF(), new String[]{goalLocationName}, new NavFailurePF(), null);
         rf = new GoalFailRF((GoalFailTF) tf);
     }
-	
-	public OOSADomain generateDomain() {
-		OOSADomain domain = new OOSADomain();
 
-		domain.addStateClass(CLASS_TAXI, TaxiNavAgent.class).addStateClass(CLASS_LOCATION, TaxiNavLocation.class);
-		
-		TaxiNavModel taxiModel = new TaxiNavModel();
-		if (tf == null) {
+    public OOSADomain generateDomain() {
+        OOSADomain domain = new OOSADomain();
+
+        domain.addStateClass(CLASS_TAXI, TaxiNavAgent.class).addStateClass(CLASS_LOCATION, TaxiNavLocation.class);
+
+        TaxiNavModel taxiModel = new TaxiNavModel();
+        if (tf == null) {
             System.err.println("Warning: initializing " + this.getClass().getSimpleName() + " with Null TF");
-			tf = new NullTermination();
-		}
-		if (rf == null) {
+            tf = new NullTermination();
+        }
+        if (rf == null) {
             System.err.println("Warning: initializing " + this.getClass().getSimpleName() + " with Null RF");
-			rf = new NullRewardFunction();
-		}
-		FactoredModel model = new FactoredModel(taxiModel, rf, tf);
-		domain.setModel(model);
-		
-		domain.addActionTypes(
-				new UniversalActionType(ACTION_NORTH),
-				new UniversalActionType(ACTION_SOUTH),
-				new UniversalActionType(ACTION_EAST),
-				new UniversalActionType(ACTION_WEST)
+            rf = new NullRewardFunction();
+        }
+        FactoredModel model = new FactoredModel(taxiModel, rf, tf);
+        domain.setModel(model);
+
+        domain.addActionTypes(
+                new UniversalActionType(ACTION_NORTH),
+                new UniversalActionType(ACTION_SOUTH),
+                new UniversalActionType(ACTION_EAST),
+                new UniversalActionType(ACTION_WEST)
             );
 
-		return domain;
-	}
+        return domain;
+    }
 
-	public static void main(String[] args) {
+    public static void main(String[] args) {
 
         String goalLocationName = CLASS_LOCATION+"2";
-		TaxiNavDomain taxiBuild = new TaxiNavDomain(goalLocationName);
-		OOSADomain domain = taxiBuild.generateDomain();
+        TaxiNavDomain taxiBuild = new TaxiNavDomain(goalLocationName);
+        OOSADomain domain = taxiBuild.generateDomain();
 
-		HashableStateFactory hs = new SimpleHashableStateFactory();
-		ValueIteration vi = new ValueIteration(domain, 0.99, hs, 0.0001, 1000);
+        HashableStateFactory hs = new SimpleHashableStateFactory();
+        ValueIteration vi = new ValueIteration(domain, 0.99, hs, 0.0001, 1000);
 
-		State base = TaxiStateFactory.createClassicState();
-		NavStateMapper map = new NavStateMapper();
-		State L1s = map.mapState(base);
+        State base = TaxiStateFactory.createClassicState();
+        NavStateMapper map = new NavStateMapper();
+        State L1s = map.mapState(base);
 
-		SimulatedEnvironment env = new SimulatedEnvironment(domain, L1s);
-		Policy p = vi.planFromState(L1s);
-		Episode e = PolicyUtils.rollout(p, env);
-		System.out.println(e.actionSequence);
-	}
+        SimulatedEnvironment env = new SimulatedEnvironment(domain, L1s);
+        Policy p = vi.planFromState(L1s);
+        Episode e = PolicyUtils.rollout(p, env);
+        System.out.println(e.actionSequence);
+    }
 
 }

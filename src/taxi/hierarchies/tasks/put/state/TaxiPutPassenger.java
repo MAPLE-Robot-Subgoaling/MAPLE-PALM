@@ -10,45 +10,45 @@ import static taxi.TaxiConstants.*;
 
 public class TaxiPutPassenger extends MutableObject {
 
-	/**
-	 * current location, whether they are in taxi, the goal, whether they haven been picked up
-	 * whether they have just been picked up and haven't changed goal
-	 */
-	private final static List<Object> keys = Arrays.<Object>asList(
-			ATT_GOAL_LOCATION,
-			ATT_LOCATION
-			);
-	
-	public TaxiPutPassenger(String name, String goalLocation, String location){
-		this(name, (Object) goalLocation, (Object) location);
-	}
+    /**
+     * current location, whether they are in taxi, the goal, whether they haven been picked up
+     * whether they have just been picked up and haven't changed goal
+     */
+    private final static List<Object> keys = Arrays.<Object>asList(
+            ATT_GOAL_LOCATION,
+            ATT_LOCATION
+            );
 
-	private TaxiPutPassenger(String name, Object goalLocation, Object location){
-		this.set(ATT_GOAL_LOCATION, goalLocation);
-		this.set(ATT_LOCATION, location);
-		this.setName(name);
-	}
-	
-	@Override
-	public String className() {
-		return CLASS_PASSENGER;
-	}
+    public TaxiPutPassenger(String name, String goalLocation, String location){
+        this(name, (Object) goalLocation, (Object) location);
+    }
 
-	@Override
-	public TaxiPutPassenger copy() {
-		return (TaxiPutPassenger) copyWithName(name());
-	}
+    private TaxiPutPassenger(String name, Object goalLocation, Object location){
+        this.set(ATT_GOAL_LOCATION, goalLocation);
+        this.set(ATT_LOCATION, location);
+        this.setName(name);
+    }
 
-	@Override
-	public ObjectInstance copyWithName(String objectName) {
-		return new TaxiPutPassenger(
-				objectName,
-				get(ATT_GOAL_LOCATION),
-				get(ATT_LOCATION)
-		);
-	}
+    @Override
+    public String className() {
+        return CLASS_PASSENGER;
+    }
 
-	@Override
-	public List<Object> variableKeys() {
-		return keys;
-	}}
+    @Override
+    public TaxiPutPassenger copy() {
+        return (TaxiPutPassenger) copyWithName(name());
+    }
+
+    @Override
+    public ObjectInstance copyWithName(String objectName) {
+        return new TaxiPutPassenger(
+                objectName,
+                get(ATT_GOAL_LOCATION),
+                get(ATT_LOCATION)
+        );
+    }
+
+    @Override
+    public List<Object> variableKeys() {
+        return keys;
+    }}

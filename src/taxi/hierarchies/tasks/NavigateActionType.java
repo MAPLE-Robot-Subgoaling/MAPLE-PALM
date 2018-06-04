@@ -9,16 +9,16 @@ import taxi.hierarchies.TaxiGetPutState;
 import static taxi.TaxiConstants.ATT_LOCATION;
 public class NavigateActionType extends ObjectParameterizedActionType {
 
-	public NavigateActionType(String name, String[] parameterClasses) {
-		super(name, parameterClasses);
-	}
+    public NavigateActionType(String name, String[] parameterClasses) {
+        super(name, parameterClasses);
+    }
 
-	@Override
-	protected boolean applicableInState(State s, ObjectParameterizedAction objectParameterizedAction) {
-		TaxiGetPutState state = (TaxiGetPutState) s;
-		String[] params = objectParameterizedAction.getObjectParameters();
-		String locName = params[0];
-		ObjectInstance location = state.object(locName);
-		return !location.name().equals(state.getTaxiAtt(ATT_LOCATION));
-	}
+    @Override
+    protected boolean applicableInState(State s, ObjectParameterizedAction objectParameterizedAction) {
+        TaxiGetPutState state = (TaxiGetPutState) s;
+        String[] params = objectParameterizedAction.getObjectParameters();
+        String locName = params[0];
+        ObjectInstance location = state.object(locName);
+        return !location.name().equals(state.getTaxiAtt(ATT_LOCATION));
+    }
 }
