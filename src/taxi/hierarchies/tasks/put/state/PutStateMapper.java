@@ -11,6 +11,8 @@ import static taxi.TaxiConstants.*;
 
 public class PutStateMapper implements ParameterizedStateMapping {
 
+//    public static final String PUT_PASSENGER_ALIAS = "**PUT_PASSENGER_ALIAS**";
+
     //maps a base taxi state to L2
     @Override
     public State mapState(State s, String... params) {
@@ -54,6 +56,7 @@ public class PutStateMapper implements ParameterizedStateMapping {
                 }
             }
             if (location.equals(ERROR)) { throw new RuntimeException("Error: passenger at invalid location in mapper"); }
+//            passengers.add(new TaxiPutPassenger(PUT_PASSENGER_ALIAS, goal, location));
             passengers.add(new TaxiPutPassenger(passengerName, goal, location));
         }
 

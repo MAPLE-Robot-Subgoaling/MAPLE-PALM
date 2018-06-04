@@ -2,6 +2,7 @@ package cleanup.hierarchies;
 
 import burlap.mdp.auxiliary.DomainGenerator;
 import burlap.mdp.auxiliary.StateMapping;
+import burlap.mdp.auxiliary.common.GoalConditionTF;
 import burlap.mdp.core.TerminalFunction;
 import burlap.mdp.core.action.ActionType;
 import burlap.mdp.core.oo.propositional.PropositionalFunction;
@@ -10,6 +11,7 @@ import burlap.mdp.singleagent.oo.OOSADomain;
 import cleanup.Cleanup;
 import cleanup.CleanupGoal;
 import cleanup.CleanupGoalDescription;
+import cleanup.CleanupRF;
 import cleanup.hierarchies.tasks.move.*;
 import cleanup.hierarchies.tasks.pick.*;
 import cleanup.hierarchies.tasks.root.CleanupRoot;
@@ -51,10 +53,12 @@ public class CleanupHierarchyAMDP extends CleanupHierarchy {
         TerminalFunction pickTF = null;// new PickTF();
         RewardFunction moveRF = null;// new CleanupRF(goalCondition, rewardGoal, rewardBase, rewardNoop, rewardPull);;//new MoveRF();
         TerminalFunction moveTF = null;// new GoalConditionTF(goalCondition);//new MoveTF();
+        RewardFunction baseRF = new CleanupRF(goalCondition, rewardGoal, rewardBase, rewardNoop, rewardPull);
+        TerminalFunction baseTF = new GoalConditionTF(goalCondition);
 
         Cleanup baseDomainG = new Cleanup(minX, minY, maxX, maxY);
-        baseDomainG.setRf(moveRF);
-        baseDomainG.setTf(moveTF);
+        baseDomainG.setRf(baseRF);
+        baseDomainG.setTf(baseTF);
         DomainGenerator madDomainG = new CleanupMove(minX, minY, maxX, maxY, moveRF, moveTF);
         DomainGenerator marDomainG = new CleanupMove(minX, minY, maxX, maxY, moveRF, moveTF);
         DomainGenerator mbdDomainG = new CleanupMove(minX, minY, maxX, maxY, moveRF, moveTF);

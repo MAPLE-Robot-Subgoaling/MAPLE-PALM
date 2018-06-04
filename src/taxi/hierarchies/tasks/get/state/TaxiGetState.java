@@ -22,12 +22,12 @@ public class TaxiGetState extends TaxiGetPutState implements DeepCopyForShallowC
     public TaxiGetState(TaxiGetAgent taxi, List<TaxiGetPassenger> pass, List<TaxiGetLocation> locs) {
         this.taxi = taxi;
 
-        this.passengers = new HashMap<String, TaxiGetPassenger>();
+        this.passengers = new HashMap<>();
         for(TaxiGetPassenger p : pass){
             this.passengers.put(p.name(), p);
         }
 
-        this.locations = new HashMap<String, TaxiGetLocation>();
+        this.locations = new HashMap<>();
         for(TaxiGetLocation loc : locs){
             this.locations.put(loc.name(), loc);
         }

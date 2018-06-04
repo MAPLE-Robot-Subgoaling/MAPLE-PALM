@@ -10,6 +10,9 @@ import java.util.List;
 import static taxi.TaxiConstants.*;
 
 public class GetStateMapper implements ParameterizedStateMapping {
+
+//    public static final String GET_PASSENGER_ALIAS = "**GET_PASSENGER_ALIAS**";
+
     //maps a base taxi state to L2
     @Override
     public State mapState(State s, String...params) {
@@ -53,6 +56,7 @@ public class GetStateMapper implements ParameterizedStateMapping {
                 }
             }
             passengers.add(new TaxiGetPassenger(passengerName, passengerLocation));
+//            passengers.add(new TaxiGetPassenger(GET_PASSENGER_ALIAS, passengerLocation));
         }
 
         return new TaxiGetState(taxi, passengers, locations);

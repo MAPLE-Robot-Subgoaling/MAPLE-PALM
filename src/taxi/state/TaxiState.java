@@ -265,7 +265,11 @@ public class TaxiState implements MutableOOState, PassengerParameterizable, Deep
     }
 
     public Object getPassengerAtt(String passname, String attName){
-        return passengers.get(passname).get(attName);
+        if (!passengers.containsKey(passname)) {
+            System.out.println("error");
+        }
+        TaxiPassenger passenger = passengers.get(passname);
+        return passenger.get(attName);
     }
 
     public Object getLocationAtt(String locName, String attName){

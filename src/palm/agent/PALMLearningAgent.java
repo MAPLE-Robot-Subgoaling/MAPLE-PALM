@@ -31,7 +31,7 @@ public class PALMLearningAgent implements LearningAgent{
     /**
      * collection of models for each task
      */
-    private Map<GroundedTask, PALMModel> models;
+    private Map<String, PALMModel> models;
 
     /**
      * Steps currently taken
@@ -76,7 +76,7 @@ public class PALMLearningAgent implements LearningAgent{
                              HashableStateFactory hs, double delta, int maxIterationsInModelPlanner) {
         this.root = root;
         this.hashingFactory = hs;
-        this.models = new HashMap<GroundedTask, PALMModel>();
+        this.models = new HashMap<>();
         this.taskNames = new HashMap<String, GroundedTask>();
         this.maxDelta = delta;
         this.maxIterationsInModelPlanner = maxIterationsInModelPlanner;
@@ -101,7 +101,7 @@ public class PALMLearningAgent implements LearningAgent{
 
         steps = 0;
         e = new Episode(env.currentObservation());
-        solveTask(root, env, maxSteps);
+        solveTask(null, root, env, maxSteps);
         System.out.println(e.actionSequence.size() + " " + e.actionSequence);
 
         ///for a chart of runtime
@@ -123,7 +123,7 @@ public class PALMLearningAgent implements LearningAgent{
      * @param maxSteps the max number of primitive actions that can be taken
      * @return whether the task was completed
      */
-    protected boolean solveTask(GroundedTask task, Environment baseEnv, int maxSteps){
+    protected boolean solveTask(GroundedTask parent, GroundedTask task, Environment baseEnv, int maxSteps){
         State baseState = e.stateSequence.get(e.stateSequence.size() - 1);
         State currentState = task.mapState(baseState);
         State pastState = currentState;
@@ -136,6 +136,17 @@ public class PALMLearningAgent implements LearningAgent{
         if(task.isPrimitive()) {
             EnvironmentOutcome result;
             Action a = task.getAction();
+
+//            if (a instanceof ObjectParameterizedAction) {
+//                ObjectParameterizedAction opa = (ObjectParameterizedAction) a;
+//                String param = opa.getObjectParameters()[0];
+//                if (param.equals(GET_PASSENGER_ALIAS)) {
+//                    param = ((ObjectParameterizedAction)parent.getAction()).getObjectParameters()[0];
+//                } else if (param.equals(PUT_PASSENGER_ALIAS)) {
+//                    param = ((ObjectParameterizedAction)parent.getAction()).getObjectParameters()[0];
+//                }
+//                ((ObjectParameterizedAction) a).getObjectParameters()[0] = param;
+//            }
 //                System.out.println(tabLevel + "    " + actionName);
 //            subtaskCompleted = true;
             result = baseEnv.executeAction(a);
@@ -173,9 +184,20 @@ public class PALMLearningAgent implements LearningAgent{
                 action = this.taskNames.get(actionName);
             }
 
+//            if (a instanceof ObjectParameterizedAction) {
+//                ObjectParameterizedAction opa = (ObjectParameterizedAction) a;
+//                String param = opa.getObjectParameters()[0];
+//                if (param.equals(GET_PASSENGER_ALIAS)) {
+//                    param = ((ObjectParameterizedAction)action.getAction()).getObjectParameters()[0];
+//                } else if (param.equals(PUT_PASSENGER_ALIAS)) {
+//                    param = ((ObjectParameterizedAction)action.getAction()).getObjectParameters()[0];
+//                }
+//                ((ObjectParameterizedAction) a).getObjectParameters()[0] = param;
+//            }
+
             // solve this task's next chosen subtask, recursively
             int stepsBefore = steps;
-            subtaskCompleted = solveTask(action, baseEnv, maxSteps);
+            subtaskCompleted = solveTask(task, action, baseEnv, maxSteps);
             int stepsAfter = steps;
             int stepsTaken = stepsAfter - stepsBefore;
 
@@ -259,10 +281,18 @@ public class PALMLearningAgent implements LearningAgent{
      * @return the learned rmax model of the task
      */
     protected PALMModel getModel(GroundedTask t){
-        PALMModel model = models.get(t);
-        if(model == null){
+//        PALMModel model = models.get(t);
+        // idea: try to do lookup such that models are shared across same AMDP class
+        // that is, instead of 4 Navigate AMDPs, one for each repo
+        // we share the model and parameterize
+        String unparameterizedNameForModelSharing = t.getAction().actionName();
+        String parameterizedNameWithoutSharing = t.toString();
+        boolean useModelSharing = false;//unparameterizedNameForModelSharing.contains("get");//unparameterizedNameForModelSharing.contains("put");
+        String lookup = useModelSharing ? unparameterizedNameForModelSharing : parameterizedNameWithoutSharing;
+        PALMModel model = models.get(lookup);
+        if(model == null) {
             model = modelGenerator.getModelForTask(t);
-            this.models.put(t, model);
+            this.models.put(lookup, model);
         }
         return model;
     }
