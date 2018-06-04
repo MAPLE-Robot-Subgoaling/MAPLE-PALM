@@ -38,11 +38,7 @@ public class HierarchicalLearnerTest {
                 conf.rmax.max_iterations_in_model);
 
         SimulatedEnvironment env;
-        if(conf.stochastic.random_start) {
-            env = new SimulatedEnvironment(groundDomain, new RandomPassengerTaxiState());
-        } else {
-            env = new SimulatedEnvironment(groundDomain, initial);
-        }
+        env = new SimulatedEnvironment(groundDomain, initial);
 
         if(conf.output.visualizer.enabled) {
             VisualActionObserver obs = new VisualActionObserver(groundDomain, TaxiVisualizer.getVisualizer(conf.output.visualizer.width, conf.output.visualizer.height));
@@ -111,14 +107,15 @@ public class HierarchicalLearnerTest {
             System.exit(404);
         }
 
+        TaxiConfig domain = (TaxiConfig) conf.domain;
         State s = conf.generateState();
         if(conf.agents.contains("ramdp")) {
-            Task RAMDProot = TaxiHierarchy.createAMDPHierarchy(conf.stochastic.correct_move, conf.stochastic.fickle, false);
+            Task RAMDProot = TaxiHierarchy.createAMDPHierarchy(domain.correct_move, domain.fickle, false);
             OOSADomain base = TaxiHierarchy.getBaseDomain();
             runRAMDPEpisodes(conf, RAMDProot, s, base);
         }
         if(conf.agents.contains("rmaxq")) {
-            Task RMAXQroot = TaxiHierarchy.createRMAXQHierarchy(conf.stochastic.correct_move, conf.stochastic.fickle);
+            Task RMAXQroot = TaxiHierarchy.createRMAXQHierarchy(domain.correct_move, domain.fickle);
             OOSADomain base = TaxiHierarchy.getBaseDomain();
             runRMAXQEpsodes(conf, RMAXQroot, s, base);
         }

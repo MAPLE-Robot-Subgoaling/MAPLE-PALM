@@ -2,18 +2,13 @@ package config;
 
 import burlap.debugtools.RandomFactory;
 import burlap.mdp.core.state.State;
-import cleanup.state.CleanupRandomStateGenerator;
-import cleanup.state.CleanupState;
-import config.cleanup.CleanupConfig;
+import burlap.visualizer.Visualizer;
 import config.output.OutputConfig;
 import config.planning.PlanningConfig;
 import config.rmax.RmaxConfig;
-import config.taxi.StochasticTaxiConfig;
-import config.taxi.TaxiConfig;
-import org.apache.commons.math3.analysis.function.Exp;
-import org.yaml.snakeyaml.TypeDescription;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
+import taxi.TaxiVisualizer;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -33,7 +28,6 @@ public class ExperimentConfig {
     public double gamma;
 
     public DomainConfig domain;
-    public StochasticTaxiConfig stochastic;
     public PlanningConfig planning;
     public RmaxConfig rmax;
     public OutputConfig output;
@@ -60,5 +54,9 @@ public class ExperimentConfig {
 
     public State generateState() {
         return domain.generateState();
+    }
+
+    public Visualizer getVisualizer(ExperimentConfig config) {
+        return domain.getVisualizer(config);
     }
 }

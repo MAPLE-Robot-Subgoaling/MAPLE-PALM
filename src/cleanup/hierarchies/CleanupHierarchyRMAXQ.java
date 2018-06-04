@@ -21,6 +21,7 @@ import cleanup.hierarchies.tasks.pick.PickRF;
 import cleanup.hierarchies.tasks.pick.PickTF;
 import cleanup.hierarchies.tasks.root.CleanupRoot;
 import cleanup.hierarchies.tasks.root.CleanupRootGoalPF;
+import config.ExperimentConfig;
 import config.cleanup.CleanupConfig;
 import hierarchy.framework.*;
 
@@ -32,8 +33,9 @@ public class CleanupHierarchyRMAXQ extends CleanupHierarchy {
 
     }
 
-    public Task createRMAXQHierarchy(CleanupConfig config){
+    public Task createRMAXQHierarchy(ExperimentConfig experimentConfig){
 
+        CleanupConfig config = (CleanupConfig) experimentConfig.domain;
         int minX = config.minX;
         int minY = config.minY;
         int maxX = config.maxX;

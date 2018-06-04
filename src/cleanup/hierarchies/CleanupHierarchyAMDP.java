@@ -16,6 +16,7 @@ import cleanup.hierarchies.tasks.root.CleanupRoot;
 import cleanup.hierarchies.tasks.root.CleanupRootFailPF;
 import cleanup.hierarchies.tasks.root.CleanupRootGoalPF;
 import cleanup.hierarchies.tasks.root.CleanupRootMapper;
+import config.ExperimentConfig;
 import config.cleanup.CleanupConfig;
 import hierarchy.framework.NonprimitiveTask;
 import hierarchy.framework.PrimitiveTask;
@@ -24,14 +25,15 @@ import hierarchy.framework.Task;
 
 import static cleanup.Cleanup.*;
 
-public class CleanupHierarchyRAMDP extends CleanupHierarchy {
+public class CleanupHierarchyAMDP extends CleanupHierarchy {
 
-    public CleanupHierarchyRAMDP() {
+    public CleanupHierarchyAMDP() {
 
     }
 
-    public Task createAMDPHierarchy(CleanupConfig config){
+    public Task createAMDPHierarchy(ExperimentConfig experimentConfig){
 
+        CleanupConfig config = (CleanupConfig) experimentConfig.domain;
         int minX = config.minX;
         int minY = config.minY;
         int maxX = config.maxX;

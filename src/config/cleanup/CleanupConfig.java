@@ -2,9 +2,12 @@ package config.cleanup;
 
 import burlap.debugtools.RandomFactory;
 import burlap.mdp.core.state.State;
+import burlap.visualizer.Visualizer;
+import cleanup.CleanupVisualizer;
 import cleanup.state.CleanupRandomStateGenerator;
 import cleanup.state.CleanupState;
 import config.DomainConfig;
+import config.ExperimentConfig;
 import config.output.OutputConfig;
 import config.planning.PlanningConfig;
 import config.rmax.RmaxConfig;
@@ -33,6 +36,11 @@ public class CleanupConfig extends DomainConfig {
 
     @Override
     public State generateState() {
-        return null;
+        return (CleanupState) new CleanupRandomStateGenerator(minX, minY, maxX, maxY).getStateFor(state, num_blocks);
+    }
+
+    @Override
+    public Visualizer getVisualizer(ExperimentConfig config) {
+        return CleanupVisualizer.getVisualizer(config.output.visualizer.width, config.output.visualizer.height);
     }
 }

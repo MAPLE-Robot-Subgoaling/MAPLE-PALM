@@ -12,9 +12,8 @@ import burlap.mdp.singleagent.environment.SimulatedEnvironment;
 import burlap.mdp.singleagent.oo.OOSADomain;
 import burlap.statehashing.HashableStateFactory;
 import cleanup.CleanupVisualizer;
-import cleanup.hierarchies.CleanupHierarchyRAMDP;
+import cleanup.hierarchies.CleanupHierarchyAMDP;
 import cleanup.hierarchies.CleanupHierarchyRMAXQ;
-import cleanup.state.CleanupState;
 import config.ExperimentConfig;
 import config.cleanup.CleanupConfig;
 import config.output.ChartConfig;
@@ -140,12 +139,12 @@ public class CleanupHierarchicalCharts {
         }
 
         State initialState = config.generateState();
-        CleanupHierarchyRAMDP ramdpHierarchy = new CleanupHierarchyRAMDP();
+        CleanupHierarchyAMDP ramdpHierarchy = new CleanupHierarchyAMDP();
         CleanupHierarchyRMAXQ rmaxqHierarchy = new CleanupHierarchyRMAXQ();
-//        Task ramdpRoot = ramdpHierarchy.createAMDPHierarchy(config);
-//        Task rmaxqRoot = rmaxqHierarchy.createRMAXQHierarchy(config);
-//        OOSADomain baseDomain = ramdpHierarchy.getBaseDomain();
-//        createCharts(config, initialState, baseDomain, ramdpRoot, rmaxqRoot);
+        Task ramdpRoot = ramdpHierarchy.createAMDPHierarchy(config);
+        Task rmaxqRoot = rmaxqHierarchy.createRMAXQHierarchy(config);
+        OOSADomain baseDomain = ramdpHierarchy.getBaseDomain();
+        createCharts(config, initialState, baseDomain, ramdpRoot, rmaxqRoot);
 
     }
 }

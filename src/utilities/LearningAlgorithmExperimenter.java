@@ -162,7 +162,8 @@ public class LearningAlgorithmExperimenter {
         }
 
         this.displayPlots = true;
-        this.plotter = new PerformancePlotter(this.agentFactories[0].getAgentName(), chartWidth, chartHeight, columns, maxWindowHeight, trialMode, metrics);
+        String agentName = this.agentFactories[0].getAgentName();
+        this.plotter = new PerformancePlotter(agentName, chartWidth, chartHeight, columns, maxWindowHeight, trialMode, metrics);
         this.plotter.setRefreshDelay(this.plotRefresh);
         this.plotter.setSignificanceForCI(this.plotCISignificance);
     }
