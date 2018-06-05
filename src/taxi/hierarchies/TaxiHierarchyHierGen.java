@@ -15,6 +15,7 @@ import taxi.hierGen.Task5.state.Task5StateMapper;
 import taxi.hierGen.Task7.state.Task7StateMapper;
 import taxi.hierGen.Task7.state.TaxiHierGenTask7State;
 import taxi.hierGen.actions.HierGenTask5ActionType;
+import taxi.hierGen.actions.HierGenTask7ActionType;
 import taxi.hierGen.functions.FailureFunction;
 import taxi.hierGen.functions.HierGenRootCompleted;
 import taxi.hierGen.functions.HierGenTask5Completed;
@@ -52,7 +53,7 @@ public class TaxiHierarchyHierGen extends TaxiHierarchy {
         ActionType aPickup = new PickupActionType(ACTION_PICKUP, new String[]{CLASS_PASSENGER});//HGPickupActionType(ACTION_PICKUP, new String[]{TaxiHierGenTask7State.CLASS_TASK7_PASSENGER});
         ActionType aPutdown = new PutdownActionType(ACTION_PUTDOWN, new String[]{CLASS_PASSENGER});//HGPutdownActionType(ACTION_PUTDOWN, new String[]{TaxiHierGenRootState.CLASS_ROOT_PASSENGER});
         ActionType aTask5 = new HierGenTask5ActionType();
-        ActionType aTask7 = new UniversalActionType(ACTION_TASK_7);
+        ActionType aTask7 = new HierGenTask7ActionType(ACTION_TASK_7, new String[]{CLASS_PASSENGER});
         ActionType asolve = new SolveActionType();
 
         //state mapper

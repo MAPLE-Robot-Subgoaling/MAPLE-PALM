@@ -4,8 +4,6 @@ import burlap.mdp.core.oo.state.MutableOOState;
 import burlap.mdp.core.oo.state.OOStateUtilities;
 import burlap.mdp.core.oo.state.ObjectInstance;
 import burlap.mdp.core.state.MutableState;
-import taxi.hierarchies.interfaces.PassengerLocationParameterizable;
-import taxi.hierarchies.interfaces.PassengerParameterizable;
 import taxi.hierarchies.tasks.put.state.TaxiPutAgent;
 import taxi.hierarchies.tasks.put.state.TaxiPutPassenger;
 import utilities.DeepCopyForShallowCopyState;
@@ -141,18 +139,6 @@ public class TaxiHierGenTask7State implements MutableOOState, DeepCopyForShallow
 //            return ATT_VAL_ON_ROAD;
 //
 //    }
-
-    public Object getTaxiAtt(String attName){
-        return taxi.get(attName);
-    }
-
-    public String getTaxiName(){
-        return taxi.name();
-    }
-
-    public Object getPassengerAtt(String passname, String attName){
-        return passengers.get(passname).get(attName);
-    }
 
     public TaxiHierGenTask7Taxi touchTaxi() {
         if (this.taxi != null) { this.taxi = taxi.copy(); }

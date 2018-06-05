@@ -89,15 +89,6 @@ public class TaxiHierGenTask5State implements MutableOOState, DeepCopyForShallow
         return new TaxiHierGenTask5State(taxi);
     }
 
-    //get values from objects
-    public Object getTaxiAtt(String attName){
-        return taxi.get(attName);
-    }
-
-    public String getTaxiName(){
-        return taxi.name();
-    }
-
     public TaxiHierGenTask5Taxi touchTaxi() {
         if (this.taxi != null) { this.taxi = taxi.copy(); }
         return taxi;
@@ -110,4 +101,7 @@ public class TaxiHierGenTask5State implements MutableOOState, DeepCopyForShallow
         return copy;
     }
 
+    public TaxiHierGenTask5Taxi getTaxi() {
+        return taxi;
+    }
 }

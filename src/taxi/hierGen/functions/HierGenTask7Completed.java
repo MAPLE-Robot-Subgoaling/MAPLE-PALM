@@ -15,15 +15,13 @@ public class HierGenTask7Completed extends PropositionalFunction {
 
     @Override
     public boolean isTrue(OOState s, String... params) {
-        //p.in taxi = true
-//        TaxiHierGenTask7State st = (TaxiHierGenTask7State) s;
-//
-//        for(String pname : st.getPassengers()){
-//            boolean inTaxi = (boolean) st.getPassengerAtt(pname, ATT_IN_TAXI);
-//            if(inTaxi)
-//                return true;
-//        }
-//        return false;
-        throw new RuntimeException("this is wrong, need to reimplement");
+        TaxiHierGenTask7State st = (TaxiHierGenTask7State) s;
+        for(String pname : params){
+            boolean inTaxi = (boolean) st.object(pname).get(ATT_IN_TAXI);
+            if(inTaxi)
+                return true;
+        }
+        return false;
+//        throw new RuntimeException("this is wrong, need to reimplement");
     }
 }

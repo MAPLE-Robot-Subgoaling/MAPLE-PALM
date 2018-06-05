@@ -24,8 +24,8 @@ public class HierGenTask5Completed extends PropositionalFunction {
         HierGenTask5ActionType navType = new HierGenTask5ActionType();
         HierGenTask5Action action = (HierGenTask5Action) navType.associatedAction(params[0]);
 
-        int tx = (int) st.getTaxiAtt(ATT_X);
-        int ty = (int) st.getTaxiAtt(ATT_Y);
+        int tx = (int) st.getTaxi().get(ATT_X);
+        int ty = (int) st.getTaxi().get(ATT_Y);
         int goalX = action.getGoalX();
         int goalY = action.getGoalY();
 
