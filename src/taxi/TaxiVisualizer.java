@@ -9,9 +9,9 @@ import burlap.visualizer.Visualizer;
 import taxi.state.*;
 
 import java.awt.*;
+import java.awt.geom.Arc2D;
 import java.awt.geom.Ellipse2D;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import static taxi.TaxiConstants.*;
 
@@ -82,7 +82,8 @@ public class TaxiVisualizer {
     }
 
     public static class PassengerPainter implements ObjectPainter{
-
+        static int numPassengers = 0;
+        ArrayList<String> passengerNumbers = new ArrayList<String>();
         @Override
         public void paintObject(Graphics2D g2, OOState s, ObjectInstance ob, float cWidth, float cHeight) {
             TaxiState state = (TaxiState) s;
@@ -106,15 +107,34 @@ public class TaxiVisualizer {
             float scale = 0.7f;
 
             boolean inTaxi = (boolean) p.get(ATT_IN_TAXI);
-            if(inTaxi)
+            if(inTaxi){
                 scale = 0.5f;
+                if(!passengerNumbers.contains(p.name()) ){
+                    ///encounter passenger not in the set but in the taxi, add to list
+                    passengerNumbers.add(p.name());
+                    numPassengers++;
+                }
+            }else{
+                if(passengerNumbers.contains(p.name()) ){
+                    ///encounter passenger in the set but not in the taxi, remove from list
+                    passengerNumbers.remove(p.name());
+                    numPassengers--;
+                }
+            }
+
 
             float realWidth = passWidth * scale;
             float realHeight = passHeight * scale;
             float realX = passx - (realWidth / 2f);
             float realy = passy - (realHeight / 2f);
+            if(inTaxi){
+                float start = 90+(360/numPassengers)*passengerNumbers.indexOf(p.name());
+                float extent = 360/numPassengers;
+                g2.fill(new Arc2D.Float(realX, realy, realWidth, realHeight, start, extent, Arc2D.PIE));
+            }else{
+                g2.fill(new Ellipse2D.Float(realX, realy, realWidth, realHeight));
+            }
 
-            g2.fill(new Ellipse2D.Float(realX, realy, realWidth, realHeight));
         }
     }
 
