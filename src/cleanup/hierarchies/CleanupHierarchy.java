@@ -1,8 +1,9 @@
 package cleanup.hierarchies;
 
 import burlap.mdp.singleagent.oo.OOSADomain;
+import hierarchy.framework.Hierarchy;
 
-public abstract class CleanupHierarchy {
+public abstract class CleanupHierarchy extends Hierarchy {
 
     protected OOSADomain baseDomain;
 

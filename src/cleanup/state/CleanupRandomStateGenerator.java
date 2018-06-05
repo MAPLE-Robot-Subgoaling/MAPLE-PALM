@@ -13,6 +13,8 @@ import utilities.BurlapConstants;
 
 import java.util.*;
 
+import static cleanup.Cleanup.*;
+
 public class CleanupRandomStateGenerator implements StateGenerator {
 
     private static final int DEBUG_CODE = 932891293;
@@ -470,10 +472,10 @@ public class CleanupRandomStateGenerator implements StateGenerator {
         while (i < numBlocks) {
             String id = "block" + i;
             CleanupRoom room = (CleanupRoom) s.objectsOfClass(Cleanup.CLASS_ROOM).get(rng.nextInt(numRooms));
-            int rLeft = ((Integer) room.get(Cleanup.ATT_LEFT)) + 1;
-            int rRight = ((Integer) room.get(Cleanup.ATT_RIGHT)) - 1;
-            int rTop = ((Integer) room.get(Cleanup.ATT_TOP)) - 1;
-            int rBottom = ((Integer) room.get(Cleanup.ATT_BOTTOM)) + 1;
+            int rLeft = ((Integer) room.get(ATT_LEFT)) + 1;
+            int rRight = ((Integer) room.get(ATT_RIGHT)) - 1;
+            int rTop = ((Integer) room.get(ATT_TOP)) - 1;
+            int rBottom = ((Integer) room.get(ATT_BOTTOM)) + 1;
             int bX = rng.nextInt(rRight - rLeft) + rLeft;
             int bY = rng.nextInt(rTop - rBottom) + rBottom;
             if (s.isOpen(bX, bY)) {
@@ -494,10 +496,10 @@ public class CleanupRandomStateGenerator implements StateGenerator {
     }
 
     public static boolean regionContainsPoint(ObjectInstance o, int x, int y, boolean countBoundary) {
-        int top = (Integer) o.get(Cleanup.ATT_TOP);
-        int left = (Integer) o.get(Cleanup.ATT_LEFT);
-        int bottom = (Integer) o.get(Cleanup.ATT_BOTTOM);
-        int right = (Integer) o.get(Cleanup.ATT_RIGHT);
+        int top = (Integer) o.get(ATT_TOP);
+        int left = (Integer) o.get(ATT_LEFT);
+        int bottom = (Integer) o.get(ATT_BOTTOM);
+        int right = (Integer) o.get(ATT_RIGHT);
 
         if (countBoundary) {
             if (y >= bottom && y <= top && x >= left && x <= right) {
@@ -636,79 +638,55 @@ public class CleanupRandomStateGenerator implements StateGenerator {
     }
 
     private State generateSlidingBlockPuzzle() {
-
         Random rng = RandomFactory.getMapped(BurlapConstants.DEFAULT_RNG_INDEX);
 
-        int numBlocks = 0;
         int numRooms = 2;
         int numDoors = 1;
 
-        int mx = (getWidth() / 2);
-        int my = (getHeight() / 2);
-        int maxRadiusWidth = mx - 2;
-        int maxRadiusHeight = my - 2;
-        int mainW = 1 + rng.nextInt(maxRadiusWidth);
-        int mainH = 1 + rng.nextInt(maxRadiusHeight);
-        int availableW = maxRadiusWidth - mainW;
-        int availableH = maxRadiusHeight - mainH;
+        List<String> blockColors = new ArrayList<>(Arrays.asList(Cleanup.COLORS_BLOCKS));
+        List<String> blockShapes = new ArrayList<>(Arrays.asList(Cleanup.SHAPES_BLOCKS));
+        List<String> roomColors = new ArrayList<>(Arrays.asList(Cleanup.COLORS_ROOMS));
 
-        int ax = mx + rng.nextInt(availableW + 1);
-        int ay = my + rng.nextInt(availableH + 1);
-        String agentDirection = Cleanup.directions[rng.nextInt(Cleanup.directions.length)];
-
-        List<String> blockColors = new ArrayList<String>(Arrays.asList(Cleanup.COLORS_BLOCKS));
-        List<String> roomColors = new ArrayList<String>(Arrays.asList(Cleanup.COLORS_ROOMS));
-
-
-        int bigRoomRadiusWidth = mx;
-        int bigRoomRadiusHeight = my;
-        String bigRoomColor = roomColors.get(rng.nextInt(roomColors.size()));
-        CleanupRoom bigRoom = new CleanupRoom("room1", mx - bigRoomRadiusWidth, mx + bigRoomRadiusWidth, my - bigRoomRadiusHeight, my + bigRoomRadiusHeight, bigRoomColor, Cleanup.SHAPE_ROOM);
-
-
-        String roomColor = roomColors.get(rng.nextInt(roomColors.size()));
-        CleanupRoom room = new CleanupRoom("room0", ax - mainW, ax + mainW, ay - mainH, ay + mainH, roomColor, Cleanup.SHAPE_ROOM);
-        int rx = ((Integer) room.get(Cleanup.ATT_LEFT));
-        int ry = ((Integer) room.get(Cleanup.ATT_BOTTOM));
-        int rWidth = ((Integer) room.get(Cleanup.ATT_RIGHT)) - ((Integer) room.get(Cleanup.ATT_LEFT));
-        int rHeight = ((Integer) room.get(Cleanup.ATT_TOP)) - ((Integer) room.get(Cleanup.ATT_BOTTOM));
-        boolean leftOrBottom = rng.nextBoolean();
-        int dx = 0;
-        int dy = 0;
-        boolean onVerticalWall = rng.nextBoolean();
-        if (onVerticalWall) {
-            dx = leftOrBottom ? rx : rx + rWidth;
-            dy = 1 + ry + rng.nextInt(rHeight - 1);
-        } else {
-            dx = 1 + rx + rng.nextInt(rWidth - 1);
-            dy = leftOrBottom ? ry : ry + rHeight;
-        }
-        CleanupDoor door = new CleanupDoor("door0", dx, dx, dy, dy, Cleanup.LOCKABLE_STATES[0], Cleanup.SHAPE_DOOR, Cleanup.COLOR_GRAY);
-
-//        int index = 0;
-//        for (int x = minX; i < minX + maxX)
-//            int bx = minY + rng.nextInt(getWidth());
-//            int by = minY + rng.nextInt(getHeight());
-//            if (s.isOpen(bx, by) && !s.agentAt(bx, by)) {
-//                String shape = blockShapes.get(rng.nextInt(blockShapes.size()));
-//                String color = blockColors.get(rng.nextInt(blockColors.size()));
-//                s.addObject(new CleanupBlock("block" + index, bx, by, shape, color));
-//                numBlocks -= 1;
-//                index += 1;
-//            }
-//        }
+        int bigRoomLeft = minX;
+        int bigRoomRight = maxX-1;
+        int bigRoomBottom = minY;
+        int bigRoomTop = maxY-1;
+        String room1Color = roomColors.get(rng.nextInt(roomColors.size()));
+        String room2Color = roomColors.get(rng.nextInt(roomColors.size()));
+        CleanupRoom room1 = new CleanupRoom("room0", bigRoomLeft, bigRoomRight/2, bigRoomBottom, bigRoomTop, room1Color, Cleanup.SHAPE_ROOM);
+        CleanupRoom room2 = new CleanupRoom("room1", bigRoomRight/2, bigRoomRight, bigRoomBottom, bigRoomTop, room2Color, Cleanup.SHAPE_ROOM);
+        int dx2 = bigRoomRight/2;
+        int dy2 = bigRoomTop/2;
+        CleanupDoor door2 = new CleanupDoor("door0", dx2, dx2, dy2, dy2, Cleanup.LOCKABLE_STATES[0], Cleanup.SHAPE_DOOR, Cleanup.COLOR_GRAY);
 
         // randomize agent's position
+        int ax = minX;
+        int ay = minY;
+        String agentDirection = Cleanup.directions[rng.nextInt(Cleanup.directions.length)];
         CleanupState s = new CleanupState(getWidth(), getHeight(), ax, ay, agentDirection, numBlocks, numRooms, numDoors);
-        s.addObject(bigRoom);
-        s.addObject(room);
-        s.addObject(door);
+        s.addObject(room1);
+        s.addObject(room2);
+        s.addObject(door2);
         do {
-            ax = rng.nextInt(getWidth());
-            ay = rng.nextInt(getHeight());
+            ax = minX + rng.nextInt(getWidth());
+            ay = minY + rng.nextInt(getHeight());
         } while (!s.isOpen(ax, ay));
         s.getAgent().set(Cleanup.ATT_X, ax);
         s.getAgent().set(Cleanup.ATT_Y, ay);
+
+        int index = 0;
+        for (int i = (int) room1.get(ATT_LEFT); i < (int) room1.get(ATT_RIGHT); i++) {
+            for (int j = (int) room1.get(ATT_BOTTOM); j < (int) room1.get(ATT_TOP); j++) {
+                int bx = i;
+                int by = j;
+                if (s.isOpen(bx, by) && !s.agentAt(bx, by)) {
+                    String shape = blockShapes.get(rng.nextInt(blockShapes.size()));
+                    String color = blockColors.get(rng.nextInt(blockColors.size()));
+                    s.addObject(new CleanupBlock("block" + index, bx, by, shape, color));
+                    index += 1;
+                }
+            }
+        }
 
         return s;
     }
@@ -747,10 +725,10 @@ public class CleanupRandomStateGenerator implements StateGenerator {
 
         String roomColor = roomColors.get(rng.nextInt(roomColors.size()));
         CleanupRoom room = new CleanupRoom("room0", ax - mainW, ax + mainW, ay - mainH, ay + mainH, roomColor, Cleanup.SHAPE_ROOM);
-        int rx = ((Integer) room.get(Cleanup.ATT_LEFT));
-        int ry = ((Integer) room.get(Cleanup.ATT_BOTTOM));
-        int rWidth = ((Integer) room.get(Cleanup.ATT_RIGHT)) - ((Integer) room.get(Cleanup.ATT_LEFT));
-        int rHeight = ((Integer) room.get(Cleanup.ATT_TOP)) - ((Integer) room.get(Cleanup.ATT_BOTTOM));
+        int rx = ((Integer) room.get(ATT_LEFT));
+        int ry = ((Integer) room.get(ATT_BOTTOM));
+        int rWidth = ((Integer) room.get(ATT_RIGHT)) - ((Integer) room.get(ATT_LEFT));
+        int rHeight = ((Integer) room.get(ATT_TOP)) - ((Integer) room.get(ATT_BOTTOM));
         boolean leftOrBottom = rng.nextBoolean();
         int dx = 0;
         int dy = 0;
@@ -938,10 +916,10 @@ public class CleanupRandomStateGenerator implements StateGenerator {
 
         String roomColor = roomColors.get(rng.nextInt(roomColors.size()));
         CleanupRoom room = new CleanupRoom("room0", mx - mainW, mx + mainW, my - mainH, my + mainH, roomColor, Cleanup.SHAPE_ROOM);
-        int rx = ((Integer) room.get(Cleanup.ATT_LEFT));
-        int ry = ((Integer) room.get(Cleanup.ATT_BOTTOM));
-        int rWidth = ((Integer) room.get(Cleanup.ATT_RIGHT)) - ((Integer) room.get(Cleanup.ATT_LEFT));
-        int rHeight = ((Integer) room.get(Cleanup.ATT_TOP)) - ((Integer) room.get(Cleanup.ATT_BOTTOM));
+        int rx = ((Integer) room.get(ATT_LEFT));
+        int ry = ((Integer) room.get(ATT_BOTTOM));
+        int rWidth = ((Integer) room.get(ATT_RIGHT)) - ((Integer) room.get(ATT_LEFT));
+        int rHeight = ((Integer) room.get(ATT_TOP)) - ((Integer) room.get(ATT_BOTTOM));
         boolean leftOrBottom = rng.nextBoolean();
         int dx = 0;
         int dy = 0;

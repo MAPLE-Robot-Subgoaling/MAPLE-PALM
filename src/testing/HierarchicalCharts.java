@@ -28,6 +28,9 @@ import palm.rmax.agent.PALMRmaxModelGenerator;
 import rmaxq.agent.RmaxQLearningAgent;
 import state.hashing.simple.CachedHashableStateFactory;
 import taxi.hierarchies.TaxiHierarchy;
+import taxi.hierarchies.TaxiHierarchyAMDP;
+import taxi.hierarchies.TaxiHierarchyHierGen;
+import taxi.hierarchies.TaxiHierarchyRMAXQ;
 import utilities.LearningAlgorithmExperimenter;
 
 import java.io.FileNotFoundException;
@@ -248,9 +251,9 @@ public class HierarchicalCharts {
         Task[] hierarchies = new Task[3];
         if (config.domain instanceof TaxiConfig) {
             TaxiConfig domain = (TaxiConfig) config.domain;
-            Task rootAMDP = TaxiHierarchy.createAMDPHierarchy(domain.correct_move, domain.fickle, false);
-            Task rootRMAXQ = TaxiHierarchy.createRMAXQHierarchy(domain.correct_move, domain.fickle);
-            Task hiergenRoot = TaxiHierarchy.createHierGenHierarchy(domain.correct_move, domain.fickle);
+            Task rootAMDP = new TaxiHierarchyAMDP().createHierarchy(domain.correct_move, domain.fickle, false);
+            Task rootRMAXQ = new TaxiHierarchyRMAXQ().createHierarchy(domain.correct_move, domain.fickle, false);
+            Task hiergenRoot = new TaxiHierarchyHierGen().createHierarchy(domain.correct_move, domain.fickle, false);
             base = TaxiHierarchy.getBaseDomain();
             hierarchies[0] = rootAMDP;
             hierarchies[1] = rootRMAXQ;
@@ -259,8 +262,8 @@ public class HierarchicalCharts {
             CleanupHierarchyAMDP rootAMDP = new CleanupHierarchyAMDP();
             CleanupHierarchyRMAXQ rootRMAXQ= new CleanupHierarchyRMAXQ();
             CleanupHierarchyHiergen hiergenHierarchy = new CleanupHierarchyHiergen();
-            Task ramdpRoot = rootAMDP.createAMDPHierarchy(config);
-            Task rmaxqRoot = rootRMAXQ.createRMAXQHierarchy(config);
+            Task ramdpRoot = rootAMDP.createAMDPHierarchy(config, false);
+            Task rmaxqRoot = rootRMAXQ.createRMAXQHierarchy(config, false);
 //            Task hiergenRoot = hiergenHierarchy.createHiergenHierarchy(config);
             base = rootAMDP.getBaseDomain();
             hierarchies[0] = ramdpRoot;
