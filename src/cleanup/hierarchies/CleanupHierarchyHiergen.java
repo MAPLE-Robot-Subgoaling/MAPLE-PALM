@@ -6,7 +6,8 @@ import hierarchy.framework.Task;
 
 public class CleanupHierarchyHiergen extends CleanupHierarchy {
 
-    public Task createHiergenHierarchy(ExperimentConfig config) {
+    @Override
+    public Task createHierarchy(ExperimentConfig config, boolean plan) {
         throw new RuntimeException("Error: cleanup hiergen not implemented");
     }
 }

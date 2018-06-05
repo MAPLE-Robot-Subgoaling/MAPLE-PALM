@@ -87,8 +87,8 @@ public class TaxiVisualizer {
         public void paintObject(Graphics2D g2, OOState s, ObjectInstance ob, float cWidth, float cHeight) {
             TaxiState state = (TaxiState) s;
             TaxiPassenger p = (TaxiPassenger) ob;
-            String goalLoc = (String) state.getPassengerAtt(p.name(), ATT_GOAL_LOCATION);
-            String color = (String) state.getLocationAtt(goalLoc, ATT_COLOR);
+            String goalLoc = (String) state.object(p.name()).get(ATT_GOAL_LOCATION);
+            String color = (String) state.object(goalLoc).get(ATT_COLOR);
             Color col = colors.get(color);
 
             g2.setColor(col);

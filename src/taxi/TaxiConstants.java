@@ -25,10 +25,13 @@ public class TaxiConstants {
     public static final String ATT_LOCATION =				"location";
     public static final String ATT_GOAL_LOCATION = 			"goalLocation";
     public static final String ATT_IN_TAXI = 				"inTaxi";
-    public static final String ATT_VAL_IN_TAXI =			"inTaxi"; // possible value for "location"
+    public static final String ATT_COLOR =					"color";
+
+    // possible value for "location"
+    public static final String ATT_VAL_IN_TAXI =			"inTaxi";
     public static final String ATT_VAL_NOT_IN_TAXI =		"notInTaxi";
     public static final String ATT_VAL_ON_ROAD =			"onRoad";
-    public static final String ATT_COLOR =					"color";
+
     //wall attributes
     public static final String ATT_START_X = 				"startX";
     public static final String ATT_START_Y = 				"startY";
@@ -51,6 +54,15 @@ public class TaxiConstants {
     public static final int IND_WEST = 3;
     public static final int IND_PICKUP = 4;
     public static final int IND_PUTDOWN = 5;
+
+    //hiergen related
+    public static final String ACTION_TASK_5 = "task5";
+    public static final String ACTION_TASK_7 = "task7";
+    public static final String ATT_DESTINATION_X = "destX";
+    public static final String ATT_DESTINATION_Y = "destY";
+    public static final String ATT_READY = "ready";
+    public static final String PF_TASK_5 = "task5completed";
+    public static final String PF_TASK_7 = "task7completed";
 
 
 

@@ -2,6 +2,7 @@ package taxi;
 
 import burlap.mdp.core.TerminalFunction;
 import burlap.mdp.core.action.Action;
+import burlap.mdp.core.oo.state.ObjectInstance;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.model.RewardFunction;
 import taxi.state.TaxiState;
@@ -64,16 +65,17 @@ public class TaxiRewardFunction implements RewardFunction{
 
 //		boolean taxiOccupied = (boolean) state.getTaxiAtt(ATT_TAXI_OCCUPIED);
         boolean taxiOccupied = state.isTaxiOccupied();
-        int tx = (int) state.getTaxiAtt(ATT_X);
-        int ty = (int) state.getTaxiAtt(ATT_Y);
+        int tx = (int) state.getTaxi().get(ATT_X);
+        int ty = (int) state.getTaxi().get(ATT_Y);
 
         //illegal pickup when no passenger at taxi's location
         if(a.actionName().equals(ACTION_PICKUP)){
 
             boolean passengerAtTaxi = false;
-            for(String passengerName : state.getPassengers()){
-                int px = (int) state.getPassengerAtt(passengerName, ATT_X);
-                int py = (int) state.getPassengerAtt(passengerName, ATT_Y);
+            for(ObjectInstance passenger : state.objectsOfClass(CLASS_PASSENGER)){
+                int px = (int) passenger.get(ATT_X);
+                int py = (int) passenger.get(ATT_Y);
+                boolean inTaxi = (boolean) passenger.get(ATT_IN_TAXI);
                 if(px == tx && py == ty){
                     passengerAtTaxi = true;
                     break;
@@ -90,9 +92,9 @@ public class TaxiRewardFunction implements RewardFunction{
 
             // if taxi/passenger is not at depot
             boolean taxiAtDepot = false;
-            for(String locName : state.getLocations()){
-                int lx = (int) state.getLocationAtt(locName, ATT_X);
-                int ly = (int) state.getLocationAtt(locName, ATT_Y);
+            for (ObjectInstance location : state.objectsOfClass(CLASS_LOCATION)) {
+                int lx = (int) location.get(ATT_X);
+                int ly = (int) location.get(ATT_Y);
                 if(tx == lx && ty == ly){
                     taxiAtDepot = true;
                     break;

@@ -14,11 +14,7 @@ import java.util.*;
 
 import static taxi.TaxiConstants.*;
 
-public class TaxiHierGenTask7State implements MutableOOState, PassengerParameterizable, PassengerLocationParameterizable, DeepCopyForShallowCopyState {
-
-    public static final String CLASS_TASK7_PASSENGER = 		"task7Passenger";
-    public static final String CLASS_TASK7_Taxi =			"Task7axi";
-    public static final String REEADY_TO_PICKUP = 			"pickup";
+public class TaxiHierGenTask7State implements MutableOOState, DeepCopyForShallowCopyState {
 
     private TaxiHierGenTask7Taxi taxi;
     private Map<String, TaxiHierGenTask7Passenger> passengers;
@@ -83,9 +79,9 @@ public class TaxiHierGenTask7State implements MutableOOState, PassengerParameter
 
     @Override
     public List<ObjectInstance> objectsOfClass(String oclass) {
-        if(oclass.equals(CLASS_TASK7_Taxi))
+        if(oclass.equals(CLASS_TAXI))
             return Arrays.<ObjectInstance>asList(taxi);
-        else if(oclass.equals(CLASS_TASK7_PASSENGER))
+        else if(oclass.equals(CLASS_PASSENGER))
             return new ArrayList<>(passengers.values());
         throw new RuntimeException("No object class " + oclass);
     }
@@ -110,15 +106,15 @@ public class TaxiHierGenTask7State implements MutableOOState, PassengerParameter
         return new TaxiHierGenTask7State(taxi, passengers);
     }
 
-    @Override
-    public int getLocationX(String pname) {
-        return (int) passengers.get(pname).get(ATT_X);
-    }
-
-    @Override
-    public int getLocationY(String pname) {
-        return (int) passengers.get(pname).get(ATT_Y);
-    }
+//    @Override
+//    public int getLocationX(String pname) {
+//        return (int) passengers.get(pname).get(ATT_X);
+//    }
+//
+//    @Override
+//    public int getLocationY(String pname) {
+//        return (int) passengers.get(pname).get(ATT_Y);
+//    }
 
     //get values from objects
     public String[] getPassengers(){
@@ -129,22 +125,22 @@ public class TaxiHierGenTask7State implements MutableOOState, PassengerParameter
         return ret;
     }
 
-    @Override
-    public String getPassengerLocation(String pname) {
-        boolean inTaxi = (boolean) passengers.get(pname).get(ATT_IN_TAXI);
-        int tx = (int) taxi.get(ATT_X);
-        int ty = (int) taxi.get(ATT_Y);
-        int px = (int) passengers.get(pname).get(ATT_X);
-        int py = (int) passengers.get(pname).get(ATT_Y);
-
-        if(inTaxi)
-            return ATT_IN_TAXI;
-        else if(tx == px && ty == py)
-            return REEADY_TO_PICKUP;
-        else
-            return ATT_VAL_ON_ROAD;
-
-    }
+//    @Override
+//    public String getPassengerLocation(String pname) {
+//        boolean inTaxi = (boolean) passengers.get(pname).get(ATT_IN_TAXI);
+//        int tx = (int) taxi.get(ATT_X);
+//        int ty = (int) taxi.get(ATT_Y);
+//        int px = (int) passengers.get(pname).get(ATT_X);
+//        int py = (int) passengers.get(pname).get(ATT_Y);
+//
+//        if(inTaxi)
+//            return ATT_IN_TAXI;
+//        else if(tx == px && ty == py)
+//            return ATT_;
+//        else
+//            return ATT_VAL_ON_ROAD;
+//
+//    }
 
     public Object getTaxiAtt(String attName){
         return taxi.get(attName);

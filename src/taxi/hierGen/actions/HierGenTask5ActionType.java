@@ -10,11 +10,13 @@ import taxi.hierarchies.interfaces.PassengerLocationParameterizable;
 import java.util.ArrayList;
 import java.util.List;
 
+import static taxi.TaxiConstants.ACTION_TASK_5;
+
 public class HierGenTask5ActionType implements ActionType {
 
     @Override
     public String typeName() {
-        return TaxiHierGenTask5State.ACTION_Task5_Action;
+        return ACTION_TASK_5;
     }
 
     @Override

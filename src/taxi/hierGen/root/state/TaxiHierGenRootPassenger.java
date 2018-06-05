@@ -10,11 +10,11 @@ import static taxi.TaxiConstants.*;
 
 public class TaxiHierGenRootPassenger extends MutableObject {
 
-    private final static List<Object> keys = Arrays.<Object>asList(
+    private final static List<Object> keys = Arrays.asList(
             ATT_X,
             ATT_Y,
-            TaxiHierGenRootState.ATT_DESTINAION_X,
-            TaxiHierGenRootState.ATT_DESTINAION_Y,
+            ATT_DESTINATION_X,
+            ATT_DESTINATION_Y,
             ATT_IN_TAXI
     );
 
@@ -25,15 +25,15 @@ public class TaxiHierGenRootPassenger extends MutableObject {
     private TaxiHierGenRootPassenger(String name, Object x, Object y, Object destX, Object destY, Object inTaxi){
         this.set(ATT_X, x);
         this.set(ATT_Y, y);
-        this.set(TaxiHierGenRootState.ATT_DESTINAION_X, destX);
-        this.set(TaxiHierGenRootState.ATT_DESTINAION_Y, destY);
+        this.set(ATT_DESTINATION_X, destX);
+        this.set(ATT_DESTINATION_Y, destY);
         this.set(ATT_IN_TAXI, inTaxi);
         this.setName(name);
     }
 
     @Override
     public String className() {
-        return TaxiHierGenRootState.CLASS_ROOT_PASSENGER;
+        return CLASS_PASSENGER;
     }
 
     @Override
@@ -42,8 +42,8 @@ public class TaxiHierGenRootPassenger extends MutableObject {
                 objectName,
                 get(ATT_X),
                 get(ATT_Y),
-                get(TaxiHierGenRootState.ATT_DESTINAION_X),
-                get(TaxiHierGenRootState.ATT_DESTINAION_Y),
+                get(ATT_DESTINATION_X),
+                get(ATT_DESTINATION_Y),
                 get(ATT_IN_TAXI)
         );
     }

@@ -2,7 +2,7 @@ package hierarchy.framework;
 
 import burlap.mdp.singleagent.model.FactoredModel;
 
-public class Hierarchy {
+public abstract class Hierarchy {
 
     public static void setupKnownTFRF(NonprimitiveTask task) {
         GoalFailTF tf = task.getGoalFailTF();
@@ -11,5 +11,7 @@ public class Hierarchy {
         model.setTf(tf);
         model.setRf(rf);
     }
+
+
 
 }

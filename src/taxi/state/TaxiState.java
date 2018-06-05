@@ -12,7 +12,7 @@ import java.util.*;
 
 import static taxi.TaxiConstants.*;
 
-public class TaxiState implements MutableOOState, PassengerParameterizable, DeepCopyForShallowCopyState {
+public class TaxiState implements MutableOOState, DeepCopyForShallowCopyState {
 
     //contains a taxi, passengers, locations and walls
     private TaxiAgent taxi;
@@ -24,24 +24,23 @@ public class TaxiState implements MutableOOState, PassengerParameterizable, Deep
             List<TaxiWall> walls) {
         this.taxi = taxi;
 
-        this.passengers = new HashMap<String, TaxiPassenger>();
+        this.passengers = new HashMap<>();
         for(TaxiPassenger p : passengers){
             this.passengers.put(p.name(), p);
         }
 
-        this.locations = new HashMap<String, TaxiLocation>();
+        this.locations = new HashMap<>();
         for(TaxiLocation l : locations){
             this.locations.put(l.name(), l);
         }
 
-        this.walls = new HashMap<String, TaxiWall>();
+        this.walls = new HashMap<>();
         for(TaxiWall w : walls){
             this.walls.put(w.name(), w);
         }
     }
 
-    public TaxiState(TaxiAgent t, Map<String, TaxiPassenger> pass, Map<String, TaxiLocation> locs,
-            Map<String, TaxiWall> walls) {
+    public TaxiState(TaxiAgent t, Map<String, TaxiPassenger> pass, Map<String, TaxiLocation> locs, Map<String, TaxiWall> walls) {
         this.taxi = t;
         this.passengers = pass;
         this.locations = locs;
@@ -50,54 +49,50 @@ public class TaxiState implements MutableOOState, PassengerParameterizable, Deep
 
     @Override
     public int numObjects() {
-        return 1 + passengers.size() + locations.size() + walls.size();
+        int count = 0;
+        if (taxi != null) { count += 1; }
+        count += passengers.size();
+        count += locations.size();
+        count += walls.size();
+        return count;
     }
 
     @Override
     public ObjectInstance object(String oname) {
-        if(taxi.name().equals(oname))
-            return taxi;
+        if(taxi != null && taxi.name().equals(oname)) { return taxi; }
 
         ObjectInstance o = passengers.get(oname);
-        if(o != null)
-            return o;
+        if(o != null) { return o; }
 
         o = locations.get(oname);
-        if(o != null)
-            return o;
+        if(o != null) { return o; }
 
         o = walls.get(oname);
-        if(o != null)
-            return o;
+        if(o != null) { return o; }
 
-        return null;
+        throw new RuntimeException("Error: no object found with name: " + oname);
     }
 
-//	public List<ObjectInstance> objectInstanceList = null;//new ArrayList<>();
     @Override
     public List<ObjectInstance> objects() {
-//		if (objectInstanceList == null) {
             List<ObjectInstance> objs = new ArrayList<ObjectInstance>();
-            objs.add(taxi);
+            if (taxi != null) { objs.add(taxi); }
             objs.addAll(passengers.values());
             objs.addAll(locations.values());
             objs.addAll(walls.values());
             return objs;
-//			objectInstanceList = objs;
-//		}
-//		return objectInstanceList;
     }
 
     @Override
     public List<ObjectInstance> objectsOfClass(String oclass) {
         if(oclass.equals(CLASS_TAXI))
-            return Arrays.<ObjectInstance>asList(taxi);
+            return Arrays.asList(taxi);
         else if(oclass.equals(CLASS_PASSENGER))
-            return new ArrayList<ObjectInstance>(passengers.values());
+            return new ArrayList<>(passengers.values());
         else if(oclass.equals(CLASS_LOCATION))
-            return new ArrayList<ObjectInstance>(locations.values());
+            return new ArrayList<>(locations.values());
         else if(oclass.equals(CLASS_WALL))
-            return new ArrayList<ObjectInstance>(walls.values());
+            return new ArrayList<>(walls.values());
         throw new RuntimeException("No object class " + oclass);
     }
 
@@ -189,95 +184,22 @@ public class TaxiState implements MutableOOState, PassengerParameterizable, Deep
     }
 
     public Map<String, TaxiPassenger> touchPassengers(){
-        this.passengers = new HashMap<String, TaxiPassenger>(passengers);
+        this.passengers = new HashMap<>(passengers);
         return passengers;
     }
 
     public Map<String, TaxiLocation> touchLocations(){
-        this.locations = new HashMap<String, TaxiLocation>(locations);
+        this.locations = new HashMap<>(locations);
         return locations;
     }
 
     public Map<String, TaxiWall> touchWalls(){
-        this.walls = new HashMap<String, TaxiWall>(walls);
+        this.walls = new HashMap<>(walls);
         return walls;
-    }
-
-    //get values from objects
-    public String[] getPassengers(){
-        String[] ret = new String[passengers.size()];
-        int i = 0;
-        for(String name : passengers.keySet())
-            ret[i++] = name;
-        return ret;
-    }
-
-    @Override
-    public String getPassengerLocation(String pname) {
-        int px = (int) passengers.get(pname).get(ATT_X);
-        int py = (int) passengers.get(pname).get(ATT_Y);
-
-        for(String loc : getLocations()){
-            int lx = (int) locations.get(loc).get(ATT_X);
-            int ly = (int) locations.get(loc).get(ATT_Y);
-            if(px == lx && py == ly)
-                return loc;
-        }
-        return ATT_VAL_ON_ROAD;
-    }
-//
-//	@Override
-//	public String getTaxiLocation() {
-//		int tx = (int) taxi.get(ATT_X);
-//		int ty = (int) taxi.get(ATT_Y);
-//
-//		for(String loc : getLocations()){
-//			int lx = (int) getLocationAtt(loc, ATT_X);
-//			int ly = (int) getLocationAtt(loc, ATT_Y);
-//			if(lx == tx && ly == ty)
-//				return loc;
-//		}
-//		return "Not a deot";
-//	}
-
-    public String[] getLocations(){
-        String[] ret = new String[locations.size()];
-        int i = 0;
-        for(String name : locations.keySet())
-            ret[i++] = name;
-        return ret;
-    }
-
-    public String[] getWalls(){
-        String[] ret = new String[walls.size()];
-        int i = 0;
-        for(String name: walls.keySet())
-            ret[i++] = name;
-        return ret;
-    }
-
-    public Object getTaxiAtt(String attName){
-        return taxi.get(attName);
     }
 
     public String getTaxiName(){
         return taxi.name();
-    }
-
-    public Object getPassengerAtt(String passname, String attName){
-        if (!passengers.containsKey(passname)) {
-            System.out.println("error");
-        }
-        TaxiPassenger passenger = passengers.get(passname);
-        return passenger.get(attName);
-    }
-
-    public Object getLocationAtt(String locName, String attName){
-        return locations.get(locName).get(attName);
-    }
-
-    public Object getWallAtt(String wallName, String attName){
-        return walls.get(wallName).get(attName);
     }
 
     //test to see if there is a wall on either side of the taxi
@@ -364,31 +286,19 @@ public class TaxiState implements MutableOOState, PassengerParameterizable, Deep
 
     @Override
     public String toString(){
-//		String out = "{\n";
-//		out += taxi.toString() + "\n";
-//
-//		for(TaxiPassenger p : passengers.values()){
-//			out += p.toString() + "\n";
-//		}
-//
-//		for(TaxiLocation l : locations.values()){
-//			out += l.toString() + "\n";
-//		}
-//		return out;
         return OOStateUtilities.ooStateToString(this);
     }
 
     // determine if at least one passenger is in the taxi
     public boolean isTaxiOccupied() {
-        for (String passengerName : getPassengers()) {
-            boolean inTaxi = (boolean) getPassengerAtt(passengerName, ATT_IN_TAXI);
+        for (String passengerName : this.passengers.keySet()) {
+            boolean inTaxi = (boolean) passengers.get(passengerName).get(ATT_IN_TAXI);
             if (inTaxi) {
                 return true;
             }
         }
         return false;
     }
-
 
     @Override
     public MutableOOState deepCopy() {
@@ -398,6 +308,10 @@ public class TaxiState implements MutableOOState, PassengerParameterizable, Deep
         copy.touchLocations();
         copy.touchWalls();
         return copy;
+    }
+
+    public TaxiAgent getTaxi() {
+        return taxi;
     }
 }
 

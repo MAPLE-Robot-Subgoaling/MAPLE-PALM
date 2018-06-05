@@ -262,8 +262,8 @@ public class HierarchicalCharts {
             CleanupHierarchyAMDP rootAMDP = new CleanupHierarchyAMDP();
             CleanupHierarchyRMAXQ rootRMAXQ= new CleanupHierarchyRMAXQ();
             CleanupHierarchyHiergen hiergenHierarchy = new CleanupHierarchyHiergen();
-            Task ramdpRoot = rootAMDP.createAMDPHierarchy(config, false);
-            Task rmaxqRoot = rootRMAXQ.createRMAXQHierarchy(config, false);
+            Task ramdpRoot = rootAMDP.createHierarchy(config, false);
+            Task rmaxqRoot = rootRMAXQ.createHierarchy(config, false);
 //            Task hiergenRoot = hiergenHierarchy.createHiergenHierarchy(config);
             base = rootAMDP.getBaseDomain();
             hierarchies[0] = ramdpRoot;

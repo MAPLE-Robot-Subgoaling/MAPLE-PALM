@@ -8,11 +8,12 @@ import taxi.hierGen.actions.HierGenTask5ActionType;
 
 import static taxi.TaxiConstants.ATT_X;
 import static taxi.TaxiConstants.ATT_Y;
+import static taxi.TaxiConstants.PF_TASK_5;
 
 public class HierGenTask5Completed extends PropositionalFunction {
 
     public HierGenTask5Completed(){
-        super("task5", new String[]{});
+        super(PF_TASK_5, new String[]{});
     }
 
     @Override

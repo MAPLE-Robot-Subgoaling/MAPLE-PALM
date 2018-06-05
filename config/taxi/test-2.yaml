@@ -6,7 +6,7 @@ domain: !!config.taxi.TaxiConfig
 seed: 89424
 
 agents:
-  - rmaxq
+  - palmExpert
 
 episodes: 100
 max_steps: 2000
@@ -27,7 +27,7 @@ rmax:
 output:
   csv:
     enabled: true
-    output: results/pex-classic-fickle.csv
+    output: results/taxi-test-2.csv
 
   chart:
     enabled: true

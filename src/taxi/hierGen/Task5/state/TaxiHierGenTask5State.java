@@ -7,14 +7,14 @@ import burlap.mdp.core.state.MutableState;
 import taxi.hierarchies.tasks.put.state.TaxiPutAgent;
 import utilities.DeepCopyForShallowCopyState;
 
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class TaxiHierGenTask5State implements MutableOOState, DeepCopyForShallowCopyState {
+import static taxi.TaxiConstants.CLASS_TAXI;
 
-    public static final String CLASS_ROOT_Taxi =			"tas5Taxi";
-    public static final String ACTION_Task5_Action = 		"task5Action";
+public class TaxiHierGenTask5State implements MutableOOState, DeepCopyForShallowCopyState {
 
     private TaxiHierGenTask5Taxi taxi;
 
@@ -64,7 +64,7 @@ public class TaxiHierGenTask5State implements MutableOOState, DeepCopyForShallow
 
     @Override
     public List<ObjectInstance> objectsOfClass(String oclass) {
-        if(oclass.equals(CLASS_ROOT_Taxi))
+        if(oclass.equals(CLASS_TAXI))
             return Arrays.<ObjectInstance>asList(taxi);
         throw new RuntimeException("No object class " + oclass);
     }

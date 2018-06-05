@@ -1,6 +1,7 @@
 package taxi.hierarchies.tasks.nav.state;
 
 import burlap.mdp.auxiliary.StateMapping;
+import burlap.mdp.core.oo.state.ObjectInstance;
 import burlap.mdp.core.state.State;
 import taxi.state.TaxiState;
 
@@ -18,23 +19,23 @@ public class NavStateMapper implements StateMapping {
         }
         TaxiState st = (TaxiState) s;
 
-        int tx = (int) st.getTaxiAtt(ATT_X);
-        int ty = (int) st.getTaxiAtt(ATT_Y);
+        int tx = (int) st.getTaxi().get(ATT_X);
+        int ty = (int) st.getTaxi().get(ATT_Y);
         TaxiNavAgent taxi = new TaxiNavAgent(CLASS_TAXI, tx, ty);
 
         List<TaxiNavLocation> locations = new ArrayList<>();
-        for(String locName : st.getLocations()){
-            int lx = (int) st.getLocationAtt(locName, ATT_X);
-            int ly = (int) st.getLocationAtt(locName, ATT_Y);
-            locations.add(new TaxiNavLocation(locName, lx, ly));
+        for(ObjectInstance location : st.objectsOfClass(CLASS_LOCATION)){
+            int lx = (int) location.get(ATT_X);
+            int ly = (int) location.get(ATT_Y);
+            locations.add(new TaxiNavLocation(location.name(), lx, ly));
         }
         List<TaxiNavWall> walls = new ArrayList<>();
-        for(String wallName : st.getWalls()){
-            int startX = (int) st.getWallAtt(wallName, ATT_START_X);
-            int startY = (int) st.getWallAtt(wallName, ATT_START_Y);
-            int length = (int) st.getWallAtt(wallName, ATT_LENGTH);
-            boolean isHorizontal = (boolean) st.getWallAtt(wallName, ATT_IS_HORIZONTAL);
-            walls.add(new TaxiNavWall(wallName, startX, startY, length, isHorizontal));
+        for(ObjectInstance wall : st.objectsOfClass(CLASS_WALL)) {
+            int startX = (int) wall.get(ATT_START_X);
+            int startY = (int) wall.get(ATT_START_Y);
+            int length = (int) wall.get(ATT_LENGTH);
+            boolean isHorizontal = (boolean) wall.get(ATT_IS_HORIZONTAL);
+            walls.add(new TaxiNavWall(wall.name(), startX, startY, length, isHorizontal));
         }
 
         return new TaxiNavState(taxi, locations, walls);

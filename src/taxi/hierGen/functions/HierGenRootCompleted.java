@@ -26,17 +26,14 @@ public class HierGenRootCompleted extends PropositionalFunction {
         for(String pname : st.getPassengers()){
             int px = (int) st.getPassengerAtt(pname, ATT_X);
             int py = (int) st.getPassengerAtt(pname, ATT_Y);
-            int destX = (int) st.getPassengerAtt(pname, TaxiHierGenRootState.ATT_DESTINAION_X);
-            int destY = (int) st.getPassengerAtt(pname, TaxiHierGenRootState.ATT_DESTINAION_Y);
+            int destX = (int) st.getPassengerAtt(pname, ATT_DESTINATION_X);
+            int destY = (int) st.getPassengerAtt(pname, ATT_DESTINATION_Y);
             boolean inTaxi = (boolean) st.getPassengerAtt(pname, ATT_IN_TAXI);
 
             if(inTaxi)
                 return false;
 
-            if(tx != px || ty != py)
-                return false;
-
-            if(tx != destX || ty != destY)
+            if(px != destX || py != destY)
                 return false;
         }
         return true;

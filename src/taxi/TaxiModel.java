@@ -4,6 +4,7 @@ import burlap.debugtools.RandomFactory;
 import burlap.mdp.core.StateTransitionProb;
 import burlap.mdp.core.action.Action;
 import burlap.mdp.core.oo.ObjectParameterizedAction;
+import burlap.mdp.core.oo.state.ObjectInstance;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.model.statemodel.FullStateModel;
 import taxi.state.TaxiAgent;
@@ -93,8 +94,8 @@ public class TaxiModel implements FullStateModel{
     public void movement(TaxiState s, int action, List<StateTransitionProb> tps){
         double[] moveProbabilities = this.moveProbability[action];
 
-        int tx = (int) s.getTaxiAtt(ATT_X);
-        int ty = (int) s.getTaxiAtt(ATT_Y);
+        int tx = (int) s.getTaxi().get(ATT_X);
+        int ty = (int) s.getTaxi().get(ATT_Y);
 
         for(int outcome = 0; outcome < moveProbabilities.length; outcome++){
             double p = moveProbabilities[outcome];
@@ -132,10 +133,10 @@ public class TaxiModel implements FullStateModel{
                 ntaxi.set(ATT_Y, ny);
 
                 //move any passenger that are in the taxi
-                for(String passengerName : s.getPassengers()){
-                    boolean inTaxi = (boolean) s.getPassengerAtt(passengerName, ATT_IN_TAXI);
-
+                for(ObjectInstance passenger : s.objectsOfClass(CLASS_PASSENGER)){
+                    boolean inTaxi = (boolean) passenger.get(ATT_IN_TAXI);
                     if(inTaxi){
+                        String passengerName = passenger.name();
                         TaxiPassenger np = ns.touchPassenger(passengerName);
                         np.set(ATT_X, nx);
                         np.set(ATT_Y, ny);
@@ -147,28 +148,27 @@ public class TaxiModel implements FullStateModel{
             if(fickle){
                 //find a passenger in the taxi
                 boolean passengerChanged = false;
-                for(String passengerName : s.getPassengers()){
-                    boolean inTaxi = (boolean) s.getPassengerAtt(passengerName, ATT_IN_TAXI);
-                    String passGoal = (String) s.getPassengerAtt(passengerName,
-                            ATT_GOAL_LOCATION);
+                for(ObjectInstance passenger : s.objectsOfClass(CLASS_PASSENGER)){
+                    boolean inTaxi = (boolean) passenger.get(ATT_IN_TAXI);
+                    String passGoal = (String) passenger.get(ATT_GOAL_LOCATION);
                     if(inTaxi){
                         passengerChanged = true;
                         //TaxiPassenger np = ns.touchPassenger(passengerName);
                         //np.set(ATT_JUST_PICKED_UP, false);
                         // may change goal
-                        for(String locName : s.getLocations()){
+                        for(ObjectInstance location : s.objectsOfClass(CLASS_LOCATION)){
                             TaxiState nfickles = ns.copy();
 
                             //check if goal is the same as loc
-                            if(passGoal.equals(locName)){
+                            if(passGoal.equals(location.name())){
                                 double prob = p * (1 - fickleChangeGoalProbaility);
                                 tps.add(new StateTransitionProb(nfickles, prob));
                             }else{
                                 //set goal to loc
-                                TaxiPassenger npf = nfickles.touchPassenger(passengerName);
-                                npf.set(ATT_GOAL_LOCATION, locName);
+                                TaxiPassenger npf = nfickles.touchPassenger(passenger.name());
+                                npf.set(ATT_GOAL_LOCATION, location.name());
                                 tps.add(new StateTransitionProb(nfickles, p * (fickleChangeGoalProbaility
-                                        / (s.getLocations().length - 1))));
+                                        / (s.objectsOfClass(CLASS_LOCATION).size() - 1))));
                             }
                         }
                         break;
@@ -193,12 +193,12 @@ public class TaxiModel implements FullStateModel{
         String p = a.getObjectParameters()[0];
         TaxiState ns = s.copy();
 
-        int tx = (int) s.getTaxiAtt(ATT_X);
-        int ty = (int) s.getTaxiAtt(ATT_Y);
+        int tx = (int) s.getTaxi().get(ATT_X);
+        int ty = (int) s.getTaxi().get(ATT_Y);
 
-        int px = (int) s.getPassengerAtt(p, ATT_X);
-        int py = (int) s.getPassengerAtt(p, ATT_Y);
-        boolean inTaxi = (boolean) s.getPassengerAtt(p, ATT_IN_TAXI);
+        int px = (int) s.object(p).get(ATT_X);
+        int py = (int) s.object(p).get(ATT_Y);
+        boolean inTaxi = (boolean) s.object(p).get(ATT_IN_TAXI);
 
         if (tx == px && ty == py && !inTaxi) {
             TaxiPassenger np = ns.touchPassenger(p);
@@ -219,32 +219,16 @@ public class TaxiModel implements FullStateModel{
     public void putdown(TaxiState s, ObjectParameterizedAction a, List<StateTransitionProb> tps){
         String p = a.getObjectParameters()[0];
         TaxiState ns = s.copy();
-        int tx = (int) s.getTaxiAtt(ATT_X);
-        int ty = (int) s.getTaxiAtt(ATT_Y);
+        int tx = (int) s.getTaxi().get(ATT_X);
+        int ty = (int) s.getTaxi().get(ATT_Y);
 
-        if((boolean) s.getPassengerAtt(p, ATT_IN_TAXI)) {
-            for (String locName : s.getLocations()) {
-                int lx = (int) s.getLocationAtt(locName, ATT_X);
-                int ly = (int) s.getLocationAtt(locName, ATT_Y);
+        if((boolean) s.object(p).get(ATT_IN_TAXI)) {
+            for (ObjectInstance location : s.objectsOfClass(CLASS_LOCATION)) {
+                int lx = (int) location.get(ATT_X);
+                int ly = (int) location.get(ATT_Y);
                 if (tx == lx && ty == ly) {
                     TaxiPassenger np = ns.touchPassenger(p);
                     np.set(ATT_IN_TAXI, false);
-
-                    // iterate through every passenger except the one that was just dropped off and see if taxi is empty
-//					boolean passengersInTaxi = false;
-//					for (String passengerName : s.getPassengers()) {
-//						boolean inTaxi = (boolean) s.getPassengerAtt(passengerName, ATT_IN_TAXI);
-//						if ((!passengerName.equals(p)) && inTaxi) {
-//							passengersInTaxi = true;
-//							break;
-//						}
-//					}
-//
-//					if (!passengersInTaxi) {
-//						TaxiAgent ntaxi = ns.touchTaxi();
-//						ntaxi.set(ATT_TAXI_OCCUPIED, false);
-//					}
-
                     break;
                 }
             }

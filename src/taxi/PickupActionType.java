@@ -25,8 +25,8 @@ public class PickupActionType extends ObjectParameterizedActionType {
             return false;
         }
 
-        int tx = (int)state.getTaxiAtt(ATT_X);
-        int ty = (int)state.getTaxiAtt(ATT_Y);
+        int tx = (int)state.getTaxi().get(ATT_X);
+        int ty = (int)state.getTaxi().get(ATT_Y);
         int px = (int)passenger.get(ATT_X);
         int py = (int)passenger.get(ATT_Y);
 

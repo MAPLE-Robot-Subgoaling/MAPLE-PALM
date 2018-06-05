@@ -14,19 +14,13 @@ import static taxi.TaxiConstants.*;
 
 public class TaxiHierGenRootState implements MutableOOState, PassengerParameterizable, PassengerLocationParameterizable, DeepCopyForShallowCopyState {
 
-    public static final String CLASS_ROOT_PASSENGER = 		"rootPassenger";
-    public static final String CLASS_ROOT_Taxi =			"rootTaxi";
-    public static final String ATT_DESTINAION_X = 			"destX";
-    public static final String ATT_DESTINAION_Y = 			"destY";
-    public static final String READY = 						"dropoffReady";
-
     private TaxiHierGenRootTaxi taxi;
     private Map<String, TaxiHierGenRootPassenger> passengers;
 
     public TaxiHierGenRootState(TaxiHierGenRootTaxi taxi, List<TaxiHierGenRootPassenger> passes){
         this.taxi = taxi;
 
-        this.passengers = new HashMap<String, TaxiHierGenRootPassenger>();
+        this.passengers = new HashMap<>();
         for(TaxiHierGenRootPassenger passenger : passes){
             this.passengers.put(passenger.name(), passenger);
         }
@@ -83,9 +77,9 @@ public class TaxiHierGenRootState implements MutableOOState, PassengerParameteri
 
     @Override
     public List<ObjectInstance> objectsOfClass(String oclass) {
-        if(oclass.equals(CLASS_ROOT_Taxi))
-            return Arrays.<ObjectInstance>asList(taxi);
-        else if(oclass.equals(CLASS_ROOT_PASSENGER))
+        if(oclass.equals(CLASS_TAXI))
+            return Arrays.asList(taxi);
+        else if(oclass.equals(CLASS_PASSENGER))
             return new ArrayList<>(passengers.values());
         throw new RuntimeException("No object class " + oclass);
     }
@@ -112,12 +106,12 @@ public class TaxiHierGenRootState implements MutableOOState, PassengerParameteri
 
     @Override
     public int getLocationX(String pname) {
-        return (int) passengers.get(pname).get(ATT_DESTINAION_X);
+        return (int) passengers.get(pname).get(ATT_DESTINATION_X);
     }
 
     @Override
     public int getLocationY(String pname) {
-        return (int) passengers.get(pname).get(ATT_DESTINAION_Y);
+        return (int) passengers.get(pname).get(ATT_DESTINATION_Y);
     }
 
     //get values from objects
@@ -140,7 +134,7 @@ public class TaxiHierGenRootState implements MutableOOState, PassengerParameteri
         if(!inTaxi)
             return ATT_VAL_NOT_IN_TAXI;
         else if(tx == px && ty == py)
-            return READY;
+            return ATT_VAL_IN_TAXI;
         else
             return ATT_VAL_ON_ROAD;
     }
