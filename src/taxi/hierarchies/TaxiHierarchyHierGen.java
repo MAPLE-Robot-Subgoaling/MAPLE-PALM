@@ -8,13 +8,14 @@ import hierarchy.framework.NonprimitiveTask;
 import hierarchy.framework.PrimitiveTask;
 import hierarchy.framework.SolveActionType;
 import hierarchy.framework.Task;
+import taxi.PickupActionType;
+import taxi.PutdownActionType;
 import taxi.Taxi;
 import taxi.hierGen.Task5.state.Task5StateMapper;
 import taxi.hierGen.Task7.state.Task7StateMapper;
 import taxi.hierGen.Task7.state.TaxiHierGenTask7State;
-import taxi.hierGen.actions.HierGenDropoffActiontype;
-import taxi.hierGen.actions.HierGenPickupActiontype;
 import taxi.hierGen.actions.HierGenTask5ActionType;
+import taxi.hierGen.actions.HierGenTask7ActionType;
 import taxi.hierGen.functions.FailureFunction;
 import taxi.hierGen.functions.HierGenRootCompleted;
 import taxi.hierGen.functions.HierGenTask5Completed;
@@ -49,10 +50,10 @@ public class TaxiHierarchyHierGen extends TaxiHierarchy {
         ActionType aEast = baseDomain.getAction(ACTION_EAST);
         ActionType aSouth = baseDomain.getAction(ACTION_SOUTH);
         ActionType aWest = baseDomain.getAction(ACTION_WEST);
-        ActionType aPickup = new HierGenPickupActiontype(ACTION_PICKUP, new String[]{TaxiHierGenTask7State.CLASS_TASK7_PASSENGER});
-        ActionType aPutdown = new HierGenDropoffActiontype(ACTION_PUTDOWN, new String[]{TaxiHierGenRootState.CLASS_ROOT_PASSENGER});
-        ActionType aTask5 = new HierGenTask5ActionType();;
-        ActionType aTask7 = new UniversalActionType("task_7");
+        ActionType aPickup = new PickupActionType(ACTION_PICKUP, new String[]{CLASS_PASSENGER});//HGPickupActionType(ACTION_PICKUP, new String[]{TaxiHierGenTask7State.CLASS_TASK7_PASSENGER});
+        ActionType aPutdown = new PutdownActionType(ACTION_PUTDOWN, new String[]{CLASS_PASSENGER});//HGPutdownActionType(ACTION_PUTDOWN, new String[]{TaxiHierGenRootState.CLASS_ROOT_PASSENGER});
+        ActionType aTask5 = new HierGenTask5ActionType();
+        ActionType aTask7 = new HierGenTask7ActionType(ACTION_TASK_7, new String[]{CLASS_PASSENGER});
         ActionType asolve = new SolveActionType();
 
         //state mapper

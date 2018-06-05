@@ -12,8 +12,8 @@ public class Task5StateMapper implements StateMapping {
     public State mapState(State s) {
         TaxiState st = (TaxiState) s;
 
-        int tx = (int) st.getTaxiAtt(ATT_X);
-        int ty = (int) st.getTaxiAtt(ATT_Y);
+        int tx = (int) st.getTaxi().get(ATT_X);
+        int ty = (int) st.getTaxi().get(ATT_Y);
         TaxiHierGenTask5Taxi taxi = new TaxiHierGenTask5Taxi(st.getTaxiName(), tx, ty);
 
         return new TaxiHierGenTask5State(taxi);

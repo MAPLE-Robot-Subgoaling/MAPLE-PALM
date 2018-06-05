@@ -8,6 +8,7 @@ import java.util.List;
 
 import static taxi.TaxiConstants.ATT_X;
 import static taxi.TaxiConstants.ATT_Y;
+import static taxi.TaxiConstants.CLASS_TAXI;
 
 public class TaxiHierGenTask5Taxi extends MutableObject{
 
@@ -27,7 +28,7 @@ public class TaxiHierGenTask5Taxi extends MutableObject{
 
     @Override
     public String className() {
-        return TaxiHierGenTask5State.CLASS_ROOT_Taxi;
+        return CLASS_TAXI;
     }
 
     @Override

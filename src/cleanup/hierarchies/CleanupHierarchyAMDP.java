@@ -33,7 +33,8 @@ public class CleanupHierarchyAMDP extends CleanupHierarchy {
 
     }
 
-    public Task createAMDPHierarchy(ExperimentConfig experimentConfig, boolean plan){
+    @Override
+    public Task createHierarchy(ExperimentConfig experimentConfig, boolean plan){
 
         CleanupConfig config = (CleanupConfig) experimentConfig.domain;
         int minX = config.minX;

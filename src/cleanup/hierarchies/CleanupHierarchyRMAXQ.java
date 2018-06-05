@@ -33,8 +33,9 @@ public class CleanupHierarchyRMAXQ extends CleanupHierarchyAMDP {
 //
 //    }
 //
-    public Task createRMAXQHierarchy(ExperimentConfig experimentConfig, boolean plan){
-        return super.createAMDPHierarchy(experimentConfig, plan);
+    @Override
+    public Task createHierarchy(ExperimentConfig experimentConfig, boolean plan){
+        return super.createHierarchy(experimentConfig, plan);
     }
 //        CleanupConfig config = (CleanupConfig) experimentConfig.domain;
 //        int minX = config.minX;

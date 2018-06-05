@@ -29,7 +29,7 @@ public class TaxiHierGenTask7Passenger extends MutableObject {
 
     @Override
     public String className() {
-        return TaxiHierGenTask7State.CLASS_TASK7_PASSENGER;
+        return CLASS_PASSENGER;
     }
 
     @Override
