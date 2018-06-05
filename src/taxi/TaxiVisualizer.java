@@ -83,8 +83,7 @@ public class TaxiVisualizer {
 
     public static class PassengerPainter implements ObjectPainter{
         static int numPassengers = 0;
-        Hashtable<String, Integer> passengerNumbers = new Hashtable<String, Integer>();
-
+        ArrayList<String> passengerNumbers = new ArrayList<String>();
         @Override
         public void paintObject(Graphics2D g2, OOState s, ObjectInstance ob, float cWidth, float cHeight) {
             TaxiState state = (TaxiState) s;
@@ -110,14 +109,14 @@ public class TaxiVisualizer {
             boolean inTaxi = (boolean) p.get(ATT_IN_TAXI);
             if(inTaxi){
                 scale = 0.5f;
-                if(!passengerNumbers.keySet().contains(p.name()) ){
-                    ///encounter passenger not in the set but in the taxi, add to set
-                    passengerNumbers.put(p.name(),numPassengers);
+                if(!passengerNumbers.contains(p.name()) ){
+                    ///encounter passenger not in the set but in the taxi, add to list
+                    passengerNumbers.add(p.name());
                     numPassengers++;
                 }
             }else{
-                if(passengerNumbers.keySet().contains(p.name()) ){
-                    ///encounter passenger in the set but not in the taxi, remove from set
+                if(passengerNumbers.contains(p.name()) ){
+                    ///encounter passenger in the set but not in the taxi, remove from list
                     passengerNumbers.remove(p.name());
                     numPassengers--;
                 }
@@ -129,7 +128,7 @@ public class TaxiVisualizer {
             float realX = passx - (realWidth / 2f);
             float realy = passy - (realHeight / 2f);
             if(inTaxi){
-                float start = 90+(360/numPassengers)*passengerNumbers.get(p.name());
+                float start = 90+(360/numPassengers)*passengerNumbers.indexOf(p.name());
                 float extent = 360/numPassengers;
                 g2.fill(new Arc2D.Float(realX, realy, realWidth, realHeight, start, extent, Arc2D.PIE));
             }else{
