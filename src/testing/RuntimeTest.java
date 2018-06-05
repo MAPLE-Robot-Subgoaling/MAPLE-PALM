@@ -13,6 +13,8 @@ import hierarchy.framework.Task;
 import palm.agent.PALMLearningAgent;
 import palm.rmax.agent.PALMRmaxModelGenerator;
 import taxi.hierarchies.TaxiHierarchy;
+import taxi.hierarchies.TaxiHierarchyAMDP;
+import taxi.hierarchies.TaxiHierarchyRMAXQ;
 import taxi.state.TaxiState;
 import taxi.stateGenerator.TaxiStateFactory;
 import utilities.LearningAgentRuntimeAnalizer;
@@ -81,9 +83,9 @@ public class RuntimeTest {
         boolean useMultitimeModel = true;
 
         TaxiState s = TaxiStateFactory.createTinyState();
-        Task RAMDProot = TaxiHierarchy.createAMDPHierarchy(correctMoveprob, fickleProb,  false);
+        Task RAMDProot = new TaxiHierarchyAMDP().createHierarchy(correctMoveprob, fickleProb,  false);
         OOSADomain base = TaxiHierarchy.getBaseDomain();
-        Task RMAXQroot = TaxiHierarchy.createRMAXQHierarchy(correctMoveprob,  fickleProb);
+        Task RMAXQroot = new TaxiHierarchyRMAXQ().createHierarchy(correctMoveprob, fickleProb, false);
         createCrarts(s, base, RAMDProot, RMAXQroot, rmax, rmaxThreshold, maxDelta, gamma,
                 numEpisodes, maxSteps, numTrials, maxIterationsInModel, useMultitimeModel);
     }

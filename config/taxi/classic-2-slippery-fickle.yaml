@@ -2,7 +2,6 @@ domain: !!config.taxi.TaxiConfig
   state: classic-2passengers
   correct_move: 0.85
   fickle: 0.04
-  random_start: false
 
 agents:
   - palmExpert
@@ -19,10 +18,12 @@ planning:
 
 rmax:
   vmax: 1.0
-  threshold: 20
-  max_delta: 0.01
+  threshold: 10
+  max_delta: 0.0001
+  max_delta_rmaxq: 0.0001
   max_iterations_in_model: 1000
-  use_multitime_model: false
+  use_multitime_model: true
+
 
 output:
   csv:

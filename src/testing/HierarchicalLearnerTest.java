@@ -18,6 +18,8 @@ import palm.rmax.agent.PALMRmaxModelGenerator;
 import rmaxq.agent.RmaxQLearningAgent;
 import taxi.TaxiVisualizer;
 import taxi.hierarchies.TaxiHierarchy;
+import taxi.hierarchies.TaxiHierarchyAMDP;
+import taxi.hierarchies.TaxiHierarchyRMAXQ;
 import taxi.state.TaxiState;
 import taxi.stateGenerator.RandomPassengerTaxiState;
 
@@ -110,12 +112,12 @@ public class HierarchicalLearnerTest {
         TaxiConfig domain = (TaxiConfig) conf.domain;
         State s = conf.generateState();
         if(conf.agents.contains("ramdp")) {
-            Task RAMDProot = TaxiHierarchy.createAMDPHierarchy(domain.correct_move, domain.fickle, false);
+            Task RAMDProot = new TaxiHierarchyAMDP().createHierarchy(domain.correct_move, domain.fickle, false);
             OOSADomain base = TaxiHierarchy.getBaseDomain();
             runRAMDPEpisodes(conf, RAMDProot, s, base);
         }
         if(conf.agents.contains("rmaxq")) {
-            Task RMAXQroot = TaxiHierarchy.createRMAXQHierarchy(domain.correct_move, domain.fickle);
+            Task RMAXQroot = new TaxiHierarchyRMAXQ().createHierarchy(domain.correct_move, domain.fickle, false);
             OOSADomain base = TaxiHierarchy.getBaseDomain();
             runRMAXQEpsodes(conf, RMAXQroot, s, base);
         }

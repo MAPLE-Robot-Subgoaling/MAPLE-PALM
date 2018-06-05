@@ -20,19 +20,37 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.List;
 
+import static config.ExperimentConfig.UNSET_DOUBLE;
+import static config.ExperimentConfig.UNSET_INT;
 import static utilities.BurlapConstants.DEFAULT_RNG_INDEX;
 
 public class CleanupConfig extends DomainConfig {
 
-    public double rewardGoal;
-    public double rewardBase;
-    public double rewardNoop;
-    public double rewardPull;
-    public int minX;
-    public int minY;
-    public int maxX;
-    public int maxY;
-    public int num_blocks;
+    public double rewardGoal = UNSET_DOUBLE;
+    public double rewardBase = UNSET_DOUBLE;
+    public double rewardNoop = UNSET_DOUBLE;
+    public double rewardPull = UNSET_DOUBLE;
+    public int minX = UNSET_INT;
+    public int minY = UNSET_INT;
+    public int maxX = UNSET_INT;
+    public int maxY = UNSET_INT;
+    public int num_blocks = UNSET_INT;
+
+    @Override
+    public boolean validate() {
+        boolean valid = super.validate();
+        if (!valid) { return false; }
+        if (rewardGoal == UNSET_DOUBLE) { return false; }
+        if (rewardBase == UNSET_DOUBLE) { return false; }
+        if (rewardNoop == UNSET_DOUBLE) { return false; }
+        if (rewardPull == UNSET_DOUBLE) { return false; }
+        if (minX == UNSET_DOUBLE) { return false; }
+        if (minY == UNSET_DOUBLE) { return false; }
+        if (maxX == UNSET_DOUBLE) { return false; }
+        if (maxY == UNSET_DOUBLE) { return false; }
+        if (num_blocks == UNSET_DOUBLE) { return false; }
+        return true;
+    }
 
     @Override
     public State generateState() {
@@ -43,4 +61,5 @@ public class CleanupConfig extends DomainConfig {
     public Visualizer getVisualizer(ExperimentConfig config) {
         return CleanupVisualizer.getVisualizer(config.output.visualizer.width, config.output.visualizer.height);
     }
+
 }

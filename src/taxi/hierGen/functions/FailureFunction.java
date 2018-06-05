@@ -6,7 +6,7 @@ import burlap.mdp.core.oo.state.OOState;
 public class FailureFunction extends PropositionalFunction {
 
     public FailureFunction(){
-        super("fialure", new String[]{});
+        super("failure", new String[]{});
     }
 
     @Override
