@@ -1,21 +1,19 @@
-seed: 325523
-
-state: threeRooms
-
-numBlocks: 2
-
-minX: 0
-minY: 0
-maxX: 9
-maxY: 9
-
-rewardGoal: 1.0
-rewardBase: 0.0
-rewardNoop: 0.0
-rewardPull: 0.0
+domain: !!config.cleanup.CleanupConfig
+    state: slidingBlock
+    num_blocks: 2
+    minX: 0
+    minY: 0
+    maxX: 9
+    maxY: 5
+    rewardGoal: 1.0
+    rewardBase: 0.0
+    rewardNoop: 0.0
+    rewardPull: 0.0
+    
+seed: 3667
 
 agents:
-  - ramdp
+  - palmExpert
 
 episodes: 300
 max_steps: 10000
@@ -28,9 +26,11 @@ planning:
 rmax:
   vmax: 1.0
   threshold: 2
-  max_delta: 0.0000001
+  max_delta: 0.0001
+  max_delta_rmaxq: 0.0001
   max_iterations_in_model: 1000
   use_multitime_model: true
+
 
 output:
   csv:
@@ -52,7 +52,7 @@ output:
       - CUMULATIVE_REWARD_PER_EPISODE
 
   visualizer:
-    enabled: true
+    enabled: false
     episodes: true
-    width: 300
-    height: 300
+    width: 9
+    height: 5

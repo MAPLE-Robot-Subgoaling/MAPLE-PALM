@@ -28,6 +28,7 @@ public class HierarchicalRmaxModel extends RmaxModel {
         this.discountProvider = new ConstantDiscountProvider(gamma);
     }
 
+
     @Override
     public double getInternalDiscount(EnvironmentOutcome eo, int k) {
         double discount = 1.0;

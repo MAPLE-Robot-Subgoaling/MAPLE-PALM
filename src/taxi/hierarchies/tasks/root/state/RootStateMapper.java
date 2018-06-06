@@ -1,6 +1,7 @@
 package taxi.hierarchies.tasks.root.state;
 
 import burlap.mdp.auxiliary.StateMapping;
+import burlap.mdp.core.oo.state.ObjectInstance;
 import burlap.mdp.core.state.State;
 import taxi.state.TaxiState;
 
@@ -10,32 +11,32 @@ import java.util.List;
 import static taxi.TaxiConstants.*;
 
 public class RootStateMapper implements StateMapping {
-	@Override
-	public State mapState(State s) {
-		List<TaxiRootPassenger> passengers = new ArrayList<>();
-		TaxiState st = (TaxiState) s;
+    @Override
+    public State mapState(State s) {
+        List<TaxiRootPassenger> passengers = new ArrayList<>();
+        TaxiState st = (TaxiState) s;
 
-		for(String passengerName : st.getPassengers()){
-			int px = (int) st.getPassengerAtt(passengerName, ATT_X);
-			int py = (int) st.getPassengerAtt(passengerName, ATT_Y);
-			String goalLocation = (String)st.getPassengerAtt(passengerName, ATT_GOAL_LOCATION);
-			boolean inTaxi = (boolean) st.getPassengerAtt(passengerName, ATT_IN_TAXI);
+        for(ObjectInstance passenger : st.objectsOfClass(CLASS_PASSENGER)){
+            int px = (int) passenger.get(ATT_X);
+            int py = (int) passenger.get(ATT_Y);
+            String goalLocation = (String) passenger.get(ATT_GOAL_LOCATION);
+            boolean inTaxi = (boolean) passenger.get(ATT_IN_TAXI);
 
-			if(inTaxi) {
-				passengers.add(new TaxiRootPassenger(passengerName, ATT_VAL_IN_TAXI, goalLocation));
-			} else {
-				for(String locName : st.getLocations()){
-					int lx = (int) st.getLocationAtt(locName, ATT_X);
-					int ly = (int) st.getLocationAtt(locName, ATT_Y);
+            if(inTaxi) {
+                passengers.add(new TaxiRootPassenger(passenger.name(), ATT_VAL_IN_TAXI, goalLocation));
+            } else {
+                for(ObjectInstance location : st.objectsOfClass(CLASS_LOCATION)){
+                    int lx = (int) location.get(ATT_X);
+                    int ly = (int) location.get(ATT_Y);
 
-					if(px == lx && py == ly){
-						passengers.add(new TaxiRootPassenger(passengerName, locName, goalLocation));
-					}
-				}
-			}
-		}
+                    if(px == lx && py == ly){
+                        passengers.add(new TaxiRootPassenger(passenger.name(), location.name(), goalLocation));
+                    }
+                }
+            }
+        }
 
-		return new TaxiRootState(passengers);
-	}
+        return new TaxiRootState(passengers);
+    }
 
 }

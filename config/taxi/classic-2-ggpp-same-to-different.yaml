@@ -1,4 +1,7 @@
-state: classic-2passengers
+domain: !!config.taxi.TaxiConfig
+  state: classic-2passengers
+  correct_move: 1.0
+  fickle: 0.0
 
 agents:
   - palmExpert
@@ -8,11 +11,7 @@ max_steps: 500
 trials: 1
 gamma: 0.99
 
-stochastic:
-  seed: 12321089
-  correct_move: 1.0
-  fickle: 0.0
-  random_start: false
+seed: 12321089
 
 planning:
   rollouts: 1000
@@ -20,9 +19,11 @@ planning:
 rmax:
   vmax: 1.0
   threshold: 10
-  max_delta: 0.0000001
+  max_delta: 0.0001
+  max_delta_rmaxq: 0.0001
   max_iterations_in_model: 1000
   use_multitime_model: true
+
 
 output:
   csv:

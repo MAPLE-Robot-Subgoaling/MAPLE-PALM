@@ -1,7 +1,9 @@
 package taxi.hierarchies.tasks.get.state;
 
+import burlap.mdp.core.oo.state.ObjectInstance;
 import burlap.mdp.core.state.State;
 import taxi.hierarchies.interfaces.ParameterizedStateMapping;
+import taxi.state.TaxiPassenger;
 import taxi.state.TaxiState;
 
 import java.util.ArrayList;
@@ -10,52 +12,56 @@ import java.util.List;
 import static taxi.TaxiConstants.*;
 
 public class GetStateMapper implements ParameterizedStateMapping {
-	//maps a base taxi state to L2
-	@Override
-	public State mapState(State s, String...params) {
-		List<TaxiGetPassenger> passengers = new ArrayList<TaxiGetPassenger>();
-		List<TaxiGetLocation> locations = new ArrayList<TaxiGetLocation>();
-		TaxiState st = (TaxiState) s;
 
-		// Get Taxi
+//    public static final String GET_PASSENGER_ALIAS = "**GET_PASSENGER_ALIAS**";
+
+    //maps a base taxi state to L2
+    @Override
+    public State mapState(State s, String...params) {
+        List<TaxiGetPassenger> passengers = new ArrayList<TaxiGetPassenger>();
+        List<TaxiGetLocation> locations = new ArrayList<TaxiGetLocation>();
+        TaxiState st = (TaxiState) s;
+
+        // Get Taxi
         String taxiLocation = ATT_VAL_ON_ROAD;
-		int tx = (int)st.getTaxiAtt(ATT_X);
-		int ty = (int)st.getTaxiAtt(ATT_Y);
-		for (String locName : st.getLocations()) {
-			int lx = (int) st.getLocationAtt(locName, ATT_X);
-			int ly = (int) st.getLocationAtt(locName, ATT_Y);
+        int tx = (int)st.getTaxi().get(ATT_X);
+        int ty = (int)st.getTaxi().get(ATT_Y);
+        for (ObjectInstance location : st.objectsOfClass(CLASS_LOCATION)) {
+            int lx = (int) location.get(ATT_X);
+            int ly = (int) location.get(ATT_Y);
 
-			locations.add(new TaxiGetLocation(locName));
+            locations.add(new TaxiGetLocation(location.name()));
 
-			if (tx == lx && ty == ly) {
-				taxiLocation = locName;
-			}
-		}
-		TaxiGetAgent taxi = new TaxiGetAgent(CLASS_TAXI, taxiLocation);
+            if (tx == lx && ty == ly) {
+                taxiLocation = location.name();
+            }
+        }
+        TaxiGetAgent taxi = new TaxiGetAgent(CLASS_TAXI, taxiLocation);
 
-		// Get Passengers
-		for(String passengerName : params){
-//		for(String passengerName : st.getPassengers()) {
-			int px = (int) st.getPassengerAtt(passengerName, ATT_X);
-			int py = (int) st.getPassengerAtt(passengerName, ATT_Y);
-			boolean inTaxi = (boolean) st.getPassengerAtt(passengerName, ATT_IN_TAXI);
-			String passengerLocation = ATT_VAL_IN_TAXI;
+        // Get Passengers
+        for(String passengerName : params){
+            TaxiPassenger passenger = (TaxiPassenger) st.object(passengerName);
+            int px = (int)passenger.get(ATT_X);
+            int py = (int)passenger.get(ATT_Y);
+            boolean inTaxi = (boolean) passenger.get(ATT_IN_TAXI);
+            String passengerLocation = ATT_VAL_IN_TAXI;
 
-			if(!inTaxi) {
-				for (String locName : st.getLocations()) {
-					int lx = (int) st.getLocationAtt(locName, ATT_X);
-					int ly = (int) st.getLocationAtt(locName, ATT_Y);
+            if(!inTaxi) {
+                for (ObjectInstance location : st.objectsOfClass(CLASS_LOCATION)) {
+                    int lx = (int) location.get(ATT_X);
+                    int ly = (int) location.get(ATT_Y);
 
-					if (px == lx && py == ly) {
-						passengerLocation = locName;
-						break;
-					}
-				}
-			}
-			passengers.add(new TaxiGetPassenger(passengerName, passengerLocation));
-		}
+                    if (px == lx && py == ly) {
+                        passengerLocation = location.name();
+                        break;
+                    }
+                }
+            }
+            passengers.add(new TaxiGetPassenger(passengerName, passengerLocation));
+//            passengers.add(new TaxiGetPassenger(GET_PASSENGER_ALIAS, passengerLocation));
+        }
 
-		return new TaxiGetState(taxi, passengers, locations);
-	}
+        return new TaxiGetState(taxi, passengers, locations);
+    }
 
 }

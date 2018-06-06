@@ -387,50 +387,50 @@ public class Cleanup implements DomainGenerator {
         return rf;
     }
 
-	/*
+    /*
     public class PullActionType extends ObjectParameterizedActionType {
 
-		public PullActionType(String name){
-			super(name,new String[]{Cleanup.CLASS_AGENT, Cleanup.CLASS_BLOCK});
-		}
-		
-		public boolean applicableInState(State st, ObjectParameterizedAction groundedAction){
-			CleanupState cws = (CleanupState)st;
-			String [] params = groundedAction.getObjectParameters();
-			CleanupAgent agent = (CleanupAgent)cws.object(params[0]);
-			CleanupBlock block = (CleanupBlock)cws.object(params[1]);
-			if (agent == null || block == null) {
-				return false;
-			}
-			
-			if (agent.get(ATT_DIR) == null) {
-				return false;
-			}
-			
-			int direction = CleanupModel.actionDir(agent.get(ATT_DIR).toString());
-			int curX = (Integer) agent.get(ATT_X);
-			int curY = (Integer) agent.get(ATT_Y);
-			//first get change in x and y from direction using 0: north; 1: south; 2:east; 3: west
-			int xdelta = 0;
-			int ydelta = 0;
-			if(direction == 0){
-				ydelta = 1;
-			} else if(direction == 1){
-				ydelta = -1;
-			} else if(direction == 2){
-				xdelta = 1;
-			} else{
-				xdelta = -1;
-			}
-			int nx = curX + xdelta;
-			int ny = curY + ydelta;
-			if ((Integer)block.get(ATT_X) == nx && (Integer)block.get(ATT_Y) == ny) {
-				return true;
-			}
-			return false;
-		}
-	}
-	*/
+        public PullActionType(String name){
+            super(name,new String[]{Cleanup.CLASS_AGENT, Cleanup.CLASS_BLOCK});
+        }
+
+        public boolean applicableInState(State st, ObjectParameterizedAction groundedAction){
+            CleanupState cws = (CleanupState)st;
+            String [] params = groundedAction.getObjectParameters();
+            CleanupAgent agent = (CleanupAgent)cws.object(params[0]);
+            CleanupBlock block = (CleanupBlock)cws.object(params[1]);
+            if (agent == null || block == null) {
+                return false;
+            }
+
+            if (agent.get(ATT_DIR) == null) {
+                return false;
+            }
+
+            int direction = CleanupModel.actionDir(agent.get(ATT_DIR).toString());
+            int curX = (Integer) agent.get(ATT_X);
+            int curY = (Integer) agent.get(ATT_Y);
+            //first get change in x and y from direction using 0: north; 1: south; 2:east; 3: west
+            int xdelta = 0;
+            int ydelta = 0;
+            if(direction == 0){
+                ydelta = 1;
+            } else if(direction == 1){
+                ydelta = -1;
+            } else if(direction == 2){
+                xdelta = 1;
+            } else{
+                xdelta = -1;
+            }
+            int nx = curX + xdelta;
+            int ny = curY + ydelta;
+            if ((Integer)block.get(ATT_X) == nx && (Integer)block.get(ATT_Y) == ny) {
+                return true;
+            }
+            return false;
+        }
+    }
+    */
 
 
     public static ValueFunction getGroundHeuristic(State s, RewardFunction rf, double lockProb) {

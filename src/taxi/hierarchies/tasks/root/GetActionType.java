@@ -17,11 +17,11 @@ public class GetActionType extends ObjectParameterizedActionType {
     }
 
     @Override
-	protected boolean applicableInState(State s, ObjectParameterizedAction objectParameterizedAction) {
-		OOState state = (OOState) s;
-		String[] params = objectParameterizedAction.getObjectParameters();
-		String passengerName = params[0];
-		ObjectInstance passenger = state.object(passengerName);
-		return !passenger.get(ATT_LOCATION).equals(ATT_VAL_IN_TAXI);
-	}
+    protected boolean applicableInState(State s, ObjectParameterizedAction objectParameterizedAction) {
+        OOState state = (OOState) s;
+        String[] params = objectParameterizedAction.getObjectParameters();
+        String passengerName = params[0];
+        ObjectInstance passenger = state.object(passengerName);
+        return !passenger.get(ATT_LOCATION).equals(ATT_VAL_IN_TAXI);
+    }
 }

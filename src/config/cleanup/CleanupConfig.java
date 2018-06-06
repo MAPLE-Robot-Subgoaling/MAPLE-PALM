@@ -1,8 +1,13 @@
 package config.cleanup;
 
 import burlap.debugtools.RandomFactory;
+import burlap.mdp.core.state.State;
+import burlap.visualizer.Visualizer;
+import cleanup.CleanupVisualizer;
 import cleanup.state.CleanupRandomStateGenerator;
 import cleanup.state.CleanupState;
+import config.DomainConfig;
+import config.ExperimentConfig;
 import config.output.OutputConfig;
 import config.planning.PlanningConfig;
 import config.rmax.RmaxConfig;
@@ -15,44 +20,46 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.List;
 
-public class CleanupConfig {
+import static config.ExperimentConfig.UNSET_DOUBLE;
+import static config.ExperimentConfig.UNSET_INT;
+import static utilities.BurlapConstants.DEFAULT_RNG_INDEX;
 
-    public long seed;
-    public int minX;
-    public int minY;
-    public int maxX;
-    public int maxY;
-    public double rewardGoal;
-    public double rewardBase;
-    public double rewardNoop;
-    public double rewardPull;
-    public int numBlocks;
-    public String state;
-    public List<String> agents;
-    public int episodes;
-    public int max_steps;
-    public int trials;
-    public double gamma;
+public class CleanupConfig extends DomainConfig {
 
-    public PlanningConfig planning;
-    public RmaxConfig rmax;
-    public OutputConfig output;
+    public double rewardGoal = UNSET_DOUBLE;
+    public double rewardBase = UNSET_DOUBLE;
+    public double rewardNoop = UNSET_DOUBLE;
+    public double rewardPull = UNSET_DOUBLE;
+    public int minX = UNSET_INT;
+    public int minY = UNSET_INT;
+    public int maxX = UNSET_INT;
+    public int maxY = UNSET_INT;
+    public int num_blocks = UNSET_INT;
 
-    public static CleanupConfig load(String conffile) throws FileNotFoundException {
-        Yaml yaml = new Yaml(new Constructor(CleanupConfig.class));
-        InputStream input = new FileInputStream(new File(conffile));
-        CleanupConfig config = (CleanupConfig) yaml.load(input);
-        long seed = config.seed;
-        if (seed == 0) {
-            seed = System.nanoTime();
-            System.err.println("Warning: using a randomly generated RNG seed: " + seed);
-        }
-        RandomFactory.seedMapped(0, seed);
-        System.out.println("Using seed: " + config.seed);
-        return config;
+    @Override
+    public boolean validate() {
+        boolean valid = super.validate();
+        if (!valid) { return false; }
+        if (rewardGoal == UNSET_DOUBLE) { return false; }
+        if (rewardBase == UNSET_DOUBLE) { return false; }
+        if (rewardNoop == UNSET_DOUBLE) { return false; }
+        if (rewardPull == UNSET_DOUBLE) { return false; }
+        if (minX == UNSET_DOUBLE) { return false; }
+        if (minY == UNSET_DOUBLE) { return false; }
+        if (maxX == UNSET_DOUBLE) { return false; }
+        if (maxY == UNSET_DOUBLE) { return false; }
+        if (num_blocks == UNSET_DOUBLE) { return false; }
+        return true;
     }
 
-    public CleanupState generateState() {
-        return (CleanupState) new CleanupRandomStateGenerator(minX, minY, maxX, maxY).getStateFor(state, numBlocks);
+    @Override
+    public State generateState() {
+        return (CleanupState) new CleanupRandomStateGenerator(minX, minY, maxX, maxY).getStateFor(state, num_blocks);
     }
+
+    @Override
+    public Visualizer getVisualizer(ExperimentConfig config) {
+        return CleanupVisualizer.getVisualizer(config.output.visualizer.width, config.output.visualizer.height);
+    }
+
 }

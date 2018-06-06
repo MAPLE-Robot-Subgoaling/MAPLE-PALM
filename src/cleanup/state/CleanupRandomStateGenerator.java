@@ -9,13 +9,15 @@ import burlap.mdp.core.oo.state.ObjectInstance;
 import burlap.mdp.core.state.State;
 import cleanup.Cleanup;
 import cleanup.CleanupGoalDescription;
+import utilities.BurlapConstants;
 
 import java.util.*;
+
+import static cleanup.Cleanup.*;
 
 public class CleanupRandomStateGenerator implements StateGenerator {
 
     private static final int DEBUG_CODE = 932891293;
-    public static int DEFAULT_RNG_INDEX = 0;
     private int numBlocks = 2;
     private int minX = 0;
     private int minY = 0;
@@ -58,7 +60,7 @@ public class CleanupRandomStateGenerator implements StateGenerator {
 
     public State generateTaxiInCleanup(int numBlocks) {
 
-        Random rng = RandomFactory.getMapped(DEFAULT_RNG_INDEX);
+        Random rng = RandomFactory.getMapped(BurlapConstants.DEFAULT_RNG_INDEX);
 
         int numRooms = 1;
         int numDoors = 4;
@@ -132,7 +134,7 @@ public class CleanupRandomStateGenerator implements StateGenerator {
 
     public State generateCentralRoomWithClosetsAndBeacon(int numBlocks) {
 
-        Random rng = RandomFactory.getMapped(DEFAULT_RNG_INDEX);
+        Random rng = RandomFactory.getMapped(BurlapConstants.DEFAULT_RNG_INDEX);
 
         int numRooms = 5;
         int numDoors = 5;
@@ -189,7 +191,7 @@ public class CleanupRandomStateGenerator implements StateGenerator {
 
     public State generateCentralRoomWithFourDoors(int numBlocks) {
 
-        Random rng = RandomFactory.getMapped(DEFAULT_RNG_INDEX);
+        Random rng = RandomFactory.getMapped(BurlapConstants.DEFAULT_RNG_INDEX);
 
         int numRooms = 1;
         int numDoors = 4;
@@ -264,7 +266,7 @@ public class CleanupRandomStateGenerator implements StateGenerator {
 
     public State generateTwoRoomsWithFourDoors(int numBlocks) {
 
-        Random rng = RandomFactory.getMapped(DEFAULT_RNG_INDEX);
+        Random rng = RandomFactory.getMapped(BurlapConstants.DEFAULT_RNG_INDEX);
 
         int numRooms = 2;
         int numDoors = 4;
@@ -343,7 +345,7 @@ public class CleanupRandomStateGenerator implements StateGenerator {
 
     public State generateCentralRoomWithClosets(int numBlocks) {
 
-        Random rng = RandomFactory.getMapped(DEFAULT_RNG_INDEX);
+        Random rng = RandomFactory.getMapped(BurlapConstants.DEFAULT_RNG_INDEX);
 
         int numRooms = 5;
         int numDoors = 4;
@@ -434,7 +436,7 @@ public class CleanupRandomStateGenerator implements StateGenerator {
 
     public State generateFourRooms() {
 
-        Random rng = RandomFactory.getMapped(DEFAULT_RNG_INDEX);
+        Random rng = RandomFactory.getMapped(BurlapConstants.DEFAULT_RNG_INDEX);
 
         int numRooms = 4;
         int numDoors = 4;
@@ -470,10 +472,10 @@ public class CleanupRandomStateGenerator implements StateGenerator {
         while (i < numBlocks) {
             String id = "block" + i;
             CleanupRoom room = (CleanupRoom) s.objectsOfClass(Cleanup.CLASS_ROOM).get(rng.nextInt(numRooms));
-            int rLeft = ((Integer) room.get(Cleanup.ATT_LEFT)) + 1;
-            int rRight = ((Integer) room.get(Cleanup.ATT_RIGHT)) - 1;
-            int rTop = ((Integer) room.get(Cleanup.ATT_TOP)) - 1;
-            int rBottom = ((Integer) room.get(Cleanup.ATT_BOTTOM)) + 1;
+            int rLeft = ((Integer) room.get(ATT_LEFT)) + 1;
+            int rRight = ((Integer) room.get(ATT_RIGHT)) - 1;
+            int rTop = ((Integer) room.get(ATT_TOP)) - 1;
+            int rBottom = ((Integer) room.get(ATT_BOTTOM)) + 1;
             int bX = rng.nextInt(rRight - rLeft) + rLeft;
             int bY = rng.nextInt(rTop - rBottom) + rBottom;
             if (s.isOpen(bX, bY)) {
@@ -494,10 +496,10 @@ public class CleanupRandomStateGenerator implements StateGenerator {
     }
 
     public static boolean regionContainsPoint(ObjectInstance o, int x, int y, boolean countBoundary) {
-        int top = (Integer) o.get(Cleanup.ATT_TOP);
-        int left = (Integer) o.get(Cleanup.ATT_LEFT);
-        int bottom = (Integer) o.get(Cleanup.ATT_BOTTOM);
-        int right = (Integer) o.get(Cleanup.ATT_RIGHT);
+        int top = (Integer) o.get(ATT_TOP);
+        int left = (Integer) o.get(ATT_LEFT);
+        int bottom = (Integer) o.get(ATT_BOTTOM);
+        int right = (Integer) o.get(ATT_RIGHT);
 
         if (countBoundary) {
             if (y >= bottom && y <= top && x >= left && x <= right) {
@@ -513,7 +515,7 @@ public class CleanupRandomStateGenerator implements StateGenerator {
     }
 
     public static CleanupGoalDescription[] getRandomGoalDescription(CleanupState s, int numGoals, PropositionalFunction pf) {
-        return getRandomGoalDescription(s, numGoals, pf, RandomFactory.getMapped(DEFAULT_RNG_INDEX));
+        return getRandomGoalDescription(s, numGoals, pf, RandomFactory.getMapped(BurlapConstants.DEFAULT_RNG_INDEX));
     }
 
     public static CleanupGoalDescription[] getRandomGoalDescription(CleanupState s, int numGoals, PropositionalFunction pf, Random rng) {
@@ -635,9 +637,64 @@ public class CleanupRandomStateGenerator implements StateGenerator {
         return goals;
     }
 
+    private State generateSlidingBlockPuzzle() {
+        Random rng = RandomFactory.getMapped(BurlapConstants.DEFAULT_RNG_INDEX);
+
+        int numRooms = 2;
+        int numDoors = 1;
+
+        List<String> blockColors = new ArrayList<>(Arrays.asList(Cleanup.COLORS_BLOCKS));
+        List<String> blockShapes = new ArrayList<>(Arrays.asList(Cleanup.SHAPES_BLOCKS));
+        List<String> roomColors = new ArrayList<>(Arrays.asList(Cleanup.COLORS_ROOMS));
+
+        int bigRoomLeft = minX;
+        int bigRoomRight = maxX-1;
+        int bigRoomBottom = minY;
+        int bigRoomTop = maxY-1;
+        String room1Color = roomColors.get(rng.nextInt(roomColors.size()));
+        String room2Color = roomColors.get(rng.nextInt(roomColors.size()));
+        CleanupRoom room1 = new CleanupRoom("room0", bigRoomLeft, bigRoomRight/2, bigRoomBottom, bigRoomTop, room1Color, Cleanup.SHAPE_ROOM);
+        CleanupRoom room2 = new CleanupRoom("room1", bigRoomRight/2, bigRoomRight, bigRoomBottom, bigRoomTop, room2Color, Cleanup.SHAPE_ROOM);
+        int dx2 = bigRoomRight/2;
+        int dy2 = bigRoomTop/2;
+        CleanupDoor door2 = new CleanupDoor("door0", dx2, dx2, dy2, dy2, Cleanup.LOCKABLE_STATES[0], Cleanup.SHAPE_DOOR, Cleanup.COLOR_GRAY);
+
+        // randomize agent's position
+        int ax = minX;
+        int ay = minY;
+        String agentDirection = Cleanup.directions[rng.nextInt(Cleanup.directions.length)];
+        CleanupState s = new CleanupState(getWidth(), getHeight(), ax, ay, agentDirection, numBlocks, numRooms, numDoors);
+        s.addObject(room1);
+        s.addObject(room2);
+        s.addObject(door2);
+        do {
+            ax = minX + rng.nextInt(getWidth());
+            ay = minY + rng.nextInt(getHeight());
+        } while (!s.isOpen(ax, ay));
+        s.getAgent().set(Cleanup.ATT_X, ax);
+        s.getAgent().set(Cleanup.ATT_Y, ay);
+
+        int index = 0;
+        for (int i = (int) room1.get(ATT_LEFT); i < (int) room1.get(ATT_RIGHT); i++) {
+            for (int j = (int) room1.get(ATT_BOTTOM); j < (int) room1.get(ATT_TOP); j++) {
+                int bx = i;
+                int by = j;
+                if (s.isOpen(bx, by) && !s.agentAt(bx, by)) {
+                    String shape = blockShapes.get(rng.nextInt(blockShapes.size()));
+                    String color = blockColors.get(rng.nextInt(blockColors.size()));
+                    s.addObject(new CleanupBlock("block" + index, bx, by, shape, color));
+                    index += 1;
+                }
+            }
+        }
+
+        return s;
+    }
+
+
     public OOState generateTwoRoomsOneDoor() {
 
-        Random rng = RandomFactory.getMapped(DEFAULT_RNG_INDEX);
+        Random rng = RandomFactory.getMapped(BurlapConstants.DEFAULT_RNG_INDEX);
 
         int numBlocks = 0;
         int numRooms = 2;
@@ -668,10 +725,10 @@ public class CleanupRandomStateGenerator implements StateGenerator {
 
         String roomColor = roomColors.get(rng.nextInt(roomColors.size()));
         CleanupRoom room = new CleanupRoom("room0", ax - mainW, ax + mainW, ay - mainH, ay + mainH, roomColor, Cleanup.SHAPE_ROOM);
-        int rx = ((Integer) room.get(Cleanup.ATT_LEFT));
-        int ry = ((Integer) room.get(Cleanup.ATT_BOTTOM));
-        int rWidth = ((Integer) room.get(Cleanup.ATT_RIGHT)) - ((Integer) room.get(Cleanup.ATT_LEFT));
-        int rHeight = ((Integer) room.get(Cleanup.ATT_TOP)) - ((Integer) room.get(Cleanup.ATT_BOTTOM));
+        int rx = ((Integer) room.get(ATT_LEFT));
+        int ry = ((Integer) room.get(ATT_BOTTOM));
+        int rWidth = ((Integer) room.get(ATT_RIGHT)) - ((Integer) room.get(ATT_LEFT));
+        int rHeight = ((Integer) room.get(ATT_TOP)) - ((Integer) room.get(ATT_BOTTOM));
         boolean leftOrBottom = rng.nextBoolean();
         int dx = 0;
         int dy = 0;
@@ -702,7 +759,7 @@ public class CleanupRandomStateGenerator implements StateGenerator {
 
     public OOState generateThreeRooms(int numBlocks) {
 
-        Random rng = RandomFactory.getMapped(DEFAULT_RNG_INDEX);
+        Random rng = RandomFactory.getMapped(BurlapConstants.DEFAULT_RNG_INDEX);
 
         int numRooms = 3;
         int numDoors = 3;
@@ -767,7 +824,7 @@ public class CleanupRandomStateGenerator implements StateGenerator {
 
     public OOState generateTwoRooms(int numBlocks) {
 
-        Random rng = RandomFactory.getMapped(DEFAULT_RNG_INDEX);
+        Random rng = RandomFactory.getMapped(BurlapConstants.DEFAULT_RNG_INDEX);
 
         int numRooms = 2;
         int numDoors = 1;
@@ -821,7 +878,7 @@ public class CleanupRandomStateGenerator implements StateGenerator {
 
     public OOState generateOneRoomOneDoor() {
 
-        Random rng = RandomFactory.getMapped(DEFAULT_RNG_INDEX);
+        Random rng = RandomFactory.getMapped(BurlapConstants.DEFAULT_RNG_INDEX);
 
         int numBlocks = 0;
         int numRooms = 1;
@@ -859,10 +916,10 @@ public class CleanupRandomStateGenerator implements StateGenerator {
 
         String roomColor = roomColors.get(rng.nextInt(roomColors.size()));
         CleanupRoom room = new CleanupRoom("room0", mx - mainW, mx + mainW, my - mainH, my + mainH, roomColor, Cleanup.SHAPE_ROOM);
-        int rx = ((Integer) room.get(Cleanup.ATT_LEFT));
-        int ry = ((Integer) room.get(Cleanup.ATT_BOTTOM));
-        int rWidth = ((Integer) room.get(Cleanup.ATT_RIGHT)) - ((Integer) room.get(Cleanup.ATT_LEFT));
-        int rHeight = ((Integer) room.get(Cleanup.ATT_TOP)) - ((Integer) room.get(Cleanup.ATT_BOTTOM));
+        int rx = ((Integer) room.get(ATT_LEFT));
+        int ry = ((Integer) room.get(ATT_BOTTOM));
+        int rWidth = ((Integer) room.get(ATT_RIGHT)) - ((Integer) room.get(ATT_LEFT));
+        int rHeight = ((Integer) room.get(ATT_TOP)) - ((Integer) room.get(ATT_BOTTOM));
         boolean leftOrBottom = rng.nextBoolean();
         int dx = 0;
         int dy = 0;
@@ -884,7 +941,7 @@ public class CleanupRandomStateGenerator implements StateGenerator {
 
     public OOState generateNoRoomsOneDoor(int numBlocks) {
 
-        Random rng = RandomFactory.getMapped(DEFAULT_RNG_INDEX);
+        Random rng = RandomFactory.getMapped(BurlapConstants.DEFAULT_RNG_INDEX);
 
         int numRooms = 0;
         int numDoors = 1;
@@ -931,6 +988,8 @@ public class CleanupRandomStateGenerator implements StateGenerator {
             state = generateOneRoomOneDoor();
         } else if (stateType.equals("noRoomsOneDoor")) {
             state = generateNoRoomsOneDoor(numBlocks);
+        } else if (stateType.equals("slidingBlock")) {
+            state = generateSlidingBlockPuzzle();
         } else if (stateType.equals("twoRoomsOneDoor")) {
             state = generateTwoRoomsOneDoor();
         } else if (stateType.equals("oneRoomFourDoors")) {
@@ -946,4 +1005,5 @@ public class CleanupRandomStateGenerator implements StateGenerator {
         }
         return state;
     }
+
 }

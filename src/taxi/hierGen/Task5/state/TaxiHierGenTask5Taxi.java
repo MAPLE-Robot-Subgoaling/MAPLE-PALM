@@ -8,44 +8,45 @@ import java.util.List;
 
 import static taxi.TaxiConstants.ATT_X;
 import static taxi.TaxiConstants.ATT_Y;
+import static taxi.TaxiConstants.CLASS_TAXI;
 
 public class TaxiHierGenTask5Taxi extends MutableObject{
 
-	private final static List<Object> keys = Arrays.<Object>asList(
-			ATT_X,
-			ATT_Y);
+    private final static List<Object> keys = Arrays.<Object>asList(
+            ATT_X,
+            ATT_Y);
 
-	public TaxiHierGenTask5Taxi(String name, int x, int y){
-		this(name, (Object) x, (Object) y);
-	}
+    public TaxiHierGenTask5Taxi(String name, int x, int y){
+        this(name, (Object) x, (Object) y);
+    }
 
-	private TaxiHierGenTask5Taxi(String name, Object x, Object y){
-		this.set(ATT_X, x);
-		this.set(ATT_Y, y);
-		this.setName(name);
-	}
+    private TaxiHierGenTask5Taxi(String name, Object x, Object y){
+        this.set(ATT_X, x);
+        this.set(ATT_Y, y);
+        this.setName(name);
+    }
 
-	@Override
-	public String className() {
-		return TaxiHierGenTask5State.CLASS_ROOT_Taxi;
-	}
+    @Override
+    public String className() {
+        return CLASS_TAXI;
+    }
 
-	@Override
-	public ObjectInstance copyWithName(String objectName) {
-		return new TaxiHierGenTask5Taxi(
-				objectName,
-				get(ATT_X),
-				get(ATT_Y)
-		);
-	}
+    @Override
+    public ObjectInstance copyWithName(String objectName) {
+        return new TaxiHierGenTask5Taxi(
+                objectName,
+                get(ATT_X),
+                get(ATT_Y)
+        );
+    }
 
-	@Override
-	public List<Object> variableKeys() {
-		return keys;
-	}
+    @Override
+    public List<Object> variableKeys() {
+        return keys;
+    }
 
-	@Override
-	public TaxiHierGenTask5Taxi copy() {
-		return (TaxiHierGenTask5Taxi) copyWithName(name());
-	}
+    @Override
+    public TaxiHierGenTask5Taxi copy() {
+        return (TaxiHierGenTask5Taxi) copyWithName(name());
+    }
 }

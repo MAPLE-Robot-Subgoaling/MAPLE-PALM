@@ -1,10 +1,14 @@
 package taxi;
 
 import burlap.mdp.core.oo.ObjectParameterizedAction;
+import burlap.mdp.core.oo.state.MutableOOState;
+import burlap.mdp.core.oo.state.ObjectInstance;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.oo.ObjectParameterizedActionType;
+import taxi.hierGen.root.state.TaxiHierGenRootState;
 import taxi.state.TaxiPassenger;
 import taxi.state.TaxiState;
+import utilities.MutableObject;
 
 import static taxi.TaxiConstants.*;
 
@@ -15,10 +19,10 @@ public class PutdownActionType extends ObjectParameterizedActionType {
 
     @Override
     protected boolean applicableInState(State s, ObjectParameterizedAction objectParameterizedAction) {
-        TaxiState state = (TaxiState) s;
+        MutableOOState state = (MutableOOState) s;
         String[] params = objectParameterizedAction.getObjectParameters();
         String passengerName = params[0];
-        TaxiPassenger passenger = (TaxiPassenger)state.object(passengerName);
+        MutableObject passenger = (MutableObject)state.object(passengerName);
 
         // Can't put down a passenger not in the taxi
         if(!(boolean)passenger.get(ATT_IN_TAXI)) {
@@ -27,9 +31,14 @@ public class PutdownActionType extends ObjectParameterizedActionType {
 
         int px = (int)passenger.get(ATT_X);
         int py = (int)passenger.get(ATT_Y);
-        for(String loc : state.getLocations()) {
-            int lx = (int)state.getLocationAtt(loc, ATT_X);
-            int ly = (int)state.getLocationAtt(loc, ATT_Y);
+        // a temporary hack -- hiergen taxi root state really should still include depots...
+        // but for now we just permit putdown in any case
+        if (state instanceof TaxiHierGenRootState) {
+            return true;
+        }
+        for(ObjectInstance location : state.objectsOfClass(CLASS_LOCATION)) {
+            int lx = (int)location.get(ATT_X);
+            int ly = (int)location.get(ATT_Y);
             // must be at ANY location in order to put the passenger down
             if(lx == px && ly == py) {
                 return true;
