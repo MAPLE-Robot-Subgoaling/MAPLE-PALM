@@ -82,7 +82,7 @@ public class TaxiStateFactory {
 	public static TaxiState createMediumState() { return createMediumState(1); }
 
 	public static TaxiState createMediumState(int numPassengers) {
-		TaxiAgent taxi = new TaxiAgent(CLASS_TAXI + 0, 1, 1);
+		TaxiAgent taxi = new TaxiAgent(CLASS_TAXI + 0, 0, 0);
 
 		List<TaxiLocation> locations = new ArrayList<TaxiLocation>();
 		locations.add(new TaxiLocation(CLASS_LOCATION + 0, 0, 0, COLOR_RED));

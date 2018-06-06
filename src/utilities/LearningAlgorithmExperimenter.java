@@ -9,6 +9,7 @@ import burlap.behavior.singleagent.learning.LearningAgentFactory;
 import burlap.debugtools.DPrint;
 import burlap.mdp.singleagent.environment.Environment;
 import burlap.mdp.singleagent.environment.extensions.EnvironmentServer;
+import palm.agent.PALMLearningAgent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -339,9 +340,9 @@ public class LearningAlgorithmExperimenter {
 		List<Episode> episodes = new ArrayList<Episode>();
 		for(int i = 0; i < this.numberEpisodes; i++){
 			DPrint.cl(this.debugCode, "Episode " + (i+1) + "/" + this.numberEpisodes);
-//			if (i >= 199) {
-//                RAMDPLearningAgent.debug = true;
-//            }
+			if (i >= 299) {
+                PALMLearningAgent.PRINT = true;
+            }
 			Episode episode = agent.runLearningEpisode(this.environmentSever, maxSteps);
 			this.plotter.endEpisode();
 			this.environmentSever.resetEnvironment();

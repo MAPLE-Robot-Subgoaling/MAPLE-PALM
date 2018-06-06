@@ -235,4 +235,7 @@ public class ValueIterationMultiStep extends DynamicProgrammingMultiStep impleme
         return valueFunction;
     }
 
+    public Map<HashableState,Double> getValueFunction() {
+        return valueFunction;
+    }
 }

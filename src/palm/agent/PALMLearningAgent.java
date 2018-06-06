@@ -5,21 +5,28 @@ import burlap.behavior.policy.Policy;
 import burlap.behavior.policy.PolicyUtils;
 import burlap.behavior.singleagent.Episode;
 import burlap.behavior.singleagent.learning.LearningAgent;
+import burlap.behavior.valuefunction.QValue;
 import burlap.behavior.valuefunction.ValueFunction;
 import burlap.mdp.core.action.Action;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.environment.Environment;
 import burlap.mdp.singleagent.environment.EnvironmentOutcome;
 import burlap.mdp.singleagent.oo.OOSADomain;
+import burlap.statehashing.HashableState;
 import burlap.statehashing.HashableStateFactory;
 import hierarchy.framework.GroundedTask;
+import hierarchy.framework.NonprimitiveTask;
 import hierarchy.framework.StringFormat;
+import hierarchy.framework.Task;
+import palm.rmax.agent.ExpectedRmaxModel;
+import palm.rmax.agent.HierarchicalRmaxModel;
 import utilities.DiscountProvider;
 import utilities.ValueIteration;
 import utilities.ValueIterationMultiStep;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class PALMLearningAgent implements LearningAgent{
 
@@ -57,8 +64,6 @@ public class PALMLearningAgent implements LearningAgent{
 
 	private int maxIterationsInModelPlanner = -1;
 
-	private boolean useMultitimeModel;
-	
 	/**
 	 * the current episode
 	 */
@@ -116,7 +121,7 @@ public class PALMLearningAgent implements LearningAgent{
 		return e;
 	}
 
-	public static String tabLevel = "";
+//	public static String tabLevel = "";
 
 	/**
 	 * tries to solve a grounded task while creating a model of it
@@ -132,7 +137,7 @@ public class PALMLearningAgent implements LearningAgent{
         PALMModel model = getModel(task);
 		int actionCount = 0;
 
-		tabLevel += "\t";
+//		tabLevel += "\t";
 //        System.out.println(tabLevel + ">>> " + task.getAction() + " " + actionCount);
 
         if(task.isPrimitive()) {
@@ -153,6 +158,8 @@ public class PALMLearningAgent implements LearningAgent{
         }
 
         List<String> subtasksExecuted = new ArrayList<String>();
+
+        boolean allChildrenBeyondThreshold = true;
 
 		while(
 			// while task still valid
@@ -175,6 +182,14 @@ public class PALMLearningAgent implements LearningAgent{
 				action = this.taskNames.get(actionName);
 			}
 
+			if (allChildrenBeyondThreshold && !action.isPrimitive()) {
+				State s = currentState;
+				PALMModel m = getModel(task);
+				if (!m.isConvergedFor(s, a, null)) {
+					allChildrenBeyondThreshold = false;
+				}
+			}
+
             // solve this task's next chosen subtask, recursively
             int stepsBefore = steps;
             subtaskCompleted = solveTask(action, baseEnv, maxSteps);
@@ -189,7 +204,7 @@ public class PALMLearningAgent implements LearningAgent{
 			// update task model if the subtask completed correctly
             // the case in which this is NOT updated is if the subtask failed or did not take at least one step
             // for example, the root "solve" task may not complete
-			if(subtaskCompleted){
+			if(subtaskCompleted) {
 				model.updateModel(result, stepsTaken);
 				subtasksExecuted.add(action.toString()+"++");
 			} else {
@@ -201,8 +216,11 @@ public class PALMLearningAgent implements LearningAgent{
             System.out.println(subtasksExecuted.size() + " " + subtasksExecuted);
         }
 
-        tabLevel = tabLevel.substring(0, (tabLevel.length() - 1));
-		return task.isComplete(currentState) || actionCount == 0;
+//        tabLevel = tabLevel.substring(0, (tabLevel.length() - 1));
+
+		boolean parentShouldUpdateModel = task.isComplete(currentState) || actionCount == 0;
+		parentShouldUpdateModel = parentShouldUpdateModel && allChildrenBeyondThreshold;
+		return parentShouldUpdateModel;
 	}
 	
 	/**
@@ -216,7 +234,8 @@ public class PALMLearningAgent implements LearningAgent{
 			taskNames.put(child.toString(), child);
 		}
 	}
-	
+
+	public static boolean PRINT = false;
 	/**
 	 * plan over the given task's model and pick the best action to do next favoring unmodeled actions
 	 * @param task the current task
@@ -231,18 +250,53 @@ public class PALMLearningAgent implements LearningAgent{
 		ValueIterationMultiStep planner = new ValueIterationMultiStep(domain, hashingFactory, maxDelta, maxIterationsInModelPlanner, discountProvider);
 		planner.toggleReachabiltiyTerminalStatePruning(true);
 //		planner.toggleReachabiltiyTerminalStatePruning(false);
-		ValueFunction valueFunction = task.valueFunction;
-		if (valueFunction != null) {
-			planner.setValueFunctionInitialization(valueFunction);
+		ValueFunction knownValueFunction = task.valueFunction;
+		if (knownValueFunction != null) {
+			planner.setValueFunctionInitialization(knownValueFunction);
 		}
 		Policy policy = planner.planFromState(s);
         Action action = policy.action(s);
+//        if (PRINT) {
+//        	PRINT = false;
+//			Map<HashableState,Double> valueFunction = planner.getValueFunction();
+//
+//			valueFunction.entrySet().stream()
+//					.sorted((k1, k2) -> -k1.getValue().compareTo(k2.getValue()))
+//					.forEach(k -> {
+//						State state = k.getKey().s();
+//						System.out.println("\n" + state + ": " + k.getValue());
+//						List<QValue> qValues = planner.qValues(state);
+//						Collections.sort(qValues, new Comparator<QValue>() {
+//							@Override
+//							public int compare(QValue o1, QValue o2) {
+//								if (o1.q > o2.q) return -1;
+//								if (o1.q < o2.q) return  1;
+//								return 0;
+//							}
+//						});
+//						for (QValue qValue : qValues) {
+//							System.out.println(qValue.a + "\t" + qValue.q);
+//						}
+////						Action tempAction = policy.action(state);
+////						double discounted = model.getDiscountProvider().yield(state, tempAction, null);
+////						((HierarchicalRmaxModel)model).getPossibleOutcome(state, action);
+////						double expectedSteps = ((ExpectedRmaxModel)model).getExpectedNumberOfSteps(state, tempAction, null);
+////						System.out.println(tempAction + " " + discounted);// + " " + expectedSteps);
+//					});
+//
+//
+//			Episode e = PolicyUtils.rollout(policy, s, model, 10);
+//			System.out.println("Debug rollout: " + e.actionSequence);
+//			System.out.println(action + ", ");
+//
+//        	nextAction(task, s);
+//		}
 		if (debug) {
 			try {
 				if (task.toString().contains("solve")) {
 					Episode e = PolicyUtils.rollout(policy, s, model, 10);
-					System.out.println(tabLevel + "    Debug rollout: " + e.actionSequence);
-					System.out.println(tabLevel + action + ", ");
+//					System.out.println(tabLevel + "    Debug rollout: " + e.actionSequence);
+//					System.out.println(tabLevel + action + ", ");
 				}
 			} catch (Exception e) {
 				//             ignore, temp debug to assess ramdp
@@ -252,7 +306,7 @@ public class PALMLearningAgent implements LearningAgent{
 		}
 		double defaultValue = 0.0;
 //		valueFunction = planner.saveValueFunction(defaultValue, rmax);
-		task.valueFunction = valueFunction;
+		task.valueFunction = knownValueFunction;
     	return action;
 	}
 

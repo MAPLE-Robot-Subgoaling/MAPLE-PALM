@@ -145,22 +145,25 @@ public class TaxiRootState implements MutableOOState, DeepCopyForShallowCopyStat
 		for (TaxiRootPassenger passenger : passengers.values()) {
 			buf.append("P");
 			buf.append(passenger.name().charAt(passenger.name().length()-1));
-			buf.append(", at:");
+//			buf.append(", at:");
+			buf.append(":");
 			String at = (String) passenger.get(ATT_LOCATION);
 			if (at.contains("Location")) {
 				buf.append("L");
 				buf.append(at.charAt(at.length()-1));
+			} else if (at.contains("Taxi")) {
+				buf.append("Tx");
 			} else {
 				buf.append(at);
 			}
-			buf.append(", goal:");
-			String goal = (String) passenger.get(ATT_GOAL_LOCATION);
-			if (goal.contains("Location")) {
-				buf.append("L");
-				buf.append(goal.charAt(goal.length()-1));
-			} else {
-				buf.append(goal);
-			}
+//			buf.append(", goal:");
+//			String goal = (String) passenger.get(ATT_GOAL_LOCATION);
+//			if (goal.contains("Location")) {
+//				buf.append("L");
+//				buf.append(goal.charAt(goal.length()-1));
+//			} else {
+//				buf.append(goal);
+//			}
 			buf.append("; ");
 		}
 		return buf.toString();

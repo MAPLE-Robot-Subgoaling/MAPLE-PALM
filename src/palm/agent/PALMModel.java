@@ -36,4 +36,7 @@ public abstract class PALMModel extends FactoredModel {
     public abstract void updateModel(EnvironmentOutcome result, int stepsTaken);
 
     public abstract DiscountProvider getDiscountProvider();
+
+    public abstract boolean isConvergedFor(State s, Action a, State sPrime);
+
 }

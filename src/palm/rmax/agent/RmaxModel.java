@@ -236,6 +236,13 @@ public abstract class RmaxModel extends PALMModel {
     // allows for Multi-time model discounting
     public abstract double getInternalDiscount(EnvironmentOutcome eo, int k);
 
+    public int getStateActionCount(State s, Action a) {
+        HashableState hs = hashingFactory.hashState(s);
+        Map<HashableState,PossibleOutcome> hsPrimeToOutcomes = getHsPrimeToOutcomes(hs, a);
+        int stateActionCount = getStateActionCount(hsPrimeToOutcomes,hs,a);
+        return stateActionCount;
+    }
+
     /**
      * get the number of times a was executed in s
      * @param hs current state
@@ -253,7 +260,7 @@ public abstract class RmaxModel extends PALMModel {
         return totalCount;
     }
 
-    protected PossibleOutcome getPossibleOutcome(Map<HashableState, PossibleOutcome> hsPrimeToOutcomes, HashableState hs, Action a, HashableState hsPrime) {
+    public PossibleOutcome getPossibleOutcome(Map<HashableState, PossibleOutcome> hsPrimeToOutcomes, HashableState hs, Action a, HashableState hsPrime) {
         if (hsPrimeToOutcomes == null) {
             String actionName = StringFormat.parameterizedActionName(a);
             HashableStateActionPair pair = new HashableStateActionPair(hs, actionName);
@@ -323,6 +330,12 @@ public abstract class RmaxModel extends PALMModel {
             }
             System.out.println("\n*****************\n");
         }
+    }
+
+    @Override
+    public boolean isConvergedFor(State s, Action a, State sPrime) {
+        int stateTransitionCount = getStateActionCount(s, a);
+        return stateTransitionCount >= getThreshold();
     }
 
 }

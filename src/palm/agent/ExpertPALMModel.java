@@ -38,4 +38,9 @@ public class ExpertPALMModel extends PALMModel {
         return discountProvider;
     }
 
+    @Override
+    public boolean isConvergedFor(State s, Action a, State sPrime) {
+        return true;
+    }
+
 }
