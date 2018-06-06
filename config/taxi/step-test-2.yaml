@@ -1,11 +1,12 @@
 state: steptest-2passengers
 
 agents:
-  - expectedStateTest
+  - palmExpert
+  - expectedStepsTest
 
 episodes: 300
 max_steps: 1000
-trials: 1
+trials: 5
 gamma: 0.99
 
 stochastic:

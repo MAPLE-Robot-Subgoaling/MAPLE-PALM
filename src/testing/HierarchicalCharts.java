@@ -97,12 +97,12 @@ public class HierarchicalCharts {
 					}
 				};
 			}
-			if(agent.equals("expectedStateTest")) {
+			if(agent.equals("expectedStepsTest")) {
 				agents[i] = new LearningAgentFactory() {
 
 					@Override
 					public String getAgentName() {
-						return "ExpStateTest";
+						return "ExpStepsTest";
 					}
 
 					@Override
