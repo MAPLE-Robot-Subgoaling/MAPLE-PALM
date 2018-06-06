@@ -5,7 +5,7 @@ import burlap.mdp.core.oo.state.OOStateUtilities;
 import burlap.mdp.core.oo.state.OOVariableKey;
 import burlap.mdp.core.oo.state.ObjectInstance;
 import burlap.mdp.core.state.MutableState;
-import taxi.hierarchies.interfaces.PassengerParameterizable;
+//import taxi.hierarchies.interfaces.PassengerParameterizable;
 import utilities.DeepCopyForShallowCopyState;
 
 import java.util.*;
