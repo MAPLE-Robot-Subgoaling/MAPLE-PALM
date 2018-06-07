@@ -1,0 +1,53 @@
+domain: !!config.taxi.TaxiConfig
+  state: classic
+  correct_move: 1.0
+  fickle: 0.00
+
+agents:
+  - palmHiergen
+
+# - rmaxq
+
+episodes: 1000
+max_steps: 10000
+trials: 1
+gamma: 0.99
+
+seed: 234567
+
+planning:
+  rollouts: 1000
+
+rmax:
+  vmax: 1.0
+  threshold: 1
+  max_delta: 0.00001
+  max_delta_rmaxq: 0.0000001
+  max_iterations_in_model: 1000
+  use_multitime_model: true
+
+output:
+  csv:
+    enabled: true
+    output: results/noah-test.csv
+
+  chart:
+    enabled: true
+
+    width: 500
+    height: 300
+    columns: 2
+    max_height: 900
+    trial_mode: MOST_RECENT_AND_AVERAGE
+
+    metrics:
+      - STEPS_PER_EPISODE
+      - CUMULATIVE_REWARD_PER_STEP
+      - CUMULATIVE_REWARD_PER_EPISODE
+
+  visualizer:
+    enabled: false
+    episodes: true
+    width: 5
+    height: 5
+    
