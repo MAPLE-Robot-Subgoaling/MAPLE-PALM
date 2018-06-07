@@ -1,6 +1,6 @@
 domain: !!config.taxi.TaxiConfig
   state: classic-2passengers
-  correct_move: 0.90
+  correct_move: 1.0
   fickle: 0.0
 
 agents:
@@ -8,7 +8,7 @@ agents:
   - palmHiergen
   - expectedStepsTest
 
-episodes: 500
+episodes: 300
 max_steps: 1000
 trials: 1
 gamma: 0.90
