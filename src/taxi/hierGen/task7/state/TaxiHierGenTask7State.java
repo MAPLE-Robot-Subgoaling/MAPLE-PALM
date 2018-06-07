@@ -1,18 +1,17 @@
-package taxi.hierGen.Task7.state;
+package taxi.hierGen.task7.state;
 
 import burlap.mdp.core.oo.state.MutableOOState;
 import burlap.mdp.core.oo.state.OOStateUtilities;
 import burlap.mdp.core.oo.state.ObjectInstance;
 import burlap.mdp.core.state.MutableState;
-import taxi.hierarchies.tasks.put.state.TaxiPutAgent;
-import taxi.hierarchies.tasks.put.state.TaxiPutPassenger;
+import taxi.hierGen.TaxiHierGenState;
 import utilities.DeepCopyForShallowCopyState;
 
 import java.util.*;
 
 import static taxi.TaxiConstants.*;
 
-public class TaxiHierGenTask7State implements MutableOOState, DeepCopyForShallowCopyState {
+public class TaxiHierGenTask7State extends TaxiHierGenState implements MutableOOState, DeepCopyForShallowCopyState {
 
     private TaxiHierGenTask7Taxi taxi;
     private Map<String, TaxiHierGenTask7Passenger> passengers;
@@ -39,12 +38,14 @@ public class TaxiHierGenTask7State implements MutableOOState, DeepCopyForShallow
     @Override
     public MutableOOState removeObject(String oname) {
         ObjectInstance objectInstance = this.object(oname);
-        if (objectInstance instanceof TaxiPutAgent) {
+        if (objectInstance instanceof TaxiHierGenTask7Taxi) {
             touchTaxi();
             taxi = null;
-        } else if (objectInstance instanceof TaxiPutPassenger) {
+        } else if (objectInstance instanceof TaxiHierGenTask7Passenger) {
             touchPassenger(oname);
             passengers.remove(oname);
+        } else {
+            throw new RuntimeException("Error: unknown object of name: " + oname);
         }
         return this;
     }
@@ -163,5 +164,10 @@ public class TaxiHierGenTask7State implements MutableOOState, DeepCopyForShallow
         copy.touchTaxi();
         copy.touchPassengers();
         return copy;
+    }
+
+    @Override
+    public ObjectInstance getTaxi() {
+        return taxi;
     }
 }

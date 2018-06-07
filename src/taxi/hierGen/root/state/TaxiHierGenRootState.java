@@ -4,13 +4,14 @@ import burlap.mdp.core.oo.state.MutableOOState;
 import burlap.mdp.core.oo.state.OOStateUtilities;
 import burlap.mdp.core.oo.state.ObjectInstance;
 import burlap.mdp.core.state.MutableState;
+import taxi.hierGen.TaxiHierGenState;
 import utilities.DeepCopyForShallowCopyState;
 
 import java.util.*;
 
 import static taxi.TaxiConstants.*;
 
-public class TaxiHierGenRootState implements MutableOOState, DeepCopyForShallowCopyState {
+public class TaxiHierGenRootState extends TaxiHierGenState implements MutableOOState, DeepCopyForShallowCopyState {
 
     private TaxiHierGenRootTaxi taxi;
     private Map<String, TaxiHierGenRootPassenger> passengers;
@@ -43,6 +44,8 @@ public class TaxiHierGenRootState implements MutableOOState, DeepCopyForShallowC
         } else if (objectInstance instanceof TaxiHierGenRootPassenger) {
             touchPassenger(oname);
             passengers.remove(oname);
+        } else {
+            throw new RuntimeException("Error: unknown object of name: " + oname);
         }
         return this;
     }
@@ -61,6 +64,9 @@ public class TaxiHierGenRootState implements MutableOOState, DeepCopyForShallowC
 
     @Override
     public ObjectInstance object(String oname) {
+        if (taxi == null) {
+            return null;
+        }
         if(taxi.name().equals(oname))
             return taxi;
         return passengers.get(oname);

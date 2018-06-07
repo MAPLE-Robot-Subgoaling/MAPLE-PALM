@@ -2,7 +2,8 @@ package taxi.hierGen.functions;
 
 import burlap.mdp.core.oo.propositional.PropositionalFunction;
 import burlap.mdp.core.oo.state.OOState;
-import taxi.hierGen.Task7.state.TaxiHierGenTask7State;
+import taxi.hierGen.task7.state.TaxiHierGenTask7Passenger;
+import taxi.hierGen.TaxiHierGenState;
 
 import static taxi.TaxiConstants.ATT_IN_TAXI;
 import static taxi.TaxiConstants.PF_TASK_7;
@@ -15,9 +16,14 @@ public class HierGenTask7Completed extends PropositionalFunction {
 
     @Override
     public boolean isTrue(OOState s, String... params) {
-        TaxiHierGenTask7State st = (TaxiHierGenTask7State) s;
+        TaxiHierGenState st = (TaxiHierGenState) s;
         for(String pname : params){
-            boolean inTaxi = (boolean) st.object(pname).get(ATT_IN_TAXI);
+            TaxiHierGenTask7Passenger passenger = (TaxiHierGenTask7Passenger) st.object(pname);
+            if (passenger == null) {
+                // assume that if the passenger does not exist, we are in the imagined state, always terminal
+                return true;
+            }
+            boolean inTaxi = (boolean) passenger.get(ATT_IN_TAXI);
             if(inTaxi)
                 return true;
         }

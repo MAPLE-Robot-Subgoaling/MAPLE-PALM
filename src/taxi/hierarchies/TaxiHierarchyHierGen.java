@@ -2,7 +2,6 @@ package taxi.hierarchies;
 
 import burlap.mdp.auxiliary.StateMapping;
 import burlap.mdp.core.action.ActionType;
-import burlap.mdp.core.action.UniversalActionType;
 import burlap.mdp.core.oo.propositional.PropositionalFunction;
 import hierarchy.framework.NonprimitiveTask;
 import hierarchy.framework.PrimitiveTask;
@@ -11,9 +10,8 @@ import hierarchy.framework.Task;
 import taxi.PickupActionType;
 import taxi.PutdownActionType;
 import taxi.Taxi;
-import taxi.hierGen.Task5.state.Task5StateMapper;
-import taxi.hierGen.Task7.state.Task7StateMapper;
-import taxi.hierGen.Task7.state.TaxiHierGenTask7State;
+import taxi.hierGen.task5.state.Task5StateMapper;
+import taxi.hierGen.task7.state.Task7StateMapper;
 import taxi.hierGen.actions.HierGenTask5ActionType;
 import taxi.hierGen.actions.HierGenTask7ActionType;
 import taxi.hierGen.functions.FailureFunction;
@@ -21,7 +19,6 @@ import taxi.hierGen.functions.HierGenRootCompleted;
 import taxi.hierGen.functions.HierGenTask5Completed;
 import taxi.hierGen.functions.HierGenTask7Completed;
 import taxi.hierGen.root.state.HierGenRootStateMapper;
-import taxi.hierGen.root.state.TaxiHierGenRootState;
 
 import static taxi.TaxiConstants.*;
 import static taxi.TaxiConstants.ACTION_PICKUP;

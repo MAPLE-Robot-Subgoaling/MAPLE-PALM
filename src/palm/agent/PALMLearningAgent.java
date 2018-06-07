@@ -5,19 +5,28 @@ import burlap.behavior.policy.Policy;
 import burlap.behavior.policy.PolicyUtils;
 import burlap.behavior.singleagent.Episode;
 import burlap.behavior.singleagent.learning.LearningAgent;
+import burlap.behavior.valuefunction.QValue;
 import burlap.behavior.valuefunction.ValueFunction;
 import burlap.mdp.core.action.Action;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.environment.Environment;
 import burlap.mdp.singleagent.environment.EnvironmentOutcome;
 import burlap.mdp.singleagent.oo.OOSADomain;
+import burlap.statehashing.HashableState;
 import burlap.statehashing.HashableStateFactory;
 import hierarchy.framework.GroundedTask;
+import hierarchy.framework.NonprimitiveTask;
 import hierarchy.framework.StringFormat;
+import hierarchy.framework.Task;
+import palm.rmax.agent.ExpectedRmaxModel;
+import palm.rmax.agent.HierarchicalRmaxModel;
+import utilities.DiscountProvider;
 import utilities.ValueIteration;
+import utilities.ValueIterationMultiStep;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class PALMLearningAgent implements LearningAgent{
 
@@ -55,7 +64,8 @@ public class PALMLearningAgent implements LearningAgent{
 
     private int maxIterationsInModelPlanner = -1;
 
-    private boolean useMultitimeModel;
+    // if true, AMDP models will not update until all actions they took were also beyond RMAX threshold
+    private boolean waitForChildren;
 
     /**
      * the current episode
@@ -73,14 +83,16 @@ public class PALMLearningAgent implements LearningAgent{
      * @param delta the max error for the planner
      */
     public PALMLearningAgent(GroundedTask root, PALMModelGenerator models,
-                             HashableStateFactory hs, double delta, int maxIterationsInModelPlanner) {
+                             HashableStateFactory hs, double delta, int maxIterationsInModelPlanner,
+                             boolean waitForChildren) {
         this.root = root;
         this.hashingFactory = hs;
         this.models = new HashMap<>();
-        this.taskNames = new HashMap<String, GroundedTask>();
+        this.taskNames = new HashMap<>();
         this.maxDelta = delta;
         this.maxIterationsInModelPlanner = maxIterationsInModelPlanner;
         this.modelGenerator = models;
+        this.waitForChildren = waitForChildren;
     }
 
     @Override
@@ -114,7 +126,7 @@ public class PALMLearningAgent implements LearningAgent{
         return e;
     }
 
-    public static String tabLevel = "";
+//    public static String tabLevel = "";
 
     /**
      * tries to solve a grounded task while creating a model of it
@@ -129,8 +141,7 @@ public class PALMLearningAgent implements LearningAgent{
         State pastState = currentState;
         PALMModel model = getModel(task);
         int actionCount = 0;
-
-        tabLevel += "\t";
+//		tabLevel += "\t";
 //        System.out.println(tabLevel + ">>> " + task.getAction() + " " + actionCount);
 
         if(task.isPrimitive()) {
@@ -163,10 +174,12 @@ public class PALMLearningAgent implements LearningAgent{
 
         List<String> subtasksExecuted = new ArrayList<String>();
 
-        while(
-            // while task still valid
-                !(task.isFailure(currentState) || task.isComplete(currentState))
-            // and still have steps it can take
+        boolean allChildrenBeyondThreshold = true;
+
+		while(
+			// while task still valid
+		        !(task.isFailure(currentState) || task.isComplete(currentState))
+			// and still have steps it can take
                 && (steps < maxSteps || maxSteps == -1)
             // and it hasn't solved the root goal, keep planning
                 && !(root.isComplete(root.mapState(baseState)))
@@ -195,6 +208,14 @@ public class PALMLearningAgent implements LearningAgent{
 //                ((ObjectParameterizedAction) a).getObjectParameters()[0] = param;
 //            }
 
+			if (waitForChildren && allChildrenBeyondThreshold && !action.isPrimitive()) {
+				State s = currentState;
+				PALMModel m = getModel(task);
+				if (!m.isConvergedFor(s, a, null)) {
+					allChildrenBeyondThreshold = false;
+				}
+			}
+
             // solve this task's next chosen subtask, recursively
             int stepsBefore = steps;
             subtaskCompleted = solveTask(task, action, baseEnv, maxSteps);
@@ -209,10 +230,10 @@ public class PALMLearningAgent implements LearningAgent{
             // update task model if the subtask completed correctly
             // the case in which this is NOT updated is if the subtask failed or did not take at least one step
             // for example, the root "solve" task may not complete
-            if(subtaskCompleted){
-                model.updateModel(result, stepsTaken);
-                subtasksExecuted.add(action.toString()+"++");
-            } else {
+			if(subtaskCompleted) {
+				model.updateModel(result, stepsTaken);
+				subtasksExecuted.add(action.toString()+"++");
+			} else {
                 subtasksExecuted.add(action.toString()+"--");
             }
         }
@@ -221,65 +242,65 @@ public class PALMLearningAgent implements LearningAgent{
             System.out.println(subtasksExecuted.size() + " " + subtasksExecuted);
         }
 
-        tabLevel = tabLevel.substring(0, (tabLevel.length() - 1));
-        return task.isComplete(currentState) || actionCount == 0;
-    }
+//        tabLevel = tabLevel.substring(0, (tabLevel.length() - 1));
 
-    /**
-     * add the children of the given task to the action name lookup
-     * @param gt the current grounded task
-     * @param s the current state
-     */
-    protected void addChildrenToMap(GroundedTask gt, State s){
-        List<GroundedTask> children = gt.getGroundedChildTasks(s);
-        for(GroundedTask child : children){
-            taskNames.put(child.toString(), child);
-        }
-    }
+		boolean parentShouldUpdateModel = task.isComplete(currentState) || actionCount == 0;
+		parentShouldUpdateModel = parentShouldUpdateModel && allChildrenBeyondThreshold;
+		return parentShouldUpdateModel;
+	}
+	
+	/**
+	 * add the children of the given task to the action name lookup
+	 * @param gt the current grounded task
+	 * @param s the current state
+	 */
+	protected void addChildrenToMap(GroundedTask gt, State s){
+		List<GroundedTask> children = gt.getGroundedChildTasks(s);
+		for(GroundedTask child : children){
+			taskNames.put(child.toString(), child);
+		}
+	}
 
-    /**
-     * plan over the given task's model and pick the best action to do next favoring unmodeled actions
-     * @param task the current task
-     * @param s the current state
-     * @return the best action to take
-     */
-    protected Action nextAction(GroundedTask task, State s){
+	public static boolean PRINT = false;
+	/**
+	 * plan over the given task's model and pick the best action to do next favoring unmodeled actions
+	 * @param task the current task
+	 * @param s the current state
+	 * @return the best action to take
+	 */
+	protected Action nextAction(GroundedTask task, State s){
         PALMModel model = getModel(task);
-        OOSADomain domain = task.getDomain(model);
-        double discount = model.gamma();
-        ValueIteration planner = new ValueIteration(domain, discount, hashingFactory, maxDelta, maxIterationsInModelPlanner);
-        planner.toggleReachabiltiyTerminalStatePruning(true);
+		OOSADomain domain = task.getDomain(model);
+//		double discount = model.gamma();
+		DiscountProvider discountProvider = model.getDiscountProvider();
+		ValueIterationMultiStep planner = new ValueIterationMultiStep(domain, hashingFactory, maxDelta, maxIterationsInModelPlanner, discountProvider);
+		planner.toggleReachabiltiyTerminalStatePruning(true);
 //		planner.toggleReachabiltiyTerminalStatePruning(false);
-        ValueFunction valueFunction = task.valueFunction;
-        if (valueFunction != null) {
-            planner.setValueFunctionInitialization(valueFunction);
-        }
-        Policy policy = planner.planFromState(s);
+		ValueFunction knownValueFunction = task.valueFunction;
+		if (knownValueFunction != null) {
+			planner.setValueFunctionInitialization(knownValueFunction);
+		}
+		Policy policy = planner.planFromState(s);
         Action action = policy.action(s);
-        if (debug) {
-            try {
-                if (task.toString().contains("solve")) {
-                    Episode e = PolicyUtils.rollout(policy, s, model, 10);
-                    System.out.println(tabLevel + "    Debug rollout: " + e.actionSequence);
-                    System.out.println(tabLevel + action + ", ");
-                }
-            } catch (Exception e) {
-                //             ignore, temp debug to assess ramdp
-                System.out.println(e);
-                e.printStackTrace();
-            }
-        }
-        double defaultValue = 0.0;
+		if (debug) {
+			try {
+				if (task.toString().contains("solve")) {
+					Episode e = PolicyUtils.rollout(policy, s, model, 10);
+//					System.out.println(tabLevel + "    Debug rollout: " + e.actionSequence);
+//					System.out.println(tabLevel + action + ", ");
+				}
+			} catch (Exception e) {
+				//             ignore, temp debug to assess ramdp
+				System.out.println(e);
+				e.printStackTrace();
+			}
+		}
+		double defaultValue = 0.0;
 //		valueFunction = planner.saveValueFunction(defaultValue, rmax);
-        task.valueFunction = valueFunction;
-        return action;
-    }
+		task.valueFunction = knownValueFunction;
+    	return action;
+	}
 
-    /**
-     * get the rmax model of the given task
-     * @param t the current task
-     * @return the learned rmax model of the task
-     */
     protected PALMModel getModel(GroundedTask t){
 //        PALMModel model = models.get(t);
         // idea: try to do lookup such that models are shared across same AMDP class
@@ -296,5 +317,6 @@ public class PALMLearningAgent implements LearningAgent{
         }
         return model;
     }
+
 }
 

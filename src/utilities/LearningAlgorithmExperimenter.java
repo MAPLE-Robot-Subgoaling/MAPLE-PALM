@@ -9,6 +9,7 @@ import burlap.behavior.singleagent.learning.LearningAgentFactory;
 import burlap.debugtools.DPrint;
 import burlap.mdp.singleagent.environment.Environment;
 import burlap.mdp.singleagent.environment.extensions.EnvironmentServer;
+import palm.agent.PALMLearningAgent;
 
 import java.util.ArrayList;
 import java.util.List;

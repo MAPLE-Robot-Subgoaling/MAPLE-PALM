@@ -104,6 +104,7 @@ public class TaxiRootState implements MutableOOState, DeepCopyForShallowCopyStat
         touchPassenger(oname);
         passengers.remove(oname);
         cachedObjectList = null;
+
         return this;
     }
 
