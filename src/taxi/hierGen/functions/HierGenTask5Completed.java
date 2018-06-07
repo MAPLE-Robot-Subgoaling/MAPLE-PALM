@@ -3,7 +3,6 @@ package taxi.hierGen.functions;
 import burlap.mdp.core.oo.propositional.PropositionalFunction;
 import burlap.mdp.core.oo.state.OOState;
 import burlap.mdp.core.oo.state.ObjectInstance;
-import taxi.hierGen.Task5.state.TaxiHierGenTask5State;
 import taxi.hierGen.TaxiHierGenState;
 import taxi.hierGen.actions.HierGenTask5Action;
 import taxi.hierGen.actions.HierGenTask5ActionType;

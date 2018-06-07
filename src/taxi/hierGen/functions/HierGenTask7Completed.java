@@ -2,9 +2,7 @@ package taxi.hierGen.functions;
 
 import burlap.mdp.core.oo.propositional.PropositionalFunction;
 import burlap.mdp.core.oo.state.OOState;
-import taxi.hierGen.Task7.state.TaxiHierGenTask7Passenger;
-import taxi.hierGen.Task7.state.TaxiHierGenTask7State;
-import taxi.hierGen.Task7.state.TaxiHierGenTask7Taxi;
+import taxi.hierGen.task7.state.TaxiHierGenTask7Passenger;
 import taxi.hierGen.TaxiHierGenState;
 
 import static taxi.TaxiConstants.ATT_IN_TAXI;

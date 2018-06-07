@@ -1,12 +1,10 @@
-package taxi.hierGen.Task7.state;
+package taxi.hierGen.task7.state;
 
 import burlap.mdp.core.oo.state.MutableOOState;
 import burlap.mdp.core.oo.state.OOStateUtilities;
 import burlap.mdp.core.oo.state.ObjectInstance;
 import burlap.mdp.core.state.MutableState;
 import taxi.hierGen.TaxiHierGenState;
-import taxi.hierarchies.tasks.put.state.TaxiPutAgent;
-import taxi.hierarchies.tasks.put.state.TaxiPutPassenger;
 import utilities.DeepCopyForShallowCopyState;
 
 import java.util.*;

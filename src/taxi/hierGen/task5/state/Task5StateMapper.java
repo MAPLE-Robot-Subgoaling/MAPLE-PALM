@@ -1,4 +1,4 @@
-package taxi.hierGen.Task5.state;
+package taxi.hierGen.task5.state;
 
 import burlap.mdp.auxiliary.StateMapping;
 import burlap.mdp.core.state.State;

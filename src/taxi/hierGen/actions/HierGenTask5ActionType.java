@@ -33,7 +33,7 @@ public class HierGenTask5ActionType implements ActionType {
         for(ObjectInstance passenger : st.objectsOfClass(CLASS_PASSENGER)){
             if (passenger.get(ATT_DESTINATION_X) == null) {
                 // somewhat of a hack, but allows reuse of this class for both types of conditions
-                // if the attribute is null, we are invoking Task5 from Task7 (going to a passenger's x and y)
+                // if the attribute is null, we are invoking task5 from task7 (going to a passenger's x and y)
                 // otherwise, we are invoking from root and should use the passenger's destination x and y
                 boolean inTaxi = (boolean) passenger.get(ATT_IN_TAXI);
                 if (inTaxi) {

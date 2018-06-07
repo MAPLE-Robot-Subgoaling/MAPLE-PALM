@@ -64,7 +64,8 @@ public class PALMLearningAgent implements LearningAgent{
 
     private int maxIterationsInModelPlanner = -1;
 
-    private boolean useMultitimeModel;
+    // if true, AMDP models will not update until all actions they took were also beyond RMAX threshold
+    private boolean waitForChildren;
 
     /**
      * the current episode
@@ -82,14 +83,16 @@ public class PALMLearningAgent implements LearningAgent{
      * @param delta the max error for the planner
      */
     public PALMLearningAgent(GroundedTask root, PALMModelGenerator models,
-                             HashableStateFactory hs, double delta, int maxIterationsInModelPlanner) {
+                             HashableStateFactory hs, double delta, int maxIterationsInModelPlanner,
+                             boolean waitForChildren) {
         this.root = root;
         this.hashingFactory = hs;
         this.models = new HashMap<>();
-        this.taskNames = new HashMap<String, GroundedTask>();
+        this.taskNames = new HashMap<>();
         this.maxDelta = delta;
         this.maxIterationsInModelPlanner = maxIterationsInModelPlanner;
         this.modelGenerator = models;
+        this.waitForChildren = waitForChildren;
     }
 
     @Override
@@ -205,7 +208,7 @@ public class PALMLearningAgent implements LearningAgent{
 //                ((ObjectParameterizedAction) a).getObjectParameters()[0] = param;
 //            }
 
-			if (allChildrenBeyondThreshold && !action.isPrimitive()) {
+			if (waitForChildren && allChildrenBeyondThreshold && !action.isPrimitive()) {
 				State s = currentState;
 				PALMModel m = getModel(task);
 				if (!m.isConvergedFor(s, a, null)) {

@@ -20,10 +20,10 @@ import taxi.stateGenerator.TaxiStateFactory;
 import utilities.LearningAgentRuntimeAnalizer;
 
 public class RuntimeTest {
-    public static void createCrarts(final State s, OOSADomain domain, final Task RAMDPRoot, final Task RMEXQRoot,
+    public static void createCharts(final State s, OOSADomain domain, final Task RAMDPRoot, final Task RMEXQRoot,
                                     final double rmax, final int threshold, final double maxDelta, final double discount,
                                     int numEpisode, int maxSteps, int numTrial, int maxIterationsInModel,
-                                    boolean useMultitimeModel){
+                                    boolean useMultitimeModel, boolean waitForChildren){
         final HashableStateFactory hs = new SimpleHashableStateFactory(true);
         final GroundedTask RAMDPGroot = RAMDPRoot.getAllGroundedTasks(s).get(0);
 
@@ -59,7 +59,7 @@ public class RuntimeTest {
                 PALMRmaxModelGenerator modelGen = new PALMRmaxModelGenerator(threshold,
                         rmax, hs, discount, useMultitimeModel);
                 return new PALMLearningAgent(RAMDPGroot,modelGen, hs, maxDelta,
-                        maxIterationsInModel);
+                        maxIterationsInModel, waitForChildren);
             }
         };
 
@@ -81,12 +81,13 @@ public class RuntimeTest {
         double maxDelta = 0.01;
         int maxIterationsInModel = 10000;
         boolean useMultitimeModel = true;
+        boolean waitForChildren = true;
 
         TaxiState s = TaxiStateFactory.createTinyState();
         Task RAMDProot = new TaxiHierarchyAMDP().createHierarchy(correctMoveprob, fickleProb,  false);
         OOSADomain base = TaxiHierarchy.getBaseDomain();
         Task RMAXQroot = new TaxiHierarchyRMAXQ().createHierarchy(correctMoveprob, fickleProb, false);
-        createCrarts(s, base, RAMDProot, RMAXQroot, rmax, rmaxThreshold, maxDelta, gamma,
-                numEpisodes, maxSteps, numTrials, maxIterationsInModel, useMultitimeModel);
+        createCharts(s, base, RAMDProot, RMAXQroot, rmax, rmaxThreshold, maxDelta, gamma,
+                numEpisodes, maxSteps, numTrials, maxIterationsInModel, useMultitimeModel, waitForChildren);
     }
 }
