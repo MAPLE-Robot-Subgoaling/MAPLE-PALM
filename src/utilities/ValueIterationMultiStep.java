@@ -128,6 +128,10 @@ public class ValueIterationMultiStep extends DynamicProgrammingMultiStep impleme
         }
 
         Set <HashableState> states = valueFunction.keySet();
+        if (states.size() < 1) {
+            System.err.println("no reachable states");
+//            throw new RuntimeException("Error: no reachable states found");
+        }
 
         int i;
         for(i = 0; i < this.maxIterations; i++){

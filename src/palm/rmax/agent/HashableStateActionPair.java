@@ -48,8 +48,10 @@ public class HashableStateActionPair {
 
     @Override
     public String toString() {
-        return "{" + actionName +
-                ", " + hs.s().toString() +
+        String a = actionName == null ? "no action" : actionName;
+        String s = hs == null ? "no hs" : hs.s().toString();
+        return "{" + a +
+                ", " + s +
                 '}';
     }
 }
