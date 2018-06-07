@@ -1,35 +1,34 @@
-domain: !!config.taxi.TaxiConfig
-  state: classic-2passengers
-  correct_move: 1.0
-  fickle: 0.0
+state: steptest
 
 agents:
   - palmExpert
 
-episodes: 100
-max_steps: 500
+episodes: 300
+max_steps: 1000
 trials: 1
 gamma: 0.99
 
-seed: 3727891
+stochastic:
+  seed: 4917419
+  correct_move: 0.5
+  fickle: 0.0
+  random_start: false
 
 planning:
   rollouts: 1000
 
 rmax:
   vmax: 1.0
-  threshold: 10
-  max_delta: 0.0001
-  max_delta_rmaxq: 0.0001
+  threshold: 5
+  max_delta: 0.00001
   max_iterations_in_model: 1000
   use_multitime_model: true
   wait_for_children: true
 
-
 output:
   csv:
     enabled: true
-    output: results/pex-classic-2-gpgp-chain.csv
+    output: results/pex-classic.csv
 
   chart:
     enabled: true
@@ -46,7 +45,7 @@ output:
       - CUMULATIVE_REWARD_PER_EPISODE
 
   visualizer:
-    enabled: false
+    enabled: true
     episodes: true
     width: 5
     height: 5

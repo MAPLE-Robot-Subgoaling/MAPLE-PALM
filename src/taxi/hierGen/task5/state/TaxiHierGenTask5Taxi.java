@@ -1,4 +1,4 @@
-package taxi.hierGen.Task7.state;
+package taxi.hierGen.task5.state;
 
 import burlap.mdp.core.oo.state.ObjectInstance;
 import utilities.MutableObject;
@@ -10,17 +10,17 @@ import static taxi.TaxiConstants.ATT_X;
 import static taxi.TaxiConstants.ATT_Y;
 import static taxi.TaxiConstants.CLASS_TAXI;
 
-public class TaxiHierGenTask7Taxi extends MutableObject{
+public class TaxiHierGenTask5Taxi extends MutableObject{
 
     private final static List<Object> keys = Arrays.<Object>asList(
             ATT_X,
             ATT_Y);
 
-    public TaxiHierGenTask7Taxi(String name, int x, int y){
+    public TaxiHierGenTask5Taxi(String name, int x, int y){
         this(name, (Object) x, (Object) y);
     }
 
-    private TaxiHierGenTask7Taxi(String name, Object x, Object y){
+    private TaxiHierGenTask5Taxi(String name, Object x, Object y){
         this.set(ATT_X, x);
         this.set(ATT_Y, y);
         this.setName(name);
@@ -33,7 +33,7 @@ public class TaxiHierGenTask7Taxi extends MutableObject{
 
     @Override
     public ObjectInstance copyWithName(String objectName) {
-        return new TaxiHierGenTask7Taxi(
+        return new TaxiHierGenTask5Taxi(
                 objectName,
                 get(ATT_X),
                 get(ATT_Y)
@@ -46,7 +46,7 @@ public class TaxiHierGenTask7Taxi extends MutableObject{
     }
 
     @Override
-    public TaxiHierGenTask7Taxi copy() {
-        return (TaxiHierGenTask7Taxi) copyWithName(name());
+    public TaxiHierGenTask5Taxi copy() {
+        return (TaxiHierGenTask5Taxi) copyWithName(name());
     }
 }

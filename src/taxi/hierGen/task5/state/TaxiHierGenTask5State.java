@@ -1,12 +1,11 @@
-package taxi.hierGen.Task5.state;
+package taxi.hierGen.task5.state;
 
 import burlap.mdp.core.oo.state.MutableOOState;
 import burlap.mdp.core.oo.state.OOStateUtilities;
 import burlap.mdp.core.oo.state.ObjectInstance;
 import burlap.mdp.core.state.MutableState;
-import taxi.hierarchies.tasks.put.state.TaxiPutAgent;
+import taxi.hierGen.TaxiHierGenState;
 import utilities.DeepCopyForShallowCopyState;
-
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,7 +13,7 @@ import java.util.List;
 
 import static taxi.TaxiConstants.CLASS_TAXI;
 
-public class TaxiHierGenTask5State implements MutableOOState, DeepCopyForShallowCopyState {
+public class TaxiHierGenTask5State extends TaxiHierGenState implements MutableOOState, DeepCopyForShallowCopyState {
 
     private TaxiHierGenTask5Taxi taxi;
 
@@ -30,7 +29,7 @@ public class TaxiHierGenTask5State implements MutableOOState, DeepCopyForShallow
     @Override
     public MutableOOState removeObject(String oname) {
         ObjectInstance objectInstance = this.object(oname);
-        if (objectInstance instanceof TaxiPutAgent) {
+        if (objectInstance instanceof TaxiHierGenTask5Taxi) {
             touchTaxi();
             taxi = null;
         }

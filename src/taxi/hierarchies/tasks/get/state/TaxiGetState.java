@@ -141,6 +141,8 @@ public class TaxiGetState extends TaxiGetPutState implements DeepCopyForShallowC
         } else if (objectInstance instanceof TaxiGetLocation) {
             touchLocation(oname);
             locations.remove(oname);
+        } else {
+            throw new RuntimeException("Error: unknown object of name: " + oname);
         }
         return this;
     }

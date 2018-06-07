@@ -37,7 +37,7 @@ public class HierarchicalLearnerTest {
         PALMRmaxModelGenerator modelGen = new PALMRmaxModelGenerator(conf.rmax.threshold,
                 conf.rmax.vmax,hs, conf.gamma,conf.rmax.use_multitime_model);
         PALMLearningAgent palmRmax = new PALMLearningAgent(rootgt,modelGen, hs, conf.rmax.max_delta,
-                conf.rmax.max_iterations_in_model);
+                conf.rmax.max_iterations_in_model, conf.rmax.wait_for_children);
 
         SimulatedEnvironment env;
         env = new SimulatedEnvironment(groundDomain, initial);

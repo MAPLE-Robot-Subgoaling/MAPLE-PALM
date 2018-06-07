@@ -23,6 +23,7 @@ import hierarchy.framework.GroundedTask;
 import hierarchy.framework.Task;
 import palm.agent.PALMLearningAgent;
 import palm.agent.PALMModelGenerator;
+import palm.rmax.agent.ExpectedRmaxModelGenerator;
 import palm.rmax.agent.ExpertNavModelGenerator;
 import palm.rmax.agent.PALMRmaxModelGenerator;
 import rmaxq.agent.RmaxQLearningAgent;
@@ -100,7 +101,7 @@ public class HierarchicalCharts {
                         PALMRmaxModelGenerator modelGen = new PALMRmaxModelGenerator(conf.rmax.threshold,
                                 conf.rmax.vmax,hs, conf.gamma, conf.rmax.use_multitime_model);
                         PALMLearningAgent agent = new PALMLearningAgent(palm, modelGen, hs, conf.rmax.max_delta,
-                                conf.rmax.max_iterations_in_model);
+                                conf.rmax.max_iterations_in_model, conf.rmax.wait_for_children);
                         return agent;
                     }
                 };
@@ -119,7 +120,7 @@ public class HierarchicalCharts {
                         PALMModelGenerator modelGen = new ExpertNavModelGenerator(conf.rmax.threshold,
                                 conf.rmax.vmax,hs, conf.gamma, conf.rmax.use_multitime_model);
                         return new PALMLearningAgent(palmWithNav, modelGen, hs, conf.rmax.max_delta,
-                                conf.rmax.max_iterations_in_model);
+                                conf.rmax.max_iterations_in_model, conf.rmax.wait_for_children);
                     }
                 };
             }
@@ -138,7 +139,7 @@ public class HierarchicalCharts {
                         PALMRmaxModelGenerator modelGen = new PALMRmaxModelGenerator(conf.rmax.threshold,
                                 conf.rmax.vmax,hs, conf.gamma, conf.rmax.use_multitime_model);
                         return new PALMLearningAgent(palmHierGen, modelGen, hs, conf.rmax.max_delta,
-                                conf.rmax.max_iterations_in_model);
+                                conf.rmax.max_iterations_in_model, conf.rmax.wait_for_children);
                     }
                 };
             }
@@ -174,7 +175,44 @@ public class HierarchicalCharts {
                     }
                 };
             }
+            if(agent.equals("expStepsExpert")) {
+                agents[i] = new LearningAgentFactory() {
 
+                    @Override
+                    public String getAgentName() {
+                        return "ExpStepsExpert";
+                    }
+
+                    @Override
+                    public LearningAgent generateAgent() {
+                        HashableStateFactory hs = initializeHashableStateFactory();
+                        ExpectedRmaxModelGenerator modelGen = new ExpectedRmaxModelGenerator(conf.rmax.threshold,
+                                conf.rmax.vmax,hs, conf.gamma);
+                        PALMLearningAgent agent = new PALMLearningAgent(palm, modelGen, hs, conf.rmax.max_delta,
+                                conf.rmax.max_iterations_in_model, conf.rmax.wait_for_children);
+                        return agent;
+                    }
+                };
+            }
+            if(agent.equals("expStepsHierGen")) {
+                agents[i] = new LearningAgentFactory() {
+
+                    @Override
+                    public String getAgentName() {
+                        return "ExpStepsHierGen";
+                    }
+
+                    @Override
+                    public LearningAgent generateAgent() {
+                        HashableStateFactory hs = initializeHashableStateFactory();
+                        ExpectedRmaxModelGenerator modelGen = new ExpectedRmaxModelGenerator(conf.rmax.threshold,
+                                conf.rmax.vmax,hs, conf.gamma);
+                        PALMLearningAgent agent = new PALMLearningAgent(palmHierGen, modelGen, hs, conf.rmax.max_delta,
+                                conf.rmax.max_iterations_in_model, conf.rmax.wait_for_children);
+                        return agent;
+                    }
+                };
+            }
             //QLearning
             if(agent.equals("qlearning")){
                 agents[i] = new LearningAgentFactory(){

@@ -54,6 +54,12 @@ public class TaxiConfig extends DomainConfig {
                 return TaxiStateFactory.createMehtaZigZag1State(1);
             case "mehta-zigzag-2":
                 return TaxiStateFactory.createMehtaZigZag2State(2);
+            case "steptest":
+                return TaxiStateFactory.createStepTest(1);
+            case "steptest-2passengers":
+                return TaxiStateFactory.createStepTest(2);
+            case "steptest-10passengers":
+                return TaxiStateFactory.createStepTest(10);
             default:
                 throw new RuntimeException("ERROR: invalid state passed to generateState in TaxiConfig: " + state);
         }

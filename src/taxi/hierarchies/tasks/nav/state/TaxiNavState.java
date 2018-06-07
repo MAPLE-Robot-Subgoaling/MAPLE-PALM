@@ -152,6 +152,8 @@ public class TaxiNavState implements MutableOOState, DeepCopyForShallowCopyState
         } else if (objectInstance instanceof TaxiNavLocation) {
             touchLocation(oname);
             locations.remove(oname);
+        } else {
+            throw new RuntimeException("Error: unknown object of name: " + oname);
         }
         cachedObjectList = null;
         return this;

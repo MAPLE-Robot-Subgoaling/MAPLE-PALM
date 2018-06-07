@@ -31,6 +31,22 @@ public class PossibleOutcome {
         this.stepsTakenToRewardTotal = new HashMap<Integer, Double>();
     }
 
+    public double getExpectedNumberOfSteps() {
+        double expected = 0.0;
+        double totalTranstions = 0.0;
+        for (Integer stepsTaken : stepsTakenToTransitionCount.keySet()) {
+            Integer occurrence = stepsTakenToTransitionCount.get(stepsTaken);
+            expected += stepsTaken * occurrence;
+            totalTranstions += occurrence;
+        }
+        if (totalTranstions < 1) {
+            return 1.0;
+        }
+        double estimate = expected / totalTranstions;
+        double limit = Math.max(1.0, estimate); // can never have smaller than 1.0 step
+        return limit;
+    }
+
     public EnvironmentOutcome getOutcome() {
         return outcome;
     }
@@ -209,4 +225,7 @@ public class PossibleOutcome {
         return out;
     }
 
+    public boolean isVisitedAtLeastOnce() {
+        return this.stepsTakenToTransitionCount.keySet().size() > 0;
+    }
 }

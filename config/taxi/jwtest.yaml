@@ -1,35 +1,37 @@
 domain: !!config.taxi.TaxiConfig
-  state: classic-2passengers
+  state: mehta-zigzag-1
   correct_move: 1.0
   fickle: 0.0
 
 agents:
   - palmExpert
+  - palmHiergen
+#  - expStepsExpert
+#  - expStepsHierGen
 
-episodes: 100
-max_steps: 500
+episodes: 300
+max_steps: 1000
 trials: 1
-gamma: 0.99
+gamma: 0.90
 
-seed: 3727891
+seed: 173412
 
 planning:
   rollouts: 1000
 
 rmax:
   vmax: 1.0
-  threshold: 10
-  max_delta: 0.0001
+  threshold: 5
+  max_delta: 0.0000001
   max_delta_rmaxq: 0.0001
   max_iterations_in_model: 1000
   use_multitime_model: true
   wait_for_children: true
 
-
 output:
   csv:
     enabled: true
-    output: results/pex-classic-2-gpgp-chain.csv
+    output: results/pex-classic.csv
 
   chart:
     enabled: true
