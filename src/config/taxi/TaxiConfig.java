@@ -51,7 +51,7 @@ public class TaxiConfig extends DomainConfig {
             case "3depots-2passengers":
                 return TaxiStateFactory.createThreeDepots(2);
             case "mehta-zigzag-1":
-                return TaxiStateFactory.createMehtaZigZag1State(2);
+                return TaxiStateFactory.createMehtaZigZag1State(1);
             case "mehta-zigzag-2":
                 return TaxiStateFactory.createMehtaZigZag2State(2);
             default:
