@@ -1,9 +1,13 @@
 package rmaxq.agent;
 
+import burlap.debugtools.RandomFactory;
+import burlap.mdp.core.state.State;
 import burlap.statehashing.HashableState;
 import hierarchy.framework.GroundedTask;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class RMAXQStateData {
@@ -15,7 +19,6 @@ public class RMAXQStateData {
 
     //P^a(s, s') for non-primitive tasks
     private HashMap<HashableState, HashMap<Integer, Double>> storedTransitionsBySteps;
-    private HashMap<HashableState, Double> storedExpectedProbability;
 
     // V(s)
     private Double storedValue;
@@ -43,7 +46,6 @@ public class RMAXQStateData {
         this.taskData = taskData;
         this.task = task;
         this.hs = hs;
-        this.storedExpectedProbability = new HashMap<>();
         this.storedTransitionsBySteps = new HashMap<>();
         this.storedQValues = new HashMap<>();
         this.totalTransitionCount = new HashMap<>();
@@ -65,6 +67,9 @@ public class RMAXQStateData {
 //        this.storedReward = storedReward;
 //    }
     public void setStoredReward(HashableState hsPrime, double reward) {
+        if (Double.isNaN(reward)) {
+            System.out.println("NaN reward");
+        }
         this.storedReward.put(hsPrime,reward);
     }
 
@@ -80,21 +85,6 @@ public class RMAXQStateData {
                 return 0.0;
             }
             return probability;
-//        } else {
-//            Map<Integer,Double> map = storedTransitionsBySteps.get(hsPrime);
-//            if (map == null) {
-//                return 0.0;
-//            }
-//            Double probability = map.get(k);
-//            if (probability == null) {
-//                probability = 0.0;
-//            }
-//            return probability;
-//        }
-    }
-
-    public void setStoredTransitionsBySteps(HashMap<HashableState, HashMap<Integer, Double>> storedTransitionsBySteps) {
-        this.storedTransitionsBySteps = storedTransitionsBySteps;
     }
 
     public Double getStoredValue() {
@@ -177,30 +167,30 @@ public class RMAXQStateData {
         storedQValues.put(childTask, newQ);
     }
 
-    public void setStoredExpectedProbability(HashableState hsX, double newP) {
-        storedExpectedProbability.put(hsX, newP);
-    }
-
-    public HashMap<HashableState, Double> getStoredExpectedProbability() {
-        return storedExpectedProbability;
-    }
-
-    public void setStoredExpectedProbability(HashMap<HashableState, Double> storedExpectedProbability) {
-        this.storedExpectedProbability = storedExpectedProbability;
-    }
-
-    public double getStoredExpectedProbability(HashableState hsPrime, boolean initialize) {
-        Double probability;
-        if (initialize) {
-            probability = storedExpectedProbability.computeIfAbsent(hsPrime, i -> 0.0);
-        } else {
-            probability = storedExpectedProbability.get(hsPrime);
-            if (probability == null) {
-                probability = 0.0;
-            }
-        }
-        return probability;
-    }
+//    public void setStoredExpectedProbability(HashableState hsX, double newP) {
+//        storedExpectedProbability.put(hsX, newP);
+//    }
+//
+//    public HashMap<HashableState, Double> getStoredExpectedProbability() {
+//        return storedExpectedProbability;
+//    }
+//
+//    public void setStoredExpectedProbability(HashMap<HashableState, Double> storedExpectedProbability) {
+//        this.storedExpectedProbability = storedExpectedProbability;
+//    }
+//
+//    public double getStoredExpectedProbability(HashableState hsPrime, boolean initialize) {
+//        Double probability;
+//        if (initialize) {
+//            probability = storedExpectedProbability.computeIfAbsent(hsPrime, i -> 0.0);
+//        } else {
+//            probability = storedExpectedProbability.get(hsPrime);
+//            if (probability == null) {
+//                probability = 0.0;
+//            }
+//        }
+//        return probability;
+//    }
 
     public RMAXQTaskData getTaskData() {
         return taskData;
@@ -213,4 +203,41 @@ public class RMAXQStateData {
     public HashableState getHs() {
         return hs;
     }
+
+    @Override
+    public String toString() {
+        return task.toString() + " " + hs.hashCode();
+    }
+
+    public void setStoredPolicy() {
+        List<GroundedTask> childTasks = this.getTask().getGroundedChildTasks(getMappedState());
+        double maxQ = Double.NEGATIVE_INFINITY;
+        List<GroundedTask> maxChildTasks = new ArrayList<>();
+        for (GroundedTask childTask : childTasks) {
+            double qValue = getQValue(childTask);
+            if (qValue > maxQ) {
+                maxQ = qValue;
+                maxChildTasks.clear();
+                maxChildTasks.add(childTask);
+            } else if (qValue == maxQ) {
+                maxChildTasks.add(childTask);
+            }
+        }
+        int size = maxChildTasks.size();
+        int bound = RandomFactory.getMapped(0).nextInt(size);
+        // get a random child task among the equally good actions
+        GroundedTask maxChildTask = maxChildTasks.get(bound);
+        setStoredPolicyAction(maxChildTask);
+    }
+
+    private HashMap<GroundedTask, HashMap<HashableState, State>> cachedStateMapping = new HashMap<>();
+    public State getMappedState() {
+        GroundedTask task = this.getTask();
+        HashableState hs = this.getHs();
+        Map<HashableState, State> stateMapping = cachedStateMapping.computeIfAbsent(task, i -> new HashMap<>());
+        State s = stateMapping.computeIfAbsent(hs, i -> task.mapState(hs.s()));
+        return s;
+//		return task.mapState(hs.s());
+    }
+
 }
