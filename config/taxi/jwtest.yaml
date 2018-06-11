@@ -1,20 +1,17 @@
 domain: !!config.taxi.TaxiConfig
-  state: classic-2passengers
+  state: small
   correct_move: 1.0
   fickle: 0.0
 
 agents:
-#  - palmExpert
-  - palmHiergen
-  - expStepsExpert
-  - expStepsHierGen
+  - rmaxq
 
 episodes: 300
 max_steps: 1000
 trials: 1
 gamma: 0.90
 
-seed: 173412
+seed: 5320
 
 planning:
   rollouts: 1000

@@ -223,8 +223,8 @@ public class RmaxQLearningAgent implements LearningAgent {
         allGroundStates.add(hsPrime);
         double newReward = outcome.r;
 
-        //r(s,a) += r
-        updateTotalReward(taskStatePair, newReward);
+        //r(s,a,s') += r
+        updateTotalReward(taskStatePair, hsPrime, newReward);
 
         //n(s,a) ++
         incrementStateActionCount(taskStatePair);
@@ -317,19 +317,22 @@ public class RmaxQLearningAgent implements LearningAgent {
     private void computeModelPrimitive(RMAXQStateData taskStatePair) {
         int stateActionCount = taskStatePair.getStateActionCount();
         if (stateActionCount >= threshold) {
-            setReward_eq6(taskStatePair);
             for (HashableState hsPrime : allGroundStates) {
+                setReward_eq6(taskStatePair, hsPrime);
                 setTransitionProbability_eq7(taskStatePair, hsPrime);
             }
         }
     }
 
-    // R^a(s) <- r(s,a) / n(s,a)
-    private void setReward_eq6(RMAXQStateData taskStatePair) {
-        int stateActionCount = taskStatePair.getStateActionCount();
-        double totalReward =  taskStatePair.getTotalReward();
-        double approximateReward = totalReward / (1.0 * stateActionCount);
-        taskStatePair.setStoredReward(approximateReward);
+    // R^a(s,s') <- r(s,a,s') / n(s,a,s')
+    private void setReward_eq6(RMAXQStateData taskStatePair, HashableState hsPrime) {
+//        int stateActionCount = taskStatePair.getStateActionCount();
+        Map<HashableState,Integer> transitions = taskStatePair.getTotalTransitionCount();
+        int stateActionSPrimeCount = transitions.containsKey(hsPrime) ? transitions.get(hsPrime) : 0;
+        double totalReward =  taskStatePair.getTotalReward(hsPrime);
+//        double approximateReward = totalReward / (1.0 * stateActionCount);
+        double approximateReward = totalReward / (1.0 * stateActionSPrimeCount);
+        taskStatePair.setStoredReward(hsPrime, approximateReward);
     }
 
     // P^a(s,sPrime) <- n(s,a,sPrime) / n(s,a)
@@ -360,9 +363,21 @@ public class RmaxQLearningAgent implements LearningAgent {
         return value;
     }
 
-    private double getStoredReward(RMAXQStateData taskStatePair) {
-        double reward = taskStatePair.getStoredReward();
-        return reward;
+//    private double getStoredReward(RMAXQStateData taskStatePair, HashableState hsPrime) {
+//        double reward = taskStatePair.getStoredReward(hsPrime);
+//        return reward;
+//    }
+
+    private double getExpectedReward(RMAXQStateData taskStatePair) {
+        Map<HashableState, Double> hsPrimesToProbs = taskStatePair.getStoredExpectedProbability();
+        double total = 0.0;
+        for (HashableState hsPrime : hsPrimesToProbs.keySet()) {
+            double prob = hsPrimesToProbs.get(hsPrime);
+            double reward = taskStatePair.getStoredReward(hsPrime);
+            double probReward = prob * reward;
+            total += probReward;
+        }
+        return total;
     }
 
     private Map<HashableState, HashMap<Integer, Double>> getStoredTransitions(GroundedTask task, HashableState hs) {
@@ -450,15 +465,21 @@ public class RmaxQLearningAgent implements LearningAgent {
         return maxDelta;
     }
 
+
+    // compute the expected reward
     private double setR_eq4(RMAXQStateData taskStatePair) {
 
         // get the action (child / subtask) that would be selected by policy
         GroundedTask childTask = getStoredPolicy(taskStatePair);
         HashableState hs = taskStatePair.getHs();
         RMAXQStateData childTaskStatePair = getStateData(childTask, hs);
-        double childReward = getStoredReward(childTaskStatePair);
 
-        //now compute the expected reward
+        double oldExpectedReward = getExpectedReward(taskStatePair);
+
+        // now compute the expected reward
+        // IMPORTANT:
+        // since we are using R(s,a,s') instead of R(s,a)
+        // you must do SUM P (ChildReward + ParentExpectedReward)
         Set<HashableState> hsPrimes = new HashSet<>(taskStatePair.getStoredTransitionsBySteps().keySet());//allGroundStates;//getHSPrimes(task, hs);
         double expectedReward = 0.0;
         for (HashableState hsPrime : hsPrimes) {
@@ -466,16 +487,27 @@ public class RmaxQLearningAgent implements LearningAgent {
             if (isTerminal(taskHsPrime)) {
                 continue;
             }
+
             double childTransitionProbability = getStoredExpectedProbability(childTaskStatePair, hsPrime);
-            double parentReward = getStoredReward(taskHsPrime);
-            expectedReward += childTransitionProbability * parentReward;
+            double childReward = childTaskStatePair.getStoredReward(hsPrime);
+            double parentExpectedReward = getExpectedReward(taskHsPrime);
+
+            double innerTerm = childReward + parentExpectedReward;
+            double probScaledReward = childTransitionProbability * innerTerm;
+
+            // store the reward for doing this s'
+            taskStatePair.setStoredReward(hsPrime, probScaledReward);
+
+            expectedReward += probScaledReward;
         }
 
-        // get the old reward, store the new reward, compute the delta
-        double oldRewardForTaskInState = getStoredReward(taskStatePair);
-        double rewardForTaskInState = childReward + expectedReward;
-        taskStatePair.setStoredReward(rewardForTaskInState);
-        double delta = Math.abs(rewardForTaskInState - oldRewardForTaskInState);
+        if (expectedReward > 1.0 || expectedReward < 1.0) {
+            System.err.println("Warning: expectedReward is outside [-1.0, 1.0], possible error?");
+        }
+
+        // compare the old expected reward to the new one, compute the delta
+
+        double delta = Math.abs(expectedReward - oldExpectedReward);
         return delta;
     }
 
@@ -516,10 +548,10 @@ public class RmaxQLearningAgent implements LearningAgent {
         return delta;
     }
 
-    private void updateTotalReward(RMAXQStateData primitiveActionState, double reward) {
-        double totalReward = primitiveActionState.getTotalReward();
+    private void updateTotalReward(RMAXQStateData primitiveActionState, HashableState hsPrime, double reward) {
+        double totalReward = primitiveActionState.getTotalReward(hsPrime);
         totalReward = totalReward + reward;
-        primitiveActionState.setTotalReward(totalReward);
+        primitiveActionState.setTotalReward(hsPrime, totalReward);
     }
 
     private void incrementStateActionCount(RMAXQStateData primitiveActionState) {
@@ -562,7 +594,7 @@ public class RmaxQLearningAgent implements LearningAgent {
         double oldQ = getStoredQ(taskStatePair, childTask);
 
         RMAXQStateData childTaskStatePair = getStateData(childTask, hs);
-        double childReward = getStoredReward(childTaskStatePair);
+        double childReward = getExpectedReward(childTaskStatePair);
 
         Map<HashableState, HashMap<Integer,Double>> childTransitions = getStoredTransitions(childTask, hs);
 

@@ -11,7 +11,7 @@ public class RMAXQStateData {
     public static double DEFAULT_INITIAL_Q_VALUE = 0.0;
 
     //R^a(s) for non-primitive tasks
-    private Double storedReward;
+    private HashMap<HashableState, Double> storedReward;
 
     //P^a(s, s') for non-primitive tasks
     private HashMap<HashableState, HashMap<Integer, Double>> storedTransitionsBySteps;
@@ -32,8 +32,8 @@ public class RMAXQStateData {
     //n(s,a,s')
     private HashMap<HashableState, Integer> totalTransitionCount;
 
-    //r(s,a)
-    private Double totalReward;
+    //r(s,a,s')
+    private Map<HashableState,Double> totalReward;
 
     private final RMAXQTaskData taskData;
     private final GroundedTask task;
@@ -49,18 +49,23 @@ public class RMAXQStateData {
         this.totalTransitionCount = new HashMap<>();
         this.storedValue = initialValue;
         this.storedPolicyAction = null;
-        this.totalReward = 0.0;
-        this.storedReward = 0.0;
+        this.totalReward = new HashMap<>();
+        this.storedReward = new HashMap<>();
         this.stateActionCount = 0;
 
     }
 
-    public Double getStoredReward() {
-        return storedReward;
+//    public Map<HashableState, Double> getStoredReward() {
+//        return storedReward;
+//    }
+    public double getStoredReward(HashableState hsPrime) {
+        return storedReward.containsKey(hsPrime) ? storedReward.get(hsPrime) : 0.0;
     }
-
-    public void setStoredReward(Double storedReward) {
-        this.storedReward = storedReward;
+//    public void setStoredReward(HashMap<HashableState,Double> storedReward) {
+//        this.storedReward = storedReward;
+//    }
+    public void setStoredReward(HashableState hsPrime, double reward) {
+        this.storedReward.put(hsPrime,reward);
     }
 
     public HashMap<HashableState, HashMap<Integer, Double>> getStoredTransitionsBySteps() {
@@ -132,12 +137,12 @@ public class RMAXQStateData {
         this.totalTransitionCount = totalTransitionCount;
     }
 
-    public Double getTotalReward() {
-        return totalReward;
+    public Double getTotalReward(HashableState hsPrime) {
+        return totalReward.computeIfAbsent(hsPrime, k -> 0.0);
     }
 
-    public void setTotalReward(Double totalReward) {
-        this.totalReward = totalReward;
+    public void setTotalReward(HashableState hsPrime, Double totalReward) {
+        this.totalReward.put(hsPrime, totalReward);
     }
 
     public void setStoredTransitionsBySteps(HashableState hsPrime, double probability, int k) {
