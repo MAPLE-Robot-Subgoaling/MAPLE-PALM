@@ -1,15 +1,17 @@
 domain: !!config.taxi.TaxiConfig
-  state: classic-2passengers
+  state: mehta-zigzag-1
   correct_move: 1.0
   fickle: 0.04
 
 agents:
   - palmExpert
-#  - rmaxq
+  - palmHiergen
 
-episodes: 30
+# - rmaxq
+
+episodes: 100
 max_steps: 2000
-trials: 1
+trials: 5
 gamma: 0.99
 
 seed: 7543221
