@@ -15,7 +15,7 @@ public class LiftCopterStateFactory {
     }
 
     public static LiftCopterState createClassicState(int numPassengers){
-        LiftCopterAgent taxi = new LiftCopterAgent(CLASS_AGENT + 0, 0,3);
+        LiftCopterAgent taxi = new LiftCopterAgent(CLASS_AGENT + 0, 0.25,3.25, .5, .5);
 
         List<LiftCopterLocation> locations = new ArrayList<LiftCopterLocation>();
         locations.add(new LiftCopterLocation(CLASS_LOCATION + 0, .5D, 4.5,1,1, COLOR_RED));
@@ -49,13 +49,13 @@ public class LiftCopterStateFactory {
         }
 
         List<LiftCopterWall> walls = new ArrayList<LiftCopterWall>();
-        walls.add(new LiftCopterWall(CLASS_WALL + 0, 0, 0, 0, 5));
-        walls.add(new LiftCopterWall(CLASS_WALL + 1, 0, 0, 5, 0));
-        walls.add(new LiftCopterWall(CLASS_WALL + 2, 5, 0, 0, 5));
-        walls.add(new LiftCopterWall(CLASS_WALL + 3, 0, 5, 5, 0));
-        walls.add(new LiftCopterWall(CLASS_WALL + 4, 1, 0, 0, 2));
-        walls.add(new LiftCopterWall(CLASS_WALL + 5, 3, 0, 0, 1));
-        walls.add(new LiftCopterWall(CLASS_WALL + 6, 2, 3, 0, 2));
+        walls.add(new LiftCopterWall(CLASS_WALL + 0, 0, 0, 0.1, 5));
+        walls.add(new LiftCopterWall(CLASS_WALL + 1, 0, 0, 5, 0.1));
+        walls.add(new LiftCopterWall(CLASS_WALL + 2, 4.9, 0, 0.1, 5));
+        walls.add(new LiftCopterWall(CLASS_WALL + 3, 0, 4.9, 5, 0.1));
+        walls.add(new LiftCopterWall(CLASS_WALL + 4, 1, 0, 0.1, 2));
+        walls.add(new LiftCopterWall(CLASS_WALL + 5, 3, 0, 0.1, 2));
+        walls.add(new LiftCopterWall(CLASS_WALL + 6, 2, 3, 0.1, 2));
 
         return new LiftCopterState(taxi, cargos, locations, walls);
     }

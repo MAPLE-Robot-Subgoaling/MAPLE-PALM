@@ -13,18 +13,21 @@ public class LiftCopterAgent extends MutableObject {
             ATT_X,
             ATT_Y,
             ATT_VX,
-            ATT_VY
+            ATT_VY,
+            ATT_H,
+            ATT_W
     );
 
-    public LiftCopterAgent(String name, double x, double y) {
-        this(name, x, y, 0.0, 0.0);
+    public LiftCopterAgent(String name, double x, double y, double h, double w) {
+        this(name, x, y, 0.0, 0.0, h, w);
     }
-    public LiftCopterAgent(String name, double x, double y, double vx, double vy) {
+    public LiftCopterAgent(String name, double x, double y, double vx, double vy, double h, double w) {
         this.set(ATT_X, x);
         this.set(ATT_Y, y);
         this.set(ATT_VX, vx);
         this.set(ATT_VY, vy);
-
+        this.set(ATT_H, h);
+        this.set(ATT_W, w);
         this.setName(name);
     }
 
@@ -45,7 +48,9 @@ public class LiftCopterAgent extends MutableObject {
                 (Double) get(ATT_X),
                 (Double) get(ATT_Y),
                 (Double) get(ATT_VX),
-                (Double) get(ATT_VY)
+                (Double) get(ATT_VY),
+                (Double) get(ATT_H),
+                (Double) get(ATT_W)
         );
     }
 

@@ -6,6 +6,9 @@ import burlap.mdp.core.oo.state.ObjectInstance;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.model.RewardFunction;
 import liftCopter.state.LiftCopterState;
+
+import java.util.List;
+
 import static liftCopter.LiftCopterConstants.*;
 
 public class LiftCopterRewardFunction implements RewardFunction {
@@ -60,8 +63,35 @@ public class LiftCopterRewardFunction implements RewardFunction {
         LiftCopterState state = (LiftCopterState) s;
 
         //goal rewardTotal when state is terminal
-        if (tf.isTerminal(sprime))
-            return goalReward + stepReward;
+        if (tf.isTerminal(sprime)){
+            boolean isCrash = false;
+            List<ObjectInstance> walls = state.objectsOfClass(CLASS_WALL);
+            double ax = (double) state.getCopter().get(ATT_X);
+            double ay = (double) state.getCopter().get(ATT_Y);
+            double ah = (double) state.getCopter().get(ATT_H);
+            double aw = (double) state.getCopter().get(ATT_W);
+            for(ObjectInstance wall: walls){
+                double ww = (double) wall.get(ATT_WIDTH);
+                double wh = (double) wall.get(ATT_HEIGHT);
+                double wx = (double) wall.get(ATT_START_X);
+                double wy = (double) wall.get(ATT_START_Y);
+
+                if (wx < ax + aw &&
+                        ww + ww > ax &&
+                        wy < ay + ah &&
+                        wy+wh > ay) {
+                    isCrash = true;
+                    break;
+                }
+            }
+            if(!isCrash){
+                return goalReward + stepReward;
+            }else{
+                return stepReward;
+            }
+
+        }
+
 
 //		boolean LiftCopterOccupied = (boolean) state.getLiftCopterAtt(ATT_LiftCopter_OCCUPIED);
         boolean LiftCopterOccupied = state.isLiftCopterOccupied();

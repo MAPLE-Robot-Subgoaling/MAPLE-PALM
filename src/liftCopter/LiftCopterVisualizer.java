@@ -69,13 +69,13 @@ public class LiftCopterVisualizer {
             double tx = (double) copter.get(ATT_X);
             double ty = (double) copter.get(ATT_Y);
             float taxix = (float)tx * taxiWidth - cellsWide;
-            float taxiy = (float)(cHeight - (1 + ty) * taxiHeight);
+            float taxiy = (float)(cHeight - (.5 + ty) * taxiHeight);
 
-            float scale = 0.9f;
+            float scale = 0.5f;
             float realWidth = taxiWidth * scale;
             float realHeight = taxiHeight * scale;
-            float realX = taxix + 0.08f * taxiWidth;
-            float realy = taxiy + 0.05f * taxiHeight;
+            float realX = taxix;
+            float realy = taxiy;
 
             g2.fill(new Ellipse2D.Float(realX, realy, realWidth, realHeight));
         }
@@ -173,15 +173,16 @@ public class LiftCopterVisualizer {
             float wallHeight = (float) cHeight / cellsTall;
 
             LiftCopterWall w = (LiftCopterWall) ob;
+            float wh, ww;
+            ww = (float)((double) w.get(ATT_WIDTH) * wallWidth);
+            wh = (float)((double) w.get(ATT_HEIGHT) * wallHeight);
             double startx = (double) w.get(ATT_START_X);
             double starty = (double) w.get(ATT_START_Y);
             float wx1 = (float)startx * wallWidth;
-            float wy1 = (float)(cHeight - starty * wallHeight);
-            float wx2, wy2;
-            wx2 = wx1 + (float)((double) w.get(ATT_WIDTH) * wallWidth);
-            wy2 = wy1 - (float)((double) w.get(ATT_HEIGHT) * wallHeight);
+            float wy1 = (float)( cHeight - (starty * wallHeight)-wh);
 
-            g2.drawLine((int) wx1, (int) wy1, (int) wx2, (int) wy2);
+
+            g2.fillRect((int) wx1, (int) wy1, (int)ww, (int)wh );
         }
     }
 }

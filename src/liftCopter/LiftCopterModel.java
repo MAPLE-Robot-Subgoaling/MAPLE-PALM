@@ -164,18 +164,20 @@ public class LiftCopterModel implements FullStateModel{
         LiftCopterAgent agent = s.touchCopter();
         double x = (double)agent.get(ATT_X);
         double y = (double)agent.get(ATT_Y);
+        double h = (double)agent.get(ATT_H);
+        double w = (double)agent.get(ATT_W);
         double vx = (double)agent.get(ATT_VX);
         double vy = (double)agent.get(ATT_VY);
         double tx = Math.cos(direction) * thrust;
         double ty = Math.sin(direction) * thrust;
-        System.out.println(tx+","+ty);
+//        System.out.println(tx+","+ty);
         double nx = x + vx * ti + 0.5D * tx * tt;
         double ny = y + vy * ti + 0.5D * ty * tt;
         double nvx = vx + tx * ti;
         double nvy = vy + ty * ti;
-        System.out.println("Updating Motion: \n " +
-                "\t old State: Coords: ("+x +","+y +") velocity: ("+vx +","+vy +") \n" +
-                "\t new State: Coords: ("+nx+","+ny+") velocity: ("+nvx+","+nvy+")");
+//        System.out.println("Updating Motion: \n " +
+//                "\t old State: Coords: ("+x +","+y +") velocity: ("+vx +","+vy +") \n" +
+//                "\t new State: Coords: ("+nx+","+ny+") velocity: ("+nvx+","+nvy+")");
 
         if (nvx > PHYS_MAX_VX) {
             nvx = PHYS_MAX_VX;
@@ -187,45 +189,6 @@ public class LiftCopterModel implements FullStateModel{
             nvy = PHYS_MAX_VY;
         } else if (nvy < -PHYS_MAX_VY) {
             nvy = -PHYS_MAX_VY;
-        }
-
-        List<ObjectInstance> walls = s.objectsOfClass(CLASS_WALL);
-        for(ObjectInstance wall: walls){
-            double width = (double) wall.get(ATT_WIDTH);
-            double height = (double) wall.get(ATT_HEIGHT);
-            double wallX = (double) wall.get(ATT_START_X);
-            double wallY = (double) wall.get(ATT_START_Y);
-            double l = wallX;
-            double r = wallX + width;
-            double b = wallY;
-            double t = wallY + height;
-
-            if(height == 0){
-                double slope = (ny-y)/(nx-x);
-                double xint = y-(slope*x);
-                double intercept =  (t-xint)/slope;
-                if (intercept >= l && intercept <= r){
-                    System.out.println("Collision at: ("+intercept+","+t+")");
-                    nx = intercept;
-                    ny = t;
-                    nvx = 0.0D;
-                    nvy = 0.0D;
-                }
-                break;
-            }else if(width == 0){
-                double slope = (ny-y)/(nx-x);
-                double intercept = slope * l + (y-(slope*x));
-                if (intercept >=b && intercept <=t){
-                    System.out.println("Collision at: ("+l+","+intercept+")");
-                    nx = l;
-                    ny = intercept;
-                    nvx = 0.0D;
-                    nvy = 0.0D;
-                }
-                break;
-            }
-
-
         }
 
         agent.set(ATT_X, nx);
