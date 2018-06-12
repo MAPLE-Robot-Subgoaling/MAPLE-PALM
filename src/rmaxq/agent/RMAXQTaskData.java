@@ -77,4 +77,5 @@ public class RMAXQTaskData {
     public void setComputedPolicy(boolean computedPolicy) {
         this.computedPolicy = computedPolicy;
     }
+
 }

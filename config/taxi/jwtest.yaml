@@ -9,7 +9,7 @@ agents:
 episodes: 300
 max_steps: 10000
 trials: 1
-gamma: 1.0
+gamma: 0.9
 
 seed: 5320
 

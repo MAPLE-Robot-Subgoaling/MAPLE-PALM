@@ -209,6 +209,9 @@ public class IDCachedHashableState extends WrappedHashableState {
         return v1.equals(v2);
     }
 
-
+    @Override
+    public String toString() {
+        return Integer.toString(hashVal);
+    }
 
 }

@@ -285,7 +285,12 @@ public class TaxiState implements MutableOOState, DeepCopyForShallowCopyState {
 
     @Override
     public String toString(){
-        return OOStateUtilities.ooStateToString(this);
+        String out = "Tx:"+taxi.get(ATT_X)+" Ty:"+taxi.get(ATT_Y)+", ";
+        for (TaxiPassenger passenger : passengers.values()) {
+            out += passenger.name()+" Px"+passenger.get(ATT_X)+" Py"+passenger.get(ATT_Y)+" inT?"+passenger.get(ATT_IN_TAXI);
+        }
+        return out;
+//        return OOStateUtilities.ooStateToString(this);
     }
 
     // determine if at least one passenger is in the taxi
