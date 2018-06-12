@@ -9,8 +9,6 @@ import java.util.Set;
 
 public class RMAXQTaskData {
 
-    protected double initialValue;
-
     protected final GroundedTask task;
 
     protected HashMap<HashableState, RMAXQStateData> stateDataMap;
@@ -25,13 +23,19 @@ public class RMAXQTaskData {
     // the possible number of primitive actions that this task may be executed over
     private Set<Integer> possibleK;
 
-    public RMAXQTaskData(GroundedTask task, double initialValue) {
+    private double gamma;
+
+    public RMAXQTaskData(GroundedTask task, double gamma) {
         this.task = task;
         this.stateDataMap = new HashMap<>();
         this.envelope = new HashSet<>();
         this.taskTimesteps = 0;
         this.possibleK = new HashSet<>();
-        this.initialValue = initialValue;
+        this.gamma = gamma;
+    }
+
+    public double getGamma() {
+        return gamma;
     }
 
     public void clearTimesteps() {
@@ -59,7 +63,17 @@ public class RMAXQTaskData {
     }
 
     public RMAXQStateData getStateData(HashableState hs) {
-        return this.stateDataMap.computeIfAbsent(hs, t -> new RMAXQStateData(this, this.task, hs, initialValue));
+        return this.stateDataMap.computeIfAbsent(hs, t ->
+        {
+            RMAXQStateData stateData;
+            if (this.task.isPrimitive()) {
+                stateData = new PrimitiveData(this, hs);
+            } else {
+                stateData = new AbstractData(this, hs);
+            }
+            return stateData;
+
+        });
     }
 
     public Set<Integer> getPossibleK() {

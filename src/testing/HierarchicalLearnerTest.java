@@ -84,7 +84,7 @@ public class HierarchicalLearnerTest {
         for(int i = 1; i <= conf.episodes; i++){
             Episode e = rmaxq.runLearningEpisode(env, conf.max_steps);
             episodes.add(e);
-            System.out.println("Episode " + i + " time " + rmaxq.getActualTimeElapsed() / 1000.0);
+//            System.out.println("Episode " + i + " time " + rmaxq.getActualTimeElapsed() / 1000.0);
             env.resetEnvironment();
         }
 

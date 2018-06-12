@@ -2,18 +2,15 @@ package rmaxq.agent;
 
 import burlap.behavior.singleagent.Episode;
 import burlap.behavior.singleagent.learning.LearningAgent;
-import burlap.debugtools.RandomFactory;
 import burlap.mdp.core.action.Action;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.environment.Environment;
 import burlap.mdp.singleagent.environment.EnvironmentOutcome;
 import burlap.statehashing.HashableState;
 import burlap.statehashing.HashableStateFactory;
-import burlap.statehashing.simple.SimpleHashableStateFactory;
 import hierarchy.framework.GroundedTask;
 import state.hashing.simple.CachedHashableStateFactory;
 
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class RmaxQLearningAgent implements LearningAgent {
@@ -31,14 +28,12 @@ public class RmaxQLearningAgent implements LearningAgent {
     private GroundedTask rootSolve;
     private HashableStateFactory hashingFactory;
     private double gamma;
-    private double discountPrimitive;
     private double vMax;
     private Environment env;
     private State initialState;
-    //	private List<HashableState> reachableStates = new ArrayList<HashableState>();
-    private long actualTimeElapsed = 0;
     private int numberPrimitivesExecuted;
-    private HashMap<GroundedTask, RMAXQTaskData> taskDataMap;
+    private LinkedHashMap<GroundedTask, RMAXQTaskData> taskDataMap;
+    private LinkedHashSet<RMAXQStateData> allStateData;
 
     public RmaxQLearningAgent(GroundedTask rootSolve, HashableStateFactory hs, State initState, double vMax, double gamma, int threshold, double maxDeltaInPolicy, double maxDeltaInModel, int maxIterationsInModel) {
         this.rootSolve = rootSolve;
@@ -46,17 +41,13 @@ public class RmaxQLearningAgent implements LearningAgent {
         this.initialState = initState;
         this.vMax = vMax;
         this.gamma = gamma;
-        this.discountPrimitive = Math.pow(gamma, 1);
         this.threshold = threshold;
         this.maxDeltaInPolicy = maxDeltaInPolicy;
         this.maxDeltaInModel = maxDeltaInModel;
         this.maxIterationsInModel = maxIterationsInModel;
-        this.allGroundStates = new HashSet<>();
-        this.taskDataMap = new HashMap<>();
-    }
-
-    public long getActualTimeElapsed() {
-        return actualTimeElapsed;
+        this.allGroundStates = new LinkedHashSet<>();
+        this.allStateData = new LinkedHashSet<>();
+        this.taskDataMap = new LinkedHashMap<>();
     }
 
     @Override
@@ -78,41 +69,47 @@ public class RmaxQLearningAgent implements LearningAgent {
             taskDataMap.get(task).clearTimesteps();
         }
 
-        //for a chart of runtime
-        long startTime = System.nanoTime();
-
-        actualTimeElapsed = System.currentTimeMillis();
-        SimpleDateFormat sdf = new SimpleDateFormat("MMM dd,yyyy HH:mm:ss");
-        Date resultdate = new Date(actualTimeElapsed);
-        System.out.println(sdf.format(resultdate));
         HashableState hs = hashingFactory.hashState(env.currentObservation());
         RMAXQStateData taskStatePair = getStateData(rootSolve, hs);
-        e = R_MaxQ(taskStatePair, e, maxSteps);
+        e = doRmaxq(taskStatePair, e, maxSteps);
 
-        //to see the number of actions
-        System.out.println("Number of actions in episode: " + e.numActions());
-
-        //for a chart of runtime
-        long estimatedTime = System.nanoTime() - startTime;
-        System.out.println("Estimated RMAXQ episode nano time: " + estimatedTime);
-
-        actualTimeElapsed = System.currentTimeMillis() - actualTimeElapsed;
-        System.out.println("Clock time elapsed: " + actualTimeElapsed);
+//        printDebug();
 
         return e;
     }
 
+//    private void printDebug() {
+////        for (GroundedTask task : this.taskDataMap.keySet()) {
+////            System.out.println(task);
+////            RMAXQTaskData taskData = getTaskData(task);
+////            for (HashableState hs : allGroundStates) {
+////                RMAXQStateData stateData = getStateData(task, hs);
+//        for (RMAXQStateData stateData : allStateData) {
+//            HashableState hs = stateData.getHs();
+//            System.out.println(hs.s());
+//            Object rewardBySteps = stateData.getStoredRewardBySteps();
+//            Object stateActionCount = stateData.getStateActionCount();
+//            Object storedExpectedTransitionProbability = stateData.getStoredExpectedTransitionProbability();
+//            Object storedTransitionsBySteps = stateData.getStoredTransitionsBySteps();
+//            Object storedExpectedReward = stateData.getStoredExpectedReward();
+//            Object storedQValues = stateData.getStoredQValues();
+//            Object totalReward = stateData.getTotalReward();
+//            Object cachedStateMapping = stateData.getCachedStateMapping();
+//            System.out.println("debug");
+//        }
+//    }
+
     private String tabLevel = "";
 
-    protected Episode R_MaxQ(RMAXQStateData taskStatePair, Episode e, int maxSteps) {
+    protected Episode doRmaxq(RMAXQStateData taskStatePair, Episode e, int maxSteps) {
 
-        RMAXQStateData currentTaskStatePair = taskStatePair;
-        HashableState currentState = currentTaskStatePair.getHs();
 
         if (taskStatePair.getTask().isPrimitive()) {
             e = executePrimitive(e, taskStatePair);
             return e;
         } else {
+            AbstractData currentTaskStatePair = (AbstractData) taskStatePair;
+            HashableState currentState = currentTaskStatePair.getHs();
             do {
 
                 System.out.println(tabLevel+"doing " + currentTaskStatePair.toString());
@@ -125,7 +122,7 @@ public class RmaxQLearningAgent implements LearningAgent {
                 int stepsBefore = numberPrimitivesExecuted;
                 RMAXQStateData childTaskStatePair = getStateData(childTask, currentState);
                 tabLevel += "\t";
-                e = R_MaxQ(childTaskStatePair, e, maxSteps);
+                e = doRmaxq(childTaskStatePair, e, maxSteps);
                 tabLevel = tabLevel.substring(0,tabLevel.length()-1);
 
                 int stepsAfter = numberPrimitivesExecuted;
@@ -135,7 +132,7 @@ public class RmaxQLearningAgent implements LearningAgent {
 
                 State s = e.stateSequence.get(e.stateSequence.size() - 1);
                 currentState = hashingFactory.hashState(s);
-                currentTaskStatePair = getStateData(currentTaskStatePair.getTask(), currentState);
+                currentTaskStatePair = (AbstractData) getStateData(currentTaskStatePair.getTask(), currentState);
                 addToEnvelope(currentTaskStatePair);
             } while (
                     !isTerminal(currentTaskStatePair)
@@ -148,11 +145,11 @@ public class RmaxQLearningAgent implements LearningAgent {
     public RMAXQTaskData getTaskData(GroundedTask task) {
         RMAXQTaskData taskData = taskDataMap.computeIfAbsent(task, t ->
         {
-                if (task.isPrimitive()) {
-                    return new RMAXQTaskData(task, vMax);
-                } else {
-                    return new RMAXQTaskData(task, 0.0);
-                }
+            if (task.isPrimitive()) {
+                return new RMAXQTaskData(task, gamma);
+            } else {
+                return new RMAXQTaskData(task, gamma);
+            }
         });
         return taskData;
     }
@@ -160,6 +157,7 @@ public class RmaxQLearningAgent implements LearningAgent {
     private RMAXQStateData getStateData(GroundedTask task, HashableState hs) {
         RMAXQTaskData taskData = getTaskData(task);
         RMAXQStateData stateData = taskData.getStateData(hs);
+        if (!allStateData.contains(stateData)) { allStateData.add(stateData); }
         return stateData;
     }
 
@@ -177,13 +175,13 @@ public class RmaxQLearningAgent implements LearningAgent {
 
     public void computePolicy(RMAXQStateData taskStatePair) {
 
-        if(taskStatePair.getTaskData().isComputedPolicy()) {
-            return;
-        }
+//        if(taskStatePair.getTaskData().isComputedPolicy()) {
+//            return;
+//        }
+//
+//        handleTimesteps(taskStatePair.getTask());
 
-        handleTimesteps(taskStatePair.getTask());
-
-        prepareEnvelope(taskStatePair);
+        prepareEnvelope((AbstractData)taskStatePair);
 
         Set<HashableState> envelope = getEnvelope(taskStatePair.getTask());
         boolean converged = false;
@@ -195,26 +193,26 @@ public class RmaxQLearningAgent implements LearningAgent {
         if (attempts < 1) {
             System.err.println("Warning: ValueIteration exhausted attempts to converge");
         }
-        taskStatePair.setStoredPolicy();
-        taskStatePair.getTaskData().setComputedPolicy(true);
+//        taskStatePair.setStoredPolicy();
+//        taskStatePair.getTaskData().setComputedPolicy(true);
     }
 
-    private void handleTimesteps(GroundedTask task) {
-
-        RMAXQTaskData taskData = getTaskData(task);
-
-        // initialize timesteps
-        Integer timesteps = taskData.getTaskTimesteps();
-
-        // initialize taskEnvelope
-        Set<HashableState> taskEnvelope = taskData.getEnvelope();
-
-        // clear task envelope if timestampForTask < total actual timesteps
-        if (timesteps < numberPrimitivesExecuted) {
-            taskData.setTaskTimesteps(numberPrimitivesExecuted);
-            taskEnvelope.clear();
-        }
-    }
+//    private void handleTimesteps(GroundedTask task) {
+//
+//        RMAXQTaskData taskData = getTaskData(task);
+//
+//        // initialize timesteps
+//        Integer timesteps = taskData.getTaskTimesteps();
+//
+//        // initialize taskEnvelope
+//        Set<HashableState> taskEnvelope = taskData.getEnvelope();
+//
+//        // clear task envelope if timestampForTask < total actual timesteps
+//        if (timesteps < numberPrimitivesExecuted) {
+//            taskData.setTaskTimesteps(numberPrimitivesExecuted);
+//            taskEnvelope.clear();
+//        }
+//    }
 
     private Episode executePrimitive(Episode e, RMAXQStateData taskStatePair) {
         Action a = taskStatePair.getTask().getAction();
@@ -238,23 +236,23 @@ public class RmaxQLearningAgent implements LearningAgent {
         numberPrimitivesExecuted++;
 
         // clear all policies
-        clearAllPolicies();
+//        clearAllPolicies();
 
         return e;
     }
 
-    public void clearAllPolicies() {
-        for (GroundedTask task : taskDataMap.keySet()) {
-            RMAXQTaskData taskData = taskDataMap.get(task);
-            taskData.setComputedPolicy(false);
-        }
-    }
+//    public void clearAllPolicies() {
+//        for (GroundedTask task : taskDataMap.keySet()) {
+//            RMAXQTaskData taskData = taskDataMap.get(task);
+//            taskData.setComputedPolicy(false);
+//        }
+//    }
 
     /**
      * calculates and stores the possible states that can be reached from the current state
      *
      */
-    private void prepareEnvelope(RMAXQStateData taskStatePair) {
+    private void prepareEnvelope(AbstractData taskStatePair) {
         GroundedTask task = taskStatePair.getTask();
         HashableState hs = taskStatePair.getHs();
         Set<HashableState> envelope = getEnvelope(task);
@@ -268,9 +266,9 @@ public class RmaxQLearningAgent implements LearningAgent {
 
                 Set<HashableState> hsPrimes = allGroundStates;
                 for (HashableState hsPrime : hsPrimes) {
-                    double transitionProbability = childTaskStatePair.getStoredExpectedTransitionProbabilityForState(hsPrime);
+                    double transitionProbability = childTaskStatePair.getP(hsPrime);
                     if (transitionProbability > 0) {
-                        RMAXQStateData next = getStateData(task, hsPrime);
+                        AbstractData next = (AbstractData) getStateData(task, hsPrime);
                         prepareEnvelope(next);
                     }
                 }
@@ -282,7 +280,7 @@ public class RmaxQLearningAgent implements LearningAgent {
         GroundedTask childTask = childTaskStatePair.getTask();
         HashableState hs = childTaskStatePair.getHs();
         if (childTask.isPrimitive()) {
-            computeModelPrimitive(childTaskStatePair);
+            computeModelPrimitive((PrimitiveData) childTaskStatePair);
         } else {
 
             computePolicy(childTaskStatePair);
@@ -292,9 +290,9 @@ public class RmaxQLearningAgent implements LearningAgent {
                     continue;
                 }
                 RMAXQStateData childTaskOneOfAllHSPair = getStateData(childTask, oneOfAllHS);
-                if (childTaskOneOfAllHSPair.getStoredPolicyAction() == null) {
-                    clearAllPolicies();
-                }
+//                if (childTaskOneOfAllHSPair.getStoredPolicyAction() == null) {
+//                    clearAllPolicies();
+//                }
                 computePolicy(childTaskOneOfAllHSPair);
             }
 
@@ -316,7 +314,7 @@ public class RmaxQLearningAgent implements LearningAgent {
         }
     }
 
-    private void computeModelPrimitive(RMAXQStateData taskStatePair) {
+    private void computeModelPrimitive(PrimitiveData taskStatePair) {
         int stateActionCount = taskStatePair.getStateActionCount();
         if (stateActionCount >= threshold) {
             for (HashableState hsPrime : allGroundStates) {
@@ -341,19 +339,6 @@ public class RmaxQLearningAgent implements LearningAgent {
         taskStatePair.setStoredRewardBySteps(hsPrime, approximateReward, k);
     }
 
-    // P^a(s,sPrime) <- n(s,a,sPrime) / n(s,a)
-    // only primitives
-    private void setTransitionProbability_eq7(RMAXQStateData taskStatePair, HashableState hsPrime) {
-        int stateActionCount = taskStatePair.getStateActionCount();
-        int countForThisTransition = taskStatePair.getTotalTransitionCount(hsPrime);
-        if (countForThisTransition <= 0) {
-            return; // sparse -- do not store zero probs
-        }
-        double approximateTransitionProbability = countForThisTransition / (1.0 * stateActionCount);
-        int k = 1;
-        double probability = approximateTransitionProbability;
-        taskStatePair.setStoredTransitionsBySteps(hsPrime, probability, k);
-    }
 
     private boolean isTerminal(RMAXQStateData taskStatePair) {
         State s = taskStatePair.getMappedState();
@@ -468,7 +453,7 @@ public class RmaxQLearningAgent implements LearningAgent {
 
     private boolean doValueIteration(GroundedTask task, Set<HashableState> taskEnvelope) {
         if (taskEnvelope.size() < 1) { System.err.println("Warning: empty taskEnvelope"); return true; }
-        double maxDelta = 0.0;
+        double maxDelta = Double.NEGATIVE_INFINITY;
         for(HashableState hsPrime : taskEnvelope){
             RMAXQStateData taskHsPrimePair = getStateData(task, hsPrime);
             List<GroundedTask> childTasks = task.getGroundedChildTasks(taskHsPrimePair.getMappedState());
@@ -484,7 +469,7 @@ public class RmaxQLearningAgent implements LearningAgent {
         return converged;
     }
 
-    private double setQ_eq1(RMAXQStateData taskStatePair, GroundedTask childTask) {
+    private double setQ_eq1(AbstractData taskStatePair, GroundedTask childTask) {
 
 //        double newQ = 0.0;
 //        if (isTerminal(taskStatePair)) { return newQ; }
@@ -531,12 +516,13 @@ public class RmaxQLearningAgent implements LearningAgent {
 //
 //        double delta = Math.abs(newQ - oldQ);
 //        return delta;
+        taskStatePair.setQValue(childTask, 0.0);
         return 0.0;
     }
 
     private Map<GroundedTask, HashMap<HashableState,Double>> cachedGoalRewards = new HashMap<>();
     private HashableStateFactory cachingHSF = new CachedHashableStateFactory(false);
-    private double setV_eq2(RMAXQStateData taskStatePair) {
+    private double setV_eq2(AbstractData taskStatePair) {
 
         double oldV = taskStatePair.getStoredValue();
 

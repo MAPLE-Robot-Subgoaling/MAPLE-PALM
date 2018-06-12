@@ -1,5 +1,5 @@
 domain: !!config.taxi.TaxiConfig
-  state: tiny-2passengers
+  state: tiny
   correct_move: 1.0
   fickle: 0.0
 
@@ -11,7 +11,8 @@ max_steps: 10000
 trials: 1
 gamma: 0.9
 
-seed: 5320
+seed: 113893
+# 5320
 
 planning:
   rollouts: 1000
