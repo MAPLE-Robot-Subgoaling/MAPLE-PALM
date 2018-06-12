@@ -7,7 +7,7 @@ seed: 89424
 
 agents:
 #  - palmExpert
-  - palmHiergen
+  - palmHierGen
 
 episodes: 100
 max_steps: 2000

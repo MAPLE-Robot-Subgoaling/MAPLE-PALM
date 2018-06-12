@@ -92,7 +92,7 @@ public class LiftCopter implements DomainGenerator {
         }
     }
     public void addStandardThrustValues() {
-        this.thrustValues.add(0.32D);
+        this.thrustValues.add(0.02D);
         this.thrustValues.add(0.0D);
     }
     public void addStandardThrustDirections() {
@@ -143,12 +143,13 @@ public class LiftCopter implements DomainGenerator {
 
         VisualExplorer exp = new VisualExplorer(domain, v, s);
 
-        exp.addKeyAction("w", "thrust", "thrust_0.32_0.5");
-        exp.addKeyAction("d", "thrust", "thrust_0.32_0.0");
-        exp.addKeyAction("a", "thrust", "thrust_0.32_1");
-        exp.addKeyAction("s", "thrust", "thrust_0.32_1.5");
+        exp.addKeyAction("w", "thrust", "thrust_0.02_0.5");
+        exp.addKeyAction("d", "thrust", "thrust_0.02_0.0");
+        exp.addKeyAction("a", "thrust", "thrust_0.02_1");
+        exp.addKeyAction("s", "thrust", "thrust_0.02_1.5");
         exp.addKeyAction("e", ACTION_PUTDOWN, "");
         exp.addKeyAction("q", ACTION_PICKUP, "");
+        exp.addKeyAction("x", ACTION_IDLE,"");
 
         exp.initGUI();
 

@@ -4,7 +4,7 @@ domain: !!config.taxi.TaxiConfig
   fickle: 0.00
 
 agents:
-  - palmHiergen
+  - palmHierGen
 
 # - rmaxq
 

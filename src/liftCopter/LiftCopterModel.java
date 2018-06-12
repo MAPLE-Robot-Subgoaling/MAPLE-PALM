@@ -158,6 +158,7 @@ public class LiftCopterModel implements FullStateModel{
      * @param direction
      */
     protected void updateMotion(LiftCopterState s, double thrust, double direction) {
+
         double ti = 1.0D;
         double tt = ti * ti;
         LiftCopterAgent agent = s.touchCopter();
@@ -167,10 +168,14 @@ public class LiftCopterModel implements FullStateModel{
         double vy = (double)agent.get(ATT_VY);
         double tx = Math.cos(direction) * thrust;
         double ty = Math.sin(direction) * thrust;
+        System.out.println(tx+","+ty);
         double nx = x + vx * ti + 0.5D * tx * tt;
         double ny = y + vy * ti + 0.5D * ty * tt;
         double nvx = vx + tx * ti;
         double nvy = vy + ty * ti;
+        System.out.println("Updating Motion: \n " +
+                "\t old State: Coords: ("+x +","+y +") velocity: ("+vx +","+vy +") \n" +
+                "\t new State: Coords: ("+nx+","+ny+") velocity: ("+nvx+","+nvy+")");
 
         if (nvx > PHYS_MAX_VX) {
             nvx = PHYS_MAX_VX;
@@ -194,10 +199,13 @@ public class LiftCopterModel implements FullStateModel{
             double r = wallX + width;
             double b = wallY;
             double t = wallY + height;
+
             if(height == 0){
                 double slope = (ny-y)/(nx-x);
-                double intercept =  (t-(y-(slope*x)))/slope;
-                if (intercept >= l && intercept < r){
+                double xint = y-(slope*x);
+                double intercept =  (t-xint)/slope;
+                if (intercept >= l && intercept <= r){
+                    System.out.println("Collision at: ("+intercept+","+t+")");
                     nx = intercept;
                     ny = t;
                     nvx = 0.0D;
@@ -207,7 +215,8 @@ public class LiftCopterModel implements FullStateModel{
             }else if(width == 0){
                 double slope = (ny-y)/(nx-x);
                 double intercept = slope * l + (y-(slope*x));
-                if (intercept >=b && intercept <t){
+                if (intercept >=b && intercept <=t){
+                    System.out.println("Collision at: ("+l+","+intercept+")");
                     nx = l;
                     ny = intercept;
                     nvx = 0.0D;

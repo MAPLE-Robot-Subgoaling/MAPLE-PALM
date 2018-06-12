@@ -13,7 +13,7 @@ import burlap.mdp.singleagent.environment.SimulatedEnvironment;
 import burlap.mdp.singleagent.oo.OOSADomain;
 import burlap.statehashing.HashableStateFactory;
 import cleanup.hierarchies.CleanupHierarchyAMDP;
-import cleanup.hierarchies.CleanupHierarchyHiergen;
+import cleanup.hierarchies.CleanupHierarchyHierGen;
 import cleanup.hierarchies.CleanupHierarchyRMAXQ;
 import config.ExperimentConfig;
 import config.cleanup.CleanupConfig;
@@ -124,7 +124,7 @@ public class HierarchicalCharts {
                     }
                 };
             }
-            if (agent.equals("palmHiergen")){
+            if (agent.equals("palmHierGen")){
 
                 agents[i] = new LearningAgentFactory() {
 
@@ -165,7 +165,7 @@ public class HierarchicalCharts {
                 agents[i] = new LearningAgentFactory() {
                     @Override
                     public String getAgentName() {
-                        return "RMAXQ with Hiergen";
+                        return "RMAXQ with HierGen";
                     }
 
                     @Override
@@ -299,7 +299,7 @@ public class HierarchicalCharts {
         } else if (config.domain instanceof CleanupConfig) {
             CleanupHierarchyAMDP rootAMDP = new CleanupHierarchyAMDP();
             CleanupHierarchyRMAXQ rootRMAXQ= new CleanupHierarchyRMAXQ();
-            CleanupHierarchyHiergen hiergenHierarchy = new CleanupHierarchyHiergen();
+            CleanupHierarchyHierGen hiergenHierarchy = new CleanupHierarchyHierGen();
             Task ramdpRoot = rootAMDP.createHierarchy(config, false);
             Task rmaxqRoot = rootRMAXQ.createHierarchy(config, false);
 //            Task hiergenRoot = hiergenHierarchy.createHiergenHierarchy(config);
