@@ -34,7 +34,7 @@ public class ExperimentConfig {
     public int max_steps = UNSET_INT;
     public int trials = UNSET_INT;
     public double gamma = UNSET_DOUBLE;
-    public Boolean identifierIndependent = UNSET_BOOLEAN;
+    public Boolean identifier_independent = UNSET_BOOLEAN;
 
     public DomainConfig domain;
     public PlanningConfig planning;
@@ -55,7 +55,7 @@ public class ExperimentConfig {
         if (max_steps == UNSET_INT) { return false; }
         if (trials == UNSET_INT) { return false; }
         if (gamma == UNSET_DOUBLE) { return false; }
-        if (identifierIndependent == UNSET_BOOLEAN) { return false; }
+        if (identifier_independent == UNSET_BOOLEAN) { return false; }
         if (domain == null || !domain.validate()) { return false; }
         if (planning == null || !planning.validate()) { return false; }
         if (rmax == null || !rmax.validate()) { return false; }

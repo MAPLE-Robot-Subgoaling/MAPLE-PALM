@@ -16,6 +16,7 @@ gamma: 0.90
 
 seed: 173412
 
+identifier_independent: false
 planning:
   rollouts: 1000
 

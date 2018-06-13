@@ -7,16 +7,12 @@ import burlap.debugtools.RandomFactory;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.oo.OOSADomain;
 import burlap.statehashing.HashableStateFactory;
-import burlap.statehashing.simple.SimpleHashableStateFactory;
-import config.DomainConfig;
 import config.ExperimentConfig;
-import config.taxi.TaxiConfig;
 import hierarchy.framework.Task;
 import state.hashing.cached.CachedHashableStateFactory;
 import taxi.TaxiVisualizer;
 import taxi.hierarchies.TaxiHierarchy;
-import taxi.hierarchies.TaxiHierarchyAMDP;
-import taxi.state.TaxiState;
+import taxi.hierarchies.TaxiHierarchyExpert;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -65,7 +61,7 @@ public class AMDPPlanTest {
 
         State s = config.generateState();
 
-        TaxiHierarchy hierarchy = new TaxiHierarchyAMDP();
+        TaxiHierarchy hierarchy = new TaxiHierarchyExpert();
         Task palmRoot = hierarchy.createHierarchy(config, true);
         OOSADomain base = hierarchy.getBaseDomain();
 //        HashableStateFactory hashingFactory = new SimpleHashableStateFactory();

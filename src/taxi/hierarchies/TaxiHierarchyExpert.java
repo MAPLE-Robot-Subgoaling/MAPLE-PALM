@@ -23,7 +23,7 @@ import static taxi.TaxiConstants.*;
 import static taxi.TaxiConstants.ACTION_PUT;
 import static taxi.TaxiConstants.ACTION_PUTDOWN;
 
-public class TaxiHierarchyAMDP extends TaxiHierarchy {
+public class TaxiHierarchyExpert extends TaxiHierarchy {
 
 
     /***

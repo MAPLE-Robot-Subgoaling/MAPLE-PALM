@@ -121,7 +121,7 @@ public enum AgentType {
 
     public abstract LearningAgent getLearningAgent(Task root, HashableStateFactory hsf, ExperimentConfig config);
     public LearningAgent getLearningAgent(Task root, ExperimentConfig config) {
-        HashableStateFactory hsf = initializeHashableStateFactory(config.identifierIndependent);
+        HashableStateFactory hsf = initializeHashableStateFactory(config.identifier_independent);
         return getLearningAgent(root, hsf, config);
     }
 

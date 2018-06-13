@@ -4,7 +4,7 @@ import config.ExperimentConfig;
 import config.cleanup.CleanupConfig;
 import hierarchy.framework.Task;
 
-public class CleanupHierarchyHiergen extends CleanupHierarchy {
+public class CleanupHierarchyHierGen extends CleanupHierarchy {
 
     @Override
     public Task createHierarchy(ExperimentConfig config, boolean plan) {
