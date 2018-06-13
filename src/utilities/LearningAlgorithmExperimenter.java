@@ -341,8 +341,8 @@ public class LearningAlgorithmExperimenter {
         List<Episode> episodes = new ArrayList<Episode>();
         for(int i = 0; i < this.numberEpisodes; i++){
             DPrint.cl(this.debugCode, "Episode " + (i+1) + "/" + this.numberEpisodes);
-//			if (i >= 199) {
-//                RAMDPLearningAgent.debug = true;
+//			if (i >= 185) {
+//                System.out.println("debug");
 //            }
             Episode episode = agent.runLearningEpisode(this.environmentSever, maxSteps);
             this.plotter.endEpisode();

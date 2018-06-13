@@ -20,6 +20,7 @@ max_steps: 1000
 trials: 1
 gamma: 0.95
 
+identifier_independent: false
 planning:
   rollouts: 10000
 

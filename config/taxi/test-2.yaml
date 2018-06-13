@@ -7,13 +7,14 @@ seed: 89424
 
 agents:
 #  - palmExpert
-  - palmHiergen
+  - palmHierGen
 
 episodes: 100
 max_steps: 2000
 trials: 1
 gamma: 0.99
 
+identifier_independent: false
 planning:
   rollouts: 1000
 

@@ -4,7 +4,11 @@ domain: !!config.taxi.TaxiConfig
   fickle: 0.0
 
 agents:
-  - rmaxq
+  - rmaxqExpert
+#  - palmExpert
+#  - palmHierGen
+#  - kappaExpert
+#  - kappaHierGen
 
 episodes: 300
 max_steps: 10000
@@ -14,6 +18,7 @@ gamma: 0.9
 seed: 113893
 # 5320
 
+identifier_independent: false
 planning:
   rollouts: 1000
 

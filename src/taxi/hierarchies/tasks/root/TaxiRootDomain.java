@@ -21,7 +21,7 @@ import taxi.functions.amdp.RootCompletedPF;
 import taxi.functions.amdp.RootFailurePF;
 import taxi.hierarchies.tasks.root.state.RootStateMapper;
 import taxi.hierarchies.tasks.root.state.TaxiRootPassenger;
-import taxi.stateGenerator.TaxiStateFactory;
+import taxi.stategenerator.TaxiStateFactory;
 
 import static taxi.TaxiConstants.*;
 

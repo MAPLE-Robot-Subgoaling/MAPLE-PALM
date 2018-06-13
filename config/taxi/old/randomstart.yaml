@@ -15,6 +15,7 @@ stochastic:
   fickle: 0.225
   random_start: true
 
+identifier_independent: false
 planning:
   rollouts: 1000
 

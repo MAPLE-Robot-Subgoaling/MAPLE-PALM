@@ -3,6 +3,7 @@ package taxi.hierarchies;
 import burlap.mdp.auxiliary.StateMapping;
 import burlap.mdp.core.action.ActionType;
 import burlap.mdp.core.oo.propositional.PropositionalFunction;
+import config.ExperimentConfig;
 import hierarchy.framework.NonprimitiveTask;
 import hierarchy.framework.PrimitiveTask;
 import hierarchy.framework.SolveActionType;
@@ -10,15 +11,15 @@ import hierarchy.framework.Task;
 import taxi.PickupActionType;
 import taxi.PutdownActionType;
 import taxi.Taxi;
-import taxi.hierGen.task5.state.Task5StateMapper;
-import taxi.hierGen.task7.state.Task7StateMapper;
-import taxi.hierGen.actions.HierGenTask5ActionType;
-import taxi.hierGen.actions.HierGenTask7ActionType;
-import taxi.hierGen.functions.FailureFunction;
-import taxi.hierGen.functions.HierGenRootCompleted;
-import taxi.hierGen.functions.HierGenTask5Completed;
-import taxi.hierGen.functions.HierGenTask7Completed;
-import taxi.hierGen.root.state.HierGenRootStateMapper;
+import taxi.hiergen.task5.state.Task5StateMapper;
+import taxi.hiergen.task7.state.Task7StateMapper;
+import taxi.hiergen.actions.HierGenTask5ActionType;
+import taxi.hiergen.actions.HierGenTask7ActionType;
+import taxi.hiergen.functions.FailureFunction;
+import taxi.hiergen.functions.HierGenRootCompleted;
+import taxi.hiergen.functions.HierGenTask5Completed;
+import taxi.hiergen.functions.HierGenTask7Completed;
+import taxi.hiergen.root.state.HierGenRootStateMapper;
 
 import static taxi.TaxiConstants.*;
 import static taxi.TaxiConstants.ACTION_PICKUP;
@@ -113,4 +114,5 @@ public class TaxiHierarchyHierGen extends TaxiHierarchy {
 
         return root;
     }
+
 }

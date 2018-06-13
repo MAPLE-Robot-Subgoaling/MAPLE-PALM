@@ -5,37 +5,37 @@ import burlap.behavior.policy.Policy;
 import burlap.behavior.policy.PolicyUtils;
 import burlap.behavior.singleagent.Episode;
 import burlap.behavior.singleagent.learning.LearningAgent;
-import burlap.behavior.valuefunction.QValue;
 import burlap.behavior.valuefunction.ValueFunction;
 import burlap.mdp.core.action.Action;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.environment.Environment;
 import burlap.mdp.singleagent.environment.EnvironmentOutcome;
 import burlap.mdp.singleagent.oo.OOSADomain;
-import burlap.statehashing.HashableState;
 import burlap.statehashing.HashableStateFactory;
+import config.ExperimentConfig;
 import hierarchy.framework.GroundedTask;
-import hierarchy.framework.NonprimitiveTask;
 import hierarchy.framework.StringFormat;
 import hierarchy.framework.Task;
-import palm.rmax.agent.ExpectedRmaxModel;
-import palm.rmax.agent.HierarchicalRmaxModel;
+import palm.rmax.agent.PALMRmaxModelGenerator;
 import utilities.DiscountProvider;
-import utilities.ValueIteration;
 import utilities.ValueIterationMultiStep;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.stream.Collectors;
 
-public class PALMLearningAgent implements LearningAgent{
+public class PALMLearningAgent implements LearningAgent {
 
     public static boolean debug = false;
 
     /**
      * The root of the task hierarchy
      */
-    private GroundedTask root;
+    private Task root;
+
+    /**
+     * The root task grounded to the initial state
+     */
+    private GroundedTask groundedRoot;
 
     /**
      * collection of models for each task
@@ -77,22 +77,24 @@ public class PALMLearningAgent implements LearningAgent{
     private long actualTimeElapsed = 0;
 
     /**
-     * create a RAMDP agent on a given task
+     * create a PALM agent on a given task
      * @param root the root of the hierarchy to learn
-     * @param hs a state hashing factory
-     * @param delta the max error for the planner
+     * @param hsf a state hashing factory
+     * @param maxDelta the max error for the planner
      */
-    public PALMLearningAgent(GroundedTask root, PALMModelGenerator models,
-                             HashableStateFactory hs, double delta, int maxIterationsInModelPlanner,
-                             boolean waitForChildren) {
+    public PALMLearningAgent(Task root, PALMModelGenerator modelGenerator, HashableStateFactory hsf, double maxDelta, int maxIterationsInModelPlanner, boolean waitForChildren) {
         this.root = root;
-        this.hashingFactory = hs;
+        this.hashingFactory = hsf;
         this.models = new HashMap<>();
         this.taskNames = new HashMap<>();
-        this.maxDelta = delta;
+        this.maxDelta = maxDelta;
         this.maxIterationsInModelPlanner = maxIterationsInModelPlanner;
-        this.modelGenerator = models;
+        this.modelGenerator = modelGenerator;
         this.waitForChildren = waitForChildren;
+    }
+
+    public PALMLearningAgent(Task root, PALMModelGenerator modelGenerator, HashableStateFactory hsf, ExperimentConfig config) {
+        this(root, modelGenerator, hsf, config.rmax.max_delta, config.rmax.max_iterations_in_model, config.rmax.wait_for_children);
     }
 
     @Override
@@ -112,8 +114,10 @@ public class PALMLearningAgent implements LearningAgent{
         System.out.println(sdf.format(resultdate));
 
         steps = 0;
-        e = new Episode(env.currentObservation());
-        solveTask(null, root, env, maxSteps);
+        State initialState = env.currentObservation();
+        e = new Episode(initialState);
+        groundedRoot = root.getAllGroundedTasks(initialState).get(0);
+        solveTask(null, groundedRoot, env, maxSteps);
         System.out.println(e.actionSequence.size() + " " + e.actionSequence);
 
         ///for a chart of runtime
@@ -182,7 +186,7 @@ public class PALMLearningAgent implements LearningAgent{
 			// and still have steps it can take
                 && (steps < maxSteps || maxSteps == -1)
             // and it hasn't solved the root goal, keep planning
-                && !(root.isComplete(root.mapState(baseState)))
+                && !(groundedRoot.isComplete(groundedRoot.mapState(baseState)))
         ){
             actionCount++;
             boolean subtaskCompleted = false;
@@ -221,6 +225,9 @@ public class PALMLearningAgent implements LearningAgent{
             subtaskCompleted = solveTask(task, action, baseEnv, maxSteps);
             int stepsAfter = steps;
             int stepsTaken = stepsAfter - stepsBefore;
+            if (stepsTaken == 0) {
+                System.err.println("took a 0 step action");
+            }
 
             baseState = e.stateSequence.get(e.stateSequence.size() - 1);
             currentState = task.mapState(baseState);
@@ -290,7 +297,7 @@ public class PALMLearningAgent implements LearningAgent{
 //					System.out.println(tabLevel + action + ", ");
 				}
 			} catch (Exception e) {
-				//             ignore, temp debug to assess ramdp
+				//             ignore, temp debug to assess palm
 				System.out.println(e);
 				e.printStackTrace();
 			}

@@ -5,7 +5,7 @@ domain: !!config.taxi.TaxiConfig
 
 agents:
   - palmExpert
-  - palmHiergen
+  - palmHierGen
 
 # - rmaxq
 
@@ -16,6 +16,7 @@ gamma: 0.99
 
 seed: 7543221
 
+identifier_independent: false
 planning:
   rollouts: 1000
 

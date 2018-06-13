@@ -23,7 +23,7 @@ import taxi.functions.amdp.NavFailurePF;
 import taxi.hierarchies.tasks.nav.state.NavStateMapper;
 import taxi.hierarchies.tasks.nav.state.TaxiNavAgent;
 import taxi.hierarchies.tasks.nav.state.TaxiNavLocation;
-import taxi.stateGenerator.TaxiStateFactory;
+import taxi.stategenerator.TaxiStateFactory;
 
 import static taxi.TaxiConstants.*;
 

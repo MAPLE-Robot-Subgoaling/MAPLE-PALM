@@ -8,8 +8,10 @@ import burlap.mdp.singleagent.environment.Environment;
 import burlap.mdp.singleagent.environment.EnvironmentOutcome;
 import burlap.statehashing.HashableState;
 import burlap.statehashing.HashableStateFactory;
+import config.ExperimentConfig;
 import hierarchy.framework.GroundedTask;
-import state.hashing.simple.CachedHashableStateFactory;
+import hierarchy.framework.Task;
+import state.hashing.cached.CachedHashableStateFactory;
 
 import java.util.*;
 
@@ -25,29 +27,33 @@ public class RmaxQLearningAgent implements LearningAgent {
     private double maxDeltaInModel = DEFAULT_MAX_DELTA_IN_MODEL;
     private int maxIterationsInModel = DEFAULT_MAX_ITERATIONS_IN_MODEL;
     private int threshold;
-    private GroundedTask rootSolve;
+    private Task rootSolve;
     private HashableStateFactory hashingFactory;
     private double gamma;
     private double vMax;
     private Environment env;
-    private State initialState;
+    //	private List<HashableState> reachableStates = new ArrayList<HashableState>();
+    private long actualTimeElapsed = 0;
     private int numberPrimitivesExecuted;
     private LinkedHashMap<GroundedTask, RMAXQTaskData> taskDataMap;
     private LinkedHashSet<RMAXQStateData> allStateData;
 
-    public RmaxQLearningAgent(GroundedTask rootSolve, HashableStateFactory hs, State initState, double vMax, double gamma, int threshold, double maxDeltaInPolicy, double maxDeltaInModel, int maxIterationsInModel) {
+    public RmaxQLearningAgent(Task rootSolve, HashableStateFactory hsf, double gamma, int threshold, double vMax, double maxDeltaInPolicy, double maxDeltaInModel, int maxIterationsInModel) {
         this.rootSolve = rootSolve;
-        this.hashingFactory = hs;
-        this.initialState = initState;
-        this.vMax = vMax;
+        this.hashingFactory = hsf;
         this.gamma = gamma;
         this.threshold = threshold;
+        this.vMax = vMax;
         this.maxDeltaInPolicy = maxDeltaInPolicy;
         this.maxDeltaInModel = maxDeltaInModel;
         this.maxIterationsInModel = maxIterationsInModel;
         this.allGroundStates = new LinkedHashSet<>();
         this.allStateData = new LinkedHashSet<>();
         this.taskDataMap = new LinkedHashMap<>();
+    }
+
+    public RmaxQLearningAgent(Task root, HashableStateFactory hsf, ExperimentConfig config) {
+        this(root, hsf, config.gamma, config.rmax.threshold, config.rmax.vmax, config.rmax.max_delta, config.rmax.max_delta_rmaxq, config.rmax.max_iterations_in_model);
     }
 
     @Override
@@ -63,6 +69,7 @@ public class RmaxQLearningAgent implements LearningAgent {
         if (debug >= 100) {
             System.out.println("debug");
         }
+        State initialState = env.currentObservation();
         Episode e = new Episode(initialState);
         numberPrimitivesExecuted = 0;
         for (GroundedTask task : taskDataMap.keySet()) {
@@ -70,10 +77,14 @@ public class RmaxQLearningAgent implements LearningAgent {
         }
 
         HashableState hs = hashingFactory.hashState(env.currentObservation());
-        RMAXQStateData taskStatePair = getStateData(rootSolve, hs);
+
+        GroundedTask groundedRoot = rootSolve.getAllGroundedTasks(initialState).get(0);
+        RMAXQStateData taskStatePair = getStateData(groundedRoot, hs);
         e = doRmaxq(taskStatePair, e, maxSteps);
 
-//        printDebug();
+        //to see the number of actions
+        System.out.println("Number of actions in episode: " + e.numActions());
+
 
         return e;
     }
