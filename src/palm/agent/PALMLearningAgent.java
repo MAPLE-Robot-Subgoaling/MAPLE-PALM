@@ -7,6 +7,7 @@ import burlap.behavior.singleagent.Episode;
 import burlap.behavior.singleagent.learning.LearningAgent;
 import burlap.behavior.valuefunction.ValueFunction;
 import burlap.mdp.core.action.Action;
+import burlap.mdp.core.oo.ObjectParameterizedAction;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.environment.Environment;
 import burlap.mdp.singleagent.environment.EnvironmentOutcome;
@@ -22,6 +23,7 @@ import utilities.ValueIterationMultiStep;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
+
 
 public class PALMLearningAgent implements LearningAgent {
 
@@ -151,27 +153,28 @@ public class PALMLearningAgent implements LearningAgent {
         if(task.isPrimitive()) {
             EnvironmentOutcome result;
             Action a = task.getAction();
-
-//            if (a instanceof ObjectParameterizedAction) {
-//                ObjectParameterizedAction opa = (ObjectParameterizedAction) a;
-//                String param = opa.getObjectParameters()[0];
-//                if (param.equals(GET_PASSENGER_ALIAS)) {
-//                    param = ((ObjectParameterizedAction)parent.getAction()).getObjectParameters()[0];
-//                } else if (param.equals(PUT_PASSENGER_ALIAS)) {
-//                    param = ((ObjectParameterizedAction)parent.getAction()).getObjectParameters()[0];
-//                }
-//                ((ObjectParameterizedAction) a).getObjectParameters()[0] = param;
-//            }
+            Action unMaskedAction = a;
+            //somewhat generalized unmasking:
+            //copy the action, and unmask the copy, execute the unmasked action
+            //this allows the task to always store the masked version for model/planning purposes
+            if (parent.isMasked()) {
+                unMaskedAction = a.copy();
+                //for now, reliant on parent of masked task to be unmasked. This may not be a safe assumption
+                //there may be a need to traverse arbitrarily far up the task hierarchy to find an unmasked ancestor
+                //in order to recover the true parameters.
+                String trueParameters = ((ObjectParameterizedAction)parent.getAction()).getObjectParameters()[0];
+                ((ObjectParameterizedAction) unMaskedAction).getObjectParameters()[0] = trueParameters;
+            }
 //                System.out.println(tabLevel + "    " + actionName);
 //            subtaskCompleted = true;
-            result = baseEnv.executeAction(a);
+            result = baseEnv.executeAction(unMaskedAction);
             e.transition(result);
             baseState = result.op;
             currentState = task.mapState(result.op);
             result.o = pastState;
             result.op = currentState;
-            result.a = a;
-            result.r = task.getReward(pastState, a, currentState);
+            result.a = unMaskedAction;
+            result.r = task.getReward(pastState, unMaskedAction, currentState);
             steps++;
             return true;
         }
@@ -201,17 +204,6 @@ public class PALMLearningAgent implements LearningAgent {
                 action = this.taskNames.get(actionName);
             }
 
-//            if (a instanceof ObjectParameterizedAction) {
-//                ObjectParameterizedAction opa = (ObjectParameterizedAction) a;
-//                String param = opa.getObjectParameters()[0];
-//                if (param.equals(GET_PASSENGER_ALIAS)) {
-//                    param = ((ObjectParameterizedAction)action.getAction()).getObjectParameters()[0];
-//                } else if (param.equals(PUT_PASSENGER_ALIAS)) {
-//                    param = ((ObjectParameterizedAction)action.getAction()).getObjectParameters()[0];
-//                }
-//                ((ObjectParameterizedAction) a).getObjectParameters()[0] = param;
-//            }
-
 			if (waitForChildren && allChildrenBeyondThreshold && !action.isPrimitive()) {
 				State s = currentState;
 				PALMModel m = getModel(task);
@@ -219,7 +211,6 @@ public class PALMLearningAgent implements LearningAgent {
 					allChildrenBeyondThreshold = false;
 				}
 			}
-
             // solve this task's next chosen subtask, recursively
             int stepsBefore = steps;
             subtaskCompleted = solveTask(task, action, baseEnv, maxSteps);
@@ -251,7 +242,7 @@ public class PALMLearningAgent implements LearningAgent {
 
 //        tabLevel = tabLevel.substring(0, (tabLevel.length() - 1));
 
-		boolean parentShouldUpdateModel = task.isComplete(currentState) || actionCount == 0;
+		boolean parentShouldUpdateModel = task.isComplete(currentState) ||actionCount == 0;
 		parentShouldUpdateModel = parentShouldUpdateModel && allChildrenBeyondThreshold;
 		return parentShouldUpdateModel;
 	}
@@ -310,18 +301,21 @@ public class PALMLearningAgent implements LearningAgent {
 
     protected PALMModel getModel(GroundedTask t){
 //        PALMModel model = models.get(t);
-        // idea: try to do lookup such that models are shared across same AMDP class
-        // that is, instead of 4 Navigate AMDPs, one for each repo
-        // we share the model and parameterize
-        String unparameterizedNameForModelSharing = t.getAction().actionName();
-        String parameterizedNameWithoutSharing = t.toString();
-        boolean useModelSharing = false;//unparameterizedNameForModelSharing.contains("get");//unparameterizedNameForModelSharing.contains("put");
-        String lookup = useModelSharing ? unparameterizedNameForModelSharing : parameterizedNameWithoutSharing;
-        PALMModel model = models.get(lookup);
+        // idea: try to do lookup such that models are shared across certain AMDP classes
+        // for example, instead of 4 put passenger AMDPs, one for each passenger
+        // we mask the name of the passenger and share models, treating every passenger the same
+        String modelName = t.isMasked() ? t.getAction().actionName() : t.toString();
+        PALMModel model = models.get(modelName);
         if(model == null) {
             model = modelGenerator.getModelForTask(t);
-            this.models.put(lookup, model);
+            this.models.put(modelName, model);
         }
+        //debug for taxi model sharing
+//        if(t.toString().contains("put") || t.toString().contains("get") || t.toString().contains("pick")) {
+//            System.out.println("task: " + t.toString());
+//            System.out.println("lookup: " + modelName);
+//            System.out.println("model: " + ((RmaxModel) model).getTask().toString());
+//        }
         return model;
     }
 

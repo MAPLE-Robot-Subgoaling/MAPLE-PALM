@@ -147,6 +147,10 @@ public class GroundedTask {
         return t.reward(s, a, sPrime);
     }
 
+    public boolean isMasked(){
+        return t.isMasked();
+    }
+
     @Override
     public String toString(){
         return formattedName;
