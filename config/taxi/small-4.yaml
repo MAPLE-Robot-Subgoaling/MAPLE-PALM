@@ -1,12 +1,12 @@
 domain: !!config.taxi.TaxiConfig
-  state: mehta-zigzag-2-3passengers
+  state: small-4passengers
   correct_move: 1.0
   fickle: 0.0
 
 agents:
   - palmExpert
 #  - palmHierGen
-#  - kappaExpert
+  - kappaExpert
 #  - kappaHierGen
 
 episodes: 300
