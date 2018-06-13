@@ -35,6 +35,12 @@ public class NonprimitiveTask extends Task {
         this.goalFailRF = new GoalFailRF(this.goalFailTF, defaultReward, noopReward);
     }
 
+    public NonprimitiveTask(OOSADomain baseDomain) {
+        super();
+        // should only be used for wrapping the baseDomain, for non-hierarchical methods like Q Learning
+        this.domain = baseDomain;
+    }
+
 
     @Override
     public boolean isPrimitive() {

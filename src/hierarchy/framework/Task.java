@@ -46,6 +46,10 @@ public abstract class Task {
         this.mapper = map;
     }
 
+    public Task() {
+        // should only be used in serialization or for wrapping data used by non-hierarchical methods like Q Learning
+    }
+
     /**
      * get the domain
      * @return the abstract domain for the task

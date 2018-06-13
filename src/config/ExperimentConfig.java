@@ -26,6 +26,7 @@ public class ExperimentConfig {
     public static long UNSET_LONG = Long.MIN_VALUE;
     public static int UNSET_INT = Integer.MIN_VALUE;
     public static double UNSET_DOUBLE = Double.NEGATIVE_INFINITY;
+    public static Boolean UNSET_BOOLEAN = null;
 
     public long seed = UNSET_LONG;
     public List<String> agents;
@@ -33,6 +34,7 @@ public class ExperimentConfig {
     public int max_steps = UNSET_INT;
     public int trials = UNSET_INT;
     public double gamma = UNSET_DOUBLE;
+    public Boolean identifierIndependent = UNSET_BOOLEAN;
 
     public DomainConfig domain;
     public PlanningConfig planning;
@@ -53,6 +55,7 @@ public class ExperimentConfig {
         if (max_steps == UNSET_INT) { return false; }
         if (trials == UNSET_INT) { return false; }
         if (gamma == UNSET_DOUBLE) { return false; }
+        if (identifierIndependent == UNSET_BOOLEAN) { return false; }
         if (domain == null || !domain.validate()) { return false; }
         if (planning == null || !planning.validate()) { return false; }
         if (rmax == null || !rmax.validate()) { return false; }
@@ -97,4 +100,17 @@ public class ExperimentConfig {
     public Visualizer getVisualizer(ExperimentConfig config) {
         return domain.getVisualizer(config);
     }
+
+    public static ExperimentConfig loadConfig(String configFile) {
+        ExperimentConfig config = new ExperimentConfig();
+        try {
+            System.out.println("Using configuration: " + configFile);
+            config = ExperimentConfig.load(configFile);
+        } catch (FileNotFoundException ex) {
+            System.err.println("Could not find configuration file");
+            System.exit(404);
+        }
+        return config;
+    }
+
 }
