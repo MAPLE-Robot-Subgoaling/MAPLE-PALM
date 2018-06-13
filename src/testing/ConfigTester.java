@@ -1,5 +1,7 @@
 package testing;
 
+import config.ExperimentConfig;
+
 import java.io.File;
 
 public class ConfigTester {
@@ -14,9 +16,14 @@ public class ConfigTester {
                 for (File listOfFile : listOfFiles) {
                     if (listOfFile.isFile()) {
                         String name = listOfFile.getName();
-                        String config = configPathTaxi + name;
-                        System.out.println("\n\n*************************\nINITIALIZING: " + config +"\n*************************\n\n");
-                        HierarchicalCharts.main(new String[]{config});
+                        String configFile = configPathTaxi + name;
+                        System.out.println("\n\n*************************\nINITIALIZING: " + configFile +"\n*************************\n\n");
+                        ExperimentConfig config = ExperimentConfig.loadConfig(configFile);
+                        // turn off visualization
+                        config.output.chart.enabled = false;
+                        config.output.visualizer.episodes = false;
+                        config.output.visualizer.enabled = false;
+                        HierarchicalCharts.run(config);
                     }
                 }
             }

@@ -72,18 +72,15 @@ public class HierarchicalCharts {
         }
 
         LearningAlgorithmExperimenter exp = new LearningAlgorithmExperimenter(env, config.trials, config.episodes, config.max_steps, agents);
-        if(config.output.chart.enabled) {
-            ChartConfig cc = config.output.chart;
+        ChartConfig cc = config.output.chart;
 
-            PerformanceMetric[] metrics = new PerformanceMetric[cc.metrics.size()];
-            for(int i = 0; i < cc.metrics.size(); i++) {
-                metrics[i] = PerformanceMetric.valueOf(cc.metrics.get(i));
-            }
-
-            exp.setUpPlottingConfiguration(cc.width, cc.height, cc.columns, cc.max_height,
-                    TrialMode.valueOf(cc.trial_mode), metrics
-            );
+        PerformanceMetric[] metrics = new PerformanceMetric[cc.metrics.size()];
+        for(int i = 0; i < cc.metrics.size(); i++) {
+            metrics[i] = PerformanceMetric.valueOf(cc.metrics.get(i));
         }
+
+        exp.setUpPlottingConfiguration(cc.width, cc.height, cc.columns, cc.max_height, TrialMode.valueOf(cc.trial_mode), metrics);
+        exp.toggleVisualPlots(config.output.chart.enabled);
 
         List<Episode> episodes = exp.startExperiment();
         if(config.output.csv.enabled) {
