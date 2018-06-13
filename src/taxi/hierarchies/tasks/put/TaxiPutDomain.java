@@ -24,7 +24,7 @@ import taxi.hierarchies.tasks.put.state.PutStateMapper;
 import taxi.hierarchies.tasks.put.state.TaxiPutAgent;
 import taxi.hierarchies.tasks.put.state.TaxiPutLocation;
 import taxi.hierarchies.tasks.put.state.TaxiPutPassenger;
-import taxi.stateGenerator.TaxiStateFactory;
+import taxi.stategenerator.TaxiStateFactory;
 
 import static taxi.TaxiConstants.*;
 

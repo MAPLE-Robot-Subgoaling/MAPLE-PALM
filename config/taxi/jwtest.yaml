@@ -5,9 +5,9 @@ domain: !!config.taxi.TaxiConfig
 
 agents:
   - palmExpert
-  - palmHiergen
-#  - expStepsExpert
-#  - expStepsHierGen
+  - palmHierGen
+#  - kappaExpert
+#  - kappaHierGen
 
 episodes: 300
 max_steps: 1000

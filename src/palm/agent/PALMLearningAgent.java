@@ -221,6 +221,9 @@ public class PALMLearningAgent implements LearningAgent{
             subtaskCompleted = solveTask(task, action, baseEnv, maxSteps);
             int stepsAfter = steps;
             int stepsTaken = stepsAfter - stepsBefore;
+            if (stepsTaken == 0) {
+                System.err.println("took a 0 step action");
+            }
 
             baseState = e.stateSequence.get(e.stateSequence.size() - 1);
             currentState = task.mapState(baseState);

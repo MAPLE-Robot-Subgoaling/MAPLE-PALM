@@ -12,7 +12,6 @@ import config.ExperimentConfig;
 import config.taxi.TaxiConfig;
 import hierarchy.framework.GroundedTask;
 import hierarchy.framework.Task;
-import org.apache.commons.math3.analysis.function.Exp;
 import palm.agent.PALMLearningAgent;
 import palm.rmax.agent.PALMRmaxModelGenerator;
 import rmaxq.agent.RmaxQLearningAgent;
@@ -20,8 +19,6 @@ import taxi.TaxiVisualizer;
 import taxi.hierarchies.TaxiHierarchy;
 import taxi.hierarchies.TaxiHierarchyAMDP;
 import taxi.hierarchies.TaxiHierarchyRMAXQ;
-import taxi.state.TaxiState;
-import taxi.stateGenerator.RandomPassengerTaxiState;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;

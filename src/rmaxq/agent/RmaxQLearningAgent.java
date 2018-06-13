@@ -9,9 +9,8 @@ import burlap.mdp.singleagent.environment.Environment;
 import burlap.mdp.singleagent.environment.EnvironmentOutcome;
 import burlap.statehashing.HashableState;
 import burlap.statehashing.HashableStateFactory;
-import burlap.statehashing.simple.SimpleHashableStateFactory;
 import hierarchy.framework.GroundedTask;
-import state.hashing.simple.CachedHashableStateFactory;
+import state.hashing.cached.CachedHashableStateFactory;
 
 import java.text.SimpleDateFormat;
 import java.util.*;

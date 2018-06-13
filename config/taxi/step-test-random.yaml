@@ -1,18 +1,20 @@
 domain: !!config.taxi.TaxiConfig
-  state: classic-2passengers
+  state: small-2passengers
   correct_move: 1.0
-  fickle: 0.04
-  
-seed: 89424
+  fickle: 0.10
 
 agents:
 #  - palmExpert
   - palmHierGen
+#  - kappaExpert
+  - kappaHierGen
 
-episodes: 100
-max_steps: 2000
+episodes: 1000
+max_steps: 1000
 trials: 1
-gamma: 0.99
+gamma: 0.95
+
+seed: 22242
 
 planning:
   rollouts: 1000
@@ -20,7 +22,7 @@ planning:
 rmax:
   vmax: 1.0
   threshold: 10
-  max_delta: 0.0001
+  max_delta: 0.00000001
   max_delta_rmaxq: 0.0001
   max_iterations_in_model: 1000
   use_multitime_model: true
@@ -29,7 +31,7 @@ rmax:
 output:
   csv:
     enabled: true
-    output: results/taxi-test-2.csv
+    output: results/pex-classic.csv
 
   chart:
     enabled: true

@@ -17,7 +17,7 @@ import taxi.state.TaxiAgent;
 import taxi.state.TaxiLocation;
 import taxi.state.TaxiPassenger;
 import taxi.state.TaxiWall;
-import taxi.stateGenerator.TaxiStateFactory;
+import taxi.stategenerator.TaxiStateFactory;
 
 /**
  * 1. run AMDP tests vs. MDP tests
