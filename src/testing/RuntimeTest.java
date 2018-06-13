@@ -16,7 +16,7 @@ import taxi.hierarchies.TaxiHierarchy;
 import taxi.hierarchies.TaxiHierarchyAMDP;
 import taxi.hierarchies.TaxiHierarchyRMAXQ;
 import taxi.state.TaxiState;
-import taxi.stateGenerator.TaxiStateFactory;
+import taxi.stategenerator.TaxiStateFactory;
 import utilities.LearningAgentRuntimeAnalizer;
 
 public class RuntimeTest {

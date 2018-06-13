@@ -1,23 +1,11 @@
 package config.taxi;
 
-import burlap.debugtools.RandomFactory;
 import burlap.visualizer.Visualizer;
 import config.DomainConfig;
 import config.ExperimentConfig;
-import config.output.OutputConfig;
-import config.planning.PlanningConfig;
-import config.rmax.RmaxConfig;
-import org.yaml.snakeyaml.Yaml;
-import org.yaml.snakeyaml.constructor.Constructor;
 import taxi.TaxiVisualizer;
 import taxi.state.TaxiState;
-import taxi.stateGenerator.TaxiStateFactory;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
-import java.util.List;
+import taxi.stategenerator.TaxiStateFactory;
 
 public class TaxiConfig extends DomainConfig {
     public double correct_move;

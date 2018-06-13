@@ -10,11 +10,13 @@ import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 import org.yaml.snakeyaml.representer.Representer;
 import taxi.TaxiVisualizer;
+import testing.AgentType;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.List;
 
 import static utilities.BurlapConstants.DEFAULT_RNG_INDEX;
@@ -40,6 +42,13 @@ public class ExperimentConfig {
     public boolean validate() {
         if (seed <= UNSET_LONG) { return false; }
         if (agents == null || agents.size() < 1) { return false; }
+        List<String> agentTypes = AgentType.getTypes();
+        for (String agent : agents) {
+            if (!agentTypes.contains(agent)) {
+                System.err.println("ConfigError: invalid (misspelled?) AgentType: " + agent);
+                return false;
+            }
+        }
         if (episodes == UNSET_INT) { return false; }
         if (max_steps == UNSET_INT) { return false; }
         if (trials == UNSET_INT) { return false; }

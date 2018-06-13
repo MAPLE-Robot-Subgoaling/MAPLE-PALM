@@ -5,7 +5,7 @@ domain: !!config.taxi.TaxiConfig
 
 agents:
   - palmExpert
-  - expectedStepsTest
+  - kappaExpert
 
 episodes: 1000
 max_steps: 1000

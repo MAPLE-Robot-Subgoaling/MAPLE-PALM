@@ -5,9 +5,7 @@ import burlap.mdp.core.oo.state.MutableOOState;
 import burlap.mdp.core.oo.state.ObjectInstance;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.oo.ObjectParameterizedActionType;
-import taxi.hierGen.root.state.TaxiHierGenRootState;
-import taxi.state.TaxiPassenger;
-import taxi.state.TaxiState;
+import taxi.hiergen.root.state.TaxiHierGenRootState;
 import utilities.MutableObject;
 
 import static taxi.TaxiConstants.*;

@@ -4,10 +4,10 @@ domain: !!config.taxi.TaxiConfig
   fickle: 0.00
 
 agents:
-#  - rmaxq
+#  - rmaxqExpert
   - palmExpert
 #  - palmExpertWithNavGiven
-#  - palmHiergen
+#  - palmHierGen
 #  - qlearning
 
 seed: 2320942930
@@ -32,7 +32,7 @@ rmax:
 output:
   csv:
     enabled: true
-    output: results/ramdp-jwtest.csv
+    output: results/classic.csv
 
   chart:
     enabled: true
