@@ -45,7 +45,7 @@ public class ExperimentConfig {
         List<String> agentTypes = AgentType.getTypes();
         for (String agent : agents) {
             if (!agentTypes.contains(agent)) {
-                System.err.println("ConfigError: invalid (misspelled?) AgentType: " + agent);
+                System.err.println("\nError: invalid (misspelled?) AgentType: " + agent);
                 return false;
             }
         }

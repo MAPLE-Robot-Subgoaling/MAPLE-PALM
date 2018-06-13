@@ -3,6 +3,7 @@ package taxi.hierarchies;
 import burlap.mdp.auxiliary.StateMapping;
 import burlap.mdp.core.action.ActionType;
 import burlap.mdp.core.oo.propositional.PropositionalFunction;
+import config.ExperimentConfig;
 import hierarchy.framework.NonprimitiveTask;
 import hierarchy.framework.PrimitiveTask;
 import hierarchy.framework.SolveActionType;
@@ -113,4 +114,5 @@ public class TaxiHierarchyHierGen extends TaxiHierarchy {
 
         return root;
     }
+
 }

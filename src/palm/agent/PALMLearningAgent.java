@@ -77,7 +77,7 @@ public class PALMLearningAgent implements LearningAgent{
     private long actualTimeElapsed = 0;
 
     /**
-     * create a RAMDP agent on a given task
+     * create a PALM agent on a given task
      * @param root the root of the hierarchy to learn
      * @param hs a state hashing factory
      * @param delta the max error for the planner
@@ -293,7 +293,7 @@ public class PALMLearningAgent implements LearningAgent{
 //					System.out.println(tabLevel + action + ", ");
 				}
 			} catch (Exception e) {
-				//             ignore, temp debug to assess ramdp
+				//             ignore, temp debug to assess palm
 				System.out.println(e);
 				e.printStackTrace();
 			}

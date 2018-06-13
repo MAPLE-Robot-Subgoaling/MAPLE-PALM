@@ -12,6 +12,7 @@ import config.DomainConfig;
 import config.ExperimentConfig;
 import config.taxi.TaxiConfig;
 import hierarchy.framework.Task;
+import state.hashing.cached.CachedHashableStateFactory;
 import taxi.TaxiVisualizer;
 import taxi.hierarchies.TaxiHierarchy;
 import taxi.hierarchies.TaxiHierarchyAMDP;
@@ -43,30 +44,32 @@ public class AMDPPlanTest {
     }
 
     public static void main(String[] args) {
-        String conffile = "./config/taxi/classic-deterministic.yaml";
+        String configFile = "./config/taxi/classic.yaml";
         if(args.length > 0) {
-            conffile = args[0];
+            configFile = args[0];
         }
 
-        ExperimentConfig conf = new ExperimentConfig();
+        ExperimentConfig config = new ExperimentConfig();
         try {
-            System.out.println("Using configuration: " + conffile);
-            conf = ExperimentConfig.load(conffile);
+            System.out.println("Using configuration: " + configFile);
+            config = ExperimentConfig.load(configFile);
         } catch (FileNotFoundException ex) {
             System.err.println("Could not find configuration file");
             System.exit(404);
         }
 
-        if(conf.seed > 0) {
-            RandomFactory.seedMapped(0, conf.seed);
-            System.out.println("Using seed: " + conf.seed);
+        if(config.seed > 0) {
+            RandomFactory.seedMapped(0, config.seed);
+            System.out.println("Using seed: " + config.seed);
         }
 
-        State s = conf.generateState();
+        State s = config.generateState();
 
-        TaxiConfig domain = (TaxiConfig) conf.domain;
-        Task RAMDProot = new TaxiHierarchyAMDP().createHierarchy(domain.correct_move, domain.fickle, true);
-        OOSADomain base = TaxiHierarchy.getBaseDomain();
-        plan(conf, RAMDProot, s, new SimpleHashableStateFactory(), base);
+        TaxiHierarchy hierarchy = new TaxiHierarchyAMDP();
+        Task palmRoot = hierarchy.createHierarchy(config, true);
+        OOSADomain base = hierarchy.getBaseDomain();
+//        HashableStateFactory hashingFactory = new SimpleHashableStateFactory();
+        HashableStateFactory hashingFactory = new CachedHashableStateFactory(false);
+        plan(config, palmRoot, s, hashingFactory, base);
     }
 }

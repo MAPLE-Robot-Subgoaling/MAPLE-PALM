@@ -20,12 +20,12 @@ import taxi.stategenerator.TaxiStateFactory;
 import utilities.LearningAgentRuntimeAnalizer;
 
 public class RuntimeTest {
-    public static void createCharts(final State s, OOSADomain domain, final Task RAMDPRoot, final Task RMEXQRoot,
+    public static void createCharts(final State s, OOSADomain domain, final Task palmRoot, final Task rmaxqRoot,
                                     final double rmax, final int threshold, final double maxDelta, final double discount,
                                     int numEpisode, int maxSteps, int numTrial, int maxIterationsInModel,
                                     boolean useMultitimeModel, boolean waitForChildren){
         final HashableStateFactory hs = new SimpleHashableStateFactory(true);
-        final GroundedTask RAMDPGroot = RAMDPRoot.getAllGroundedTasks(s).get(0);
+        final GroundedTask groundedPalmRoot = palmRoot.getAllGroundedTasks(s).get(0);
 
         SimulatedEnvironment env = new SimulatedEnvironment(domain, s);
 //		VisualActionObserver obs = new VisualActionObserver(domain, TaxiVisualizer.getVisualizer(5, 5));
@@ -37,35 +37,35 @@ public class RuntimeTest {
 
             @Override
             public String getAgentName() {
-                return "R-MAXQ";
+                return AgentType.RMAXQ_EXPERT.getPlotterDisplayName();
             }
 
             @Override
             public LearningAgent generateAgent() {
                 throw new RuntimeException("not fixed on this branch");
-//				return new RmaxQLearningAgent(RMEXQRoot, hs, s, rmax, threshold, maxDelta);
+//				return new RmaxQLearningAgent(rmaxqRoot, hs, s, rmax, threshold, maxDelta);
             }
         };
 
-        LearningAgentFactory ramdp = new LearningAgentFactory() {
+        LearningAgentFactory palm = new LearningAgentFactory() {
 
             @Override
             public String getAgentName() {
-                return "R-AMDP";
+                return AgentType.PALM_EXPERT.getPlotterDisplayName();
             }
 
             @Override
             public LearningAgent generateAgent() {
                 PALMRmaxModelGenerator modelGen = new PALMRmaxModelGenerator(threshold,
                         rmax, hs, discount, useMultitimeModel);
-                return new PALMLearningAgent(RAMDPGroot,modelGen, hs, maxDelta,
+                return new PALMLearningAgent(groundedPalmRoot,modelGen, hs, maxDelta,
                         maxIterationsInModel, waitForChildren);
             }
         };
 
-        LearningAgentRuntimeAnalizer timer = new LearningAgentRuntimeAnalizer(500, 300, ramdp, rmaxq);
+        LearningAgentRuntimeAnalizer timer = new LearningAgentRuntimeAnalizer(500, 300, palm, rmaxq);
         timer.runRuntimeAnalysis(numTrial, numEpisode, maxSteps, env);
-        timer.writeDataToCSV("C:\\Users\\mland\\Box Sync\\Maple\\hierarchical learning data\\determintistic runtime ramdp");
+        timer.writeDataToCSV("./results/");
     }
 
 
@@ -84,10 +84,14 @@ public class RuntimeTest {
         boolean waitForChildren = true;
 
         TaxiState s = TaxiStateFactory.createTinyState();
-        Task RAMDProot = new TaxiHierarchyAMDP().createHierarchy(correctMoveprob, fickleProb,  false);
-        OOSADomain base = TaxiHierarchy.getBaseDomain();
-        Task RMAXQroot = new TaxiHierarchyRMAXQ().createHierarchy(correctMoveprob, fickleProb, false);
-        createCharts(s, base, RAMDProot, RMAXQroot, rmax, rmaxThreshold, maxDelta, gamma,
+        TaxiHierarchy amdpHierarchy = new TaxiHierarchyAMDP();
+        TaxiHierarchy rmaxqHierarchy = new TaxiHierarchyAMDP();
+        Task palmRoot = amdpHierarchy.createHierarchy(correctMoveprob, fickleProb,  false);
+        Task rmaxqRoot = rmaxqHierarchy.createHierarchy(correctMoveprob, fickleProb, false);
+        OOSADomain base = amdpHierarchy.getBaseDomain();
+        amdpHierarchy.setBaseDomain(base);
+        rmaxqHierarchy.setBaseDomain(base);
+        createCharts(s, base, palmRoot, rmaxqRoot, rmax, rmaxThreshold, maxDelta, gamma,
                 numEpisodes, maxSteps, numTrials, maxIterationsInModel, useMultitimeModel, waitForChildren);
     }
 }

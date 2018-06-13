@@ -42,10 +42,6 @@ import java.util.List;
 
 import static testing.AgentType.*;
 
-//------------------------------------
-
-//import utilities.SimpleHashableStateFactory;
-
 public class HierarchicalCharts {
 
     public static HashableStateFactory initializeHashableStateFactory() {
@@ -55,17 +51,17 @@ public class HierarchicalCharts {
 
     public static void createCharts(final ExperimentConfig config, final State s, OOSADomain domain, Task[] hierarchies) {
         SimulatedEnvironment env;
-        final Task RAMDPRoot = hierarchies[0];
-        final Task RMAXQRoot = hierarchies[1];
+        final Task palmRoot = hierarchies[0];
+        final Task rmaxqRoot = hierarchies[1];
         final Task hierGenRoot = hierarchies[2];
 
-        GroundedTask gRootPalm = null, gRootHierGen = null, gRootRMAXQ = null;
+        GroundedTask groundedPalmRoot, groundedRmaxqRoot, groundedHierGenRoot = null;
 
         env = new SimulatedEnvironment(domain, s);
-        gRootPalm = RAMDPRoot.getAllGroundedTasks(s).get(0);
-        gRootRMAXQ = RMAXQRoot.getAllGroundedTasks(s).get(0);
+        groundedPalmRoot = palmRoot.getAllGroundedTasks(s).get(0);
+        groundedRmaxqRoot = rmaxqRoot.getAllGroundedTasks(s).get(0);
         if (hierGenRoot != null) {
-            gRootHierGen = hierGenRoot.getAllGroundedTasks(s).get(0);
+            groundedHierGenRoot = hierGenRoot.getAllGroundedTasks(s).get(0);
         }
 
         // new SimpleHashableStateFactory(false); //new CachedHashableStateFactory(true); // new SimpleHashableStateFactory(true);
@@ -78,11 +74,11 @@ public class HierarchicalCharts {
             env.addObservers(obs);
         }
 
-        final GroundedTask palm = gRootPalm;
-        final GroundedTask palmWithNav = gRootPalm;
-        final GroundedTask rmaxq = gRootRMAXQ;
-        final GroundedTask palmHierGen = gRootHierGen;
-        final GroundedTask rmaxqHierGen = gRootHierGen;
+        final GroundedTask palm = groundedPalmRoot;
+        final GroundedTask palmWithNav = groundedPalmRoot;
+        final GroundedTask rmaxq = groundedRmaxqRoot;
+        final GroundedTask palmHierGen = groundedHierGenRoot;
+        final GroundedTask rmaxqHierGen = groundedHierGenRoot;
 
         // Loop to keep order of agents defined in YAML
         LearningAgentFactory[] agents = new LearningAgentFactory[config.agents.size()];
@@ -306,23 +302,31 @@ public class HierarchicalCharts {
         OOSADomain base;
         Task[] hierarchies = new Task[3];
         if (config.domain instanceof TaxiConfig) {
-            TaxiConfig domain = (TaxiConfig) config.domain;
-            Task rootAMDP = new TaxiHierarchyAMDP().createHierarchy(domain.correct_move, domain.fickle, false);
-            Task rootRMAXQ = new TaxiHierarchyRMAXQ().createHierarchy(domain.correct_move, domain.fickle, false);
-            Task hiergenRoot = new TaxiHierarchyHierGen().createHierarchy(domain.correct_move, domain.fickle, false);
-            base = TaxiHierarchy.getBaseDomain();
+            TaxiHierarchy amdpHierarchy = new TaxiHierarchyAMDP();
+            TaxiHierarchy rmaxqHierarchy = new TaxiHierarchyRMAXQ();
+            TaxiHierarchy hierGenHierarchy = new TaxiHierarchyHierGen();
+            Task rootAMDP = amdpHierarchy.createHierarchy(config, false);
+            Task rootRMAXQ = rmaxqHierarchy.createHierarchy(config, false);
+            Task hiergenRoot = hierGenHierarchy.createHierarchy(config, false);
+            base = amdpHierarchy.getBaseDomain();
+            amdpHierarchy.setBaseDomain(base);
+            rmaxqHierarchy.setBaseDomain(base);
+            hierGenHierarchy.setBaseDomain(base);
             hierarchies[0] = rootAMDP;
             hierarchies[1] = rootRMAXQ;
             hierarchies[2] = hiergenRoot;
         } else if (config.domain instanceof CleanupConfig) {
-            CleanupHierarchyAMDP rootAMDP = new CleanupHierarchyAMDP();
-            CleanupHierarchyRMAXQ rootRMAXQ= new CleanupHierarchyRMAXQ();
-            CleanupHierarchyHiergen hiergenHierarchy = new CleanupHierarchyHiergen();
-            Task ramdpRoot = rootAMDP.createHierarchy(config, false);
-            Task rmaxqRoot = rootRMAXQ.createHierarchy(config, false);
+            CleanupHierarchyAMDP amdpHierarchy = new CleanupHierarchyAMDP();
+            CleanupHierarchyRMAXQ rmaxqHierarchy= new CleanupHierarchyRMAXQ();
+            CleanupHierarchyHiergen hierGenHierarchy = new CleanupHierarchyHiergen();
+            Task palmRoot = amdpHierarchy.createHierarchy(config, false);
+            Task rmaxqRoot = rmaxqHierarchy.createHierarchy(config, false);
 //            Task hiergenRoot = hiergenHierarchy.createHiergenHierarchy(config);
-            base = rootAMDP.getBaseDomain();
-            hierarchies[0] = ramdpRoot;
+            base = amdpHierarchy.getBaseDomain();
+            amdpHierarchy.setBaseDomain(base);
+            rmaxqHierarchy.setBaseDomain(base);
+//            hierGenHierarchy.setBaseDomain(base);
+            hierarchies[0] = palmRoot;
             hierarchies[1] = rmaxqRoot;
 //            hierarchies[2] = hiergenRoot;
         } else {
