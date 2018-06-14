@@ -1,5 +1,5 @@
 domain: !!config.taxi.TaxiConfig
-  state: small-10passengers
+  state: small-2passengers
   correct_move: 1.0
   fickle: 0.0
 

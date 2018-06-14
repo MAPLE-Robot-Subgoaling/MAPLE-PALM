@@ -1,6 +1,7 @@
 package utilities;
 
 import burlap.mdp.core.state.MutableState;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -64,7 +65,7 @@ public abstract class MutableObject implements MutableObjectInstance, Serializab
     }
 
     @Override
-    public boolean equals(Object other) {
+    public final boolean equals(Object other) {
         if (this == other) return true;
         if (other == null) return false;
         if (getClass() != other.getClass()) return false;
@@ -77,4 +78,14 @@ public abstract class MutableObject implements MutableObjectInstance, Serializab
         }
         return name.equals(o.name);
     }
+
+    @Override
+    public final int hashCode() {
+        return new HashCodeBuilder(41,89)
+            .append(name)
+            .append(values)
+            .toHashCode()
+        ;
+    }
+
 }

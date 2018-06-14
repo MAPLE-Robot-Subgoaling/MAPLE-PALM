@@ -15,7 +15,7 @@ public class TaxiGetPassenger extends MutableObject {
      * current location, whether they are in taxi, the goal, whether they haven been picked up
      * whether they have just been picked up and haven't changed goal
      */
-    private final static List<Object> keys = Arrays.<Object>asList( ATT_LOCATION );
+    private final static List<Object> keys = Arrays.<Object>asList(ATT_LOCATION);
 
     public TaxiGetPassenger(String name, String currentLocation) {
         this(name, (Object) currentLocation);
@@ -44,4 +44,6 @@ public class TaxiGetPassenger extends MutableObject {
     @Override
     public List<Object> variableKeys() {
         return keys;
-    }}
+    }
+
+}

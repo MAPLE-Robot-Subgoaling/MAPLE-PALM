@@ -5,6 +5,7 @@ import burlap.mdp.core.oo.state.OOStateUtilities;
 import burlap.mdp.core.oo.state.OOVariableKey;
 import burlap.mdp.core.oo.state.ObjectInstance;
 import burlap.mdp.core.state.MutableState;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import taxi.hierarchies.tasks.put.state.TaxiPutAgent;
 import taxi.hierarchies.tasks.put.state.TaxiPutLocation;
 import taxi.hierarchies.tasks.put.state.TaxiPutPassenger;
@@ -170,11 +171,13 @@ public class TaxiRootState implements MutableOOState, DeepCopyForShallowCopyStat
         return passengers != null ? passengers.equals(that.passengers) : that.passengers == null;
     }
 
+
     @Override
     public int hashCode() {
-        return passengers != null ? passengers.hashCode() : 0;
+        return new HashCodeBuilder(47, 73)
+                .append(passengers)
+                .toHashCode();
     }
-
     @Override
     public MutableOOState deepCopy() {
         TaxiRootState copy = this.copy();

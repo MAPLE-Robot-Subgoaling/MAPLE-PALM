@@ -5,6 +5,7 @@ import burlap.mdp.core.oo.state.OOStateUtilities;
 import burlap.mdp.core.oo.state.OOVariableKey;
 import burlap.mdp.core.oo.state.ObjectInstance;
 import burlap.mdp.core.state.MutableState;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import taxi.hierarchies.TaxiGetPutState;
 import utilities.DeepCopyForShallowCopyState;
 
@@ -63,7 +64,8 @@ public class TaxiPutState extends TaxiGetPutState implements DeepCopyForShallowC
             return o;
         }
 
-        throw new RuntimeException("Error: no object found with name: " + oname);
+//        throw new RuntimeException("Error: no object found with name " + oname);
+        return null; // return null, needed for imagined state in rmax implementations
     }
 
     @Override
@@ -216,10 +218,11 @@ public class TaxiPutState extends TaxiGetPutState implements DeepCopyForShallowC
 
     @Override
     public int hashCode() {
-        int result = taxi != null ? taxi.hashCode() : 0;
-        result = 31 * result + (passengers != null ? passengers.hashCode() : 0);
-        result = 31 * result + (locations != null ? locations.hashCode() : 0);
-        return result;
+        return new HashCodeBuilder(83, 53)
+                .append(taxi)
+                .append(passengers)
+                .append(locations)
+                .toHashCode();
     }
 
     @Override

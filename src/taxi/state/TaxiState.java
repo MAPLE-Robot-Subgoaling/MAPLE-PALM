@@ -5,6 +5,7 @@ import burlap.mdp.core.oo.state.OOStateUtilities;
 import burlap.mdp.core.oo.state.OOVariableKey;
 import burlap.mdp.core.oo.state.ObjectInstance;
 import burlap.mdp.core.state.MutableState;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import utilities.DeepCopyForShallowCopyState;
 
 import java.util.*;
@@ -343,11 +344,12 @@ public class TaxiState implements MutableOOState, DeepCopyForShallowCopyState {
 
     @Override
     public int hashCode() {
-        int result = getTaxi() != null ? getTaxi().hashCode() : 0;
-        result = 31 * result + (passengers != null ? passengers.hashCode() : 0);
-        result = 31 * result + (locations != null ? locations.hashCode() : 0);
-        result = 31 * result + (walls != null ? walls.hashCode() : 0);
-        return result;
+        return new HashCodeBuilder(19, 41)
+                .append(taxi)
+                .append(passengers)
+                .append(locations)
+                .append(walls)
+                .toHashCode();
     }
 }
 

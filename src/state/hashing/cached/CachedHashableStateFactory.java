@@ -45,7 +45,21 @@ public class CachedHashableStateFactory implements HashableStateFactory {
             throw new RuntimeException("Error: to use CachedHashing, the state must implement DeepCopyForShallowCopyState");
         }
 
+
         DeepCopyForShallowCopyState dcfscs = (DeepCopyForShallowCopyState) s;
+
+
+//        int hc = s.hashCode();
+//        HashableState hs = states.computeIfAbsent(hc, k -> new IDCachedHashableState(dcfscs));
+////        State storedS = hs.s();
+////        if (hc != 0 && !storedS.equals(s)) {
+////            System.err.println("bad");
+////            int h1 = storedS.hashCode();
+////            int h2 = s.hashCode();
+////            System.err.println(h1==h2);
+////        }
+//        return hs;
+
 
         WrappedHashableState hs;
         if(identifierIndependent){

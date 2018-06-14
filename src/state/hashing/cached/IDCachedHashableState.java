@@ -63,6 +63,7 @@ public class IDCachedHashableState extends WrappedHashableState {
         if(hashed)
             return hashVal;
         hashed = true;
+//        hashVal = s.hashCode(); // <--- alternate, dont believe it works
         if(s instanceof OOState){
             hashVal = computeOOHashCode((OOState)s);
         } else{

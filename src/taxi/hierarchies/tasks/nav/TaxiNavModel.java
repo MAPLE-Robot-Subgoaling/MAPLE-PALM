@@ -41,11 +41,6 @@ public class TaxiNavModel implements FullStateModel {
     public List<StateTransitionProb> stateTransitions(State s, Action a) {
         List<StateTransitionProb> tps = new ArrayList<StateTransitionProb>();
         TaxiNavState state = new NavStateMapper().mapState(s);
-
-        ObjectInstance taxi = state.objectsOfClass(CLASS_TAXI).get(0);
-        int tx = (int)taxi.get(ATT_X);
-        int ty = (int)taxi.get(ATT_Y);
-
         if(a.actionName().startsWith(ACTION_NORTH)){
             move(state, 0, +1, tps);
         } else if(a.actionName().startsWith(ACTION_SOUTH)) {

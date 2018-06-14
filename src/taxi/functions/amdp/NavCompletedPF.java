@@ -5,6 +5,8 @@ import burlap.mdp.core.oo.state.OOState;
 import burlap.mdp.core.oo.state.ObjectInstance;
 import taxi.hierarchies.tasks.nav.state.TaxiNavState;
 
+import java.util.List;
+
 import static taxi.TaxiConstants.*;
 
 public class NavCompletedPF extends PropositionalFunction {
@@ -18,7 +20,11 @@ public class NavCompletedPF extends PropositionalFunction {
     public boolean isTrue(OOState s, String... params) {
         if (!(s instanceof TaxiNavState)) { return false; }
         TaxiNavState st = (TaxiNavState) s;
-        ObjectInstance taxi = st.objectsOfClass(CLASS_TAXI).get(0);
+        List<ObjectInstance> taxis = st.objectsOfClass(CLASS_TAXI);
+        if (taxis.size() < 1) {
+            return true; // no taxi, we assume it is terminal
+        }
+        ObjectInstance taxi = taxis.get(0);
         Integer tx = (Integer) taxi.get(ATT_X);
         if (tx == null) { return false; }
         int ty = (int) taxi.get(ATT_Y);
