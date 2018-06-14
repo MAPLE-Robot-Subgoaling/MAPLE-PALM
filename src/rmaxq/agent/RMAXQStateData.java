@@ -46,4 +46,7 @@ public abstract class RMAXQStateData {
     }
 
     public abstract double getP(HashableState hsPrime);
+
+    public abstract double getR(HashableState hsPrime);
+
 }

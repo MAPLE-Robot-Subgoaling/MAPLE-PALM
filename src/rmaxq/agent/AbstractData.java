@@ -1,5 +1,6 @@
 package rmaxq.agent;
 
+import burlap.behavior.valuefunction.QProvider;
 import burlap.statehashing.HashableState;
 import hierarchy.framework.GroundedTask;
 
@@ -22,34 +23,12 @@ public class AbstractData extends RMAXQStateData {
     // P^a(s, s', k) for non-primitive tasks
     private HashMap<HashableState, HashMap<Integer, Double>> storedTransitionsBySteps;
 
-    private Double storedValue;
-
-    // Q(s,a)
-    private HashMap<GroundedTask, Double> storedQValues;    // V(s)
-
-    // pi(s)
-    private GroundedTask storedPolicyAction;
-
     public AbstractData(RMAXQTaskData taskData, HashableState hs) {
         super(taskData, hs);
-        this.storedValue = DEFAULT_INITIAL_Q_VALUE;
-        this.storedQValues = new HashMap<>();
-        this.storedPolicyAction = null;
         this.storedRewardBySteps = new HashMap<>();
         this.storedTransitionsBySteps = new HashMap<>();
-//        this.storedExpectedTransitionProbability = new HashMap<>();
-//        this.storedExpectedReward = new HashMap<>();
-
     }
 
-
-    public GroundedTask getStoredPolicyAction() {
-        return storedPolicyAction;
-    }
-
-    public Double getStoredValue() {
-        return storedValue;
-    }
 
     public double getP(HashableState hsPrime) {
         double transitionProbability = 0.0;
@@ -68,4 +47,17 @@ public class AbstractData extends RMAXQStateData {
         return transitionProbability;
     }
 
+    @Override
+    public double getR(HashableState hsPrime) {
+
+        // TODO
+
+        return 0.0;
+    }
+
+    public GroundedTask selectNextAction() {
+        RMAXQTaskData taskData = getTaskData();
+        GroundedTask action = taskData.selectActionForState(getHs());
+        return action;
+    }
 }

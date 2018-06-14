@@ -1,5 +1,6 @@
 package hierarchy.framework;
 
+import burlap.behavior.policy.Policy;
 import burlap.behavior.valuefunction.ValueFunction;
 import burlap.mdp.core.action.Action;
 import burlap.mdp.core.oo.ObjectParameterizedAction;
@@ -26,6 +27,7 @@ public class GroundedTask {
     private Task t;
 
     protected final String formattedName;
+    private Policy policy;
 
     /**
      * each grounded task has an action and task
@@ -186,5 +188,4 @@ public class GroundedTask {
         hashCodeBuilder.append(formattedName);
         return hashCodeBuilder.toHashCode();
     }
-
 }
