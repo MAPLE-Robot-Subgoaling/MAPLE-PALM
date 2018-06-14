@@ -4,7 +4,7 @@ domain: !!config.taxi.TaxiConfig
   fickle: 0.0
 
 agents:
-  - rmaxq
+  - rmaxqExpert
 
 episodes: 100
 max_steps: 1000
@@ -13,6 +13,7 @@ gamma: 0.90
 
 seed: 173412
 
+identifier_independent: false
 planning:
   rollouts: 1000
 

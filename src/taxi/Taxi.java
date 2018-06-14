@@ -19,12 +19,6 @@ import taxi.state.TaxiPassenger;
 import taxi.state.TaxiWall;
 import taxi.stategenerator.TaxiStateFactory;
 
-/**
- * 1. run AMDP tests vs. MDP tests
- * 2. run runtime tests
- */
-//import ramdp.agent.*; //in order to run RAMDP tests
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -161,7 +155,7 @@ public class Taxi implements DomainGenerator{
         SimulatedEnvironment env = new SimulatedEnvironment(domain, s);
 
         List<Episode> eps = new ArrayList<Episode>();
-        QLearning qagent = new QLearning(domain, 0.95, hs, 0, 0.1); //gamma = 0.99 to match the RAMDP parameters
+        QLearning qagent = new QLearning(domain, 0.95, hs, 0, 0.1); //gamma = 0.99 to match the PALM parameters
 
         //initialize the min and max
         //int maxNumActions = 0;

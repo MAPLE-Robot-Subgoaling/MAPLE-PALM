@@ -7,49 +7,60 @@ import taxi.TaxiVisualizer;
 import taxi.state.TaxiState;
 import taxi.stategenerator.TaxiStateFactory;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class TaxiConfig extends DomainConfig {
     public double correct_move;
     public double fickle;
 
     public TaxiState generateState() {
-        switch (state) {
-            case "classic":
-                return TaxiStateFactory.createClassicState();
-            //added classic20 for the 20x20 map
-            case "classic20":
-            	return TaxiStateFactory.createClassic20State(1);
-            case "classic-2passengers":
-                return TaxiStateFactory.createClassicState(2);
-            case "tiny":
-                return TaxiStateFactory.createTinyState();
-            case "tiny-2passengers":
-                return TaxiStateFactory.createTinyState(2);
-            case "tiny3-2passengers":
-                return TaxiStateFactory.createTiny3State(2);
-            case "small":
-                return TaxiStateFactory.createSmallState();
-            case "small-2passengers":
-                return TaxiStateFactory.createSmallState(2);
-            case "medium":
-                return TaxiStateFactory.createMediumState();
-            case "medium-2passengers":
-                return TaxiStateFactory.createMediumState(2);
-            case "3depots":
-                return TaxiStateFactory.createThreeDepots();
-            case "3depots-2passengers":
-                return TaxiStateFactory.createThreeDepots(2);
-            case "mehta-zigzag-1":
-                return TaxiStateFactory.createMehtaZigZag1State(1);
-            case "mehta-zigzag-2":
-                return TaxiStateFactory.createMehtaZigZag2State(2);
-            case "steptest":
-                return TaxiStateFactory.createStepTest(1);
-            case "steptest-2passengers":
-                return TaxiStateFactory.createStepTest(2);
-            case "steptest-10passengers":
-                return TaxiStateFactory.createStepTest(10);
-            default:
-                throw new RuntimeException("ERROR: invalid state passed to generateState in TaxiConfig: " + state);
+        String passengerNumberRegex = "\\-(\\d+)passengers";
+        Pattern r = Pattern.compile(passengerNumberRegex);
+        Matcher m = r.matcher(state);
+        String numPassengersString = "";
+        if (m.find()) {
+            numPassengersString = m.group(1);
+        }
+        int numPassengers = "".equals(numPassengersString) ? 1 : Integer.parseInt(numPassengersString);
+        if        (state.equals("classic")) {
+            return TaxiStateFactory.createClassicState();
+        } else if (state.equals("tiny")) {
+            return TaxiStateFactory.createTinyState();
+        } else if (state.equals("small")) {
+            return TaxiStateFactory.createSmallState();
+        } else if (state.equals("medium")) {
+            return TaxiStateFactory.createMediumState();
+        } else if (state.equals("3depots")) {
+            return TaxiStateFactory.createThreeDepots();
+        } else if (state.equals("mehta-zigzag-1")) {
+            return TaxiStateFactory.createMehtaZigZag1State(1);
+        } else if (state.equals("mehta-zigzag-2")) {
+            return TaxiStateFactory.createMehtaZigZag2State(1);
+        } else if (state.equals("steptest")) {
+            return TaxiStateFactory.createStepTest(1);
+        } else if (state.matches("classic" + passengerNumberRegex)) {
+            return TaxiStateFactory.createClassicState(numPassengers);
+        } else if (state.matches("classic20" + passengerNumberRegex)) {
+            return TaxiStateFactory.createClassic20State(numPassengers);
+        } else if (state.matches("tiny" + passengerNumberRegex)) {
+            return TaxiStateFactory.createTinyState(numPassengers);
+        } else if (state.matches("tiny3" + passengerNumberRegex)) {
+            return TaxiStateFactory.createTiny3State(numPassengers);
+        } else if (state.matches("small" + passengerNumberRegex)) {
+            return TaxiStateFactory.createSmallState(numPassengers);
+        } else if (state.matches("medium" + passengerNumberRegex)) {
+            return TaxiStateFactory.createMediumState(numPassengers);
+        } else if (state.matches("3depots" + passengerNumberRegex)) {
+            return TaxiStateFactory.createThreeDepots(numPassengers);
+        } else if (state.matches("mehta-zigzag-1" + passengerNumberRegex)) {
+            return TaxiStateFactory.createMehtaZigZag1State(numPassengers);
+        } else if (state.matches("mehta-zigzag-2" + passengerNumberRegex)) {
+            return TaxiStateFactory.createMehtaZigZag2State(numPassengers);
+        }  else if (state.matches("steptest" + passengerNumberRegex)) {
+            return TaxiStateFactory.createStepTest(numPassengers);
+        } else {
+            throw new RuntimeException("ERROR: invalid state passed to generateState in TaxiConfig: " + state);
         }
     }
 

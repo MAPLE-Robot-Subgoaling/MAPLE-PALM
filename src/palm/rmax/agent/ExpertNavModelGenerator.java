@@ -5,6 +5,7 @@ import burlap.mdp.core.oo.ObjectParameterizedAction;
 import burlap.mdp.singleagent.model.FactoredModel;
 import burlap.mdp.singleagent.oo.OOSADomain;
 import burlap.statehashing.HashableStateFactory;
+import config.ExperimentConfig;
 import hierarchy.framework.GroundedTask;
 import palm.agent.ExpertPALMModel;
 import palm.agent.PALMModel;
@@ -21,13 +22,16 @@ public class ExpertNavModelGenerator implements PALMModelGenerator {
     private boolean useMultitimeModel;
     private HashableStateFactory hashingFactory;
 
-    public ExpertNavModelGenerator( int threshold, double rmax, HashableStateFactory hs,
-                                   double gamma, boolean useMultitimeModel) {
+    public ExpertNavModelGenerator(HashableStateFactory hsf, double gamma, int threshold, double rmax, boolean useMultitimeModel) {
+        this.hashingFactory = hsf;
+        this.gamma = gamma;
         this.threshold = threshold;
         this.rmax = rmax;
-        this.hashingFactory = hs;
-        this.gamma = gamma;
         this.useMultitimeModel = useMultitimeModel;
+    }
+
+    public ExpertNavModelGenerator(HashableStateFactory hsf, ExperimentConfig config) {
+        this(hsf, config.gamma, config.rmax.threshold, config.rmax.vmax, config.rmax.use_multitime_model);
     }
 
     @Override

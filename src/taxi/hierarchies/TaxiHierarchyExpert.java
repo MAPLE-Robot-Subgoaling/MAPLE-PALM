@@ -2,6 +2,8 @@ package taxi.hierarchies;
 
 import burlap.mdp.core.action.ActionType;
 import burlap.mdp.singleagent.oo.OOSADomain;
+import config.ExperimentConfig;
+import config.taxi.TaxiConfig;
 import hierarchy.framework.NonprimitiveTask;
 import hierarchy.framework.PrimitiveTask;
 import hierarchy.framework.SolveActionType;
@@ -21,7 +23,8 @@ import static taxi.TaxiConstants.*;
 import static taxi.TaxiConstants.ACTION_PUT;
 import static taxi.TaxiConstants.ACTION_PUTDOWN;
 
-public class TaxiHierarchyAMDP extends TaxiHierarchy {
+public class TaxiHierarchyExpert extends TaxiHierarchy {
+
 
     /***
      * creates the standards taxi hierarchy and returns the root task
@@ -45,10 +48,6 @@ public class TaxiHierarchyAMDP extends TaxiHierarchy {
         OOSADomain putDomain = (new TaxiPutDomain()).generateDomain();
         OOSADomain navDomain = (new TaxiNavDomain()).generateDomain();
         baseDomain = taxiDomain.generateDomain();
-        rootDomain.setModel(null);
-        getDomain.setModel(null);
-        putDomain.setModel(null);
-        navDomain.setModel(null);
 
         // Navigate Tasks (Primitives used for Put Nav and Get Nav later)
         ActionType aNorth = navDomain.getAction(ACTION_NORTH);
@@ -76,7 +75,7 @@ public class TaxiHierarchyAMDP extends TaxiHierarchy {
                 defaultReward,
                 noopReward
         );
-        if (plan) { setupKnownTFRF(navigate); }
+        if (plan) { setupKnownTFRF(navigate); } else { navDomain.setModel(null); }
 
         // Pickup
         ActionType aPickup = getDomain.getAction(ACTION_PICKUP);
@@ -95,7 +94,7 @@ public class TaxiHierarchyAMDP extends TaxiHierarchy {
                 defaultReward,
                 noopReward
         );
-        if (plan) { setupKnownTFRF(get); }
+        if (plan) { setupKnownTFRF(get); } else { getDomain.setModel(null); }
 
         // Putdown
         ActionType aPutdown = putDomain.getAction(ACTION_PUTDOWN);
@@ -114,7 +113,7 @@ public class TaxiHierarchyAMDP extends TaxiHierarchy {
                 defaultReward,
                 noopReward
         );
-        if (plan) { setupKnownTFRF(put); }
+        if (plan) { setupKnownTFRF(put); } else { putDomain.setModel(null); }
 
         // Root
         ActionType aSolve = new SolveActionType();
@@ -129,10 +128,8 @@ public class TaxiHierarchyAMDP extends TaxiHierarchy {
                 defaultReward,
                 noopReward
         );
-        if (plan) { setupKnownTFRF(root); }
+        if (plan) { setupKnownTFRF(root); } else { rootDomain.setModel(null); }
 
         return root;
     }
-
-
 }
