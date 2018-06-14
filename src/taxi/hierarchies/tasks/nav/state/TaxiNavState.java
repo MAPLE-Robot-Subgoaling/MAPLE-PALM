@@ -127,7 +127,7 @@ public class TaxiNavState implements MutableOOState, DeepCopyForShallowCopyState
 
     @Override
     public TaxiNavState copy() {
-        return new TaxiNavState(touchTaxi(), touchLocations(), touchWalls());
+        return new TaxiNavState(taxi, locations, walls);
     }
 
     @Override

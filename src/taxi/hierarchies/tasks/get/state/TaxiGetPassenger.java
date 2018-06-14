@@ -38,7 +38,7 @@ public class TaxiGetPassenger extends MutableObject {
 
     @Override
     public ObjectInstance copyWithName(String objectName) {
-        return new TaxiGetPassenger( objectName, get(ATT_LOCATION) );
+        return new TaxiGetPassenger(objectName, get(ATT_LOCATION));
     }
 
     @Override

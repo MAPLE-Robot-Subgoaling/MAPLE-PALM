@@ -100,7 +100,7 @@ public class TaxiPutState extends TaxiGetPutState implements DeepCopyForShallowC
 
     @Override
     public TaxiPutState copy() {
-        return new TaxiPutState(touchTaxi(), touchPassengers(), touchLocations());
+        return new TaxiPutState(taxi, passengers, locations);
     }
 
     @Override

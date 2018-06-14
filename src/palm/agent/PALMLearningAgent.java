@@ -106,12 +106,12 @@ public class PALMLearningAgent implements LearningAgent {
     public Episode runLearningEpisode(Environment env, int maxSteps) {
 
         //runtime
-        long start = System.nanoTime();
-        System.out.println("PALM episode start time: " + start);
-        actualTimeElapsed = System.currentTimeMillis();
-        SimpleDateFormat sdf = new SimpleDateFormat("MMM dd,yyyy HH:mm:ss");
-        Date resultdate = new Date(actualTimeElapsed);
-        System.out.println(sdf.format(resultdate));
+//        long start = System.nanoTime();
+//        System.out.println("PALM episode start time: " + start);
+//        actualTimeElapsed = System.currentTimeMillis();
+//        SimpleDateFormat sdf = new SimpleDateFormat("MMM dd,yyyy HH:mm:ss");
+//        Date resultdate = new Date(actualTimeElapsed);
+//        System.out.println(sdf.format(resultdate));
 
         steps = 0;
         State initialState = env.currentObservation();
@@ -121,11 +121,10 @@ public class PALMLearningAgent implements LearningAgent {
         System.out.println(e.actionSequence.size() + " " + e.actionSequence);
 
         ///for a chart of runtime
-        long estimatedTime = System.nanoTime() - start;
-        System.out.println("Estimated PALM episode nano time: " + estimatedTime);
-
-        actualTimeElapsed = System.currentTimeMillis() - actualTimeElapsed;
-        System.out.println("Clock time elapsed: " + actualTimeElapsed);
+//        long estimatedTime = System.nanoTime() - start;
+//        System.out.println("Estimated PALM episode nano time: " + estimatedTime);
+//        actualTimeElapsed = System.currentTimeMillis() - actualTimeElapsed;
+//        System.out.println("Clock time elapsed: " + actualTimeElapsed);
 
         return e;
     }

@@ -73,7 +73,7 @@ public class TaxiRootState implements MutableOOState, DeepCopyForShallowCopyStat
 
     @Override
     public TaxiRootState copy() {
-        return new TaxiRootState(touchPassengers());
+        return new TaxiRootState(passengers);
     }
 
     @Override

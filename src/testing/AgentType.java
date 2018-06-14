@@ -5,6 +5,7 @@ import burlap.behavior.singleagent.learning.LearningAgentFactory;
 import burlap.behavior.singleagent.learning.tdmethods.QLearning;
 import burlap.mdp.singleagent.oo.OOSADomain;
 import burlap.statehashing.HashableStateFactory;
+import burlap.statehashing.simple.SimpleHashableStateFactory;
 import config.ExperimentConfig;
 import hierarchy.framework.Task;
 import palm.agent.PALMLearningAgent;
@@ -128,6 +129,7 @@ public enum AgentType {
 
     public static HashableStateFactory initializeHashableStateFactory(boolean identifierIndependent) {
         return new CachedHashableStateFactory(identifierIndependent);
+//        return new SimpleHashableStateFactory(identifierIndependent);
     }
 
     public static final boolean DEFAULT_IDENTIFIER_INDEPENDENT = false;

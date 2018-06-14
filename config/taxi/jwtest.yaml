@@ -1,5 +1,5 @@
 domain: !!config.taxi.TaxiConfig
-  state: mehta-zigzag-2-3passengers
+  state: small-10passengers
   correct_move: 1.0
   fickle: 0.0
 
@@ -9,12 +9,12 @@ agents:
 #  - kappaExpert
 #  - kappaHierGen
 
-episodes: 300
-max_steps: 10000
+episodes: 1000
+max_steps: 100
 trials: 1
 gamma: 0.90
 
-seed: 2451
+seed: 1219
 
 identifier_independent: false
 planning:
