@@ -7,6 +7,8 @@ import burlap.mdp.singleagent.oo.ObjectParameterizedActionType;
 import taxi.hierarchies.TaxiGetPutState;
 
 import static taxi.TaxiConstants.ATT_LOCATION;
+import static taxi.TaxiConstants.CLASS_TAXI;
+
 public class NavigateActionType extends ObjectParameterizedActionType {
 
     public NavigateActionType(String name, String[] parameterClasses) {
@@ -18,7 +20,9 @@ public class NavigateActionType extends ObjectParameterizedActionType {
         TaxiGetPutState state = (TaxiGetPutState) s;
         String[] params = objectParameterizedAction.getObjectParameters();
         String locName = params[0];
+        ObjectInstance taxi = state.objectsOfClass(CLASS_TAXI).get(0);
         ObjectInstance location = state.object(locName);
-        return !location.name().equals(state.getTaxiAtt(ATT_LOCATION));
+        return !location.name().equals(taxi.get(ATT_LOCATION));
     }
+
 }

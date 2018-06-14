@@ -10,6 +10,7 @@ import java.util.*;
 
 import static taxi.TaxiConstants.*;
 public class TaxiNavState implements MutableOOState, DeepCopyForShallowCopyState {
+
     private TaxiNavAgent taxi;
     private Map<String, TaxiNavLocation> locations;
     private Map<String, TaxiNavWall> walls;
@@ -49,7 +50,7 @@ public class TaxiNavState implements MutableOOState, DeepCopyForShallowCopyState
     }
 
     public Map<String, TaxiNavLocation> touchLocations(){
-        this.locations = new HashMap<String, TaxiNavLocation>(locations);
+        this.locations = new HashMap<>(locations);
         return locations;
     }
 
@@ -61,11 +62,9 @@ public class TaxiNavState implements MutableOOState, DeepCopyForShallowCopyState
     }
 
     public Map<String, TaxiNavWall> touchWalls(){
-        this.walls = new HashMap<String, TaxiNavWall>(walls);
+        this.walls = new HashMap<>(walls);
         return walls;
     }
-
-
 
     @Override
     public int numObjects() {
@@ -77,47 +76,50 @@ public class TaxiNavState implements MutableOOState, DeepCopyForShallowCopyState
 
     @Override
     public ObjectInstance object(String oname) {
-        if(taxi != null && taxi.name().equals(oname))
+        if(taxi != null && taxi.name().equals(oname)) {
             return taxi;
+        }
 
         ObjectInstance o = locations.get(oname);
-        if(o != null)
+        if(o != null) {
             return o;
+        }
 
         o = walls.get(oname);
-        if(o != null)
+        if(o != null) {
             return o;
+        }
 
-        return null;
+        throw new RuntimeException("Error: no object found with name: " + oname);
     }
 
-    private List<ObjectInstance> cachedObjectList = null;
     @Override
     public List<ObjectInstance> objects() {
-        if (cachedObjectList == null) { cachedObjectList = new ArrayList<ObjectInstance>(); }
-        else { return cachedObjectList; }
         List<ObjectInstance> objs = new ArrayList<ObjectInstance>();
         if (taxi != null) { objs.add(taxi); }
         objs.addAll(locations.values());
         objs.addAll(walls.values());
-        cachedObjectList = objs;
         return objs;
     }
 
     @Override
     public List<ObjectInstance> objectsOfClass(String oclass) {
         if(oclass.equals(CLASS_TAXI))
-            return taxi == null ? new ArrayList<ObjectInstance>() : Arrays.<ObjectInstance>asList(taxi);
+            return taxi == null ? new ArrayList<>() : Arrays.<ObjectInstance>asList(taxi);
         else if(oclass.equals(CLASS_LOCATION))
-            return new ArrayList<ObjectInstance>(locations.values());
+            return new ArrayList<>(locations.values());
         else if(oclass.equals(CLASS_WALL))
-            return new ArrayList<ObjectInstance>(walls.values());
+            return new ArrayList<>(walls.values());
         throw new RuntimeException("No object class " + oclass);
     }
 
+    private List<Object> variableKeys;
     @Override
     public List<Object> variableKeys() {
-        return OOStateUtilities.flatStateKeys(this);
+        if (variableKeys == null) {
+            variableKeys = OOStateUtilities.flatStateKeys(this);
+        }
+        return variableKeys;
     }
 
     @Override
@@ -155,49 +157,12 @@ public class TaxiNavState implements MutableOOState, DeepCopyForShallowCopyState
         } else {
             throw new RuntimeException("Error: unknown object of name: " + oname);
         }
-        cachedObjectList = null;
         return this;
     }
 
     @Override
     public MutableOOState renameObject(String objectName, String newName) {
         throw new RuntimeException("Rename not implemented");
-    }
-
-    public String[] getLocations(){
-        String[] ret = new String[locations.size()];
-        int i = 0;
-        for(String name : locations.keySet())
-            ret[i++] = name;
-        return ret;
-    }
-
-    public String[] getWalls(){
-        String[] ret = new String[walls.size()];
-        int i = 0;
-        for(String name: walls.keySet())
-            ret[i++] = name;
-        return ret;
-    }
-
-    public Collection<TaxiNavWall> getWallObjects() {
-        return walls.values();
-    }
-
-
-    public Object getTaxiAtt(String attName){
-        if(taxi == null) {
-            return null;
-        }
-        return taxi.get(attName);
-    }
-
-    public Object getLocationAtt(String locName, String attName){
-        return locations.get(locName).get(attName);
-    }
-
-    public Object getWallAtt(String wallName, String attName){
-        return walls.get(wallName).get(attName);
     }
 
     @Override

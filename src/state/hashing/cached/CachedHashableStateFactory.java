@@ -44,11 +44,13 @@ public class CachedHashableStateFactory implements HashableStateFactory {
         if (!(s instanceof DeepCopyForShallowCopyState)) {
             throw new RuntimeException("Error: to use CachedHashing, the state must implement DeepCopyForShallowCopyState");
         }
+
         DeepCopyForShallowCopyState dcfscs = (DeepCopyForShallowCopyState) s;
 
         WrappedHashableState hs;
         if(identifierIndependent){
             hs = new IICachedHashableState(dcfscs);
+            throw new RuntimeException("Not checked for bugs");
         } else {
             hs = new IDCachedHashableState(dcfscs);
         }

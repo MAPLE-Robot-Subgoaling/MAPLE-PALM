@@ -4,6 +4,7 @@ import burlap.debugtools.RandomFactory;
 import burlap.mdp.core.StateTransitionProb;
 import burlap.mdp.core.action.Action;
 import burlap.mdp.core.oo.ObjectParameterizedAction;
+import burlap.mdp.core.oo.state.ObjectInstance;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.model.statemodel.FullStateModel;
 import taxi.hierarchies.tasks.put.state.TaxiPutAgent;
@@ -55,7 +56,8 @@ public class TaxiPutModel implements FullStateModel {
         String passenger = a.getObjectParameters()[0];
 
         TaxiPutPassenger np = ns.touchPassenger(passenger);
-        String taxiLocation = (String) ns.getTaxiAtt(ATT_LOCATION);
+        ObjectInstance taxi = s.objectsOfClass(CLASS_TAXI).get(0);
+        String taxiLocation = (String) taxi.get(ATT_LOCATION);
         np.set(ATT_LOCATION, taxiLocation);
 
         tps.add(new StateTransitionProb(ns, 1));

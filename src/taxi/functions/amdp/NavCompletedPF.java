@@ -2,6 +2,7 @@ package taxi.functions.amdp;
 
 import burlap.mdp.core.oo.propositional.PropositionalFunction;
 import burlap.mdp.core.oo.state.OOState;
+import burlap.mdp.core.oo.state.ObjectInstance;
 import taxi.hierarchies.tasks.nav.state.TaxiNavState;
 
 import static taxi.TaxiConstants.*;
@@ -15,14 +16,16 @@ public class NavCompletedPF extends PropositionalFunction {
 
     @Override
     public boolean isTrue(OOState s, String... params) {
-//		TaxiNavState st = new NavStateMapper().mapState(s);
         if (!(s instanceof TaxiNavState)) { return false; }
         TaxiNavState st = (TaxiNavState) s;
-        Integer tx = (Integer) st.getTaxiAtt(ATT_X);
+        ObjectInstance taxi = st.objectsOfClass(CLASS_TAXI).get(0);
+        Integer tx = (Integer) taxi.get(ATT_X);
         if (tx == null) { return false; }
-        int ty = (int) st.getTaxiAtt(ATT_Y);
-        int lx = (int) st.getLocationAtt(params[0], ATT_X);
-        int ly = (int) st.getLocationAtt(params[0], ATT_Y);
+        int ty = (int) taxi.get(ATT_Y);
+        String locationName = params[0];
+        ObjectInstance location = st.object(locationName);
+        int lx = (int) location.get(ATT_X);
+        int ly = (int) location.get(ATT_Y);
         return tx == lx && ty == ly;
     }
 

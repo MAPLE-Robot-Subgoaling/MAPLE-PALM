@@ -54,43 +54,45 @@ public class TaxiPutState extends TaxiGetPutState implements DeepCopyForShallowC
         }
 
         ObjectInstance o = passengers.get(oname);
-        if(o != null)
+        if(o != null) {
             return o;
+        }
 
         o = locations.get(oname);
-        if(o != null)
+        if(o != null) {
             return o;
+        }
 
-        return null;
+        throw new RuntimeException("Error: no object found with name: " + oname);
     }
 
-    private List<ObjectInstance> cachedObjectList = null;
     @Override
     public List<ObjectInstance> objects() {
-        if (cachedObjectList == null) { cachedObjectList = new ArrayList<ObjectInstance>(); }
-        else { return cachedObjectList; }
         List<ObjectInstance> obj = new ArrayList<ObjectInstance>();
         if (taxi != null) { obj.add(taxi); }
         obj.addAll(passengers.values());
         obj.addAll(locations.values());
-        cachedObjectList = obj;
         return obj;
     }
 
     @Override
     public List<ObjectInstance> objectsOfClass(String oclass) {
         if(oclass.equals(CLASS_TAXI))
-            return taxi == null ? new ArrayList<ObjectInstance>() : Arrays.<ObjectInstance>asList(taxi);
+            return taxi == null ? new ArrayList<>() : Arrays.<ObjectInstance>asList(taxi);
         if(oclass.equals(CLASS_PASSENGER))
-            return new ArrayList<ObjectInstance>(passengers.values());
+            return new ArrayList<>(passengers.values());
         if(oclass.equals(CLASS_LOCATION))
-            return new ArrayList<ObjectInstance>(locations.values());
+            return new ArrayList<>(locations.values());
         throw new RuntimeException("No object class " + oclass);
     }
 
+    private List<Object> variableKeys;
     @Override
     public List<Object> variableKeys() {
-        return OOStateUtilities.flatStateKeys(this);
+        if (variableKeys == null) {
+            variableKeys = OOStateUtilities.flatStateKeys(this);
+        }
+        return variableKeys;
     }
 
     @Override
@@ -106,7 +108,6 @@ public class TaxiPutState extends TaxiGetPutState implements DeepCopyForShallowC
     @Override
     public MutableState set(Object variableKey, Object value) {
         OOVariableKey key = OOStateUtilities.generateKey(variableKey);
-
         if(taxi != null && key.obName.equals(taxi.name())) {
             touchTaxi().set(variableKey, value);
         } else if(passengers.get(key.obName) != null){
@@ -130,7 +131,6 @@ public class TaxiPutState extends TaxiGetPutState implements DeepCopyForShallowC
         } else {
             throw new RuntimeException("Can only add certain objects to state.");
         }
-        cachedObjectList = null;
         return this;
     }
 
@@ -149,7 +149,6 @@ public class TaxiPutState extends TaxiGetPutState implements DeepCopyForShallowC
         } else {
             throw new RuntimeException("Error: unknown object of name: " + oname);
         }
-        cachedObjectList = null;
         return this;
     }
 
@@ -176,15 +175,6 @@ public class TaxiPutState extends TaxiGetPutState implements DeepCopyForShallowC
         return passengers;
     }
 
-    //get values from objects
-    public String[] getPassengers(){
-        String[] ret = new String[passengers.size()];
-        int i = 0;
-        for(String name : passengers.keySet())
-            ret[i++] = name;
-        return ret;
-    }
-
     public TaxiPutLocation touchLocation(String locName){
         TaxiPutLocation loc = locations.get(locName).copy();
         touchLocations().remove(locName);
@@ -193,32 +183,8 @@ public class TaxiPutState extends TaxiGetPutState implements DeepCopyForShallowC
     }
 
     public Map<String, TaxiPutLocation> touchLocations(){
-        this.locations = new HashMap<String, TaxiPutLocation>(locations);
+        this.locations = new HashMap<>(locations);
         return locations;
-    }
-
-    //get values from objects
-    public String[] getLocations(){
-        String[] ret = new String[locations.size()];
-        int i = 0;
-        for(String name : locations.keySet())
-            ret[i++] = name;
-        return ret;
-    }
-
-    public Object getTaxiAtt(String attName) {
-        if (taxi == null) {
-            return null;
-        }
-        return taxi.get(attName);
-    }
-
-    public Object getPassengerAtt(String passname, String attName){
-        return passengers.get(passname).get(attName);
-    }
-
-    public Object getLocationAtt(String locname, String attName) {
-        return locations.get(locname).get(attName);
     }
 
     @Override

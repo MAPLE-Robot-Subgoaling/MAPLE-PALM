@@ -17,9 +17,6 @@ public class IICachedHashableState extends WrappedHashableState {
     protected boolean dirty = true;
     protected boolean hashed = false;
     protected int hashVal;
-    public IICachedHashableState() {
-        dirty = true;
-    }
 
     public IICachedHashableState(DeepCopyForShallowCopyState s) {
         this.s = s.deepCopy();

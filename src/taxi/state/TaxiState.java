@@ -19,22 +19,21 @@ public class TaxiState implements MutableOOState, DeepCopyForShallowCopyState {
     private Map<String, TaxiLocation> locations;
     private Map<String, TaxiWall> walls;
 
-    public TaxiState(TaxiAgent taxi, List<TaxiPassenger> passengers, List<TaxiLocation> locations,
-            List<TaxiWall> walls) {
+    public TaxiState(TaxiAgent taxi, List<TaxiPassenger> passengers, List<TaxiLocation> locations, List<TaxiWall> walls) {
         this.taxi = taxi;
 
         this.passengers = new HashMap<>();
-        for(TaxiPassenger p : passengers){
+        for (TaxiPassenger p : passengers) {
             this.passengers.put(p.name(), p);
         }
 
         this.locations = new HashMap<>();
-        for(TaxiLocation l : locations){
+        for (TaxiLocation l : locations) {
             this.locations.put(l.name(), l);
         }
 
         this.walls = new HashMap<>();
-        for(TaxiWall w : walls){
+        for (TaxiWall w : walls) {
             this.walls.put(w.name(), w);
         }
     }
@@ -49,7 +48,9 @@ public class TaxiState implements MutableOOState, DeepCopyForShallowCopyState {
     @Override
     public int numObjects() {
         int count = 0;
-        if (taxi != null) { count += 1; }
+        if (taxi != null) {
+            count += 1;
+        }
         count += passengers.size();
         count += locations.size();
         count += walls.size();
@@ -58,46 +59,61 @@ public class TaxiState implements MutableOOState, DeepCopyForShallowCopyState {
 
     @Override
     public ObjectInstance object(String oname) {
-        if(taxi != null && taxi.name().equals(oname)) { return taxi; }
+        if (taxi != null && taxi.name().equals(oname)) {
+            return taxi;
+        }
 
         ObjectInstance o = passengers.get(oname);
-        if(o != null) { return o; }
+        if (o != null) {
+            return o;
+        }
 
         o = locations.get(oname);
-        if(o != null) { return o; }
+        if (o != null) {
+            return o;
+        }
 
         o = walls.get(oname);
-        if(o != null) { return o; }
+        if (o != null) {
+            return o;
+        }
 
         throw new RuntimeException("Error: no object found with name: " + oname);
     }
 
     @Override
     public List<ObjectInstance> objects() {
-            List<ObjectInstance> objs = new ArrayList<ObjectInstance>();
-            if (taxi != null) { objs.add(taxi); }
-            objs.addAll(passengers.values());
-            objs.addAll(locations.values());
-            objs.addAll(walls.values());
-            return objs;
+        List<ObjectInstance> objs = new ArrayList<ObjectInstance>();
+        if (taxi != null) {
+            objs.add(taxi);
+        }
+        objs.addAll(passengers.values());
+        objs.addAll(locations.values());
+        objs.addAll(walls.values());
+        return objs;
     }
 
     @Override
     public List<ObjectInstance> objectsOfClass(String oclass) {
-        if(oclass.equals(CLASS_TAXI))
+        if (oclass.equals(CLASS_TAXI)) {
             return Arrays.asList(taxi);
-        else if(oclass.equals(CLASS_PASSENGER))
+        } else if (oclass.equals(CLASS_PASSENGER)) {
             return new ArrayList<>(passengers.values());
-        else if(oclass.equals(CLASS_LOCATION))
+        } else if(oclass.equals(CLASS_LOCATION)) {
             return new ArrayList<>(locations.values());
-        else if(oclass.equals(CLASS_WALL))
+        } else if(oclass.equals(CLASS_WALL)) {
             return new ArrayList<>(walls.values());
-        throw new RuntimeException("No object class " + oclass);
+        }
+        throw new RuntimeException("Error no class found with name: " + oclass);
     }
 
+    private List<Object> variableKeys;
     @Override
     public List<Object> variableKeys() {
-        return OOStateUtilities.flatStateKeys(this);
+        if (variableKeys == null) {
+            variableKeys = OOStateUtilities.flatStateKeys(this);
+        }
+        return variableKeys;
     }
 
     @Override
@@ -113,7 +129,6 @@ public class TaxiState implements MutableOOState, DeepCopyForShallowCopyState {
     @Override
     public MutableState set(Object variableKey, Object value) {
         OOVariableKey key = OOStateUtilities.generateKey(variableKey);
-
         if(key.obName.equals(taxi.name())){
             touchTaxi().set(variableKey, value);
         }else if(passengers.get(key.obName) != null){
@@ -311,6 +326,28 @@ public class TaxiState implements MutableOOState, DeepCopyForShallowCopyState {
 
     public TaxiAgent getTaxi() {
         return taxi;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        TaxiState taxiState = (TaxiState) o;
+
+        if (getTaxi() != null ? !getTaxi().equals(taxiState.getTaxi()) : taxiState.getTaxi() != null) return false;
+        if (passengers != null ? !passengers.equals(taxiState.passengers) : taxiState.passengers != null) return false;
+        if (locations != null ? !locations.equals(taxiState.locations) : taxiState.locations != null) return false;
+        return walls != null ? walls.equals(taxiState.walls) : taxiState.walls == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = getTaxi() != null ? getTaxi().hashCode() : 0;
+        result = 31 * result + (passengers != null ? passengers.hashCode() : 0);
+        result = 31 * result + (locations != null ? locations.hashCode() : 0);
+        result = 31 * result + (walls != null ? walls.hashCode() : 0);
+        return result;
     }
 }
 
