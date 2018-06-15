@@ -5,7 +5,7 @@ domain: !!config.taxi.TaxiConfig
 
 agents:
   - rmaxqExpert
-  - rmaxqHierGen
+#  - rmaxqHierGen
   - palmExpert
   - palmExpertWithNavGiven
   - palmHierGen
