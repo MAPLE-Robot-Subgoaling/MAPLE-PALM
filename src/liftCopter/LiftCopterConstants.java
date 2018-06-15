@@ -32,6 +32,9 @@ public class LiftCopterConstants {
     public static final String ATT_PICKED_UP = "pickedUp";
     public static final String ATT_COLOR = "color";
 
+    public static final String ATT_VAL_PICKED_UP = "pickedUp";
+    public static final String ATT_VAL_IN_AIR = "flyin";
+
 
     //wall attributes
     public static final String ATT_START_X = "startX";

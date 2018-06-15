@@ -76,8 +76,8 @@ public class LiftCopterVisualizer {
             float realHeight = taxiHeight * scale;
             float realX = taxix;
             float realy = taxiy;
-
-            g2.fill(new Ellipse2D.Float(realX, realy, realWidth, realHeight));
+            g2.fillRect((int)realX, (int)realy, (int)realWidth, (int)realHeight);
+//            g2.fill(new Ellipse2D.Float(realX, realy, realWidth, realHeight));
         }
     }
 
@@ -158,7 +158,7 @@ public class LiftCopterVisualizer {
             double locx = (lx - lw/2)* locWidth;
             double locy = cHeight - (ly + lh/2) * locHeight;
 
-            g2.fill(new Ellipse2D.Float((float)locx, (float)locy, locWidth, locHeight));
+            g2.fillRect((int)locx, (int)locy, (int)locWidth, (int)locHeight);
         }
     }
 

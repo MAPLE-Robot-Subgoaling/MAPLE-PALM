@@ -26,15 +26,15 @@ public class LiftCopterTerminalFunction implements TerminalFunction {
             double wh = (double) wall.get(ATT_HEIGHT);
             double wx = (double) wall.get(ATT_START_X);
             double wy = (double) wall.get(ATT_START_Y);
-            System.out.println("Compare: \n" +
-                    "\t a:"+ax+","+ay+","+ah+","+aw+"\n" +
-                    "\t w:"+wall.name() + ","+wx+","+wy+","+wh+","+ww
-            );
+//            System.out.println("Compare: \n" +
+//                    "\t a:"+ax+","+ay+","+ah+","+aw+"\n" +
+//                    "\t w:"+wall.name() + ","+wx+","+wy+","+wh+","+ww
+//            );
             if (wx < ax + aw &&
                     wx + ww > ax &&
                     wy < ay + ah &&
                     wy+wh > ay) {
-                System.out.println("Crashed into "+wall.name());
+                //System.out.println("Crashed into "+wall.name());
                 return true;
             }
         }

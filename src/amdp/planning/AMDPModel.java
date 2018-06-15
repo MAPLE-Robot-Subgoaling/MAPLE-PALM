@@ -1,4 +1,4 @@
-//package amdp.planning;
+//package functions.planning;
 //
 //import burlap.debugtools.RandomFactory;
 //import burlap.mdp.core.action.Action;

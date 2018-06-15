@@ -26,12 +26,12 @@ public class PutdownActionType extends ObjectParameterizedActionType {
             return false;
         }
 
-        int px = (int)passenger.get(ATT_X);
-        int py = (int)passenger.get(ATT_Y);
+        double px = (double)passenger.get(ATT_X);
+        double py = (double)passenger.get(ATT_Y);
 
         for(ObjectInstance location : state.objectsOfClass(CLASS_LOCATION)) {
-            int lx = (int)location.get(ATT_X);
-            int ly = (int)location.get(ATT_Y);
+            double lx = (double)location.get(ATT_X);
+            double ly = (double)location.get(ATT_Y);
             // must be at ANY location in order to put the passenger down
             if(lx == px && ly == py) {
                 return true;

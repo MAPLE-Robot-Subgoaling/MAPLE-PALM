@@ -13,7 +13,7 @@ import static liftCopter.LiftCopterConstants.*;
 
 public class LiftCopterState implements MutableOOState, DeepCopyForShallowCopyState {
 
-    //contains a taxi, passengers, locations and walls
+    //contains a agent, cargos, locations and walls
     private LiftCopterAgent copter;
     private Map<String, LiftCopterCargo> cargo;
     private Map<String, LiftCopterLocation> locations;
@@ -213,7 +213,7 @@ public class LiftCopterState implements MutableOOState, DeepCopyForShallowCopySt
         return copter.name();
     }
 
-//    //test to see if there is a wall on either side of the taxi
+//    //test to see if there is a wall on either side of the agent
 //    public boolean wallNorth(){
 //        int tx = (int) copter.get(ATT_X);
 //        int ty = (int) copter.get(ATT_Y);
@@ -300,7 +300,7 @@ public class LiftCopterState implements MutableOOState, DeepCopyForShallowCopySt
         return OOStateUtilities.ooStateToString(this);
     }
 
-    // determine if at least one passenger is in the taxi
+    // determine if at least one cargo is in the agent
     public boolean isLiftCopterOccupied() {
         for (String cargoName : this.cargo.keySet()) {
             boolean pickedUp = (boolean) cargo.get(cargoName).get(ATT_PICKED_UP);

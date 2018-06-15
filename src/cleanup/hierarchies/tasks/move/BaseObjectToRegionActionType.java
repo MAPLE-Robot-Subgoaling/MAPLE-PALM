@@ -49,7 +49,7 @@ public class BaseObjectToRegionActionType extends ObjectParameterizedActionType 
 
                     if(rectanglesIntersect(rt, rl, rb, rr, dt, dl, db, dr)){
                         connected.add(d.name());
-                        // also "connect" rooms to rooms through the door (for the PickRoom->Room amdp)
+                        // also "connect" rooms to rooms through the door (for the PickRoom->Room functions)
                         HashSet<String> doorConnections = getConnectedRegions(state, d.name());
                         connected.addAll(doorConnections);
                     }

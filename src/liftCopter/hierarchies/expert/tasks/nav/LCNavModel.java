@@ -1,4 +1,4 @@
-package liftCopter;
+package liftCopter.hierarchies.expert.tasks.nav;
 
 import burlap.debugtools.RandomFactory;
 import burlap.mdp.core.StateTransitionProb;
@@ -16,20 +16,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static liftCopter.LiftCopterConstants.*;
-public class LiftCopterModel implements FullStateModel{
+public class LCNavModel implements FullStateModel{
 
     /**
      * the array saying how the probabilities are distributed
      */
-    private double[][] moveProbability;
 
     /**
      * creates a stochastic non fickle liftCopter model
-     * @param moveprob the array of movement probabilities
      */
-    public LiftCopterModel(double[][] moveprob){
-        this.moveProbability = moveprob;
-    }
+    public LCNavModel() {  }
 
     @Override
     public State sample(State s, Action a) {
@@ -54,13 +50,7 @@ public class LiftCopterModel implements FullStateModel{
 
         if(action <= IND_IDLE){
             movement(liftCopterS, action, tps, a);
-        }else if(action == IND_PUTDOWN){
-            putdown(liftCopterS, (ObjectParameterizedAction)a, tps);
-        }else if(action == IND_PICKUP){
-            pickup(liftCopterS, (ObjectParameterizedAction)a, tps);
         }
-
-
         return tps;
     }
 
@@ -72,7 +62,6 @@ public class LiftCopterModel implements FullStateModel{
      */
     public void movement(LiftCopterState s, int action, List<StateTransitionProb> tps, Action a){
         LiftCopterState ns = s.copy();
-        double[] moveProbabilities = this.moveProbability[action];
         double force = 0.0D;
         double direction = 0.0D;
 
@@ -84,10 +73,10 @@ public class LiftCopterModel implements FullStateModel{
 
 //        for(int outcome = 0; outcome < moveProbabilities.length; outcome++){
 //            double p = moveProbabilities[outcome];
-            if (a instanceof ThrustAction) {
-                force = ((ThrustAction)a).thrust;
-                direction = ((ThrustAction)a).direction;
-            }
+        if (a instanceof ThrustAction) {
+            force = ((ThrustAction)a).thrust;
+            direction = ((ThrustAction)a).direction;
+        }
 
 
         this.updateMotion(ns, force, direction);
@@ -95,64 +84,7 @@ public class LiftCopterModel implements FullStateModel{
         tps.add(new StateTransitionProb(ns, 1));
     }
 
-    /**
-     * put cargo inside liftCopter
-     * @param s the current state
-     * @param a the Cargo parameterized pickup action
-     * @param tps a list of state transition probabilities to add to
-     */
-    public void pickup(LiftCopterState s, ObjectParameterizedAction a, List<StateTransitionProb> tps) {
-        String p = a.getObjectParameters()[0];
-        LiftCopterState ns = s.copy();
 
-        double tx = (double) s.getCopter().get(ATT_X);
-        double ty = (double) s.getCopter().get(ATT_Y);
-
-        double lx = (double) s.object(p).get(ATT_X);
-        double ly = (double) s.object(p).get(ATT_Y);
-        double lh = (double) s.object(p).get(ATT_H);
-        double lw = (double) s.object(p).get(ATT_W);
-
-        boolean inliftCopter = (boolean) s.object(p).get(ATT_PICKED_UP);
-
-        if (lx + lw/2 >= tx && lx - lw/2 <= tx && ly + lh/2 >= ty && ly - lh/2 <= ty && !inliftCopter) {
-            LiftCopterCargo np = ns.touchCargo(p);
-            np.set(ATT_PICKED_UP, true);
-        }
-        this.updateMotion(ns, 0.0D, 0.0D);
-        tps.add(new StateTransitionProb(ns, 1.));
-    }
-
-    /**
-     * put cargo down if the liftCopter is occupied and at a depot
-     * @param s the current state
-     * @param a the Cargo parameterized putdown action
-     * @param tps a list of state transition probabilities to add to
-     */
-    public void putdown(LiftCopterState s, ObjectParameterizedAction a, List<StateTransitionProb> tps){
-        String p = a.getObjectParameters()[0];
-        LiftCopterState ns = s.copy();
-        double tx = (double) s.getCopter().get(ATT_X);
-        double ty = (double) s.getCopter().get(ATT_Y);
-
-        if((boolean) s.object(p).get(ATT_PICKED_UP)) {
-            for (ObjectInstance location : s.objectsOfClass(CLASS_LOCATION)) {
-                double lx = (double) location.get(ATT_X);
-                double ly = (double) location.get(ATT_Y);
-                double lh = (double) location.get(ATT_H);
-                double lw = (double) location.get(ATT_W);
-                if (lx + lw/2 >= tx && lx - lw/2 <= tx && ly + lh/2 >= ty && ly - lh/2 <= ty) {
-                    LiftCopterCargo np = ns.touchCargo(p);
-                    np.set(ATT_PICKED_UP, false);
-                    np.set(ATT_X, lx-lw/2);
-                    np.set(ATT_Y, ly-lh/2);
-                    break;
-                }
-            }
-        }
-        this.updateMotion(ns, 0.0D, 0.0D);
-        tps.add(new StateTransitionProb(ns, 1.));
-    }
 
     /**
      * resolve continuous motion
@@ -204,8 +136,8 @@ public class LiftCopterModel implements FullStateModel{
             if(inTaxi){
                 String passengerName = passenger.name();
                 LiftCopterCargo np = s.touchCargo(passengerName);
-                np.set(ATT_X, nx-((double)agent.get(ATT_W)/2));
-                np.set(ATT_Y, ny-((double)agent.get(ATT_H)/2));
+                np.set(ATT_X, nx);
+                np.set(ATT_Y, ny);
             }
         }
 
@@ -222,10 +154,6 @@ public class LiftCopterModel implements FullStateModel{
             return IND_THRUST;
         else if(aname.startsWith(ACTION_IDLE))
             return IND_IDLE;
-        else if(aname.startsWith(ACTION_PICKUP))
-            return IND_PICKUP;
-        else if(aname.startsWith(ACTION_PUTDOWN))
-            return IND_PUTDOWN;
         throw new RuntimeException("Invalid action " + aname);
     }
 }

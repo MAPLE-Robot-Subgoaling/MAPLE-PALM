@@ -1,8 +1,5 @@
 package liftCopter;
 
-import burlap.behavior.singleagent.Episode;
-import burlap.behavior.singleagent.auxiliary.EpisodeSequenceVisualizer;
-import burlap.behavior.singleagent.learning.tdmethods.QLearning;
 import burlap.mdp.auxiliary.DomainGenerator;
 import burlap.mdp.core.TerminalFunction;
 import burlap.mdp.core.action.UniversalActionType;
@@ -93,7 +90,6 @@ public class LiftCopter implements DomainGenerator {
     }
     public void addStandardThrustValues() {
         this.thrustValues.add(0.02D);
-        this.thrustValues.add(0.0D);
     }
     public void addStandardThrustDirections() {
         this.directionValues.add(0.0);
@@ -147,8 +143,8 @@ public class LiftCopter implements DomainGenerator {
         exp.addKeyAction("d", "thrust", "thrust_0.02_0.0");
         exp.addKeyAction("a", "thrust", "thrust_0.02_1");
         exp.addKeyAction("s", "thrust", "thrust_0.02_1.5");
-        exp.addKeyAction("e", ACTION_PUTDOWN, "");
-        exp.addKeyAction("q", ACTION_PICKUP, "");
+        exp.addKeyAction("e", ACTION_PUTDOWN, "cargo0");
+        exp.addKeyAction("q", ACTION_PICKUP, "cargo0");
         exp.addKeyAction("x", ACTION_IDLE,"");
 
         exp.initGUI();

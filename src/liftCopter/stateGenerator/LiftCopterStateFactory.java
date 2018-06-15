@@ -14,8 +14,8 @@ public class LiftCopterStateFactory {
         return createClassicState(1);
     }
 
-    public static LiftCopterState createClassicState(int numPassengers){
-        LiftCopterAgent taxi = new LiftCopterAgent(CLASS_AGENT + 0, 0.25,3.25, .5, .5);
+    public static LiftCopterState createClassicState(int numCargos){
+        LiftCopterAgent agent = new LiftCopterAgent(CLASS_AGENT + 0, 0.25,3.25, .5, .5);
 
         List<LiftCopterLocation> locations = new ArrayList<LiftCopterLocation>();
         locations.add(new LiftCopterLocation(CLASS_LOCATION + 0, .5D, 4.5,1,1, COLOR_RED));
@@ -24,12 +24,12 @@ public class LiftCopterStateFactory {
         locations.add(new LiftCopterLocation(CLASS_LOCATION + 3, 4.5, 4.5,1,1, COLOR_GREEN));
 
         List<LiftCopterCargo> cargos = new ArrayList<LiftCopterCargo>();
-        for (int i = 0; i < numPassengers; i++){
-            // classic taxi has original passenger at BLUE depot going to RED depot
-            int startX = 3;
-            int startY = 0;
-            String goalLocationName = CLASS_LOCATION+0;
-            // other passengers both start and go to a random depot
+        for (int i = 0; i < numCargos; i++){
+            // classic agent has original cargo at BLUE depot going to RED depot
+            int startX = 0;
+            int startY = 4;
+            String goalLocationName = CLASS_LOCATION+1;
+            // other cargos both start and go to a random depot
             if (i > 0) {
 //                 get a random goal
                 goalLocationName = locations.get(RandomFactory.getMapped(0).nextInt(locations.size())).getName();
@@ -57,6 +57,18 @@ public class LiftCopterStateFactory {
         walls.add(new LiftCopterWall(CLASS_WALL + 5, 3, 0, 0.1, 2));
         walls.add(new LiftCopterWall(CLASS_WALL + 6, 2, 3, 0.1, 2));
 
-        return new LiftCopterState(taxi, cargos, locations, walls);
+        return new LiftCopterState(agent, cargos, locations, walls);
+    }
+    
+    public static LiftCopterState createClassicStateHalfpoint(boolean pickedUp) {
+        LiftCopterState classic = createClassicState();
+        LiftCopterCargo cargo = (LiftCopterCargo) classic.objectsOfClass(CLASS_CARGO).get(0);
+        LiftCopterAgent agent = (LiftCopterAgent) classic.objectsOfClass(CLASS_AGENT).get(0);
+        agent.set(ATT_X, cargo.get(ATT_X));
+        agent.set(ATT_Y, cargo.get(ATT_Y));
+//		agent.set(ATT_AGENT_OCCUPIED, inAgent);
+        cargo.set(ATT_PICKED_UP, pickedUp);
+//		cargo.set(ATT_JUST_PICKED_UP, true);
+        return classic;
     }
 }

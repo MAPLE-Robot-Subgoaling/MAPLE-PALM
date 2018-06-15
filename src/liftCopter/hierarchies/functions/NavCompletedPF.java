@@ -1,10 +1,11 @@
-package taxi.functions.amdp;
+package liftCopter.hierarchies.functions;
 
 import burlap.mdp.core.oo.propositional.PropositionalFunction;
 import burlap.mdp.core.oo.state.OOState;
+import liftCopter.hierarchies.expert.tasks.nav.state.LCNavState;
 import taxi.hierarchies.tasks.nav.state.TaxiNavState;
 
-import static taxi.TaxiConstants.*;
+import static liftCopter.LiftCopterConstants.*;
 
 public class NavCompletedPF extends PropositionalFunction {
     //nav is terminal when the taxi is at the desired location
@@ -16,11 +17,11 @@ public class NavCompletedPF extends PropositionalFunction {
     @Override
     public boolean isTrue(OOState s, String... params) {
 //		LCNavState st = new NavStateMapper().mapState(s);
-        if (!(s instanceof TaxiNavState)) { return false; }
-        TaxiNavState st = (TaxiNavState) s;
-        Integer tx = (Integer) st.getTaxiAtt(ATT_X);
+        if (!(s instanceof LCNavState)) { return false; }
+        LCNavState st = (LCNavState) s;
+        Integer tx = (Integer) st.getAgentAtt(ATT_X);
         if (tx == null) { return false; }
-        int ty = (int) st.getTaxiAtt(ATT_Y);
+        int ty = (int) st.getAgentAtt(ATT_Y);
         int lx = (int) st.getLocationAtt(params[0], ATT_X);
         int ly = (int) st.getLocationAtt(params[0], ATT_Y);
         return tx == lx && ty == ly;
