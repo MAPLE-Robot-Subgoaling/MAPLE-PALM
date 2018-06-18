@@ -5,6 +5,7 @@ import burlap.mdp.core.action.Action;
 import burlap.mdp.core.action.ActionType;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.oo.OOSADomain;
+import taxi.hierarchies.interfaces.MaskedParameterizedStateMapping;
 import taxi.hierarchies.interfaces.ParameterizedStateMapping;
 
 import java.util.ArrayList;
@@ -32,6 +33,8 @@ public abstract class Task {
      */
     private StateMapping mapper;
 
+    private boolean masked;
+    private String[] maskedParameters;
     /**
      * Setup of variables
      * @param children the task's subtasks
@@ -44,6 +47,12 @@ public abstract class Task {
         this.actionType = aType;
         this.domain = abstractDomain;
         this.mapper = map;
+        this.masked = (map instanceof MaskedParameterizedStateMapping);
+        if(this.masked){
+            maskedParameters = ((MaskedParameterizedStateMapping)this.mapper).getMaskedParameters();
+        }else {
+            maskedParameters = null;
+        }
     }
 
     public Task() {
@@ -104,6 +113,12 @@ public abstract class Task {
     public String getName(){
         return actionType.typeName();
     }
+
+    /**
+     *
+     * @return boolean indicating whether the state mapping masks parameters
+     */
+    public boolean isMasked() {return this.masked;}
 
     /**
      * determines if the current task is terminated in state s which parameterization a

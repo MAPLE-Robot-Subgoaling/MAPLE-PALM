@@ -4,10 +4,16 @@ domain: !!config.taxi.TaxiConfig
   fickle: 0.04
 
 agents:
-  - palmExpert
-
-episodes: 100
-max_steps: 2000
+#    - rmaxqExpert
+  #  - rmaxqHierGen
+    - palmExpert
+    - palmExpertWithNavGiven
+    - palmHierGen
+    - kappaExpert
+    - kappaHierGen
+#    - qLearning
+episodes: 250
+max_steps: 4000
 trials: 1
 gamma: 0.99
 

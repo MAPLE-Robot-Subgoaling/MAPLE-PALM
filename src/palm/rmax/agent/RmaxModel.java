@@ -318,6 +318,9 @@ public abstract class RmaxModel extends PALMModel {
 
     public double getRmax() { return rmax; }
 
+    public GroundedTask getTask(){
+        return task;
+    }
     public void printDebugInfo() {
         System.out.println("\n\n\n******************************************************************************************************\n\n\n");
         for(HashableStateActionPair pair : approximateTransitions.keySet()) {

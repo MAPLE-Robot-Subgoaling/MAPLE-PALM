@@ -5,7 +5,7 @@ domain: !!config.taxi.TaxiConfig
 
 agents:
   - rmaxqExpert
-  - rmaxqHierGen
+#  - rmaxqHierGen
   - palmExpert
   - palmExpertWithNavGiven
   - palmHierGen
@@ -14,8 +14,8 @@ agents:
   - qLearning
 
 seed: 2320942930
-episodes: 50
-max_steps: 100000
+episodes: 200
+max_steps: 1000
 trials: 1
 gamma: 0.99
 
@@ -26,7 +26,7 @@ planning:
 rmax:
   vmax: 1.0
   threshold: 3
-  max_delta: 0.0000001
+  max_delta: 0.0001
   max_delta_rmaxq: 0.0001
   max_iterations_in_model: 1000
   use_multitime_model: true
@@ -48,7 +48,6 @@ output:
     trial_mode: MOST_RECENT_AND_AVERAGE
 
     metrics:
-                                     
       - STEPS_PER_EPISODE
       - CUMULATIVE_REWARD_PER_STEP
       - CUMULATIVE_REWARD_PER_EPISODE

@@ -4,6 +4,7 @@ import burlap.behavior.singleagent.Episode;
 import burlap.behavior.singleagent.learning.LearningAgent;
 import burlap.debugtools.RandomFactory;
 import burlap.mdp.core.action.Action;
+import burlap.mdp.core.oo.ObjectParameterizedAction;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.environment.Environment;
 import burlap.mdp.singleagent.environment.EnvironmentOutcome;
@@ -88,7 +89,7 @@ public class RmaxQLearningAgent implements LearningAgent {
 
         GroundedTask groundedRoot = rootSolve.getAllGroundedTasks(initialState).get(0);
         RMAXQStateData taskStatePair = getStateData(groundedRoot, hs);
-        e = R_MaxQ(taskStatePair, e, maxSteps);
+        e = R_MaxQ(null, taskStatePair, e, maxSteps);
 
         //to see the number of actions
         System.out.println("Number of actions in episode: " + e.numActions());
@@ -105,7 +106,7 @@ public class RmaxQLearningAgent implements LearningAgent {
 
     public static String tabLevel = "";
 
-    protected Episode R_MaxQ(RMAXQStateData taskStatePair, Episode e, int maxSteps) {
+    protected Episode R_MaxQ(RMAXQStateData parent, RMAXQStateData taskStatePair, Episode e, int maxSteps) {
 
 //		System.out.println(tabLevel + ">>> " + taskStatePair.getTask().getAction());
 
@@ -113,7 +114,7 @@ public class RmaxQLearningAgent implements LearningAgent {
         HashableState currentState = currentTaskStatePair.getHs();
 
         if (taskStatePair.getTask().isPrimitive()) {
-            e = executePrimitive(e, taskStatePair);
+            e = executePrimitive(e, parent, taskStatePair);
             return e;
         } else {
             do {
@@ -126,7 +127,7 @@ public class RmaxQLearningAgent implements LearningAgent {
 
                 int stepsBefore = numberPrimitivesExecuted;
                 RMAXQStateData childTaskStatePair = getStateData(childTask, currentState);
-                e = R_MaxQ(childTaskStatePair, e, maxSteps);
+                e = R_MaxQ(taskStatePair, childTaskStatePair, e, maxSteps);
 
                 int stepsAfter = numberPrimitivesExecuted;
                 int k = stepsAfter - stepsBefore;
@@ -219,9 +220,19 @@ public class RmaxQLearningAgent implements LearningAgent {
         }
     }
 
-    private Episode executePrimitive(Episode e, RMAXQStateData taskStatePair) {
+    private Episode executePrimitive(Episode e,RMAXQStateData parent, RMAXQStateData taskStatePair) {
+        GroundedTask parentTask = parent.getTask();
         Action a = taskStatePair.getTask().getAction();
-        EnvironmentOutcome outcome = env.executeAction(a);
+        Action unMaskedAction = a;
+      if (parentTask.isMasked()) {
+                unMaskedAction = a.copy();
+                //for now, reliant on parent of masked task to be unmasked. This may not be a safe assumption
+                //there may be a need to traverse arbitrarily far up the task hierarchy to find an unmasked ancestor
+                //in order to recover the true parameters.
+                String trueParameters = ((ObjectParameterizedAction)parentTask.getAction()).getObjectParameters()[0];
+                ((ObjectParameterizedAction) unMaskedAction).getObjectParameters()[0] = trueParameters;
+            }
+        EnvironmentOutcome outcome = env.executeAction(unMaskedAction);
         e.transition(outcome);
         State sPrime = outcome.op;
         HashableState hsPrime = hashingFactory.hashState(sPrime);
