@@ -34,7 +34,7 @@ public class LiftCopterTerminalFunction implements TerminalFunction {
                     wx + ww > ax &&
                     wy < ay + ah &&
                     wy+wh > ay) {
-                //System.out.println("Crashed into "+wall.name());
+//                System.out.println("Crashed into "+wall.name());
                 return true;
             }
         }
@@ -56,7 +56,10 @@ public class LiftCopterTerminalFunction implements TerminalFunction {
                 double lh = (double) location.get(ATT_H);
                 double lw = (double) location.get(ATT_W);
                 if (cargoGoal.equals(location.name())) {
-                    if (!(lx + lw >= px+pw/2 && lx <= px+pw/2 && ly + lh >= py+ph/2 && ly <= py+ph/2)) {
+                    if (!(lx - lw/2 <= px &&
+                            lx + lw/2 >= px &&
+                            ly - lh/2 <= py &&
+                            ly + lh/2 >= py) ) {
                         return false;
                     }
                     break;

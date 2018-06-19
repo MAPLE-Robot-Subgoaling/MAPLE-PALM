@@ -141,11 +141,14 @@ public class LiftCopterModel implements FullStateModel{
                 double ly = (double) location.get(ATT_Y);
                 double lh = (double) location.get(ATT_H);
                 double lw = (double) location.get(ATT_W);
-                if (lx + lw/2 >= tx && lx - lw/2 <= tx && ly + lh/2 >= ty && ly - lh/2 <= ty) {
+                if (lx + lw/2 >= tx &&
+                        lx - lw/2 <= tx &&
+                        ly + lh/2 >= ty &&
+                        ly - lh/2 <= ty) {
                     LiftCopterCargo np = ns.touchCargo(p);
                     np.set(ATT_PICKED_UP, false);
-                    np.set(ATT_X, lx-lw/2);
-                    np.set(ATT_Y, ly-lh/2);
+                    np.set(ATT_X, lx);
+                    np.set(ATT_Y, ly);
                     break;
                 }
             }

@@ -64,30 +64,33 @@ public class LiftCopterRewardFunction implements RewardFunction {
 
         //goal rewardTotal when state is terminal
         if (tf.isTerminal(sprime)){
+            LiftCopterState sp = (LiftCopterState) sprime;
             boolean isCrash = false;
-            List<ObjectInstance> walls = state.objectsOfClass(CLASS_WALL);
-            double ax = (double) state.getCopter().get(ATT_X);
-            double ay = (double) state.getCopter().get(ATT_Y);
-            double ah = (double) state.getCopter().get(ATT_H);
-            double aw = (double) state.getCopter().get(ATT_W);
+            List<ObjectInstance> walls = sp.objectsOfClass(CLASS_WALL);
+            double ax = (double) sp.getCopter().get(ATT_X);
+            double ay = (double) sp.getCopter().get(ATT_Y);
+            double ah = (double) sp.getCopter().get(ATT_H);
+            double aw = (double) sp.getCopter().get(ATT_W);
             for(ObjectInstance wall: walls){
                 double ww = (double) wall.get(ATT_WIDTH);
                 double wh = (double) wall.get(ATT_HEIGHT);
                 double wx = (double) wall.get(ATT_START_X);
                 double wy = (double) wall.get(ATT_START_Y);
 
-                if (wx < ax + aw &&
-                        ww + ww > ax &&
+                if (    wx < ax + aw &&
+                        wx + ww > ax &&
                         wy < ay + ah &&
-                        wy+wh > ay) {
+                        wy + wh > ay) {
+//                   System.out.println("crash");
                     isCrash = true;
                     break;
                 }
             }
             if(!isCrash){
+               // System.out.println("goal");
                 return goalReward + stepReward;
             }else{
-                return stepReward;
+                return stepReward-1;
             }
 
         }
@@ -108,7 +111,10 @@ public class LiftCopterRewardFunction implements RewardFunction {
                 double ph = (double) cargo.get(ATT_H);
                 double pw = (double) cargo.get(ATT_W);
                 boolean inLiftCopter = (boolean) cargo.get(ATT_PICKED_UP);
-                if (px + pw >= tx && px <= tx && py + ph >= ty && py <= ty) {
+                if (px + pw/2 >= tx &&
+                        px - pw/2 <= tx &&
+                        py + ph/2 >= ty &&
+                        py - ph/2 <= ty) {
                     cargoAtLiftCopter = true;
                     break;
                 }
@@ -129,7 +135,10 @@ public class LiftCopterRewardFunction implements RewardFunction {
                 double ly = (double) location.get(ATT_Y);
                 double lh = (double) location.get(ATT_H);
                 double lw = (double) location.get(ATT_W);
-                if (lx + lw >= tx && lx <= tx && ly + lh >= ty && ly <= ty) {
+                if (lx + lw/2 >= tx &&
+                        lx - lw/2 <= tx &&
+                        ly + lh/2 >= ty &&
+                        ly - lh/2 <= ty) {
                     LiftCopterAtDepot = true;
                     break;
                 }

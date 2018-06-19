@@ -18,6 +18,7 @@ import liftCopter.hierarchies.expert.tasks.put.state.PutStateMapper;
 import liftCopter.hierarchies.expert.tasks.root.LCRootDomain;
 import liftCopter.hierarchies.expert.tasks.root.state.RootStateMapper;
 import liftCopter.hierarchies.functions.*;
+import org.yaml.snakeyaml.Yaml;
 
 import java.util.List;
 
@@ -141,5 +142,9 @@ public class LCExpertHierarchy extends LCHierarchy {
         return root;
     }
 
+    public static void main( String[] args){
+        Yaml yaml = new Yaml();
+        System.out.println(yaml.dump(new LCExpertHierarchy().createHierarchy( 1.0, true)));
+    }
 
 }

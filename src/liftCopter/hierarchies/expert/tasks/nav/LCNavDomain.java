@@ -33,7 +33,6 @@ import java.util.List;
 import static liftCopter.LiftCopterConstants.*;
 
 public class LCNavDomain implements DomainGenerator {
-
     private RewardFunction rf;
     private TerminalFunction tf;
     public List<Double> thrustValues = new ArrayList();

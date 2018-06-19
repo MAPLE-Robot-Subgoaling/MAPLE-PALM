@@ -60,6 +60,9 @@ public class LiftCopterConstants {
     public static final String PF_OVER_CARGO = "overCargo";
     public static final String PF_OVER_DEPOT = "overDepot";
 
+
+
+
     public static final double PHYS_MAX_VX = 4;
     public static final double PHYS_MAX_VY = 4;
 

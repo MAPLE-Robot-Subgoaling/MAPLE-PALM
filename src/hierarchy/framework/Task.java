@@ -58,7 +58,24 @@ public abstract class Task {
         return actionType;
     }
 
+    public void setDomain(OOSADomain domain) {
+        this.domain = domain;
+    }
+
+    public void setActionType(ActionType actionType) {
+        this.actionType = actionType;
+    }
+
+    public void setChildren(Task[] children) {
+        this.children = children;
+    }
+
+    public void setMapper(StateMapping mapper) {
+        this.mapper = mapper;
+    }
+
     /**
+
      * Gets all parameterizations of the task availibe in s
      * @param s the current state
      * @return list of grounded tasks which gives all variations

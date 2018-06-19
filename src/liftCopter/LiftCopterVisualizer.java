@@ -47,7 +47,7 @@ public class LiftCopterVisualizer {
 
         oopainter.addObjectClassPainter(CLASS_LOCATION, new LocationPainter());
         oopainter.addObjectClassPainter(CLASS_AGENT, new CopterPainter());
-        oopainter.addObjectClassPainter(CLASS_CARGO, new PassengerPainter());
+        oopainter.addObjectClassPainter(CLASS_CARGO, new CargoPainter());
         oopainter.addObjectClassPainter(CLASS_WALL, new WallPainter());
 
         rl.addStatePainter(oopainter);
@@ -81,9 +81,9 @@ public class LiftCopterVisualizer {
         }
     }
 
-    public static class PassengerPainter implements ObjectPainter{
-        static int numPassengers = 0;
-        ArrayList<String> passengerNumbers = new ArrayList<String>();
+    public static class CargoPainter implements ObjectPainter{
+        static int numCargos = 0;
+        ArrayList<String> cargoNumbers = new ArrayList<String>();
         @Override
         public void paintObject(Graphics2D g2, OOState s, ObjectInstance ob, float cWidth, float cHeight) {
             LiftCopterState state = (LiftCopterState) s;
@@ -109,16 +109,16 @@ public class LiftCopterVisualizer {
             boolean inTaxi = (boolean) p.get(ATT_PICKED_UP);
             if(inTaxi){
                 scale = 0.5f;
-                if(!passengerNumbers.contains(p.name()) ){
-                    ///encounter passenger not in the set but in the taxi, add to list
-                    passengerNumbers.add(p.name());
-                    numPassengers++;
+                if(!cargoNumbers.contains(p.name()) ){
+                    ///encounter cargo not in the set but in the taxi, add to list
+                    cargoNumbers.add(p.name());
+                    numCargos++;
                 }
             }else{
-                if(passengerNumbers.contains(p.name()) ){
-                    ///encounter passenger in the set but not in the taxi, remove from list
-                    passengerNumbers.remove(p.name());
-                    numPassengers--;
+                if(cargoNumbers.contains(p.name()) ){
+                    ///encounter cargo in the set but not in the taxi, remove from list
+                    cargoNumbers.remove(p.name());
+                    numCargos--;
                 }
             }
 
@@ -128,8 +128,8 @@ public class LiftCopterVisualizer {
             float realX = passx - (realWidth / 2f);
             float realy = passy - (realHeight / 2f);
             if(inTaxi){
-                float start = 90+(360/numPassengers)*passengerNumbers.indexOf(p.name());
-                float extent = 360/numPassengers;
+                float start = 90+(360/numCargos)*cargoNumbers.indexOf(p.name());
+                float extent = 360/numCargos;
                 g2.fill(new Arc2D.Float(realX, realy, realWidth, realHeight, start, extent, Arc2D.PIE));
             }else{
                 g2.fill(new Ellipse2D.Float(realX, realy, realWidth, realHeight));
@@ -155,8 +155,8 @@ public class LiftCopterVisualizer {
             double ly = (double) l.get(ATT_Y);
             double lh = (double) l.get(ATT_H);
             double lw = (double) l.get(ATT_W);
-            double locx = (lx - lw/2)* locWidth;
-            double locy = cHeight - (ly + lh/2) * locHeight;
+            double locx = lx* locWidth;
+            double locy = cHeight - (ly + lh) * locHeight;
 
             g2.fillRect((int)locx, (int)locy, (int)locWidth, (int)locHeight);
         }
