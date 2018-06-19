@@ -31,6 +31,7 @@ rmax:
   max_iterations_in_model: 1000
   use_multitime_model: true
   wait_for_children: true
+  use_model_sharing: false
 
 
 output:

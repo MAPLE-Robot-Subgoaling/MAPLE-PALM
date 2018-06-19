@@ -13,6 +13,7 @@ public class RmaxConfig {
     public int max_iterations_in_model = UNSET_INT;
     public Boolean use_multitime_model = null;
     public Boolean wait_for_children = null;
+    public Boolean use_model_sharing = null;
 
     public boolean validate() {
         if (vmax == UNSET_DOUBLE) { return false; }
@@ -22,6 +23,7 @@ public class RmaxConfig {
         if (max_iterations_in_model== UNSET_INT) { return false; }
         if (use_multitime_model == null) { return false; }
         if (wait_for_children == null) { return false; }
+        if (use_model_sharing == null) { return false; }
         return true;
     }
 
