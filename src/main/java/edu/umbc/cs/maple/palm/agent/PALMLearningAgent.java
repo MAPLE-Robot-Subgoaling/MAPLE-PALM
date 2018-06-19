@@ -69,6 +69,9 @@ public class PALMLearningAgent implements LearningAgent {
     // if true, AMDP models will not update until all actions they took were also beyond RMAX threshold
     private boolean waitForChildren;
 
+    // if true, uses model sharing, forcing the same model regardless of the parameterized object
+    private boolean useModelSharing;
+
     /**
      * the current episode
      */
@@ -84,7 +87,7 @@ public class PALMLearningAgent implements LearningAgent {
      * @param hsf a state hashing factory
      * @param maxDelta the max error for the planner
      */
-    public PALMLearningAgent(Task root, PALMModelGenerator modelGenerator, HashableStateFactory hsf, double maxDelta, int maxIterationsInModelPlanner, boolean waitForChildren) {
+    public PALMLearningAgent(Task root, PALMModelGenerator modelGenerator, HashableStateFactory hsf, double maxDelta, int maxIterationsInModelPlanner, boolean waitForChildren, boolean useModelSharing) {
         this.root = root;
         this.hashingFactory = hsf;
         this.models = new HashMap<>();
@@ -93,10 +96,11 @@ public class PALMLearningAgent implements LearningAgent {
         this.maxIterationsInModelPlanner = maxIterationsInModelPlanner;
         this.modelGenerator = modelGenerator;
         this.waitForChildren = waitForChildren;
+        this.useModelSharing = useModelSharing;
     }
 
     public PALMLearningAgent(Task root, PALMModelGenerator modelGenerator, HashableStateFactory hsf, ExperimentConfig config) {
-        this(root, modelGenerator, hsf, config.rmax.max_delta, config.rmax.max_iterations_in_model, config.rmax.wait_for_children);
+        this(root, modelGenerator, hsf, config.rmax.max_delta, config.rmax.max_iterations_in_model, config.rmax.wait_for_children, config.rmax.use_model_sharing);
     }
 
     @Override
@@ -304,7 +308,7 @@ public class PALMLearningAgent implements LearningAgent {
         // idea: try to do lookup such that models are shared across certain AMDP classes
         // for example, instead of 4 put passenger AMDPs, one for each passenger
         // we mask the name of the passenger and share models, treating every passenger the same
-        String modelName = t.isMasked() ? t.getAction().actionName() : t.toString();
+        String modelName = t.isMasked() && useModelSharing ? t.getAction().actionName() : t.toString();
         PALMModel model = models.get(modelName);
         if(model == null) {
             model = modelGenerator.getModelForTask(t);
