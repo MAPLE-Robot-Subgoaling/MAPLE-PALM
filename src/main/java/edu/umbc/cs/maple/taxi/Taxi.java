@@ -33,6 +33,28 @@ public class Taxi implements DomainGenerator{
     private double fickleProbability;
     private double[][] moveDynamics;
 
+
+    public boolean isFickle() {
+        return fickle;
+    }
+
+    public void setFickle(boolean fickle) {
+        this.fickle = fickle;
+    }
+
+    public double getFickleProbability() {
+        return fickleProbability;
+    }
+
+    public void setFickleProbability(double fickleProbability) {
+        this.fickleProbability = fickleProbability;
+    }
+
+    public double[][] getMoveDynamics() {
+        return moveDynamics;
+    }
+
+
     /**
      * create a taxi domain generator
      * @param r rewardTotal function

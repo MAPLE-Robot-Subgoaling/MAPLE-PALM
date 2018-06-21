@@ -13,6 +13,8 @@ public class GoalFailRF implements RewardFunction {
 
     protected GoalFailTF tf;
 
+    public GoalFailRF(){}
+
     public GoalFailRF(GoalFailTF tf) {
         this.tf = tf;
     }

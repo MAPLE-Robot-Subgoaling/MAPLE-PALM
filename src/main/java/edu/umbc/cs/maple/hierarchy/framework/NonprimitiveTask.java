@@ -1,12 +1,17 @@
 package edu.umbc.cs.maple.hierarchy.framework;
 
+import burlap.behavior.singleagent.MDPSolver;
 import burlap.mdp.auxiliary.StateMapping;
+import burlap.mdp.core.TerminalFunction;
 import burlap.mdp.core.action.Action;
 import burlap.mdp.core.action.ActionType;
 import burlap.mdp.core.oo.ObjectParameterizedAction;
 import burlap.mdp.core.oo.propositional.PropositionalFunction;
 import burlap.mdp.core.state.State;
+import burlap.mdp.singleagent.model.RewardFunction;
 import burlap.mdp.singleagent.oo.OOSADomain;
+import edu.umbc.cs.maple.config.hierarchy.SolverConfig;
+import scpsolver.lpsolver.SolverFactory;
 
 public class NonprimitiveTask extends Task {
     //tasks which are not at the base of the hierarchy
@@ -14,9 +19,10 @@ public class NonprimitiveTask extends Task {
     // default rewardTotal used in nonprimitive task's pseudo-rewardTotal function
     public static double DEFAULT_REWARD = 0.000;//1;//0.000001;
     public static double NOOP_REWARD = 0.0;//-0.0001;
+    SolverConfig solver;
+    protected TerminalFunction tf;
+    protected RewardFunction rf;
 
-    protected GoalFailTF goalFailTF;
-    protected GoalFailRF goalFailRF;
 
     //used for hierarchies with abstractions
     /**
@@ -25,14 +31,16 @@ public class NonprimitiveTask extends Task {
      * @param aType the set of actions this task represents in its parent task's domain
      * @param abstractDomain the domain this task executes actions in
      * @param map the state abstraction function into the domain
-     * @param fail the failure PF
-     * @param compl the completion PF
+     * @param tf
+     * @param rf
+     * @param solver
      */
     public NonprimitiveTask(Task[] children, ActionType aType, OOSADomain abstractDomain, StateMapping map,
-            PropositionalFunction fail, PropositionalFunction compl, double defaultReward, double noopReward) {
+                            TerminalFunction tf , RewardFunction rf, SolverConfig solver) {
         super(children, aType, abstractDomain, map);
-        this.goalFailTF = new GoalFailTF(compl, null, fail, null);
-        this.goalFailRF = new GoalFailRF(this.goalFailTF, defaultReward, noopReward);
+        this.tf = tf;
+        this.rf = rf;
+        this.solver = solver;
     }
 
     public NonprimitiveTask(OOSADomain baseDomain) {
@@ -56,7 +64,7 @@ public class NonprimitiveTask extends Task {
      */
     @Override
     public double reward(State s, Action a, State sPrime){
-        return goalFailRF.reward(s, a, sPrime);
+        return rf.reward(s, a, sPrime);
     }
 
     /**
@@ -65,20 +73,20 @@ public class NonprimitiveTask extends Task {
      * grounded action
      */
     public void setRF(GoalFailRF rf){
-        this.goalFailRF = rf;
+        this.rf = rf;
     }
 
     @Override
     public boolean isFailure(State s, Action a) {
         String[] params = parseParams(a);
-        boolean atFailure = goalFailTF.atFailure(s, params);
+        boolean atFailure = ((GoalFailTF)tf).atFailure(s, params);
         return atFailure;
     }
 
     @Override
     public boolean isComplete(State s, Action a){
         String[] params = parseParams(a);
-        boolean atGoal = goalFailTF.atGoal(s, params);
+        boolean atGoal = ((GoalFailTF)tf).atGoal(s, params);
         return atGoal;
     }
     public static String[] parseParams(Action action) {
@@ -92,10 +100,10 @@ public class NonprimitiveTask extends Task {
     }
 
     public GoalFailTF getGoalFailTF() {
-        return goalFailTF;
+        return (GoalFailTF)tf;
     }
 
     public GoalFailRF getGoalFailRF() {
-        return goalFailRF;
+        return (GoalFailRF)rf;
     }
 }

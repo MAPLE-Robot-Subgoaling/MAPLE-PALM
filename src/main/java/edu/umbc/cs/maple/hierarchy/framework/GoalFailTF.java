@@ -12,6 +12,8 @@ public class GoalFailTF implements TerminalFunction {
     protected String[] goalParams;
     protected String[] failParams;
 
+    public GoalFailTF(){}
+
     public GoalFailTF(PropositionalFunction goalPF, String[] goalParams, PropositionalFunction failPF, String[] failParams) {
         this.goalPF = goalPF;
         this.goalParams = goalParams;

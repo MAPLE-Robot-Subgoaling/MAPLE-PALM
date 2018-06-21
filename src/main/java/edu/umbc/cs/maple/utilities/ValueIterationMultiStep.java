@@ -70,7 +70,6 @@ public class ValueIterationMultiStep extends DynamicProgrammingMultiStep impleme
         this.DPPInit(domain, hashingFactory, discountProvider);
         this.maxDelta = maxDelta;
         this.maxIterations = maxIterations;
-
     }
 
 
