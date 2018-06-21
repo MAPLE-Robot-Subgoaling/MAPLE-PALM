@@ -2,7 +2,7 @@
 .idea/
 out/
 trees/
-Maple-RAMDP.iml
+*.iml
 .classpath
 .project
 out/

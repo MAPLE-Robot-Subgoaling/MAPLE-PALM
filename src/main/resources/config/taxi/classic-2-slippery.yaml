@@ -1,0 +1,55 @@
+domain: !!edu.umbc.cs.maple.config.taxi.TaxiConfig
+  state: classic-2passengers
+  correct_move: 0.85
+  fickle: 0.0
+
+agents:
+  - palmExpert
+
+episodes: 200
+max_steps: 1000
+trials: 1
+gamma: 0.99
+
+seed: 7543221
+
+identifier_independent: false
+planning:
+  rollouts: 1000
+
+rmax:
+  vmax: 1.0
+  threshold: 10
+  max_delta: 0.0001
+  max_delta_rmaxq: 0.0001
+  max_iterations_in_model: 1000
+  use_multitime_model: true
+  wait_for_children: true
+  use_model_sharing: false
+
+
+output:
+  csv:
+    enabled: true
+    output: results/pex-classic-2-slippery.csv
+
+  chart:
+    enabled: true
+
+    width: 500
+    height: 300
+    columns: 2
+    max_height: 900
+    trial_mode: MOST_RECENT_AND_AVERAGE
+
+    metrics:
+      - STEPS_PER_EPISODE
+      - CUMULATIVE_REWARD_PER_STEP
+      - CUMULATIVE_REWARD_PER_EPISODE
+
+  visualizer:
+    enabled: false
+    episodes: true
+    width: 5
+    height: 5
+    
