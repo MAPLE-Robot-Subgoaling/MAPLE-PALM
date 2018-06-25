@@ -225,7 +225,7 @@ public class PALMLearningAgent implements LearningAgent {
 			}
             // solve this task's next chosen subtask, recursively
             int stepsBefore = steps;
-            System.out.println(tabLevel + ">>>>> " + task.toString() + " >>>>> " + action);
+//            System.out.println(tabLevel + ">>>>> " + task.toString() + " >>>>> " + action);
             subtaskCompleted = solveTask(task, action, baseEnv, maxSteps);
             int stepsAfter = steps;
             int stepsTaken = stepsAfter - stepsBefore;
