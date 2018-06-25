@@ -7,6 +7,8 @@ import burlap.debugtools.RandomFactory;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.oo.OOSADomain;
 import burlap.statehashing.HashableStateFactory;
+import edu.umbc.cs.maple.cleanup.hierarchies.CleanupHierarchy;
+import edu.umbc.cs.maple.cleanup.hierarchies.CleanupHierarchyAMDP;
 import edu.umbc.cs.maple.config.ExperimentConfig;
 import edu.umbc.cs.maple.hierarchy.framework.Task;
 import edu.umbc.cs.maple.state.hashing.cached.CachedHashableStateFactory;
@@ -20,13 +22,15 @@ import java.util.List;
 
 public class AMDPPlanTest {
 
-    public static void plan(ExperimentConfig conf, Task root, State init, HashableStateFactory hs, OOSADomain baseDomain) {
+    public static void plan(ExperimentConfig conf, Task root, State initialState, HashableStateFactory hs, OOSADomain baseDomain) {
 
         AMDPPlanner amdp = new AMDPPlanner(root, conf.gamma, hs, conf.rmax.max_delta, conf.planning.rollouts, conf.max_steps);
         List<Episode> eps = new ArrayList<Episode>();
 
+        System.err.println("For now, setting episodes always to just 1 inside AMDPPlanTest");
+        conf.episodes = 1;
         for(int i = 0; i < conf.episodes; i++){
-            Episode e = amdp.planFromState(init);
+            Episode e = amdp.planFromState(baseDomain, initialState);
             eps.add(e);
             System.out.println(e.actionSequence);
             System.out.println(e.rewardSequence);
@@ -40,7 +44,7 @@ public class AMDPPlanTest {
     }
 
     public static void main(String[] args) {
-        String configFile = "./config/taxi/classic.yaml";
+        String configFile = "./config/taxi/jwtest.yaml";
         if(args.length > 0) {
             configFile = args[0];
         }
@@ -62,6 +66,7 @@ public class AMDPPlanTest {
         State s = config.generateState();
 
         TaxiHierarchy hierarchy = new TaxiHierarchyExpert();
+//        CleanupHierarchy hierarchy = new CleanupHierarchyAMDP();
         Task palmRoot = hierarchy.createHierarchy(config, true);
         OOSADomain base = hierarchy.getBaseDomain();
 //        HashableStateFactory hashingFactory = new SimpleHashableStateFactory();
