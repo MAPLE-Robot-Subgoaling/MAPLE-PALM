@@ -1,4 +1,4 @@
-domain: !!config.cleanup.CleanupConfig
+domain: !!edu.umbc.cs.maple.config.cleanup.CleanupConfig
     state: threeRooms
     num_blocks: 2
     minX: 0
@@ -31,7 +31,8 @@ rmax:
   max_delta_rmaxq: 0.0001
   max_iterations_in_model: 1000
   use_multitime_model: true
-
+  wait_for_children: true
+  use_model_sharing: false
 
 output:
   csv:
