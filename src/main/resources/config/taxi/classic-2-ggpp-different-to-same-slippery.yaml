@@ -1,6 +1,6 @@
 domain: !!edu.umbc.cs.maple.config.taxi.TaxiConfig
   state: classic-2passengers
-  correct_move: 1.0
+  correct_move: 0.85
   fickle: 0.0
 
 agents:

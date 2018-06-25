@@ -228,12 +228,13 @@ public class PALMLearningAgent implements LearningAgent {
 
             baseState = e.stateSequence.get(e.stateSequence.size() - 1);
             currentState = task.mapState(baseState);
-            double sumChildRewards = e.rewardSequence.subList(stepsBefore, stepsAfter).stream().mapToDouble(Double::doubleValue).sum();
-            double discount = getModel(task).getDiscountProvider().yield(pastState, a, currentState);
-            double discountOverTime = Math.pow(discount, stepsTaken);
-            double discountedReward = sumChildRewards * discountOverTime;
+//            double sumChildRewards = e.rewardSequence.subList(stepsBefore, stepsAfter).stream().mapToDouble(Double::doubleValue).sum();
+//            double discount = getModel(task).getDiscountProvider().yield(pastState, a, currentState);
+//            double discountOverTime = Math.pow(discount, stepsTaken);
+//            double discountedReward = sumChildRewards * discountOverTime;
 //            System.out.println(sumChildRewards + " " + discount + " " + discountOverTime + " " + discountedReward);
-            double taskReward = discountedReward + task.getReward(pastState, a, currentState);
+//            double taskReward = discountedReward + task.getReward(pastState, a, currentState);
+            double taskReward = task.getReward(pastState, a, currentState);
             result = new EnvironmentOutcome(pastState, a, currentState, taskReward, false); //task.isFailure(currentState));
 
             // update task model if the subtask completed correctly

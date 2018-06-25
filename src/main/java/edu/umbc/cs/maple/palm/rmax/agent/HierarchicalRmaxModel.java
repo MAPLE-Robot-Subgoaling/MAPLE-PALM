@@ -30,11 +30,21 @@ public class HierarchicalRmaxModel extends RmaxModel {
 
 
     @Override
-    public double getInternalDiscount(EnvironmentOutcome eo, int k) {
+    public double getInternalDiscountReward(EnvironmentOutcome eo, int k) {
         double discount = 1.0;
         if (useMultitimeModel) {
             double gamma = discountProvider.yield(eo.o, eo.a, eo.op);
-            discount = Math.min(1.0, Math.pow(gamma, k));
+            discount = Math.min(1.0, Math.pow(gamma, k - 1)); // note: use k - 1
+        }
+        return discount;
+    }
+
+    @Override
+    public double getInternalDiscountProbability(EnvironmentOutcome eo, int k) {
+        double discount = 1.0;
+        if (useMultitimeModel) {
+            double gamma = discountProvider.yield(eo.o, eo.a, eo.op);
+            discount = Math.min(1.0, Math.pow(gamma, k)); // note: use k
         }
         return discount;
     }
