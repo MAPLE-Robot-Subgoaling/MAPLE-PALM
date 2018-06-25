@@ -6,3 +6,6 @@ trees/
 .classpath
 .project
 out/
+target/
+results/
+.DS_Store
