@@ -152,7 +152,7 @@ public class PALMLearningAgent implements LearningAgent {
         PALMModel model = getModel(task);
         int actionCount = 0;
 
-        System.out.println(">>> " + task.getAction() + " " + actionCount);
+//        System.out.println(">>> " + task.getAction() + " " + actionCount);
         if(task.isPrimitive()) {
             EnvironmentOutcome result;
             Action a = task.getAction();
