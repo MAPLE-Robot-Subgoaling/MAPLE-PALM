@@ -37,27 +37,28 @@ public class TaxiRootState implements MutableOOState, DeepCopyForShallowCopyStat
     @Override
     public ObjectInstance object(String oname) {
         ObjectInstance o = passengers.get(oname);
-        if(o != null)
+        if(o != null) {
             return o;
+        }
 
         return null;
     }
 
-    private List<ObjectInstance> cachedObjectList = null;
+//    private List<ObjectInstance> cachedObjectList = null;
     @Override
     public List<ObjectInstance> objects() {
-        if (cachedObjectList == null) { cachedObjectList = new ArrayList<ObjectInstance>(); }
-        else { return cachedObjectList; }
+//        if (cachedObjectList == null) { cachedObjectList = new ArrayList<ObjectInstance>(); }
+//        else { return cachedObjectList; }
         List<ObjectInstance> obj = new ArrayList<>();
         obj.addAll(passengers.values());
-        cachedObjectList = obj;
+//        cachedObjectList = obj;
         return obj;
     }
 
     @Override
     public List<ObjectInstance> objectsOfClass(String oclass) {
         if(oclass.equals(CLASS_PASSENGER))
-            return new ArrayList<ObjectInstance>(passengers.values());
+            return new ArrayList<>(passengers.values());
         throw new RuntimeException("No object class " + oclass);
     }
 
@@ -95,7 +96,7 @@ public class TaxiRootState implements MutableOOState, DeepCopyForShallowCopyStat
         }else{
             throw new RuntimeException("Can only add certain objects to state.");
         }
-        cachedObjectList = null;
+//        cachedObjectList = null;
         return this;
     }
 
@@ -103,7 +104,7 @@ public class TaxiRootState implements MutableOOState, DeepCopyForShallowCopyStat
     public MutableOOState removeObject(String oname) {
         touchPassenger(oname);
         passengers.remove(oname);
-        cachedObjectList = null;
+//        cachedObjectList = null;
 
         return this;
     }
@@ -124,19 +125,6 @@ public class TaxiRootState implements MutableOOState, DeepCopyForShallowCopyStat
     public Map<String, TaxiRootPassenger> touchPassengers(){
         this.passengers = new HashMap<>(passengers);
         return passengers;
-    }
-
-    //get values from objects
-    public String[] getPassengers(){
-        String[] ret = new String[passengers.size()];
-        int i = 0;
-        for(String name : passengers.keySet())
-            ret[i++] = name;
-        return ret;
-    }
-
-    public Object getPassengerAtt(String passname, String attName){
-        return passengers.get(passname).get(attName);
     }
 
     @Override

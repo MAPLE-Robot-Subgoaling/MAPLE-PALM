@@ -8,6 +8,7 @@ import burlap.behavior.singleagent.learning.LearningAgent;
 import burlap.behavior.valuefunction.ValueFunction;
 import burlap.mdp.core.action.Action;
 import burlap.mdp.core.oo.ObjectParameterizedAction;
+import burlap.mdp.core.oo.state.OOState;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.environment.Environment;
 import burlap.mdp.singleagent.environment.EnvironmentOutcome;
@@ -125,6 +126,7 @@ public class PALMLearningAgent implements LearningAgent {
         State initialState = env.currentObservation();
         e = new Episode(initialState);
         groundedRoot = root.getAllGroundedTasks(initialState).get(0);
+        tabLevel = "";
         solveTask(null, groundedRoot, env, maxSteps);
         System.out.println(e.actionSequence.size() + " " + e.actionSequence);
 
@@ -138,6 +140,8 @@ public class PALMLearningAgent implements LearningAgent {
         return e;
     }
 
+    private String tabLevel = "";
+
     /**
      * tries to solve a grounded task while creating a model of it
      * @param task the grounded task to solve
@@ -146,13 +150,15 @@ public class PALMLearningAgent implements LearningAgent {
      * @return whether the task was completed
      */
     protected boolean solveTask(GroundedTask parent, GroundedTask task, Environment baseEnv, int maxSteps){
+
+        tabLevel += "\t";
+
         State baseState = e.stateSequence.get(e.stateSequence.size() - 1);
         State currentState = task.mapState(baseState);
         State pastState = currentState;
         PALMModel model = getModel(task);
         int actionCount = 0;
 
-//        System.out.println(">>> " + task.getAction() + " " + actionCount);
         if(task.isPrimitive()) {
             EnvironmentOutcome result;
             Action a = task.getAction();
@@ -219,12 +225,15 @@ public class PALMLearningAgent implements LearningAgent {
 			}
             // solve this task's next chosen subtask, recursively
             int stepsBefore = steps;
+            System.out.println(tabLevel + ">>>>> " + task.toString() + " >>>>> " + action);
             subtaskCompleted = solveTask(task, action, baseEnv, maxSteps);
             int stepsAfter = steps;
             int stepsTaken = stepsAfter - stepsBefore;
             if (stepsTaken == 0) {
                 System.err.println("took a 0 step action");
             }
+
+            tabLevel = tabLevel.substring(0,tabLevel.length()-1);
 
             baseState = e.stateSequence.get(e.stateSequence.size() - 1);
             currentState = task.mapState(baseState);
@@ -291,13 +300,19 @@ public class PALMLearningAgent implements LearningAgent {
 		}
 		Policy policy = planner.planFromState(s);
         Action action = policy.action(s);
+        boolean debug = false;
 		if (debug) {
 			try {
-				if (task.toString().contains("solve")) {
+//				if (task.toString().contains("solve")) {
+                    System.out.println(tabLevel + "    Task:    " + task.toString());
 					Episode e = PolicyUtils.rollout(policy, s, model, 10);
-//					System.out.println(tabLevel + "    Debug rollout: " + e.actionSequence);
-//					System.out.println(tabLevel + action + ", ");
-				}
+					OOState last = (OOState) e.stateSequence.get(e.stateSequence.size()-1);
+					if (last.numObjects() > 0) {
+                        System.out.println(tabLevel + "    Rollout: " + e.actionSequence);
+                        System.out.println(tabLevel + "    Chose:   "+action);
+                        System.out.println(tabLevel + "    Done?: " + task.isComplete(last));
+                    }
+//				}
 			} catch (Exception e) {
 				//             ignore, temp debug to assess palm
 				System.out.println(e);

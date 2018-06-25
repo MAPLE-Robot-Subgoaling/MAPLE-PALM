@@ -64,8 +64,9 @@ public class TaxiHierGenTask7State extends TaxiHierGenState implements MutableOO
 
     @Override
     public ObjectInstance object(String oname) {
-        if(taxi.name().equals(oname))
+        if(taxi != null && taxi.name().equals(oname)) {
             return taxi;
+        }
         return passengers.get(oname);
     }
 
@@ -104,42 +105,6 @@ public class TaxiHierGenTask7State extends TaxiHierGenState implements MutableOO
     public TaxiHierGenTask7State copy() {
         return new TaxiHierGenTask7State(taxi, passengers);
     }
-
-//    @Override
-//    public int getLocationX(String pname) {
-//        return (int) passengers.get(pname).get(ATT_X);
-//    }
-//
-//    @Override
-//    public int getLocationY(String pname) {
-//        return (int) passengers.get(pname).get(ATT_Y);
-//    }
-
-    //get values from objects
-    public String[] getPassengers(){
-        String[] ret = new String[passengers.size()];
-        int i = 0;
-        for(String name : passengers.keySet())
-            ret[i++] = name;
-        return ret;
-    }
-
-//    @Override
-//    public String getPassengerLocation(String pname) {
-//        boolean inTaxi = (boolean) passengers.get(pname).get(ATT_IN_TAXI);
-//        int tx = (int) taxi.get(ATT_X);
-//        int ty = (int) taxi.get(ATT_Y);
-//        int px = (int) passengers.get(pname).get(ATT_X);
-//        int py = (int) passengers.get(pname).get(ATT_Y);
-//
-//        if(inTaxi)
-//            return ATT_IN_TAXI;
-//        else if(tx == px && ty == py)
-//            return ATT_;
-//        else
-//            return ATT_VAL_ON_ROAD;
-//
-//    }
 
     public TaxiHierGenTask7Taxi touchTaxi() {
         if (this.taxi != null) { this.taxi = taxi.copy(); }

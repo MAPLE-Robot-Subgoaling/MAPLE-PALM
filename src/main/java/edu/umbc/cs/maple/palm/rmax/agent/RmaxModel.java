@@ -13,6 +13,7 @@ import edu.umbc.cs.maple.hierarchy.framework.GroundedTask;
 import edu.umbc.cs.maple.hierarchy.framework.StringFormat;
 import edu.umbc.cs.maple.palm.agent.PALMModel;
 import edu.umbc.cs.maple.palm.agent.PossibleOutcome;
+import edu.umbc.cs.maple.utilities.BurlapConstants;
 import edu.umbc.cs.maple.utilities.DiscountProvider;
 import edu.umbc.cs.maple.utilities.ExpectedStepsDiscountProvider;
 
@@ -87,7 +88,19 @@ public abstract class RmaxModel extends PALMModel {
             }
         }
 
-        throw new RuntimeException("Probabilities don't sum to 1.0: " + sum);
+        // IMPORTANT:
+        // with the Multi-time model, the totalProbability will not sum to 1.0 but to GAMMA, or less even
+//        throw new RuntimeException("Probabilities don't sum to 1.0: " + sum);
+        // thus, handle edge case here
+        sample = RandomFactory.getMapped(BurlapConstants.DEFAULT_RNG_INDEX).nextDouble()*sum;
+        sum = 0;
+        for(TransitionProb tp : tps){
+            sum += tp.p;
+            if(sample <= sum){
+                return tp.eo;
+            }
+        }
+        throw new RuntimeException("Error: incorrect RNG logic inside RmaxModel");
     }
 
     //the model is terminal if the task is completed or if it fails, or is the imagined state
