@@ -25,6 +25,8 @@ import edu.umbc.cs.maple.taxi.hierarchies.tasks.get.state.TaxiGetAgent;
 import edu.umbc.cs.maple.taxi.hierarchies.tasks.get.state.TaxiGetLocation;
 import edu.umbc.cs.maple.taxi.hierarchies.tasks.get.state.TaxiGetPassenger;
 import edu.umbc.cs.maple.taxi.stategenerator.TaxiStateFactory;
+import edu.umbc.cs.maple.utilities.ExceptionReward;
+import edu.umbc.cs.maple.utilities.ExceptionTermination;
 
 import static edu.umbc.cs.maple.taxi.TaxiConstants.*;
 
@@ -68,12 +70,12 @@ public class TaxiGetDomain implements DomainGenerator {
 
         TaxiGetModel tmodel = new TaxiGetModel();
         if (tf == null) {
-            System.err.println("Warning: initializing " + this.getClass().getSimpleName() + " with Null TF");
-            tf = new NullTermination();
+//            System.err.println("Warning: initializing " + this.getClass().getSimpleName() + " with Null TF");
+            tf = new ExceptionTermination();
         }
         if (rf == null) {
-            System.err.println("Warning: initializing " + this.getClass().getSimpleName() + " with Null RF");
-            rf = new NullRewardFunction();
+//            System.err.println("Warning: initializing " + this.getClass().getSimpleName() + " with Null RF");
+            rf = new ExceptionReward();
         }
         FactoredModel model = new FactoredModel(tmodel, rf, tf);
         domain.setModel(model);
