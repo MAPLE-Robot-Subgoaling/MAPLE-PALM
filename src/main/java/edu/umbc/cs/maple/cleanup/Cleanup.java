@@ -3,6 +3,7 @@ package edu.umbc.cs.maple.cleanup;
 import burlap.behavior.singleagent.Episode;
 import burlap.behavior.valuefunction.ValueFunction;
 import burlap.mdp.auxiliary.DomainGenerator;
+import burlap.mdp.auxiliary.common.GoalConditionTF;
 import burlap.mdp.auxiliary.common.NullTermination;
 import burlap.mdp.core.Domain;
 import burlap.mdp.core.TerminalFunction;
@@ -610,9 +611,26 @@ public class Cleanup implements DomainGenerator {
         cleanup.setMaxX(13);
         cleanup.setMinY(0);
         cleanup.setMaxY(13);
-        OOSADomain domain = (OOSADomain) cleanup.generateDomain();
-        CleanupRandomStateGenerator gen = new CleanupRandomStateGenerator(cleanup);
 
+		RewardFunction rf;
+		TerminalFunction tf;
+		CleanupGoal goalCondition;
+		goalCondition = new CleanupGoal();
+        OOSADomain domain = (OOSADomain) cleanup.generateDomain();
+
+        CleanupGoalDescription[] goals = new CleanupGoalDescription[]{
+				new CleanupGoalDescription(new String[]{"block0", "room1"}, domain.propFunction(PF_BLOCK_IN_ROOM)),
+//				new CleanupGoalDescription(new String[]{"block1", "room1"}, domain.propFunction(PF_BLOCK_IN_ROOM)),
+//				new CleanupGoalDescription(new String[]{"block2", "room0"}, domain.propFunction(PF_BLOCK_IN_ROOM))
+		};
+        goalCondition.setGoals(goals);
+
+        rf = new CleanupRF(goalCondition, 1.0, 0.0, 0.0, 0.0 );
+        tf = new GoalConditionTF(goalCondition);
+        cleanup.setRf(rf);
+        cleanup.setTf(tf);
+        CleanupRandomStateGenerator gen = new CleanupRandomStateGenerator(cleanup);
+        domain = (OOSADomain) cleanup.generateDomain();
         int numBlocks1 = 1;
         int numBlocks2 = 3;
         State state1 = gen.generateTwoRoomsWithFourDoors(numBlocks1); //gen.generateCentralRoomWithFourDoors(numBlocks1);
