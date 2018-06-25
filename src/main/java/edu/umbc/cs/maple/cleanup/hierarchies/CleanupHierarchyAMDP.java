@@ -20,10 +20,7 @@ import edu.umbc.cs.maple.cleanup.hierarchies.tasks.root.CleanupRootGoalPF;
 import edu.umbc.cs.maple.cleanup.hierarchies.tasks.root.CleanupRootMapper;
 import edu.umbc.cs.maple.config.ExperimentConfig;
 import edu.umbc.cs.maple.config.cleanup.CleanupConfig;
-import edu.umbc.cs.maple.hierarchy.framework.NonprimitiveTask;
-import edu.umbc.cs.maple.hierarchy.framework.PrimitiveTask;
-import edu.umbc.cs.maple.hierarchy.framework.SolveActionType;
-import edu.umbc.cs.maple.hierarchy.framework.Task;
+import edu.umbc.cs.maple.hierarchy.framework.*;
 
 import static edu.umbc.cs.maple.cleanup.Cleanup.*;
 
@@ -96,31 +93,32 @@ public class CleanupHierarchyAMDP extends CleanupHierarchy {
         StateMapping agentDoorMapper = new AgentDoorMapper();
         PropositionalFunction agentDoorFail = new ObjectInRegionFailPF("AgentDoorFailPF", new String[]{CLASS_AGENT, CLASS_DOOR});
         PropositionalFunction agentDoorGoal = new ObjectInRegionGoalPF("AgentDoorGoalPF", new String[]{CLASS_AGENT, CLASS_DOOR});
-        NonprimitiveTask agentToDoor = new NonprimitiveTask(
-                subTasks,
-                aMoveAgentToDoor,
-                moveAgentDoorDomain,
+       GoalFailTF agentDoorTF = new GoalFailTF(agentDoorGoal,null, agentDoorFail,null);
+        NonprimitiveTask agentToDoor =  new NonprimitiveTask(
+                (Task[]) subTasks,
+                aMoveAgentToDoor ,
+                (OOSADomain) moveAgentDoorDomain,
                 agentDoorMapper,
-                agentDoorFail,
-                agentDoorGoal,
-                defaultReward,
-                noopReward
+                agentDoorTF,
+                new GoalFailRF(agentDoorTF, defaultReward, noopReward),
+                null
         );
+
         if (plan) { setupKnownTFRF(agentToDoor); }
 
         StateMapping agentRoomMapper = new AgentRoomMapper();
         ActionType aMoveAgentToRoom = pickRoomAgentDomain.getAction(CleanupPick.ACTION_MOVE_AGENT_ROOM);
         PropositionalFunction agentRoomFail = new ObjectInRegionFailPF("AgentRoomFailPF", new String[]{CLASS_AGENT, CLASS_ROOM});
         PropositionalFunction agentRoomGoal = new ObjectInRegionGoalPF("AgentRoomGoalPF", new String[]{CLASS_AGENT, CLASS_ROOM});
-        NonprimitiveTask agentToRoom = new NonprimitiveTask(
-                subTasks,
-                aMoveAgentToRoom,
-                moveAgentRoomDomain,
+        GoalFailTF agentRoomTF = new GoalFailTF(agentRoomGoal,null, agentRoomFail,null);
+        NonprimitiveTask agentToRoom =  new NonprimitiveTask(
+                (Task[]) subTasks,
+                aMoveAgentToRoom ,
+                (OOSADomain) moveAgentRoomDomain,
                 agentRoomMapper,
-                agentRoomFail,
-                agentRoomGoal,
-                defaultReward,
-                noopReward
+                agentRoomTF,
+                new GoalFailRF(agentRoomTF, defaultReward, noopReward),
+                null
         );
         if (plan) { setupKnownTFRF(agentToRoom); }
 
@@ -128,15 +126,15 @@ public class CleanupHierarchyAMDP extends CleanupHierarchy {
         ActionType aMoveBlockToDoor = pickRoomBlockDomain.getAction(CleanupPick.ACTION_MOVE_BLOCK_DOOR);
         PropositionalFunction blockDoorFail = new ObjectInRegionFailPF("BlockDoorFailPF", new String[]{CLASS_BLOCK, CLASS_DOOR});
         PropositionalFunction blockDoorGoal = new ObjectInRegionGoalPF("BlockDoorGoalPF", new String[]{CLASS_BLOCK, CLASS_DOOR});
-        NonprimitiveTask blockToDoor = new NonprimitiveTask(
-                subTasks,
+        GoalFailTF blockDoorTF = new GoalFailTF(blockDoorGoal,null, agentDoorFail,null);
+        NonprimitiveTask blockToDoor =  new NonprimitiveTask(
+                (Task[]) subTasks,
                 aMoveBlockToDoor,
-                moveBlockDoorDomain,
+                (OOSADomain) moveBlockDoorDomain,
                 blockDoorMapper,
-                blockDoorFail,
-                blockDoorGoal,
-                defaultReward,
-                noopReward
+                blockDoorTF,
+                new GoalFailRF(blockDoorTF, defaultReward, noopReward),
+                null
         );
         if (plan) { setupKnownTFRF(blockToDoor); }
 
@@ -144,56 +142,63 @@ public class CleanupHierarchyAMDP extends CleanupHierarchy {
         ActionType aMoveBlockToRoom = pickRoomBlockDomain.getAction(CleanupPick.ACTION_MOVE_BLOCK_ROOM);
         PropositionalFunction blockRoomFail = new ObjectInRegionFailPF("BlockRoomFailPF", new String[]{CLASS_BLOCK, CLASS_ROOM});
         PropositionalFunction blockRoomGoal = new ObjectInRegionGoalPF("BlockRoomGoalPF", new String[]{CLASS_BLOCK, CLASS_ROOM});
-        NonprimitiveTask blockToRoom = new NonprimitiveTask(
-                subTasks,
-                aMoveBlockToRoom,
-                moveBlockRoomDomain,
+        GoalFailTF blockRoomTF = new GoalFailTF(agentDoorGoal,null, agentDoorFail,null);
+        NonprimitiveTask blockToRoom =  new NonprimitiveTask(
+                (Task[]) subTasks,
+                aMoveBlockToRoom ,
+                (OOSADomain) moveBlockRoomDomain,
                 blockRoomMapper,
-                blockRoomFail,
-                blockRoomGoal,
-                defaultReward,
-                noopReward
+                blockRoomTF,
+                new GoalFailRF(blockRoomTF , defaultReward, noopReward),
+                null
         );
         if (plan) { setupKnownTFRF(blockToRoom); }
 
         ActionType aPickRoomForAgent = rootDomain.getAction(CleanupRoot.ACTION_PICK_ROOM_AGENT);
         Task[] subTasks2 = {agentToDoor, agentToRoom, blockToDoor, blockToRoom};
+        PickObjectRoomFailPF failPF = new PickObjectRoomFailPF("PickAgentRoomFailPF", new String[]{CLASS_AGENT, CLASS_ROOM});
+        PickObjectRoomGoalPF goalPF = new PickObjectRoomGoalPF("PickAgentRoomGoalPF", new String[]{CLASS_AGENT, CLASS_ROOM});
+        GoalFailTF pickRoomAgentTF = new GoalFailTF(goalPF,null, failPF,null);
         NonprimitiveTask pickRoomAgent = new NonprimitiveTask(
                 subTasks2,
                 aPickRoomForAgent,
                 pickRoomAgentDomain,
                 new PickRoomAgentMapper(),
-                new PickObjectRoomFailPF("PickAgentRoomFailPF", new String[]{CLASS_AGENT, CLASS_ROOM}),
-                new PickObjectRoomGoalPF("PickAgentRoomGoalPF", new String[]{CLASS_AGENT, CLASS_ROOM}),
-                defaultReward,
-                noopReward
+                pickRoomAgentTF,
+                new GoalFailRF(pickRoomAgentTF, defaultReward, noopReward),
+                null
         );
         if (plan) { setupKnownTFRF(pickRoomAgent); }
 
         ActionType aPickRoomForBlock = rootDomain.getAction(CleanupRoot.ACTION_PICK_ROOM_BLOCK);
+        PickObjectRoomFailPF prbfailPF = new PickObjectRoomFailPF("PickAgentRoomFailPF", new String[]{CLASS_AGENT, CLASS_ROOM});
+        PickObjectRoomGoalPF prbgoalPF = new PickObjectRoomGoalPF("PickAgentRoomGoalPF", new String[]{CLASS_AGENT, CLASS_ROOM});
+        GoalFailTF pickRoomBlockTF = new GoalFailTF(prbgoalPF,null, prbfailPF,null);
         NonprimitiveTask pickRoomBlock = new NonprimitiveTask(
                 subTasks2,
                 aPickRoomForBlock,
                 pickRoomBlockDomain,
                 new PickRoomBlockMapper(),
-                new PickObjectRoomFailPF("PickBlockRoomFailPF", new String[]{CLASS_BLOCK, CLASS_ROOM}),
-                new PickObjectRoomGoalPF("PickBlockRoomGoalPF", new String[]{CLASS_BLOCK, CLASS_ROOM}),
-                defaultReward,
-                noopReward
+                pickRoomBlockTF,
+                new GoalFailRF(pickRoomBlockTF, defaultReward, noopReward),
+                null
         );
         if (plan) { setupKnownTFRF(pickRoomBlock); }
 
         ActionType aSolve = new SolveActionType();
         Task[] rootTasks = {pickRoomAgent, pickRoomBlock};
+        CleanupRootFailPF rootFailPF = new CleanupRootFailPF("CleanupRootFailPF", new String[]{});
+        CleanupRootGoalPF rootGoalPF = new CleanupRootGoalPF("CleanupRootGoalPF", goalCondition);
+        rootTF = new GoalFailTF(rootGoalPF,null, rootFailPF,null);
         NonprimitiveTask root = new NonprimitiveTask(
                 rootTasks,
                 aSolve,
                 rootDomain,
                 new CleanupRootMapper(),
-                new CleanupRootFailPF("CleanupRootFailPF", new String[]{}),
-                new CleanupRootGoalPF("CleanupRootGoalPF", goalCondition),
-                defaultReward,
-                noopReward
+                rootTF,
+                new GoalFailRF((GoalFailTF) rootTF, defaultReward, noopReward),
+                null
+
         );
         if (plan) { setupKnownTFRF(root); }
 
