@@ -11,6 +11,8 @@ import burlap.mdp.core.oo.ObjectParameterizedAction;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.environment.Environment;
 import burlap.mdp.singleagent.environment.EnvironmentOutcome;
+import burlap.mdp.singleagent.environment.SimulatedEnvironment;
+import burlap.mdp.singleagent.environment.extensions.EnvironmentServer;
 import burlap.mdp.singleagent.oo.OOSADomain;
 import burlap.statehashing.HashableStateFactory;
 import edu.umbc.cs.maple.config.ExperimentConfig;
@@ -136,8 +138,6 @@ public class PALMLearningAgent implements LearningAgent {
         return e;
     }
 
-//    public static String tabLevel = "";
-
     /**
      * tries to solve a grounded task while creating a model of it
      * @param task the grounded task to solve
@@ -151,9 +151,8 @@ public class PALMLearningAgent implements LearningAgent {
         State pastState = currentState;
         PALMModel model = getModel(task);
         int actionCount = 0;
-//		tabLevel += "\t";
-//        System.out.println(tabLevel + ">>> " + task.getAction() + " " + actionCount);
 
+        System.out.println(">>> " + task.getAction() + " " + actionCount);
         if(task.isPrimitive()) {
             EnvironmentOutcome result;
             Action a = task.getAction();
@@ -169,9 +168,12 @@ public class PALMLearningAgent implements LearningAgent {
                 String trueParameters = ((ObjectParameterizedAction)parent.getAction()).getObjectParameters()[0];
                 ((ObjectParameterizedAction) unMaskedAction).getObjectParameters()[0] = trueParameters;
             }
-//                System.out.println(tabLevel + "    " + actionName);
-//            subtaskCompleted = true;
+//            System.out.println(tabLevel + "    " + a.toString());
             result = baseEnv.executeAction(unMaskedAction);
+
+            SimulatedEnvironment simEnv = (SimulatedEnvironment)((EnvironmentServer)baseEnv).getEnvironmentDelegate();
+            simEnv.setAllowActionFromTerminalStates(true);
+
             e.transition(result);
             baseState = result.op;
             currentState = task.mapState(result.op);
@@ -193,7 +195,7 @@ public class PALMLearningAgent implements LearningAgent {
 			// and still have steps it can take
                 && (steps < maxSteps || maxSteps == -1)
             // and it hasn't solved the root goal, keep planning
-                && !(groundedRoot.isComplete(groundedRoot.mapState(baseState)))
+            //    && !(groundedRoot.isComplete(groundedRoot.mapState(baseState)))
         ){
             actionCount++;
             boolean subtaskCompleted = false;
@@ -244,7 +246,6 @@ public class PALMLearningAgent implements LearningAgent {
             System.out.println(subtasksExecuted.size() + " " + subtasksExecuted);
         }
 
-//        tabLevel = tabLevel.substring(0, (tabLevel.length() - 1));
 
 		boolean parentShouldUpdateModel = task.isComplete(currentState) ||actionCount == 0;
 		parentShouldUpdateModel = parentShouldUpdateModel && allChildrenBeyondThreshold;

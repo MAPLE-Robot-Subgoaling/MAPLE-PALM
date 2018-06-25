@@ -1,11 +1,11 @@
 domain: !!edu.umbc.cs.maple.config.cleanup.CleanupConfig
-    state: slidingBlock
-    num_blocks: 2
+    state: threeRooms
+    num_blocks: 1
     minX: 0
     minY: 0
-    maxX: 9
+    maxX: 5
     maxY: 5
-    rewardGoal: 1.0
+    rewardGoal: 0.0
     rewardBase: 0.0
     rewardNoop: 0.0
     rewardPull: 0.0
@@ -15,7 +15,7 @@ seed: 3667
 agents:
   - palmExpert
 
-episodes: 300
+episodes: 52
 max_steps: 10000
 trials: 1
 gamma: 0.99
@@ -54,7 +54,7 @@ output:
       - CUMULATIVE_REWARD_PER_EPISODE
 
   visualizer:
-    enabled: false
+    enabled: true
     episodes: true
-    width: 9
+    width: 5
     height: 5
