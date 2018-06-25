@@ -42,7 +42,12 @@ public class ExpectedRmaxModel extends RmaxModel {
     }
 
     @Override
-    public double getInternalDiscount(EnvironmentOutcome eo, int k) {
+    public double getInternalDiscountReward(EnvironmentOutcome eo, int k) {
+        return DEFAULT_INTERNAL_DISCOUNT;
+    }
+
+    @Override
+    public double getInternalDiscountProbability(EnvironmentOutcome eo, int k) {
         return DEFAULT_INTERNAL_DISCOUNT;
     }
 

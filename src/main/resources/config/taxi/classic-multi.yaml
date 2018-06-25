@@ -1,17 +1,24 @@
 domain: !!edu.umbc.cs.maple.config.taxi.TaxiConfig
   state: classic-2passengers
   correct_move: 1.0
-  fickle: 0.0
+  fickle: 0.00
 
 agents:
-  - palmExpert
-
-episodes: 150
-max_steps: 500
+#    - rmaxqExpert
+  #  - rmaxqHierGen
+    - palmExpert
+#    - palmExpertWithNavGiven
+#    - palmHierGen
+#    - kappaExpert
+#    - kappaHierGen
+#    - qLearning
+episodes: 100
+max_steps: 4000
 trials: 1
 gamma: 0.99
 
-seed: 1232106
+seed: 7543221
+
 
 identifier_independent: false
 planning:
@@ -27,12 +34,11 @@ rmax:
   wait_for_children: true
   use_model_sharing: false
 
-  
 
 output:
   csv:
     enabled: true
-    output: results/pex-classic-2-ggpp-s2s.csv
+    output: results/pex-classic-2-fickle.csv
 
   chart:
     enabled: true

@@ -127,9 +127,9 @@ public abstract class RmaxModel extends PALMModel {
         // IMPORTANT:
         // with the Multi-time model, the totalProbability will not sum to 1.0 but to GAMMA, or less even
         // the rationale for this is explained in Jong's RMAXQ paper (essentially the remainder is prob. of termination)
-        if (totalProbability < 0.99999999999 || totalProbability > 1.00000000001) {
-            System.err.println("total probability does not sum to 1.0: " + totalProbability);
-        }
+//        if (totalProbability < 0.99999999999 || totalProbability > 1.00000000001) {
+//            System.err.println("total probability does not sum to 1.0: " + totalProbability);
+//        }
         return tps;
     }
 
@@ -218,23 +218,34 @@ public abstract class RmaxModel extends PALMModel {
         Map<Integer, Integer> stepsTakenToTransitionCount = outcome.getStepsTakenToTransitionCount();
         Map<Integer, Double> stepsTakenToRewardTotal = outcome.getStepsTakenToRewardTotal();
         double transitionCountSASP = 0.0;
+        double probabilitySASP = 0.0;
         double rewardTotalSASP = 0.0;
         for (int k : stepsTakenToTransitionCount.keySet()) {
+
+            // approximate the transition probability
             int transitionCountSASPK = stepsTakenToTransitionCount.get(k);
             transitionCountSASP += transitionCountSASPK;
+            double probabilitySASPK = transitionCountSASPK / (1.0 * transitionCountSA);
+            double discountProbability = getInternalDiscountProbability(outcome.getOutcome(), k);
+            double discountedProbability = probabilitySASPK * discountProbability;
+            probabilitySASP += discountedProbability;
+
+            // approximate the reward
             double rewardTotalSASPK = stepsTakenToRewardTotal.get(k);
-            double discount = getInternalDiscount(outcome.getOutcome(), k);
-            rewardTotalSASPK *= discount;
+            double discountReward = getInternalDiscountReward(outcome.getOutcome(), k);
+            rewardTotalSASPK *= discountReward;
             rewardTotalSASP += rewardTotalSASPK;
         }
-        double transitionProbabilitySASP = transitionCountSASP / (1.0 * transitionCountSA);
-        outcome.setTransitionProbability(transitionProbabilitySASP);
+//        double transitionProbabilitySASP = transitionCountSASP / (1.0 * transitionCountSA);
+        outcome.setTransitionProbability(probabilitySASP);
+
         double rewardEstimateSASP = rewardTotalSASP / transitionCountSASP;
         outcome.setReward(rewardEstimateSASP);
     }
 
     // allows for Multi-time model discounting
-    public abstract double getInternalDiscount(EnvironmentOutcome eo, int k);
+    public abstract double getInternalDiscountProbability(EnvironmentOutcome eo, int k);
+    public abstract double getInternalDiscountReward(EnvironmentOutcome eo, int k);
 
     public int getStateActionCount(State s, Action a) {
         HashableState hs = hashingFactory.hashState(s);

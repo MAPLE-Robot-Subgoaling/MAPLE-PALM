@@ -6,7 +6,7 @@ domain: !!edu.umbc.cs.maple.config.taxi.TaxiConfig
 agents:
   - palmExpert
 
-episodes: 100
+episodes: 150
 max_steps: 500
 trials: 1
 gamma: 0.99
