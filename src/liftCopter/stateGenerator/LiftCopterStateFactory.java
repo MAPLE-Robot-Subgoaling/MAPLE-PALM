@@ -18,16 +18,16 @@ public class LiftCopterStateFactory {
         LiftCopterAgent agent = new LiftCopterAgent(CLASS_AGENT + 0, 0.25,3.25, .5, .5);
 
         List<LiftCopterLocation> locations = new ArrayList<LiftCopterLocation>();
-        locations.add(new LiftCopterLocation(CLASS_LOCATION + 0, .5D, 4.5,1,1, COLOR_RED));
-        locations.add(new LiftCopterLocation(CLASS_LOCATION + 1, .5, .5,1,1, COLOR_YELLOW));
+        locations.add(new LiftCopterLocation(CLASS_LOCATION + 0, .5D, 3.5,1,1, COLOR_RED));
+        locations.add(new LiftCopterLocation(CLASS_LOCATION + 1, 1.5, .5,1,1, COLOR_YELLOW));
         locations.add(new LiftCopterLocation(CLASS_LOCATION + 2, 3.5, .5,1,1, COLOR_BLUE));
-        locations.add(new LiftCopterLocation(CLASS_LOCATION + 3, 4.5, 4.5,1,1, COLOR_GREEN));
+        locations.add(new LiftCopterLocation(CLASS_LOCATION + 3, 3.5, 3.5,1,1, COLOR_GREEN));
 
         List<LiftCopterCargo> cargos = new ArrayList<LiftCopterCargo>();
         for (int i = 0; i < numCargos; i++){
             // classic agent has original cargo at BLUE depot going to RED depot
-            int startX = 0;
-            int startY = 4;
+            double startX = 0.0;
+            double startY = 4.0;
             String goalLocationName = CLASS_LOCATION+1;
             // other cargos both start and go to a random depot
             if (i > 0) {
@@ -37,8 +37,8 @@ public class LiftCopterStateFactory {
                 while (startLocationName.equals(goalLocationName)) {
                     // put the agent in a random depot that is NOT the goal
                     LiftCopterLocation startLocation = locations.get(RandomFactory.getMapped(0).nextInt(locations.size()));
-                    startX = (int) startLocation.get(ATT_X);
-                    startY = (int) startLocation.get(ATT_Y);
+                    startX =  (double) startLocation.get(ATT_X);
+                    startY =  (double) startLocation.get(ATT_Y);
                     startLocationName = startLocation.getName();
                 }
 //                startX = 3;

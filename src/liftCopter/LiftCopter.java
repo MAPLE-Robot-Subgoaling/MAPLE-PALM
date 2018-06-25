@@ -131,7 +131,7 @@ public class LiftCopter implements DomainGenerator {
 
         LiftCopter copter = new LiftCopter();
         OOSADomain domain = copter.generateDomain();
-        State s = LiftCopterStateFactory.createMiniState();
+        State s = LiftCopterStateFactory.createClassicState(2);
 
         Visualizer v = LiftCopterVisualizer.getVisualizer(5,5);
 
