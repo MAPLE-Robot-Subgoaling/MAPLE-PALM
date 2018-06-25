@@ -1,5 +1,6 @@
 package edu.umbc.cs.maple.testing;
 
+import burlap.statehashing.simple.SimpleHashableStateFactory;
 import edu.umbc.cs.maple.amdp.planning.AMDPPlanner;
 import burlap.behavior.singleagent.Episode;
 import burlap.behavior.singleagent.auxiliary.EpisodeSequenceVisualizer;
@@ -69,8 +70,8 @@ public class AMDPPlanTest {
 //        CleanupHierarchy hierarchy = new CleanupHierarchyAMDP();
         Task palmRoot = hierarchy.createHierarchy(config, true);
         OOSADomain base = hierarchy.getBaseDomain();
-//        HashableStateFactory hashingFactory = new SimpleHashableStateFactory();
-        HashableStateFactory hashingFactory = new CachedHashableStateFactory(false);
+        HashableStateFactory hashingFactory = new SimpleHashableStateFactory(false);
+//        HashableStateFactory hashingFactory = new CachedHashableStateFactory(false);
         plan(config, palmRoot, s, hashingFactory, base);
     }
 }
