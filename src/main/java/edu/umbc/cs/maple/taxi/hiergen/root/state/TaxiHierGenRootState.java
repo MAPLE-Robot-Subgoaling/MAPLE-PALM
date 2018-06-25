@@ -108,22 +108,6 @@ public class TaxiHierGenRootState extends TaxiHierGenState implements MutableOOS
         return new TaxiHierGenRootState(taxi, passengers);
     }
 
-//
-//    public String getPassengerLocation(String pname) {
-//        boolean inTaxi = (boolean) passengers.get(pname).get(ATT_IN_TAXI);
-//        int tx = (int) taxi.get(ATT_X);
-//        int ty = (int) taxi.get(ATT_Y);
-//        int px = (int) passengers.get(pname).get(ATT_X);
-//        int py = (int) passengers.get(pname).get(ATT_Y);
-//
-//        if(!inTaxi)
-//            return ATT_VAL_NOT_IN_TAXI;
-//        else if(tx == px && ty == py)
-//            return ATT_VAL_IN_TAXI;
-//        else
-//            return ATT_VAL_ON_ROAD;
-//    }
-
     public TaxiHierGenRootTaxi touchTaxi() {
         if (this.taxi != null) { this.taxi = taxi.copy(); }
         return taxi;
@@ -151,5 +135,37 @@ public class TaxiHierGenRootState extends TaxiHierGenState implements MutableOOS
 
     public TaxiHierGenRootTaxi getTaxi() {
         return taxi;
+    }
+
+
+    @Override
+    public String toString() {
+        StringBuilder buf = new StringBuilder();
+        buf.append("");
+        for (ObjectInstance passenger : passengers.values()) {
+            buf.append("P");
+            buf.append(passenger.name().charAt(passenger.name().length()-1));
+            buf.append(", at:");
+            int atX = (int) passenger.get(ATT_X);
+            int atY = (int) passenger.get(ATT_Y);
+            buf.append("(");
+            buf.append(atX);
+            buf.append(",");
+            buf.append(atY);
+            buf.append(")");
+            buf.append(", goal:");
+            int goalX = (int) passenger.get(ATT_DESTINATION_X);
+            int goalY = (int) passenger.get(ATT_DESTINATION_X);
+            buf.append("(");
+            buf.append(goalX);
+            buf.append(",");
+            buf.append(goalY);
+            buf.append(")");
+            buf.append(", inTaxi:");
+            boolean inTaxi = (boolean) passenger.get(ATT_IN_TAXI);
+            buf.append(inTaxi);
+            buf.append("; ");
+        }
+        return buf.toString();
     }
 }

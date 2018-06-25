@@ -14,7 +14,7 @@ agents:
 #  - qLearning
 
 seed: 68598
-episodes: 350
+episodes: 200
 max_steps: 100000
 trials: 1
 gamma: 0.99
@@ -25,7 +25,7 @@ planning:
 
 rmax:
   vmax: 1.0
-  threshold: 5
+  threshold: 2
   max_delta: 0.0000001
   max_delta_rmaxq: 0.0001
   max_iterations_in_model: 1000

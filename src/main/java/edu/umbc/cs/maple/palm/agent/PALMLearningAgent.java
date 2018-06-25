@@ -304,8 +304,8 @@ public class PALMLearningAgent implements LearningAgent {
 		if (debug) {
 			try {
 //				if (task.toString().contains("solve")) {
-                    System.out.println(tabLevel + "    Task:    " + task.toString());
-					Episode e = PolicyUtils.rollout(policy, s, model, 10);
+                    System.out.println(tabLevel + "    Task:    " + task.toString() + " " + s.toString());
+					Episode e = PolicyUtils.rollout(policy, s, model, 100);
 					OOState last = (OOState) e.stateSequence.get(e.stateSequence.size()-1);
 					if (last.numObjects() > 0) {
                         System.out.println(tabLevel + "    Rollout: " + e.actionSequence);
