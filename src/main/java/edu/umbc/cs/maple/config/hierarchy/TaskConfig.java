@@ -9,6 +9,7 @@ import burlap.mdp.core.action.ActionType;
 import burlap.mdp.singleagent.SADomain;
 import burlap.mdp.singleagent.model.RewardFunction;
 import burlap.mdp.singleagent.oo.OOSADomain;
+import edu.umbc.cs.maple.hierarchy.framework.GoalFailTF;
 import edu.umbc.cs.maple.hierarchy.framework.NonprimitiveTask;
 import edu.umbc.cs.maple.hierarchy.framework.Task;
 
@@ -32,7 +33,7 @@ public class TaskConfig {
     }
     public Task finalizeTask(List<Task> kids, ActionType actionType){
         return new NonprimitiveTask(
-                (Task[]) kids.toArray(),
+                kids.toArray(new Task[kids.size()]),
                 actionType,
                 (OOSADomain) domain,
                 stateMapping,

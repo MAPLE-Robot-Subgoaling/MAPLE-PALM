@@ -1,4 +1,4 @@
-package edu.umbc.cs.maple.taxi.hiergen.task5.state;
+package edu.umbc.cs.maple.taxi.hiergen.task5;
 
 import burlap.mdp.auxiliary.DomainGenerator;
 import burlap.mdp.auxiliary.common.NullTermination;

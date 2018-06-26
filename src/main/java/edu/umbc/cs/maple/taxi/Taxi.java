@@ -32,9 +32,19 @@ public class Taxi implements DomainGenerator{
     private boolean fickle;
     private double fickleProbability;
     private double[][] moveDynamics;
+    private double correctMoveProbability;
+
+    public double getCorrectMoveProb(){
+        return correctMoveProbability;
+    }
+    public void setCorrectMoveProb(double correctMoveProbability){
+        this.correctMoveProbability = correctMoveProbability;
+        setMoveDynamics(correctMoveProbability);
+
+    }
 
 
-    public boolean isFickle() {
+    public boolean getFickle() {
         return fickle;
     }
 
@@ -48,10 +58,6 @@ public class Taxi implements DomainGenerator{
 
     public void setFickleProbability(double fickleProbability) {
         this.fickleProbability = fickleProbability;
-    }
-
-    public double[][] getMoveDynamics() {
-        return moveDynamics;
     }
 
 

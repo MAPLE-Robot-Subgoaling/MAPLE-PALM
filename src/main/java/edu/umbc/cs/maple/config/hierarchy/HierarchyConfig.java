@@ -3,12 +3,14 @@ package edu.umbc.cs.maple.config.hierarchy;
 import burlap.mdp.auxiliary.DomainGenerator;
 import burlap.mdp.core.Domain;
 import burlap.mdp.core.action.ActionType;
+import burlap.mdp.singleagent.SADomain;
 import burlap.mdp.singleagent.oo.OOSADomain;
 import edu.umbc.cs.maple.hierarchy.framework.PrimitiveTask;
 import edu.umbc.cs.maple.hierarchy.framework.SolveActionType;
 import edu.umbc.cs.maple.hierarchy.framework.Task;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -22,6 +24,7 @@ public class HierarchyConfig {
     public HierarchyConfig(){}
 
     public Task buildRoot(){
+        taskMap = new HashMap<String,Task>();
         baseDomain = baseDomainGenerator.generateDomain();
         Task root = buildTask("root", new SolveActionType());
         return root;
@@ -36,10 +39,12 @@ public class HierarchyConfig {
             OOSADomain homeDomain = (OOSADomain) taskConfig.buildDomain();
             List<Task> childTasksList = new ArrayList<Task>();
             for (String childTaskName: taskConfig.getChildren()) {
+                System.out.println(childTaskName.split("_")[0]);
                 ActionType childActionType = homeDomain.getAction(childTaskName.split("_")[0]);
                 if(childTaskName.endsWith("_np")){
                     childTasksList.add(buildTask(childTaskName.split("_")[0], childActionType));
                 }else if(childTaskName.endsWith("_p")){
+                    childActionType = ((SADomain)baseDomain).getAction(childTaskName.split("_")[0]);
                     childTasksList.add(new PrimitiveTask(childActionType, ((OOSADomain)baseDomain)));
                 }
             }

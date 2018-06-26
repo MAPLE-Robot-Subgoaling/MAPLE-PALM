@@ -1,4 +1,4 @@
-package edu.umbc.cs.maple.taxi.hiergen.root.state;
+package edu.umbc.cs.maple.taxi.hiergen.root;
 
 import burlap.mdp.auxiliary.DomainGenerator;
 import burlap.mdp.auxiliary.common.NullTermination;

@@ -43,11 +43,10 @@ public class NonprimitiveTask extends Task {
         this.solver = solver;
     }
     public NonprimitiveTask(Task[] children, ActionType aType, OOSADomain abstractDomain, StateMapping map,
-                            TerminalFunction tf , RewardFunction rf, SolverConfig solver) {
+                            PropositionalFunction fail, PropositionalFunction compl, double defaultReward, double noopReward) {
         super(children, aType, abstractDomain, map);
-        this.tf = tf;
-        this.rf = rf;
-        this.solver = solver;
+        this.tf = new GoalFailTF(compl, null, fail, null);
+        this.rf = new GoalFailRF((GoalFailTF) tf, defaultReward, noopReward);
     }
 
     public NonprimitiveTask(OOSADomain baseDomain) {
