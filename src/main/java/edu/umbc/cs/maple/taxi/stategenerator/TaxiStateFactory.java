@@ -329,6 +329,31 @@ public class TaxiStateFactory {
 
         return new TaxiState(taxi, passengers, locations, walls);
     }
+
+    public static TaxiState createDiscountTest(int numPassengers) {
+
+        TaxiAgent taxi = new TaxiAgent(CLASS_TAXI + 0, 0, 0);
+
+        List<TaxiLocation> locations = new ArrayList<TaxiLocation>();
+        locations.add(new TaxiLocation(CLASS_LOCATION + 0, 0, 0, COLOR_RED));
+        locations.add(new TaxiLocation(CLASS_LOCATION + 2, 3, 0, COLOR_BLUE));
+
+        List<TaxiPassenger> passengers = new ArrayList<TaxiPassenger>();
+        for (int i = 0; i < numPassengers; i++){
+            int startX = 3;
+            int startY = 0;
+            String goalLocationName = CLASS_LOCATION+0;
+            passengers.add(new TaxiPassenger(CLASS_PASSENGER + i, startX, startY, goalLocationName));
+        }
+
+        List<TaxiWall> walls = new ArrayList<TaxiWall>();
+        walls.add(new TaxiWall(CLASS_WALL + 0, 0, 0, 4, true));
+        walls.add(new TaxiWall(CLASS_WALL + 1, 0, 1, 4, true));
+        walls.add(new TaxiWall(CLASS_WALL + 2, 0, 0, 1, false));
+        walls.add(new TaxiWall(CLASS_WALL + 3, 4, 0, 1, false));
+
+        return new TaxiState(taxi, passengers, locations, walls);
+    }
     public static TaxiState createMehtaZigZag1State(int numPassengers){
         TaxiAgent taxi = new TaxiAgent(CLASS_TAXI + 0, 2, 2);
 
