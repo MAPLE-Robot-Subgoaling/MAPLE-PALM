@@ -1,5 +1,5 @@
 domain: !!edu.umbc.cs.maple.config.taxi.TaxiConfig
-  state: tiny-5passengers
+  state: tiny-4passengers
   correct_move: 1.0
   fickle: 0.0
 
@@ -12,7 +12,7 @@ max_steps: 10000
 trials: 1
 gamma: 0.99
 
-seed: 6583094792
+seed: 777771
 
 identifier_independent: false
 planning:
@@ -26,7 +26,7 @@ rmax:
   max_iterations_in_model: 1000
   use_multitime_model: true
   wait_for_children: true
-  use_model_sharing: false
+  use_model_sharing: true
 
 output:
   csv:
