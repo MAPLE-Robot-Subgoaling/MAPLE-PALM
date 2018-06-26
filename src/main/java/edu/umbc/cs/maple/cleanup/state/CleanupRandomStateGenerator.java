@@ -981,6 +981,56 @@ public class CleanupRandomStateGenerator implements StateGenerator {
         return s;
     }
 
+    public OOState generateCheckerRooms(int numBlocks){
+        Random rng = RandomFactory.getMapped(BurlapConstants.DEFAULT_RNG_INDEX);
+
+        int numRooms = 9;
+        int numDoors = 12;
+
+        List<String> blockColors = new ArrayList<>(Arrays.asList(Cleanup.COLORS_BLOCKS));
+        List<String> blockShapes = new ArrayList<>(Arrays.asList(Cleanup.SHAPES_BLOCKS));
+        List<String> roomColors = new ArrayList<>(Arrays.asList(Cleanup.COLORS_ROOMS));
+
+        //initializes rooms
+        List<CleanupRoom> rooms = new ArrayList<>(9);
+        int nextR =0;
+        //help determine next coordinates
+        int[] xCoordinates = {1,1,1,3,3,3,5,5,5,};
+        int[] yCoordinates = {1,3,5};
+        String nextColor=roomColors.get(rng.nextInt(roomColors.size()));
+        for(CleanupRoom a:rooms){
+            a=new CleanupRoom("room"+nextR, xCoordinates[nextR], xCoordinates[nextR]+1, yCoordinates[nextR%3], yCoordinates[nextR%3], nextColor, Cleanup.SHAPE_ROOM);
+            nextColor=roomColors.get(rng.nextInt(roomColors.size()));
+            nextR++;
+        }
+
+        List<CleanupDoor> doors = new ArrayList<>(12);
+        xCoordinates = new int[]{1, 1, 2, 2, 2, 3, 3, 4, 4, 4, 5, 5};
+        yCoordinates = new int[]{2,4,1,3,5};
+        int nextD= 0;
+        for(CleanupDoor c: doors){
+            c=new CleanupDoor("door"+nextD, xCoordinates[nextD], xCoordinates[nextD]+1, yCoordinates[nextD%5], yCoordinates[nextD%5]+1, Cleanup.LOCKABLE_STATES[0], Cleanup.SHAPE_DOOR, Cleanup.COLOR_GRAY);
+            nextD++;
+        }
+
+        // randomize agent's position
+
+        String agentDirection = Cleanup.directions[rng.nextInt(Cleanup.directions.length)];
+        CleanupState s = new CleanupState(7, 7, 1, 1, ACTION_SOUTH, numBlocks, numRooms, numDoors);
+        for(CleanupRoom b:rooms)
+            s.addObject(b);
+        for(CleanupDoor d: doors)
+            s.addObject(d);
+        s.getAgent().set(Cleanup.ATT_X, 1);
+        s.getAgent().set(Cleanup.ATT_Y, 1);
+
+//        String shape = blockShapes.get(rng.nextInt(blockShapes.size()));
+//        String color = blockColors.get(rng.nextInt(blockColors.size()));
+//        s.addObject(new CleanupBlock("block" + index, bx, by, shape, color));
+
+        return s;
+    }
+
 
     public State getStateFor(String stateType, int numBlocks) {
         State state = null;
@@ -1000,6 +1050,8 @@ public class CleanupRandomStateGenerator implements StateGenerator {
             state = generateThreeRooms(numBlocks);
         } else if (stateType.equals("twoRooms")){
             state = generateTwoRooms(numBlocks);
+        } else if (stateType.equals("checkerRooms")){
+            state = generateCheckerRooms(numBlocks);
         } else {
             throw new RuntimeException("Error: unknown name for generating a random Cleanup state");
         }
