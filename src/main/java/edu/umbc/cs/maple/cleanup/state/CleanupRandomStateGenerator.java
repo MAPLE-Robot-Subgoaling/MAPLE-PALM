@@ -769,9 +769,13 @@ public class CleanupRandomStateGenerator implements StateGenerator {
         List<String> roomColors = new ArrayList<>(Arrays.asList(Cleanup.COLORS_ROOMS));
 
         int bigRoomLeft = minX;
+       //System.out.println("bigRoomsLeft is: "+ bigRoomLeft);
         int bigRoomRight = maxX-1;
+        //System.out.println("bigRoomsLeft is: "+ bigRoomRight);
         int bigRoomBottom = maxY/2;
+        //System.out.println("bigRoomsLeft is: "+ bigRoomBottom);
         int bigRoomTop = maxY-1;
+        //System.out.println("bigRoomsLeft is: "+ bigRoomTop);
         String bigRoomColor = roomColors.get(rng.nextInt(roomColors.size()));
         CleanupRoom bigRoom = new CleanupRoom("room0", bigRoomLeft, bigRoomRight, bigRoomBottom, bigRoomTop, bigRoomColor, Cleanup.SHAPE_ROOM);
         String room1Color = roomColors.get(rng.nextInt(roomColors.size()));
@@ -784,6 +788,7 @@ public class CleanupRandomStateGenerator implements StateGenerator {
         int dy0 = bigRoomBottom;
         int dy1 = bigRoomBottom;
         int dy2 = bigRoomBottom/2;
+        System.out.println("doors coord is: "+ dx0+","+ dx0+","+ dy0+","+ dy0+",");
         CleanupDoor door0 = new CleanupDoor("door0", dx0, dx0, dy0, dy0, Cleanup.LOCKABLE_STATES[0], Cleanup.SHAPE_DOOR, Cleanup.COLOR_GRAY);
         CleanupDoor door1 = new CleanupDoor("door1", dx1, dx1, dy1, dy1, Cleanup.LOCKABLE_STATES[0], Cleanup.SHAPE_DOOR, Cleanup.COLOR_GRAY);
         CleanupDoor door2 = new CleanupDoor("door2", dx2, dx2, dy2, dy2, Cleanup.LOCKABLE_STATES[0], Cleanup.SHAPE_DOOR, Cleanup.COLOR_GRAY);
@@ -995,38 +1000,151 @@ public class CleanupRandomStateGenerator implements StateGenerator {
         List<CleanupRoom> rooms = new ArrayList<>(9);
         int nextR =0;
         //help determine next coordinates
-        int[] xCoordinates = {1,1,1,3,3,3,5,5,5,};
-        int[] yCoordinates = {1,3,5};
-        String nextColor=roomColors.get(rng.nextInt(roomColors.size()));
-        for(CleanupRoom a:rooms){
-            a=new CleanupRoom("room"+nextR, xCoordinates[nextR], xCoordinates[nextR]+1, yCoordinates[nextR%3], yCoordinates[nextR%3], nextColor, Cleanup.SHAPE_ROOM);
-            nextColor=roomColors.get(rng.nextInt(roomColors.size()));
-            nextR++;
-        }
+//        int[] xCoordinates = {1,1,1,3,3,3,5,5,5};
+//        int[] yCoordinates = {1,3,5};
+//        String nextColor=roomColors.get(rng.nextInt(roomColors.size()));
+//        for(CleanupRoom a:rooms){
+//            a=new CleanupRoom("room"+nextR, xCoordinates[nextR], xCoordinates[nextR]+1, yCoordinates[nextR%3], yCoordinates[nextR%3], nextColor, Cleanup.SHAPE_ROOM);
+//            nextColor=roomColors.get(rng.nextInt(roomColors.size()));
+//            nextR++;
+//        }
 
-        List<CleanupDoor> doors = new ArrayList<>(12);
-        xCoordinates = new int[]{1, 1, 2, 2, 2, 3, 3, 4, 4, 4, 5, 5};
-        yCoordinates = new int[]{2,4,1,3,5};
-        int nextD= 0;
-        for(CleanupDoor c: doors){
-            c=new CleanupDoor("door"+nextD, xCoordinates[nextD], xCoordinates[nextD]+1, yCoordinates[nextD%5], yCoordinates[nextD%5]+1, Cleanup.LOCKABLE_STATES[0], Cleanup.SHAPE_DOOR, Cleanup.COLOR_GRAY);
-            nextD++;
-        }
+        String room0color = roomColors.get(rng.nextInt(roomColors.size()));
+        System.out.println("room0color is: "+room0color);
+        CleanupRoom room0= new CleanupRoom("room0", 1, 1, 1, 1, room0color, Cleanup.SHAPE_ROOM);
+        String room1color = roomColors.get(rng.nextInt(roomColors.size()));
+        CleanupRoom room1= new CleanupRoom("room1", 1, 1, 3, 3, room1color, Cleanup.SHAPE_ROOM);
+        String room2color = roomColors.get(rng.nextInt(roomColors.size()));
+        CleanupRoom room2= new CleanupRoom("room2", 1, 1, 5, 5, room2color, Cleanup.SHAPE_ROOM);
 
-        // randomize agent's position
+        String room3color = roomColors.get(rng.nextInt(roomColors.size()));
+        CleanupRoom room3= new CleanupRoom("room3", 3, 3, 1, 1, room3color, Cleanup.SHAPE_ROOM);
+        String room4color = roomColors.get(rng.nextInt(roomColors.size()));
+        CleanupRoom room4= new CleanupRoom("room4", 3, 3, 3, 3, room4color, Cleanup.SHAPE_ROOM);
+        String room5color = roomColors.get(rng.nextInt(roomColors.size()));
+        CleanupRoom room5= new CleanupRoom("room5", 3, 3, 5, 5, room5color, Cleanup.SHAPE_ROOM);
+
+        String room6color = roomColors.get(rng.nextInt(roomColors.size()));
+        CleanupRoom room6= new CleanupRoom("room6", 5, 5, 1, 1, room6color, Cleanup.SHAPE_ROOM);
+        String room7color = roomColors.get(rng.nextInt(roomColors.size()));
+        CleanupRoom room7= new CleanupRoom("room7", 5, 5, 3, 3, room7color, Cleanup.SHAPE_ROOM);
+        String room8color = roomColors.get(rng.nextInt(roomColors.size()));
+        CleanupRoom room8= new CleanupRoom("room8", 5, 5, 5, 5, room8color, Cleanup.SHAPE_ROOM);
+
+        //initializes doors
+//        List<CleanupDoor> doors = new ArrayList<>(12);
+//        xCoordinates = new int[]{1, 1, 2, 2, 2, 3, 3, 4, 4, 4, 5, 5};
+//        yCoordinates = new int[]{2,4,1,3,5};
+//        int nextD= 0;
+//        for(CleanupDoor c: doors){
+//            c=new CleanupDoor("door"+nextD, xCoordinates[nextD], xCoordinates[nextD]+1, yCoordinates[nextD%5], yCoordinates[nextD%5]+1, Cleanup.LOCKABLE_STATES[0], Cleanup.SHAPE_DOOR, Cleanup.COLOR_GRAY);
+//            nextD++;
+//        }
+
+        CleanupDoor door0= new CleanupDoor("door0", 1, 1, 2, 2, Cleanup.LOCKABLE_STATES[0], Cleanup.SHAPE_DOOR, Cleanup.COLOR_GRAY);
+        CleanupDoor door1= new CleanupDoor("door1", 1, 1, 4, 4, Cleanup.LOCKABLE_STATES[0], Cleanup.SHAPE_DOOR, Cleanup.COLOR_GRAY);
+
+        CleanupDoor door2= new CleanupDoor("door2", 2, 2, 1, 1, Cleanup.LOCKABLE_STATES[0], Cleanup.SHAPE_DOOR, Cleanup.COLOR_GRAY);
+        CleanupDoor door3= new CleanupDoor("door3", 2, 2, 3, 3, Cleanup.LOCKABLE_STATES[0], Cleanup.SHAPE_DOOR, Cleanup.COLOR_GRAY);
+        CleanupDoor door4= new CleanupDoor("door4", 2, 2, 5, 5, Cleanup.LOCKABLE_STATES[0], Cleanup.SHAPE_DOOR, Cleanup.COLOR_GRAY);
+
+        CleanupDoor door5= new CleanupDoor("door5", 3, 3, 2, 2, Cleanup.LOCKABLE_STATES[0], Cleanup.SHAPE_DOOR, Cleanup.COLOR_GRAY);
+        CleanupDoor door6= new CleanupDoor("door6", 3, 3, 4, 4, Cleanup.LOCKABLE_STATES[0], Cleanup.SHAPE_DOOR, Cleanup.COLOR_GRAY);
+
+        CleanupDoor door7= new CleanupDoor("door7", 4, 4, 1, 1, Cleanup.LOCKABLE_STATES[0], Cleanup.SHAPE_DOOR, Cleanup.COLOR_GRAY);
+        CleanupDoor door8= new CleanupDoor("door8", 4, 4, 3, 3, Cleanup.LOCKABLE_STATES[0], Cleanup.SHAPE_DOOR, Cleanup.COLOR_GRAY);
+        CleanupDoor door9= new CleanupDoor("door9", 4, 4, 5, 5, Cleanup.LOCKABLE_STATES[0], Cleanup.SHAPE_DOOR, Cleanup.COLOR_GRAY);
+
+        CleanupDoor door10= new CleanupDoor("door10", 5, 5, 2, 2, Cleanup.LOCKABLE_STATES[0], Cleanup.SHAPE_DOOR, Cleanup.COLOR_GRAY);
+        CleanupDoor door11= new CleanupDoor("door11", 5, 5, 4, 4, Cleanup.LOCKABLE_STATES[0], Cleanup.SHAPE_DOOR, Cleanup.COLOR_GRAY);
+
+        //Cleanup
 
         String agentDirection = Cleanup.directions[rng.nextInt(Cleanup.directions.length)];
-        CleanupState s = new CleanupState(7, 7, 1, 1, ACTION_SOUTH, numBlocks, numRooms, numDoors);
-        for(CleanupRoom b:rooms)
-            s.addObject(b);
-        for(CleanupDoor d: doors)
-            s.addObject(d);
+        CleanupState s = new CleanupState(getWidth(), getHeight(), 1, 1, ACTION_SOUTH, numBlocks, numRooms, numDoors);
+//        for(CleanupRoom b:rooms)
+//            s.addObject(b);
+//        for(CleanupDoor d: doors)
+//            s.addObject(d);
+
+
+//        s.addObject(door0);
+//        s.addObject(door1);
+//        s.addObject(door2);
+//        s.addObject(door3);
+//        s.addObject(door4);
+//        s.addObject(door5);
+//        s.addObject(door6);
+//        s.addObject(door7);
+//        s.addObject(door8);
+//        s.addObject(door9);
+//        s.addObject(door10);
+//        s.addObject(door11);
+
+
+        s.addObject(room0);
+        s.addObject(room1);
+        s.addObject(room2);
+        s.addObject(room3);
+        s.addObject(room4);
+        s.addObject(room5);
+        s.addObject(room6);
+        s.addObject(room7);
+        s.addObject(room8);
+
         s.getAgent().set(Cleanup.ATT_X, 1);
         s.getAgent().set(Cleanup.ATT_Y, 1);
 
 //        String shape = blockShapes.get(rng.nextInt(blockShapes.size()));
 //        String color = blockColors.get(rng.nextInt(blockColors.size()));
 //        s.addObject(new CleanupBlock("block" + index, bx, by, shape, color));
+
+        return s;
+    }
+
+    public OOState generateSmallCheckerRooms(){
+        Random rng = RandomFactory.getMapped(BurlapConstants.DEFAULT_RNG_INDEX);
+
+        int numRooms = 14;
+        int numDoors = 4;
+
+        String agentDirection = Cleanup.directions[rng.nextInt(Cleanup.directions.length)];
+        CleanupState s = new CleanupState(getWidth(), getHeight(), 1, 1, agentDirection, 1, numRooms, numDoors);
+
+        List<String> blockColors = new ArrayList<String>(Arrays.asList(Cleanup.COLORS_BLOCKS));
+        List<String> blockShapes = new ArrayList<>(Arrays.asList(Cleanup.SHAPES_BLOCKS));
+        List<String> roomColors = new ArrayList<String>(Arrays.asList(Cleanup.COLORS_ROOMS));
+
+        //initializes rooms
+        String room0Color = roomColors.get(rng.nextInt(roomColors.size()));
+        CleanupRoom room0 = new CleanupRoom("room0", 0, 2, 0, 2, room0Color, Cleanup.SHAPE_ROOM);
+        String room1Color = roomColors.get(rng.nextInt(roomColors.size()));
+        CleanupRoom room1 = new CleanupRoom("room1", 0, 2, 2, 4, room1Color, Cleanup.SHAPE_ROOM);
+        String room2Color = roomColors.get(rng.nextInt(roomColors.size()));
+        CleanupRoom room2 = new CleanupRoom("room2", 2, 4, 0, 2, room2Color, Cleanup.SHAPE_ROOM);
+        String room3Color = roomColors.get(rng.nextInt(roomColors.size()));
+        CleanupRoom room3 = new CleanupRoom("room3", 2, 4, 2, 4, room3Color, Cleanup.SHAPE_ROOM);
+
+        //initializes doors
+        CleanupDoor door0 = new CleanupDoor("door0", 1, 1, 2, 2, Cleanup.LOCKABLE_STATES[0], Cleanup.SHAPE_DOOR, Cleanup.COLOR_GRAY);
+        CleanupDoor door1 = new CleanupDoor("door1", 2, 2, 1, 1, Cleanup.LOCKABLE_STATES[0], Cleanup.SHAPE_DOOR, Cleanup.COLOR_GRAY);
+        CleanupDoor door2 = new CleanupDoor("door2", 2, 2, 3, 3, Cleanup.LOCKABLE_STATES[0], Cleanup.SHAPE_DOOR, Cleanup.COLOR_GRAY);
+        CleanupDoor door3 = new CleanupDoor("door3", 3, 3, 2, 2, Cleanup.LOCKABLE_STATES[0], Cleanup.SHAPE_DOOR, Cleanup.COLOR_GRAY);
+
+        //initialize block
+        String shape = blockShapes.get(rng.nextInt(blockShapes.size()));
+        String color = blockColors.get(rng.nextInt(blockColors.size()));
+        CleanupBlock block0 = new CleanupBlock("block0", 3, 1, shape, color);
+
+        s.addObject(room0);
+        s.addObject(room1);
+        s.addObject(room2);
+        s.addObject(room3);
+        s.addObject(door0);
+        s.addObject(door1);
+        s.addObject(door2);
+        s.addObject(door3);
+        s.addObject(block0);
 
         return s;
     }
@@ -1052,6 +1170,8 @@ public class CleanupRandomStateGenerator implements StateGenerator {
             state = generateTwoRooms(numBlocks);
         } else if (stateType.equals("checkerRooms")){
             state = generateCheckerRooms(numBlocks);
+        } else if (stateType.equals("smallCheckerRooms")){
+            state = generateSmallCheckerRooms();
         } else {
             throw new RuntimeException("Error: unknown name for generating a random Cleanup state");
         }

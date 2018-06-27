@@ -1,10 +1,10 @@
 domain: !!edu.umbc.cs.maple.config.cleanup.CleanupConfig
-    state: checkerRooms
-    num_blocks: 1
+    state: smallCheckerRooms
+    num_blocks: 0
     minX: 0
     minY: 0
-    maxX: 7
-    maxY: 7
+    maxX: 5
+    maxY: 5
     rewardGoal: 0.0
     rewardBase: 0.0
     rewardNoop: 0.0
