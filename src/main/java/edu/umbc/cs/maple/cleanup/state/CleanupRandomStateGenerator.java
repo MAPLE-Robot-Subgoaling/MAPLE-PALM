@@ -1102,7 +1102,7 @@ public class CleanupRandomStateGenerator implements StateGenerator {
         return s;
     }
 
-    public OOState generateSmallCheckerRooms(){
+    public OOState generateDonutRooms(){
         Random rng = RandomFactory.getMapped(BurlapConstants.DEFAULT_RNG_INDEX);
 
         int numRooms = 14;
@@ -1170,8 +1170,8 @@ public class CleanupRandomStateGenerator implements StateGenerator {
             state = generateTwoRooms(numBlocks);
         } else if (stateType.equals("checkerRooms")){
             state = generateCheckerRooms(numBlocks);
-        } else if (stateType.equals("smallCheckerRooms")){
-            state = generateSmallCheckerRooms();
+        } else if (stateType.equals("donutRooms")){
+            state = generateDonutRooms();
         } else {
             throw new RuntimeException("Error: unknown name for generating a random Cleanup state");
         }

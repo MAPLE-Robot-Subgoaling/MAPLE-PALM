@@ -1,5 +1,5 @@
 domain: !!edu.umbc.cs.maple.config.cleanup.CleanupConfig
-    state: smallCheckerRooms
+    state: donutRooms
     num_blocks: 0
     minX: 0
     minY: 0
