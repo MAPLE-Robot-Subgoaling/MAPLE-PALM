@@ -50,6 +50,12 @@ public enum AgentType {
         }
 
     },
+    PALM_UCB("palmUcb", "PALM=UCB"){
+        @Override
+        public LearningAgent getLearningAgent(Task root, HashableStateFactory hsf, ExperimentConfig config) {
+
+        }
+    },
     RMAXQ_EXPERT("rmaxqExpert", "RMAXQ-Expert"){
         @Override
         public LearningAgent getLearningAgent(Task root, HashableStateFactory hsf, ExperimentConfig config) {
