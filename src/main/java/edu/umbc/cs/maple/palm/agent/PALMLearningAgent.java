@@ -27,6 +27,9 @@ import edu.umbc.cs.maple.utilities.ValueIterationMultiStep;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import static edu.umbc.cs.maple.hierarchy.framework.GoalFailRF.PSEUDOREWARD_ON_FAIL;
+import static edu.umbc.cs.maple.hierarchy.framework.GoalFailRF.PSEUDOREWARD_ON_GOAL;
+
 
 public class PALMLearningAgent implements LearningAgent {
 
@@ -238,14 +241,14 @@ public class PALMLearningAgent implements LearningAgent {
             baseState = e.stateSequence.get(e.stateSequence.size() - 1);
             currentState = task.mapState(baseState);
             double sumChildRewards = e.rewardSequence.subList(stepsBefore, stepsAfter).stream().mapToDouble(Double::doubleValue).sum();
-            double discount = getModel(task).getDiscountProvider().yield(pastState, a, currentState);
+            double discount = 1.0;// getModel(task).getDiscountProvider().yield(pastState, a, currentState);
             double discountOverTime = Math.pow(discount, stepsTaken);
             double discountedReward = sumChildRewards * discountOverTime;
 //            System.out.println(sumChildRewards + " " + discount + " " + discountOverTime + " " + discountedReward);
 //            double taskReward = discountedReward + task.getReward(pastState, a, currentState);
 //            double taskReward = task.getReward(pastState, a, currentState);
             double pseudoReward = task.getReward(pastState, a, currentState);
-            double taskReward = pseudoReward <= -1.0 || pseudoReward >= 1.0 ? pseudoReward : discountedReward;
+            double taskReward = pseudoReward <= PSEUDOREWARD_ON_FAIL || pseudoReward >= PSEUDOREWARD_ON_GOAL ? pseudoReward : discountedReward;
 //            System.out.println(pseudoReward + " " + taskReward);
             result = new EnvironmentOutcome(pastState, a, currentState, taskReward, false); //task.isFailure(currentState));
 
@@ -264,8 +267,7 @@ public class PALMLearningAgent implements LearningAgent {
             System.out.println(subtasksExecuted.size() + " " + subtasksExecuted);
         }
 
-
-		boolean parentShouldUpdateModel = task.isComplete(currentState) ||actionCount == 0;
+		boolean parentShouldUpdateModel = task.isComplete(currentState) || actionCount == 0;
 		parentShouldUpdateModel = parentShouldUpdateModel && allChildrenBeyondThreshold;
 		return parentShouldUpdateModel;
 	}

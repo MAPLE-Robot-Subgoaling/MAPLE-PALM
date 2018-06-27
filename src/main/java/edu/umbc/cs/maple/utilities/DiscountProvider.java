@@ -6,6 +6,6 @@ import edu.umbc.cs.maple.palm.rmax.agent.ExpectedRmaxModel;
 
 public abstract class DiscountProvider {
 
-    public abstract double yield(State s, Action action, State sPrime);
+    public abstract double yield(State s, Action action, State sPrime, boolean oneOff);
 
 }
