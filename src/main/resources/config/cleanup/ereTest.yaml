@@ -1,10 +1,10 @@
 domain: !!edu.umbc.cs.maple.config.cleanup.CleanupConfig
-    state: donutRooms
+    state: donutCheckers
     num_blocks: 0
     minX: 0
     minY: 0
-    maxX: 5
-    maxY: 5
+    maxX: 7
+    maxY: 7
     rewardGoal: 0.0
     rewardBase: 0.0
     rewardNoop: 0.0
