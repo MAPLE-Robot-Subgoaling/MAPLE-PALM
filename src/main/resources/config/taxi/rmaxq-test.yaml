@@ -18,7 +18,7 @@ planning:
   rollouts: 1000
 
 rmax:
-  vmax: 1.0
+  vmax: 10.0
   threshold: 5
   max_delta: 0.0000001
   max_delta_rmaxq: 0.0001
