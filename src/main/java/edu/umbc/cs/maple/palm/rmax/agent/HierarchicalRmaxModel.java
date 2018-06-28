@@ -5,6 +5,7 @@ import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.environment.EnvironmentOutcome;
 import burlap.statehashing.HashableStateFactory;
 import edu.umbc.cs.maple.hierarchy.framework.GroundedTask;
+import edu.umbc.cs.maple.hierarchy.framework.Task;
 import edu.umbc.cs.maple.utilities.ConstantDiscountProvider;
 
 public class HierarchicalRmaxModel extends RmaxModel {
@@ -18,7 +19,7 @@ public class HierarchicalRmaxModel extends RmaxModel {
 	 * @param rmax max rewardTotal in domain
 	 * @param hs provided hashing factory
 	 */
-	public HierarchicalRmaxModel( GroundedTask task, int threshold, double rmax, HashableStateFactory hs, double gamma, boolean useMultitimeModel) {
+	public HierarchicalRmaxModel(Task task, int threshold, double rmax, HashableStateFactory hs, double gamma, boolean useMultitimeModel) {
 		super(task, threshold, rmax, hs, gamma);
 		this.useMultitimeModel = useMultitimeModel;
 	}

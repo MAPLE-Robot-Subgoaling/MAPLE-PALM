@@ -12,6 +12,16 @@ import java.util.List;
 
 public abstract class PALMModel extends FactoredModel {
 
+    protected String[] params;
+
+    public void setParams(String[] params) {
+        this.params = params;
+    }
+
+    public String[] getParams() {
+        return params;
+    }
+
     @Override
     public EnvironmentOutcome sample(State s, Action a) {
         List<TransitionProb> tps = transitions(s, a);

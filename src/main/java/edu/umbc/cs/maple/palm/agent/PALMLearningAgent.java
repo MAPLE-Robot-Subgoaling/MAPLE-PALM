@@ -133,6 +133,30 @@ public class PALMLearningAgent implements LearningAgent {
         tabLevel = "";
         solveTask(null, groundedRoot, env, maxSteps);
         System.out.println(e.actionSequence.size() + " " + e.actionSequence);
+        System.out.println(e.discountedReturn(getModel(groundedRoot).getDiscountProvider().getGamma()));
+
+
+
+        State abstractInitialState = groundedRoot.mapState(initialState);
+        PALMModel model = getModel(groundedRoot);
+        OOSADomain domain = groundedRoot.getDomain(model);
+//		double discount = model.gamma();
+        DiscountProvider discountProvider = model.getDiscountProvider();
+        ValueIterationMultiStep planner = new ValueIterationMultiStep(domain, hashingFactory, maxDelta, maxIterationsInModelPlanner, discountProvider);
+        planner.toggleReachabiltiyTerminalStatePruning(true);
+//		planner.toggleReachabiltiyTerminalStatePruning(false);
+        ValueFunction knownValueFunction = groundedRoot.valueFunction;
+        if (knownValueFunction != null) {
+            planner.setValueFunctionInitialization(knownValueFunction);
+        }
+        Policy policy = planner.planFromState(abstractInitialState);
+        Episode ep = PolicyUtils.rollout(policy, abstractInitialState, model, 100);
+        OOState last = (OOState) ep.stateSequence.get(ep.stateSequence.size()-1);
+        if (last.numObjects() > 0) {
+            System.out.println(tabLevel + "    Rollout: " + ep.actionSequence);
+        }
+
+
 
         ///for a chart of runtime
         long estimatedTime = System.nanoTime() - start;
@@ -257,7 +281,14 @@ public class PALMLearningAgent implements LearningAgent {
             // the case in which this is NOT updated is if the subtask failed or did not take at least one step
             // for example, the root "solve" task may not complete
 			if(subtaskCompleted) {
+                Action taskAction = task.getAction();
+                String[] params = null;
+                if (taskAction instanceof ObjectParameterizedAction) {
+                    params = Task.parseParams(taskAction);
+                }
+			    model.setParams(params);
 				model.updateModel(result, stepsTaken);
+				model.setParams(null);
 				subtasksExecuted.add(action.toString()+"++");
 			} else {
                 subtasksExecuted.add(action.toString()+"--");
@@ -294,6 +325,12 @@ public class PALMLearningAgent implements LearningAgent {
 	 */
 	protected Action nextAction(GroundedTask task, State s){
         PALMModel model = getModel(task);
+        Action taskAction = task.getAction();
+        String[] params = null;
+        if (taskAction instanceof ObjectParameterizedAction) {
+            params = Task.parseParams(taskAction);
+        }
+        model.setParams(params);
 		OOSADomain domain = task.getDomain(model);
 //		double discount = model.gamma();
 		DiscountProvider discountProvider = model.getDiscountProvider();
@@ -328,6 +365,7 @@ public class PALMLearningAgent implements LearningAgent {
 		double defaultValue = 0.0;
 //		valueFunction = planner.saveValueFunction(defaultValue, rmax);
 		task.valueFunction = knownValueFunction;
+        model.setParams(null);
     	return action;
 	}
 
@@ -339,15 +377,15 @@ public class PALMLearningAgent implements LearningAgent {
         String modelName = t.isMasked() && useModelSharing ? t.getAction().actionName() : t.toString();
         PALMModel model = models.get(modelName);
         if(model == null) {
-            model = modelGenerator.getModelForTask(t);
+            model = modelGenerator.getModelForTask(t.getTask());
             this.models.put(modelName, model);
         }
         //debug for taxi model sharing
-        if(t.toString().contains("put") || t.toString().contains("get") || t.toString().contains("pick")) {
-            System.out.println("task: " + t.toString());
-            System.out.println("lookup: " + modelName);
-            System.out.println("model: " + ((RmaxModel) model).getTask().toString());
-        }
+//        if(t.toString().contains("put") || t.toString().contains("get") || t.toString().contains("pick")) {
+//            System.out.println("task: " + t.toString());
+//            System.out.println("lookup: " + modelName);
+//            System.out.println("model: " + ((RmaxModel) model).getTask().toString());
+//        }
         return model;
     }
 

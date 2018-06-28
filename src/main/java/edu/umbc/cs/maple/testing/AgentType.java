@@ -11,7 +11,7 @@ import edu.umbc.cs.maple.hierarchy.framework.Task;
 import edu.umbc.cs.maple.palm.agent.PALMLearningAgent;
 import edu.umbc.cs.maple.palm.agent.PALMModelGenerator;
 import edu.umbc.cs.maple.palm.rmax.agent.ExpectedRmaxModelGenerator;
-import edu.umbc.cs.maple.palm.rmax.agent.ExpertNavModelGenerator;
+//import edu.umbc.cs.maple.palm.rmax.agent.ExpertNavModelGenerator;
 import edu.umbc.cs.maple.palm.rmax.agent.PALMRmaxModelGenerator;
 import edu.umbc.cs.maple.rmaxq.agent.RmaxQLearningAgent;
 import edu.umbc.cs.maple.state.hashing.cached.CachedHashableStateFactory;
@@ -41,15 +41,15 @@ public enum AgentType {
             return agent;
         }
     },
-    PALM_EXPERT_NAV_GIVEN("palmExpertWithNavGiven", "PALM-Expert w/ Nav"){
-        @Override
-        public LearningAgent getLearningAgent(Task root, HashableStateFactory hsf, ExperimentConfig config) {
-            PALMModelGenerator modelGen = new ExpertNavModelGenerator(hsf, config);
-            LearningAgent agent = new PALMLearningAgent(root, modelGen, hsf, config);
-            return agent;
-        }
-
-    },
+//    PALM_EXPERT_NAV_GIVEN("palmExpertWithNavGiven", "PALM-Expert w/ Nav"){
+//        @Override
+//        public LearningAgent getLearningAgent(Task root, HashableStateFactory hsf, ExperimentConfig config) {
+//            PALMModelGenerator modelGen = new ExpertNavModelGenerator(hsf, config);
+//            LearningAgent agent = new PALMLearningAgent(root, modelGen, hsf, config);
+//            return agent;
+//        }
+//
+//    },
     RMAXQ_EXPERT("rmaxqExpert", "RMAXQ-Expert"){
         @Override
         public LearningAgent getLearningAgent(Task root, HashableStateFactory hsf, ExperimentConfig config) {

@@ -11,6 +11,7 @@ import burlap.statehashing.HashableState;
 import burlap.statehashing.HashableStateFactory;
 import edu.umbc.cs.maple.hierarchy.framework.GroundedTask;
 import edu.umbc.cs.maple.hierarchy.framework.StringFormat;
+import edu.umbc.cs.maple.hierarchy.framework.Task;
 import edu.umbc.cs.maple.palm.agent.PALMModel;
 import edu.umbc.cs.maple.palm.agent.PossibleOutcome;
 import edu.umbc.cs.maple.utilities.BurlapConstants;
@@ -24,6 +25,7 @@ import java.util.Map;
 
 public abstract class RmaxModel extends PALMModel {
 
+    protected Task task;
 
     protected HashableState hImaginedState;
     /**
@@ -47,11 +49,6 @@ public abstract class RmaxModel extends PALMModel {
 
 
     /**
-     * the grounded task that is being modeled
-     */
-    protected GroundedTask task;
-
-    /**
      * the max rewardTotal for the domain
      */
     protected double rmax;
@@ -63,13 +60,13 @@ public abstract class RmaxModel extends PALMModel {
      * @param task the grounded task to model
      * @param threshold rmax sample threshold
      * @param rmax max rewardTotal in domain
-     * @param hs provided hashing factory
+     * @param hsf provided hashing factory
      */
-    public RmaxModel( GroundedTask task, int threshold, double rmax, HashableStateFactory hs, double gamma) {
-        this.hashingFactory = hs;
+    public RmaxModel(Task task, int threshold, double rmax, HashableStateFactory hsf, double gamma) {
+        this.task = task;
+        this.hashingFactory = hsf;
         this.mThreshold = threshold;
         this.approximateTransitions = new HashMap<>();
-        this.task = task;
         this.rmax = rmax;
         this.initializeDiscountProvider(gamma);
     }
@@ -106,7 +103,7 @@ public abstract class RmaxModel extends PALMModel {
     //the model is terminal if the task is completed or if it fails, or is the imagined state
     @Override
     public boolean terminal(State s) {
-        boolean failOrComplete = task.isFailure(s) || task.isComplete(s);
+        boolean failOrComplete = task.isFailure(s, params) || task.isComplete(s, params);
         if (failOrComplete) { return true; }
         if (hImaginedState == null) { return false; }
         HashableState hs = hashingFactory.hashState(s);
@@ -341,23 +338,6 @@ public abstract class RmaxModel extends PALMModel {
     }
 
     public double getRmax() { return rmax; }
-
-    public GroundedTask getTask(){
-        return task;
-    }
-    public void printDebugInfo() {
-        System.out.println("\n\n\n******************************************************************************************************\n\n\n");
-        for(HashableStateActionPair pair : approximateTransitions.keySet()) {
-            System.out.println(pair.actionName);
-            System.out.println(pair.hs.s().toString());
-            Map<HashableState, PossibleOutcome> hsPrimeToOutcomes = approximateTransitions.get(pair);
-            for (HashableState hsPrime : hsPrimeToOutcomes.keySet()) {
-                PossibleOutcome outcome = hsPrimeToOutcomes.get(hsPrime);
-                System.out.println(outcome.toString());
-            }
-            System.out.println("\n*****************\n");
-        }
-    }
 
     @Override
     public boolean isConvergedFor(State s, Action a, State sPrime) {

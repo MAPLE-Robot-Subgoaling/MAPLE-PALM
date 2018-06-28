@@ -63,6 +63,8 @@ public class TaxiConfig extends DomainConfig {
             return TaxiStateFactory.createDiscountTest(numPassengers);
         } else if (state.matches("discounttestbig" + passengerNumberRegex)) {
             return TaxiStateFactory.createDiscountTestBig(numPassengers);
+        } else if (state.matches("discounttestsmall" + passengerNumberRegex)) {
+            return TaxiStateFactory.createDiscountTestSmall(numPassengers);
         } else {
             throw new RuntimeException("ERROR: invalid state passed to generateState in TaxiConfig: " + state);
         }

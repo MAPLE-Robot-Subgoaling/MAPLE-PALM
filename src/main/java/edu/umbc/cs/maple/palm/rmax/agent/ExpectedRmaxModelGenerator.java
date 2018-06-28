@@ -26,7 +26,7 @@ public class ExpectedRmaxModelGenerator implements PALMModelGenerator {
     }
 
     @Override
-    public PALMModel getModelForTask(GroundedTask t) {
+    public PALMModel getModelForTask(Task t) {
         return new ExpectedRmaxModel(t, this.threshold, this.rmax, this.hashingFactory, this.gamma);
     }
 }

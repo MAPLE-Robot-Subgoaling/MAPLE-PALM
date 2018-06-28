@@ -69,26 +69,15 @@ public class NonprimitiveTask extends Task {
     }
 
     @Override
-    public boolean isFailure(State s, Action a) {
-        String[] params = parseParams(a);
+    public boolean isFailure(State s, String[] params) {
         boolean atFailure = goalFailTF.atFailure(s, params);
         return atFailure;
     }
 
     @Override
-    public boolean isComplete(State s, Action a){
-        String[] params = parseParams(a);
+    public boolean isComplete(State s, String[] params){
         boolean atGoal = goalFailTF.atGoal(s, params);
         return atGoal;
-    }
-    public static String[] parseParams(Action action) {
-        String[] params = null;
-        if (action instanceof ObjectParameterizedAction) {
-            params = ((ObjectParameterizedAction) action).getObjectParameters();
-        } else {
-            params = new String[]{StringFormat.parameterizedActionName(action)};
-        }
-        return params;
     }
 
     public GoalFailTF getGoalFailTF() {

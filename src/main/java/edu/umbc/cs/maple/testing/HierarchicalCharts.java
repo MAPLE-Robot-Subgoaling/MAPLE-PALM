@@ -41,7 +41,7 @@ public class HierarchicalCharts {
         env = new SimulatedEnvironment(baseDomain, stateGenerator);
 
         if(config.output.visualizer.enabled) {
-            VisualActionObserver obs = new VisualActionObserver(baseDomain, config.getVisualizer(config), 600, 600);
+            VisualActionObserver obs = new VisualActionObserver(baseDomain, config.getVisualizer(config), 550, 550);
             obs.setFrameDelay(0);
             obs.initGUI();
             obs.setDefaultCloseOperation(obs.EXIT_ON_CLOSE);
@@ -53,9 +53,11 @@ public class HierarchicalCharts {
             String agent = config.agents.get(i);
             if(agent.equals(PALM_EXPERT.getType())) {
                 agents[i] = PALM_EXPERT.generateLearningAgentFactory(expertRoot, config);
-            } else if(agent.equals(PALM_EXPERT_NAV_GIVEN.getType())) {
-                agents[i] = PALM_EXPERT_NAV_GIVEN.generateLearningAgentFactory(expertRoot, config);
-            } else if(agent.equals(PALM_HIERGEN.getType())){
+            }
+//            else if(agent.equals(PALM_EXPERT_NAV_GIVEN.getType())) {
+//                agents[i] = PALM_EXPERT_NAV_GIVEN.generateLearningAgentFactory(expertRoot, config);
+//            }
+            else if(agent.equals(PALM_HIERGEN.getType())){
                 agents[i] = PALM_HIERGEN.generateLearningAgentFactory(hierGenRoot, config);
             } else if(agent.equals(RMAXQ_EXPERT.getType())) {
                 agents[i] = RMAXQ_EXPERT.generateLearningAgentFactory(expertRoot, config);
@@ -90,7 +92,7 @@ public class HierarchicalCharts {
         }
 
         if (config.output.visualizer.episodes){
-            EpisodeSequenceVisualizer ev = new EpisodeSequenceVisualizer(config.getVisualizer(config), baseDomain, episodes);;
+            EpisodeSequenceVisualizer ev = new EpisodeSequenceVisualizer(config.getVisualizer(config), baseDomain, episodes, 550, 550);
             ev.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
             ev.initGUI();
         }

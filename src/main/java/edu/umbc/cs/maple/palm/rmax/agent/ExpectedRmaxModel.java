@@ -11,6 +11,7 @@ import burlap.statehashing.HashableState;
 import burlap.statehashing.HashableStateFactory;
 import edu.umbc.cs.maple.hierarchy.framework.GroundedTask;
 import edu.umbc.cs.maple.hierarchy.framework.StringFormat;
+import edu.umbc.cs.maple.hierarchy.framework.Task;
 import edu.umbc.cs.maple.palm.agent.PALMModel;
 import edu.umbc.cs.maple.palm.agent.PossibleOutcome;
 import edu.umbc.cs.maple.utilities.DiscountProvider;
@@ -27,12 +28,12 @@ public class ExpectedRmaxModel extends RmaxModel {
 
     /**
      * creates a rmax model
-     * @param task the grounded task to model
+     * @param task the task to model
      * @param threshold rmax sample threshold
      * @param rmax max rewardTotal in domain
      * @param hs provided hashing factory
      */
-    public ExpectedRmaxModel(GroundedTask task, int threshold, double rmax, HashableStateFactory hs, double gamma) {
+    public ExpectedRmaxModel(Task task, int threshold, double rmax, HashableStateFactory hs, double gamma) {
         super(task, threshold, rmax, hs, gamma);
     }
 

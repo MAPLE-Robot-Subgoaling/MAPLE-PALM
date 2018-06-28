@@ -38,6 +38,10 @@ public class GroundedTask {
         this.t = t;
     }
 
+    public Task getTask() {
+        return t;
+    }
+
     /**
      * gets the action this task wraps around
      * @return the grounded task's action
