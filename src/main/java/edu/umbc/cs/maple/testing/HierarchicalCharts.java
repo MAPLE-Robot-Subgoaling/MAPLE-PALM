@@ -14,19 +14,21 @@ import burlap.mdp.singleagent.oo.OOSADomain;
 import edu.umbc.cs.maple.cleanup.hierarchies.CleanupHierarchyAMDP;
 import edu.umbc.cs.maple.config.ExperimentConfig;
 import edu.umbc.cs.maple.config.cleanup.CleanupConfig;
+import edu.umbc.cs.maple.config.hierarchy.HierarchyConfig;
 import edu.umbc.cs.maple.config.output.ChartConfig;
 import edu.umbc.cs.maple.config.taxi.TaxiConfig;
+import edu.umbc.cs.maple.hierarchy.framework.Hierarchy;
 import edu.umbc.cs.maple.hierarchy.framework.NonprimitiveTask;
 import edu.umbc.cs.maple.hierarchy.framework.Task;
 import edu.umbc.cs.maple.taxi.hierarchies.TaxiHierarchy;
 import edu.umbc.cs.maple.taxi.hierarchies.TaxiHierarchyExpert;
 import edu.umbc.cs.maple.taxi.hierarchies.TaxiHierarchyHierGen;
 import edu.umbc.cs.maple.utilities.LearningAlgorithmExperimenter;
+import sun.management.resources.agent;
 
 import javax.swing.*;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import static edu.umbc.cs.maple.testing.AgentType.*;
 
@@ -35,8 +37,6 @@ public class HierarchicalCharts {
 
     public static void createCharts(final ExperimentConfig config, OOSADomain baseDomain, Task[] hierarchies, StateGenerator stateGenerator) {
         SimulatedEnvironment env;
-        final Task expertRoot = hierarchies[0];
-        final Task hierGenRoot = hierarchies[1];
 
         env = new SimulatedEnvironment(baseDomain, stateGenerator);
 
@@ -48,30 +48,34 @@ public class HierarchicalCharts {
             env.addObservers(obs);
         }
 
-        LearningAgentFactory[] agents = new LearningAgentFactory[config.agents.size()];
-        for(int i = 0; i < config.agents.size(); i++) {
-            String agent = config.agents.get(i);
-            if(agent.equals(PALM_EXPERT.getType())) {
-                agents[i] = PALM_EXPERT.generateLearningAgentFactory(expertRoot, config);
-            } else if(agent.equals(PALM_EXPERT_NAV_GIVEN.getType())) {
-                agents[i] = PALM_EXPERT_NAV_GIVEN.generateLearningAgentFactory(expertRoot, config);
-            } else if(agent.equals(PALM_HIERGEN.getType())){
-                agents[i] = PALM_HIERGEN.generateLearningAgentFactory(hierGenRoot, config);
-            } else if(agent.equals(RMAXQ_EXPERT.getType())) {
-                agents[i] = RMAXQ_EXPERT.generateLearningAgentFactory(expertRoot, config);
-            } else if(agent.equals(RMAXQ_HIERGEN.getType())) {
-                agents[i] = RMAXQ_HIERGEN.generateLearningAgentFactory(hierGenRoot, config);
-            } else if(agent.equals(KAPPA_EXPERT.getType())) {
-                agents[i] = KAPPA_EXPERT.generateLearningAgentFactory(expertRoot, config);
-            } else if(agent.equals(KAPPA_HIERGEN.getType())) {
-                agents[i] = KAPPA_HIERGEN.generateLearningAgentFactory(hierGenRoot, config);
-            } else if(agent.equals(Q_LEARNING.getType())){
-                Task qLearningWrapper = new NonprimitiveTask(baseDomain);
-                agents[i] = Q_LEARNING.generateLearningAgentFactory(qLearningWrapper, config);
+        List<LearningAgentFactory> agents = new LinkedList<>();
+        Map<String, Task> hierarchyMap = new HashMap<>();
+        String agentName = "";
+        for(Iterator<String> i = config.agents.keySet().iterator(); i.hasNext(); ){
+            agentName = i.next();
+//        }
+//        for( String agentName : config.agents.keySet()){
+            //String agentConfigLocation = "config/agent/" + agentName + ".yaml";
+            for ( String hierarchy : (LinkedHashSet<String>)config.agents.get(agentName)){
+                if(! (hierarchyMap.keySet().contains(hierarchy))){
+                    HierarchyConfig hierarchyConfig = HierarchyConfig.load(config,"config/hierarchy/"+hierarchy+".yaml");
+                    hierarchyMap.put(hierarchy, hierarchyConfig.getRoot());
+
+                }
+                if(agentName.equals(PALM.getType())) {
+                    agents.add(PALM.generateLearningAgentFactory(hierarchyMap.get(hierarchy), config));
+                } else if(agentName.equals(RMAXQ.getType())) {
+                    agents.add( RMAXQ.generateLearningAgentFactory(hierarchyMap.get(hierarchy), config));
+                } else if(agentName.equals(KAPPA.getType())) {
+                    agents.add(KAPPA.generateLearningAgentFactory(hierarchyMap.get(hierarchy), config));
+                } else if(agentName.equals(Q_LEARNING.getType())){
+                    Task qLearningWrapper = new NonprimitiveTask(baseDomain);
+                    agents.add( Q_LEARNING.generateLearningAgentFactory(qLearningWrapper, config));
+                }
             }
         }
 
-        LearningAlgorithmExperimenter exp = new LearningAlgorithmExperimenter(env, config.trials, config.episodes, config.max_steps, agents);
+        LearningAlgorithmExperimenter exp = new LearningAlgorithmExperimenter(env, config.trials, config.episodes, config.max_steps, agents.toArray(new LearningAgentFactory[agents.size()]));
         ChartConfig cc = config.output.chart;
 
         PerformanceMetric[] metrics = new PerformanceMetric[cc.metrics.size()];
@@ -147,7 +151,7 @@ public class HierarchicalCharts {
 
     public static void main(String[] args) {
 
-        String configFile = "config/taxi/classic-2-fickle.yaml";
+        String configFile = "config/taxi/classic.yaml";
         if(args.length > 0) {
             configFile = args[0];
         }

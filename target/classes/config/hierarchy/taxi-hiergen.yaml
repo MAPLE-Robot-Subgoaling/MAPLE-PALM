@@ -1,8 +1,3 @@
-baseDomainGenerator: !!edu.umbc.cs.maple.taxi.Taxi
-  fickle: false
-  fickleProb: 0.0
-  moveDynamics: 1.0
-
 hierarchyConfigMap:
    root:
       children:
@@ -18,7 +13,7 @@ hierarchyConfigMap:
         tf: *tf
         rewardDefault: 0.0
         rewardNoop: 0.0
-      solver: !!edu.umbc.cs.maple.config.hierarchy.ValueIterationMultistepConfig
+      solver: !!edu.umbc.cs.maple.config.solver.ValueIterationMultistepConfig
         maxDelta: 0.0001
         maxIterations: 1000
 
@@ -35,7 +30,7 @@ hierarchyConfigMap:
         tf: *tf
         rewardDefault: 0.0
         rewardNoop: 0.0
-      solver: !!edu.umbc.cs.maple.config.hierarchy.ValueIterationMultistepConfig
+      solver: !!edu.umbc.cs.maple.config.solver.ValueIterationMultistepConfig
         maxDelta: 0.0001
         maxIterations: 1000
 
@@ -54,6 +49,6 @@ hierarchyConfigMap:
         tf: *tf
         rewardDefault: 0.0
         rewardNoop: 0.0
-      solver: !!edu.umbc.cs.maple.config.hierarchy.ValueIterationMultistepConfig
+      solver: !!edu.umbc.cs.maple.config.solver.ValueIterationMultistepConfig
         maxDelta: 0.0001
         maxIterations: 1000

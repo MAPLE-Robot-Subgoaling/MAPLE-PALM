@@ -4,14 +4,10 @@ domain: !!edu.umbc.cs.maple.config.taxi.TaxiConfig
   fickle: 0.00
 
 agents:
-  - rmaxqExpert
-#  - rmaxqHierGen
-  - palmExpert
-  - palmExpertWithNavGiven
-  - palmHierGen
-  - kappaExpert
-  - kappaHierGen
-  - qLearning
+ # rmaxq: {taxi-expert}
+  palm: { taxi-hiergen}
+ # kappa: {taxi-expert, taxi-hiergen}
+ # qLearning: {taxi-expert}
 
 seed: 2320942930
 episodes: 200

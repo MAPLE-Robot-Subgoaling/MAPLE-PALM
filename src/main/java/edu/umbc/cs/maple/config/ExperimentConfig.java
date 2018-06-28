@@ -18,6 +18,7 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import static edu.umbc.cs.maple.utilities.BurlapConstants.DEFAULT_RNG_INDEX;
 
@@ -29,39 +30,17 @@ public class ExperimentConfig {
     public static Boolean UNSET_BOOLEAN = null;
 
     public long seed = UNSET_LONG;
-    public List<String> agents;
+    public Map<String,List<String>> agents;
     public int episodes = UNSET_INT;
     public int max_steps = UNSET_INT;
     public int trials = UNSET_INT;
-    public double gamma = UNSET_DOUBLE;
     public Boolean identifier_independent = UNSET_BOOLEAN;
 
     public DomainConfig domain;
     public PlanningConfig planning;
     public RmaxConfig rmax;
     public OutputConfig output;
-
-    public boolean validate() {
-        if (seed <= UNSET_LONG) { return false; }
-        if (agents == null || agents.size() < 1) { return false; }
-        List<String> agentTypes = AgentType.getTypes();
-        for (String agent : agents) {
-            if (!agentTypes.contains(agent)) {
-                System.err.println("\nError: invalid (misspelled?) AgentType: " + agent);
-                return false;
-            }
-        }
-        if (episodes == UNSET_INT) { return false; }
-        if (max_steps == UNSET_INT) { return false; }
-        if (trials == UNSET_INT) { return false; }
-        if (gamma == UNSET_DOUBLE) { return false; }
-        if (identifier_independent == UNSET_BOOLEAN) { return false; }
-        if (domain == null || !domain.validate()) { return false; }
-        if (planning == null || !planning.validate()) { return false; }
-        if (rmax == null || !rmax.validate()) { return false; }
-        if (output == null || !output.validate()) { return false; }
-        return true;
-    }
+    public double gamma;
 
 
     public static ExperimentConfig load(String configFile) throws FileNotFoundException {
@@ -77,12 +56,6 @@ public class ExperimentConfig {
         Yaml yaml = new Yaml(constructor, representer);
         InputStream input = ClassLoader.getSystemResourceAsStream(configFile);
         ExperimentConfig config = (ExperimentConfig) yaml.load(input);
-
-        boolean validated = config.validate();
-        if (!validated) {
-            System.err.println("Error: config file failed to validate -- missing parameters?");
-            System.exit(-9921);
-        }
 
         long seed = config.seed;
         if (seed == 0) {

@@ -24,7 +24,7 @@ import static edu.umbc.cs.maple.utilities.BurlapConstants.DEFAULT_Q_INIT;
 
 public enum AgentType {
 
-    PALM_EXPERT("palmExpert", "PALM-Expert"){
+    PALM("palm", "PALM"){
         @Override
         public LearningAgent getLearningAgent(Task root, HashableStateFactory hsf, ExperimentConfig config) {
             PALMModelGenerator modelGen = new PALMRmaxModelGenerator(hsf, config);
@@ -32,11 +32,29 @@ public enum AgentType {
             return agent;
         }
     },
-    PALM_HIERGEN("palmHierGen", "PALM-HierGen"){
+    RMAXQ("rmaxq", "RMAXQ"){
         @Override
         public LearningAgent getLearningAgent(Task root, HashableStateFactory hsf, ExperimentConfig config) {
-            PALMModelGenerator modelGen = new PALMRmaxModelGenerator(hsf, config);
-            LearningAgent agent = new PALMLearningAgent(root, modelGen, hsf, config);
+            return new RmaxQLearningAgent(root, hsf, config);
+        }
+
+    },
+    KAPPA("kappa", "κ"){
+        @Override
+        public LearningAgent getLearningAgent(Task root, HashableStateFactory hsf, ExperimentConfig config) {
+            ExpectedRmaxModelGenerator modelGen = new ExpectedRmaxModelGenerator(hsf, config);
+            PALMLearningAgent agent = new PALMLearningAgent(root, modelGen, hsf, config);
+            return agent;
+        }
+
+    },
+    Q_LEARNING("qLearning", "QL"){
+        @Override
+        public LearningAgent getLearningAgent(Task root, HashableStateFactory hsf, ExperimentConfig config) {
+            OOSADomain baseDomain = root.getDomain();
+            double qInit = DEFAULT_Q_INIT;
+            double learningRate = DEFAULT_LEARNING_RATE;
+            LearningAgent agent = new QLearning(baseDomain, config.gamma, hsf, qInit, learningRate);
             return agent;
         }
     },
@@ -48,54 +66,7 @@ public enum AgentType {
             return agent;
         }
 
-    },
-    RMAXQ_EXPERT("rmaxqExpert", "RMAXQ-Expert"){
-        @Override
-        public LearningAgent getLearningAgent(Task root, HashableStateFactory hsf, ExperimentConfig config) {
-            return new RmaxQLearningAgent(root, hsf, config);
-        }
-
-    },
-    RMAXQ_HIERGEN("rmaxqHierGen", "RMAXQ-HierGen"){
-        @Override
-        public LearningAgent getLearningAgent(Task root, HashableStateFactory hsf, ExperimentConfig config) {
-            return new RmaxQLearningAgent(root, hsf, config);
-        }
-
-    },
-
-    KAPPA_EXPERT("kappaExpert", "κ-Expert"){
-        @Override
-        public LearningAgent getLearningAgent(Task root, HashableStateFactory hsf, ExperimentConfig config) {
-            ExpectedRmaxModelGenerator modelGen = new ExpectedRmaxModelGenerator(hsf, config);
-            PALMLearningAgent agent = new PALMLearningAgent(root, modelGen, hsf, config);
-            return agent;
-        }
-
-    },
-    KAPPA_HIERGEN("kappaHierGen", "κ-HierGen"){
-        @Override
-        public LearningAgent getLearningAgent(Task root, HashableStateFactory hsf, ExperimentConfig config) {
-            ExpectedRmaxModelGenerator modelGen = new ExpectedRmaxModelGenerator(hsf, config);
-            PALMLearningAgent agent = new PALMLearningAgent(root, modelGen, hsf, config);
-            return agent;
-        }
-
-    },
-
-
-
-    Q_LEARNING("qLearning", "QL"){
-        @Override
-        public LearningAgent getLearningAgent(Task root, HashableStateFactory hsf, ExperimentConfig config) {
-            OOSADomain baseDomain = root.getDomain();
-            double qInit = DEFAULT_Q_INIT;
-            double learningRate = DEFAULT_LEARNING_RATE;
-            LearningAgent agent = new QLearning(baseDomain, config.gamma, hsf, qInit, learningRate);
-            return agent;
-        }
-
-    },
+    }
 
     ;
 

@@ -12,18 +12,5 @@ import java.io.InputStream;
 
 public class HierarchyConfigTester {
     public static void main(String[] args) {
-        Constructor constructor = new Constructor(HierarchyConfig.class);
-
-        TypeDescription typeHierarchyConfig = new TypeDescription(HierarchyConfig.class);
-        typeHierarchyConfig.putMapPropertyType("hierarchyConfigMap", String.class, TaskConfig.class);
-        constructor.addTypeDescription(typeHierarchyConfig);
-
-        Representer representer = new Representer();
-        representer.getPropertyUtils().setSkipMissingProperties(true);
-        Yaml yaml = new Yaml(constructor, representer);
-        InputStream input = ClassLoader.getSystemResourceAsStream("config/hierarchy/taxi-hiergen.yaml");
-        HierarchyConfig config = (HierarchyConfig) yaml.load(input);
-        Task root = config.buildRoot();
-        System.out.println("done");
     }
 }

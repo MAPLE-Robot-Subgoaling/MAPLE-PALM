@@ -5,10 +5,16 @@ import burlap.mdp.core.Domain;
 import burlap.mdp.core.action.ActionType;
 import burlap.mdp.singleagent.SADomain;
 import burlap.mdp.singleagent.oo.OOSADomain;
+import edu.umbc.cs.maple.config.ExperimentConfig;
 import edu.umbc.cs.maple.hierarchy.framework.PrimitiveTask;
 import edu.umbc.cs.maple.hierarchy.framework.SolveActionType;
 import edu.umbc.cs.maple.hierarchy.framework.Task;
+import org.yaml.snakeyaml.TypeDescription;
+import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.constructor.Constructor;
+import org.yaml.snakeyaml.representer.Representer;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -39,12 +45,11 @@ public class HierarchyConfig {
             OOSADomain homeDomain = (OOSADomain) taskConfig.buildDomain();
             List<Task> childTasksList = new ArrayList<Task>();
             for (String childTaskName: taskConfig.getChildren()) {
-                System.out.println(childTaskName.split("_")[0]);
                 ActionType childActionType = homeDomain.getAction(childTaskName.split("_")[0]);
                 if(childTaskName.endsWith("_np")){
                     childTasksList.add(buildTask(childTaskName.split("_")[0], childActionType));
                 }else if(childTaskName.endsWith("_p")){
-                    childActionType = ((SADomain)baseDomain).getAction(childTaskName.split("_")[0]);
+                 //   childActionType = ((SADomain)baseDomain).getAction(childTaskName.split("_")[0]);
                     childTasksList.add(new PrimitiveTask(childActionType, ((OOSADomain)baseDomain)));
                 }
             }
@@ -61,16 +66,37 @@ public class HierarchyConfig {
     public void setHierarchyConfigMap(Map<String, TaskConfig> hierarchyConfigMap) {
         this.hierarchyConfigMap = hierarchyConfigMap;
     }
-    public DomainGenerator getBaseDomainGenerator() {
-        return baseDomainGenerator;
-    }
-    public void setBaseDomainGenerator(DomainGenerator baseDomainGenerator) {
-        this.baseDomainGenerator = baseDomainGenerator;
-    }
     public boolean isDoPlanOnly() {
         return doPlanOnly;
     }
     public void setDoPlanOnly(boolean doPlanOnly) {
         this.doPlanOnly = doPlanOnly;
     }
+    public Task getRoot(){
+        if(!(taskMap.keySet().contains("root"))){
+            return buildRoot();
+        }else{
+            return taskMap.get("root");
+        }
+    }
+
+    public static HierarchyConfig load(ExperimentConfig experimentConfig, String configPath){
+        Constructor constructor = new Constructor(HierarchyConfig.class);
+
+        TypeDescription typeHierarchyConfig = new TypeDescription(HierarchyConfig.class);
+        typeHierarchyConfig.putMapPropertyType("hierarchyConfigMap", String.class, TaskConfig.class);
+        constructor.addTypeDescription(typeHierarchyConfig);
+
+        Representer representer = new Representer();
+        representer.getPropertyUtils().setSkipMissingProperties(true);
+        Yaml yaml = new Yaml(constructor, representer);
+
+        InputStream input = ClassLoader.getSystemResourceAsStream(configPath);
+        HierarchyConfig config = (HierarchyConfig) yaml.load(input);
+        config.baseDomainGenerator = experimentConfig.domain.getDomainGenerator();
+        config.buildRoot();
+        return config;
+    }
+
+
 }

@@ -1,6 +1,5 @@
 package edu.umbc.cs.maple.config.hierarchy;
 
-import burlap.behavior.singleagent.MDPSolver;
 import burlap.mdp.auxiliary.DomainGenerator;
 import burlap.mdp.auxiliary.StateMapping;
 import burlap.mdp.core.Domain;
@@ -9,17 +8,16 @@ import burlap.mdp.core.action.ActionType;
 import burlap.mdp.singleagent.SADomain;
 import burlap.mdp.singleagent.model.RewardFunction;
 import burlap.mdp.singleagent.oo.OOSADomain;
-import edu.umbc.cs.maple.hierarchy.framework.GoalFailTF;
+import edu.umbc.cs.maple.config.solver.SolverConfig;
 import edu.umbc.cs.maple.hierarchy.framework.NonprimitiveTask;
 import edu.umbc.cs.maple.hierarchy.framework.Task;
 
 import java.util.List;
-import java.util.Map;
 
 public class TaskConfig {
     List< String> children;
     DomainGenerator domainGenerator;
-    StateMapping stateMapping;
+    StateMapping stateMapper;
     TerminalFunction tf;
     RewardFunction rf;
     SolverConfig solver;
@@ -36,7 +34,7 @@ public class TaskConfig {
                 kids.toArray(new Task[kids.size()]),
                 actionType,
                 (OOSADomain) domain,
-                stateMapping,
+                stateMapper,
                 tf,
                 rf,
                 solver
@@ -57,11 +55,11 @@ public class TaskConfig {
     public void setDomainGenerator(DomainGenerator domain) {
         this.domainGenerator = domain;
     }
-    public StateMapping getStateMapping() {
-        return stateMapping;
+    public StateMapping getStateMapper() {
+        return stateMapper;
     }
-    public void setStateMapping(StateMapping stateMapping) {
-        this.stateMapping = stateMapping;
+    public void setStateMapper(StateMapping stateMapping) {
+        this.stateMapper = stateMapping;
     }
     public TerminalFunction getTf() {
         return tf;

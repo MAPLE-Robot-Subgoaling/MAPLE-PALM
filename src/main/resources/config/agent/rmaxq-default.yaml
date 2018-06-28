@@ -1,0 +1,8 @@
+  vmax: 1.0
+  threshold: 3
+  max_delta: 0.0001
+  max_delta_rmaxq: 0.0001
+  max_iterations_in_model: 1000
+  use_multitime_model: true
+  wait_for_children: true
+  gamma: 0.99

@@ -1,6 +1,5 @@
 package edu.umbc.cs.maple.hierarchy.framework;
 
-import burlap.behavior.singleagent.MDPSolver;
 import burlap.mdp.auxiliary.StateMapping;
 import burlap.mdp.core.TerminalFunction;
 import burlap.mdp.core.action.Action;
@@ -10,8 +9,7 @@ import burlap.mdp.core.oo.propositional.PropositionalFunction;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.model.RewardFunction;
 import burlap.mdp.singleagent.oo.OOSADomain;
-import edu.umbc.cs.maple.config.hierarchy.SolverConfig;
-import scpsolver.lpsolver.SolverFactory;
+import edu.umbc.cs.maple.config.solver.SolverConfig;
 
 public class NonprimitiveTask extends Task {
     //tasks which are not at the base of the hierarchy

@@ -1,6 +1,7 @@
 package edu.umbc.cs.maple.config.cleanup;
 
 import burlap.debugtools.RandomFactory;
+import burlap.mdp.auxiliary.DomainGenerator;
 import burlap.mdp.core.state.State;
 import burlap.visualizer.Visualizer;
 import edu.umbc.cs.maple.cleanup.CleanupVisualizer;
@@ -60,6 +61,11 @@ public class CleanupConfig extends DomainConfig {
     @Override
     public Visualizer getVisualizer(ExperimentConfig config) {
         return CleanupVisualizer.getVisualizer(config.output.visualizer.width, config.output.visualizer.height);
+    }
+
+    @Override
+    public DomainGenerator getDomainGenerator() {
+        return null;
     }
 
 }

@@ -1,4 +1,4 @@
-package edu.umbc.cs.maple.config.hierarchy;
+package edu.umbc.cs.maple.config.solver;
 
 import burlap.behavior.singleagent.MDPSolver;
 import burlap.mdp.singleagent.SADomain;
