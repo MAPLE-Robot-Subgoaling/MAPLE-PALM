@@ -21,6 +21,7 @@ import edu.umbc.cs.maple.hierarchy.framework.GroundedTask;
 import edu.umbc.cs.maple.hierarchy.framework.StringFormat;
 import edu.umbc.cs.maple.hierarchy.framework.Task;
 import edu.umbc.cs.maple.palm.rmax.agent.PALMRmaxModelGenerator;
+import edu.umbc.cs.maple.palm.rmax.agent.RmaxModel;
 import edu.umbc.cs.maple.utilities.DiscountProvider;
 import edu.umbc.cs.maple.utilities.ValueIterationMultiStep;
 
@@ -337,11 +338,11 @@ public class PALMLearningAgent implements LearningAgent {
             this.models.put(modelName, model);
         }
         //debug for taxi model sharing
-//        if(t.toString().contains("put") || t.toString().contains("get") || t.toString().contains("pick")) {
-//            System.out.println("task: " + t.toString());
-//            System.out.println("lookup: " + modelName);
-//            System.out.println("model: " + ((RmaxModel) model).getTask().toString());
-//        }
+        if(t.toString().contains("put") || t.toString().contains("get") || t.toString().contains("pick")) {
+            System.out.println("task: " + t.toString());
+            System.out.println("lookup: " + modelName);
+            System.out.println("model: " + ((RmaxModel) model).getTask().toString());
+        }
         return model;
     }
 

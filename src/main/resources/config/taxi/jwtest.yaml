@@ -1,5 +1,5 @@
 domain: !!edu.umbc.cs.maple.config.taxi.TaxiConfig
-  state: mehta-zigzag-2-3passengers
+  state: classic
   correct_move: 1.0
   fickle: 0.0
 
@@ -9,12 +9,12 @@ agents:
 #  - kappaExpert
 #  - kappaHierGen
 
-episodes: 300
+episodes: 100
 max_steps: 10000
 trials: 1
 gamma: 0.95
 
-seed: 2451
+seed: 99430
 
 identifier_independent: false
 planning:
