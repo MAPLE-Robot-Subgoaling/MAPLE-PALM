@@ -6,8 +6,12 @@ import burlap.mdp.singleagent.model.RewardFunction;
 
 public class GoalFailRF implements RewardFunction {
 
-    protected double rewardGoal = 1.0;
-    protected double rewardFail = -1.0;
+
+    public static final double PSEUDOREWARD_ON_GOAL = 10.0;
+    public static final double PSEUDOREWARD_ON_FAIL = -10.0;
+
+    protected double rewardGoal = PSEUDOREWARD_ON_GOAL;
+    protected double rewardFail = PSEUDOREWARD_ON_FAIL;
     protected double rewardDefault = 0.0;
     protected double rewardNoop = 0.0;
 
