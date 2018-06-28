@@ -12,8 +12,8 @@ import static edu.umbc.cs.maple.taxi.TaxiConstants.CLASS_TAXI;
 public class TaxiGetAgent extends MutableObject {
 
     private final static List<Object> keys = Arrays.<Object>asList(
-            ATT_LOCATION
-            );
+        ATT_LOCATION
+    );
 
     public TaxiGetAgent(String name, String location) {
         this(name, (Object)location);

@@ -41,7 +41,7 @@ public class HierarchicalCharts {
         env = new SimulatedEnvironment(baseDomain, stateGenerator);
 
         if(config.output.visualizer.enabled) {
-            VisualActionObserver obs = new VisualActionObserver(baseDomain, config.getVisualizer(config));
+            VisualActionObserver obs = new VisualActionObserver(baseDomain, config.getVisualizer(config), 600, 600);
             obs.setFrameDelay(0);
             obs.initGUI();
             obs.setDefaultCloseOperation(obs.EXIT_ON_CLOSE);

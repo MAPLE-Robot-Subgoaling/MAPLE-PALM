@@ -20,8 +20,7 @@ public class PutPutdownActionType extends ObjectParameterizedActionType {
         String passengerName = params[0];
         ObjectInstance passenger = state.object(passengerName);
         String taxiLoc = (String)state.getTaxiAtt(ATT_LOCATION);
-        return ((String)passenger.get(ATT_LOCATION)).equals(ATT_VAL_IN_TAXI)
-                && !taxiLoc.equals(ATT_VAL_ON_ROAD);
+        return (passenger.get(ATT_LOCATION)).equals(ATT_VAL_IN_TAXI) && !taxiLoc.equals(ATT_VAL_ON_ROAD);
     }
 }
 

@@ -54,26 +54,28 @@ public class TaxiPutState extends TaxiGetPutState implements DeepCopyForShallowC
         }
 
         ObjectInstance o = passengers.get(oname);
-        if(o != null)
+        if(o != null) {
             return o;
+        }
 
         o = locations.get(oname);
-        if(o != null)
+        if(o != null) {
             return o;
+        }
 
         return null;
     }
 
-    private List<ObjectInstance> cachedObjectList = null;
+//    private List<ObjectInstance> cachedObjectList = null;
     @Override
     public List<ObjectInstance> objects() {
-        if (cachedObjectList == null) { cachedObjectList = new ArrayList<ObjectInstance>(); }
-        else { return cachedObjectList; }
+//        if (cachedObjectList == null) { cachedObjectList = new ArrayList<>(); }
+//        else { return cachedObjectList; }
         List<ObjectInstance> obj = new ArrayList<ObjectInstance>();
         if (taxi != null) { obj.add(taxi); }
         obj.addAll(passengers.values());
         obj.addAll(locations.values());
-        cachedObjectList = obj;
+//        cachedObjectList = obj;
         return obj;
     }
 
@@ -130,7 +132,7 @@ public class TaxiPutState extends TaxiGetPutState implements DeepCopyForShallowC
         } else {
             throw new RuntimeException("Can only add certain objects to state.");
         }
-        cachedObjectList = null;
+//        cachedObjectList = null;
         return this;
     }
 
@@ -149,7 +151,7 @@ public class TaxiPutState extends TaxiGetPutState implements DeepCopyForShallowC
         } else {
             throw new RuntimeException("Error: unknown object of name: " + oname);
         }
-        cachedObjectList = null;
+//        cachedObjectList = null;
         return this;
     }
 
@@ -176,15 +178,6 @@ public class TaxiPutState extends TaxiGetPutState implements DeepCopyForShallowC
         return passengers;
     }
 
-    //get values from objects
-    public String[] getPassengers(){
-        String[] ret = new String[passengers.size()];
-        int i = 0;
-        for(String name : passengers.keySet())
-            ret[i++] = name;
-        return ret;
-    }
-
     public TaxiPutLocation touchLocation(String locName){
         TaxiPutLocation loc = locations.get(locName).copy();
         touchLocations().remove(locName);
@@ -193,17 +186,8 @@ public class TaxiPutState extends TaxiGetPutState implements DeepCopyForShallowC
     }
 
     public Map<String, TaxiPutLocation> touchLocations(){
-        this.locations = new HashMap<String, TaxiPutLocation>(locations);
+        this.locations = new HashMap<>(locations);
         return locations;
-    }
-
-    //get values from objects
-    public String[] getLocations(){
-        String[] ret = new String[locations.size()];
-        int i = 0;
-        for(String name : locations.keySet())
-            ret[i++] = name;
-        return ret;
     }
 
     public Object getTaxiAtt(String attName) {
@@ -211,14 +195,6 @@ public class TaxiPutState extends TaxiGetPutState implements DeepCopyForShallowC
             return null;
         }
         return taxi.get(attName);
-    }
-
-    public Object getPassengerAtt(String passname, String attName){
-        return passengers.get(passname).get(attName);
-    }
-
-    public Object getLocationAtt(String locname, String attName) {
-        return locations.get(locname).get(attName);
     }
 
     @Override

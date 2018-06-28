@@ -12,7 +12,7 @@ public class ConstantDiscountProvider extends DiscountProvider {
     }
 
     @Override
-    public double yield(State s, Action action, State sPrime) {
+    public double yield(State s, Action action, State sPrime, boolean oneOff) {
         return constantGamma;
     }
 }

@@ -13,7 +13,7 @@ public class TaxiNavAgent extends MutableObject {
     private final static List<Object> keys = Arrays.<Object>asList(
             ATT_X,
             ATT_Y
-            );
+    );
 
     public TaxiNavAgent(String name, int x, int y) {
         this(name, (Object) x, (Object) y);

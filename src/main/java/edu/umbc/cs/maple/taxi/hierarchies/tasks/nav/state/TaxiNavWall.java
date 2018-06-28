@@ -21,7 +21,7 @@ public class TaxiNavWall extends MutableObject {
             );
 
     public TaxiNavWall(String name, int startX, int startY, int length, boolean isHorizontal) {
-        this(name, (Object) startX, (Object) startY, (Object) length, (Object) isHorizontal);
+        this(name, startX, startY, length, (Object) isHorizontal);
     }
 
     public TaxiNavWall(String name, Object startX, Object startY, Object length, Object isHorizontal) {

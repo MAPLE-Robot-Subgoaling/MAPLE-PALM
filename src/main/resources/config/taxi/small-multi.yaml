@@ -1,19 +1,23 @@
 domain: !!edu.umbc.cs.maple.config.taxi.TaxiConfig
-  state: medium
+  state: small-3passengers
   correct_move: 1.0
   fickle: 0.00
 
 agents:
-  - palmExpert
-  - kappaExpert
+#  - rmaxqExpert
+#  - rmaxqHierGen
+#  - palmExpert
+#  - palmExpertWithNavGiven
   - palmHierGen
-  - kappaHierGen
+#  - kappaExpert
+#  - kappaHierGen
+#  - qLearning
 
-seed: 785439
+seed: 68598
 episodes: 200
-max_steps: 1000
+max_steps: 100000
 trials: 1
-gamma: 0.95
+gamma: 0.99
 
 identifier_independent: false
 planning:
@@ -21,9 +25,9 @@ planning:
 
 rmax:
   vmax: 10.0
-  threshold: 3
-  max_delta: 0.000001
-  max_delta_rmaxq: 0.000001
+  threshold: 2
+  max_delta: 0.0000001
+  max_delta_rmaxq: 0.0001
   max_iterations_in_model: 1000
   use_multitime_model: true
   wait_for_children: true
@@ -45,12 +49,13 @@ output:
     trial_mode: MOST_RECENT_AND_AVERAGE
 
     metrics:
+                                     
       - STEPS_PER_EPISODE
       - CUMULATIVE_REWARD_PER_STEP
       - CUMULATIVE_REWARD_PER_EPISODE
 
   visualizer:
-    enabled: false
+    enabled: true
     episodes: true
     width: 5
     height: 5

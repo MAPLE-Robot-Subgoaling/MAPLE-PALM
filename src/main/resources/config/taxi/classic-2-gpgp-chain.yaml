@@ -18,7 +18,7 @@ planning:
   rollouts: 1000
 
 rmax:
-  vmax: 1.0
+  vmax: 10.0
   threshold: 10
   max_delta: 0.0001
   max_delta_rmaxq: 0.0001
@@ -48,7 +48,7 @@ output:
       - CUMULATIVE_REWARD_PER_EPISODE
 
   visualizer:
-    enabled: false
+    enabled: true
     episodes: true
     width: 5
     height: 5
