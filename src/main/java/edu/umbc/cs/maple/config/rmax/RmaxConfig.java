@@ -4,6 +4,7 @@ import burlap.behavior.singleagent.auxiliary.performance.PerformanceMetric;
 
 import static edu.umbc.cs.maple.config.ExperimentConfig.UNSET_DOUBLE;
 import static edu.umbc.cs.maple.config.ExperimentConfig.UNSET_INT;
+import static edu.umbc.cs.maple.hierarchy.framework.GoalFailRF.PSEUDOREWARD_ON_GOAL;
 
 public class RmaxConfig {
     public double vmax = UNSET_DOUBLE;
@@ -17,6 +18,7 @@ public class RmaxConfig {
 
     public boolean validate() {
         if (vmax == UNSET_DOUBLE) { return false; }
+        if (vmax < PSEUDOREWARD_ON_GOAL) { System.err.println("Warning: vmax is set < GoalFailRF.PSEUDOREWARD_ON_GOAL"); return false; }
         if (threshold == UNSET_INT) { return false; }
         if (max_delta == UNSET_DOUBLE) { return false; }
         if (max_delta_rmaxq == UNSET_DOUBLE) { return false; }

@@ -226,8 +226,10 @@ public class DynamicProgrammingMultiStep extends MultiStepMDPSolver implements V
             for(var6 = tps.iterator(); var6.hasNext(); q += tp.p * (r + discount * vp)) {
                 tp = (TransitionProb)var6.next();
                 vp = this.value(tp.eo.op);
-                discount = discountProvider.yield(tp.eo.o, tp.eo.a, tp.eo.op);
-                r = tp.eo.r;
+                discount = discountProvider.yield(tp.eo.o, tp.eo.a, tp.eo.op, false);
+                double rewardDiscount = discountProvider.yield(tp.eo.o, tp.eo.a, tp.eo.op, true);
+                r = tp.eo.r * rewardDiscount;
+//                r = tp.eo.r;
             }
         }
 
