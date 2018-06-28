@@ -606,7 +606,7 @@ public class Cleanup implements DomainGenerator {
 //        RandomFactory.seedMapped(0, 575L);
 //        Random rng = RandomFactory.getMapped(0);
         List<String> objectAttributes = new ArrayList<String>();
-        Cleanup cleanup = new Cleanup(0,0,7,7);
+        Cleanup cleanup = new Cleanup(0,0,10,10);
 
 		RewardFunction rf;
 		TerminalFunction tf;
@@ -615,9 +615,9 @@ public class Cleanup implements DomainGenerator {
         OOSADomain domain = (OOSADomain) cleanup.generateDomain();
 
         CleanupGoalDescription[] goals = new CleanupGoalDescription[]{
-				new CleanupGoalDescription(new String[]{"block0", "room4"}, domain.propFunction(PF_BLOCK_IN_ROOM)),
-//				new CleanupGoalDescription(new String[]{"block1", "room1"}, domain.propFunction(PF_BLOCK_IN_ROOM)),
-//				new CleanupGoalDescription(new String[]{"block2", "room0"}, domain.propFunction(PF_BLOCK_IN_ROOM))
+				new CleanupGoalDescription(new String[]{"block0", "room10"}, domain.propFunction(PF_BLOCK_IN_ROOM)),
+				//new CleanupGoalDescription(new String[]{"block1", "room1"}, domain.propFunction(PF_BLOCK_IN_ROOM)),
+				//new CleanupGoalDescription(new String[]{"block2", "room0"}, domain.propFunction(PF_BLOCK_IN_ROOM))
 		};
         goalCondition.setGoals(goals);
 

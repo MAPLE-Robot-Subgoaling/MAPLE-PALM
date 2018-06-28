@@ -1391,17 +1391,17 @@ public class CleanupRandomStateGenerator implements StateGenerator {
         String room1Color = roomColors.get(rng.nextInt(roomColors.size()));
         CleanupRoom room1 = new CleanupRoom("room1", 6, 9, 0, 9, room1Color, Cleanup.SHAPE_ROOM);
         String room2Color = roomColors.get(rng.nextInt(roomColors.size()));
-        CleanupRoom room2 = new CleanupRoom("room2", 1, 6, 0, 3, room2Color, Cleanup.SHAPE_ROOM);
+        CleanupRoom room2 = new CleanupRoom("room2", 0, 6, 0, 3, room2Color, Cleanup.SHAPE_ROOM);
         String room3Color = roomColors.get(rng.nextInt(roomColors.size()));
-        CleanupRoom room3 = new CleanupRoom("room3", 1, 4, 3, 6, room3Color, Cleanup.SHAPE_ROOM);
+        CleanupRoom room3 = new CleanupRoom("room3", 0, 3, 3, 6, room3Color, Cleanup.SHAPE_ROOM);
         String room4Color = roomColors.get(rng.nextInt(roomColors.size()));
-        CleanupRoom room4 = new CleanupRoom("room4", 4, 6, 3, 6, room4Color, Cleanup.SHAPE_ROOM);
+        CleanupRoom room4 = new CleanupRoom("room4", 3, 6, 3, 6, room4Color, Cleanup.SHAPE_ROOM);
 
         //initializes doors
         CleanupDoor door0 = new CleanupDoor("door0", 6, 6, 7, 8, Cleanup.LOCKABLE_STATES[0], Cleanup.SHAPE_DOOR, Cleanup.COLOR_GRAY);
         CleanupDoor door1 = new CleanupDoor("door1", 6, 6, 1, 2, Cleanup.LOCKABLE_STATES[0], Cleanup.SHAPE_DOOR, Cleanup.COLOR_GRAY);
-        CleanupDoor door2 = new CleanupDoor("door2", 2, 3, 3, 3, Cleanup.LOCKABLE_STATES[0], Cleanup.SHAPE_DOOR, Cleanup.COLOR_GRAY);
-        CleanupDoor door3 = new CleanupDoor("door3", 4, 4, 4, 5, Cleanup.LOCKABLE_STATES[0], Cleanup.SHAPE_DOOR, Cleanup.COLOR_GRAY);
+        CleanupDoor door2 = new CleanupDoor("door2", 1, 2, 3, 3, Cleanup.LOCKABLE_STATES[0], Cleanup.SHAPE_DOOR, Cleanup.COLOR_GRAY);
+        CleanupDoor door3 = new CleanupDoor("door3", 3, 3, 4, 5, Cleanup.LOCKABLE_STATES[0], Cleanup.SHAPE_DOOR, Cleanup.COLOR_GRAY);
 
 
         //initialize blocks
