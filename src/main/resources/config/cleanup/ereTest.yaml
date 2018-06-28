@@ -1,11 +1,11 @@
 domain: !!edu.umbc.cs.maple.config.cleanup.CleanupConfig
-    state: donutCheckers
-    num_blocks: 0
+    state: 1blockDebris
+    num_blocks: 1
     minX: 0
     minY: 0
-    maxX: 7
-    maxY: 7
-    rewardGoal: 0.0
+    maxX: 10
+    maxY: 10
+    rewardGoal: 1.0
     rewardBase: 0.0
     rewardNoop: 0.0
     rewardPull: 0.0
@@ -13,9 +13,9 @@ domain: !!edu.umbc.cs.maple.config.cleanup.CleanupConfig
 seed: 473031
 
 agents:
-  - palmExpert
-
-episodes: 52
+#  - qLearning
+    - palmExpert
+episodes: 100
 max_steps: 10000
 trials: 1
 gamma: 0.99
@@ -54,7 +54,7 @@ output:
       - CUMULATIVE_REWARD_PER_EPISODE
 
   visualizer:
-    enabled: true
+    enabled: false
     episodes: true
-    width: 5
-    height: 5
+    width: 7
+    height: 7

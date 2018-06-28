@@ -615,7 +615,7 @@ public class Cleanup implements DomainGenerator {
         OOSADomain domain = (OOSADomain) cleanup.generateDomain();
 
         CleanupGoalDescription[] goals = new CleanupGoalDescription[]{
-				new CleanupGoalDescription(new String[]{"block0", "room8"}, domain.propFunction(PF_BLOCK_IN_ROOM)),
+				new CleanupGoalDescription(new String[]{"block0", "room4"}, domain.propFunction(PF_BLOCK_IN_ROOM)),
 //				new CleanupGoalDescription(new String[]{"block1", "room1"}, domain.propFunction(PF_BLOCK_IN_ROOM)),
 //				new CleanupGoalDescription(new String[]{"block2", "room0"}, domain.propFunction(PF_BLOCK_IN_ROOM))
 		};
