@@ -25,6 +25,9 @@ public class CleanupPick implements DomainGenerator {
     private RewardFunction rf;
     private TerminalFunction tf;
 
+    public CleanupPick(){
+
+    }
     public CleanupPick(RewardFunction rf, TerminalFunction tf) {
         this.rf = rf;
         this.tf = tf;

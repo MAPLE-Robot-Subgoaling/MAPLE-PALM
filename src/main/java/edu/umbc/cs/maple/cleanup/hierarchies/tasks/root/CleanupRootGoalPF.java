@@ -9,6 +9,9 @@ public class CleanupRootGoalPF extends PropositionalFunction {
 
     private CleanupGoal goal;
 
+    public CleanupRootGoalPF(){
+        super("root", new String[]{});
+    }
     public CleanupRootGoalPF(String name, CleanupGoal goal) {
         super(name, new String[]{});
         this.goal = goal;

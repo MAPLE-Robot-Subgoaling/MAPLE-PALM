@@ -11,6 +11,10 @@ import edu.umbc.cs.maple.cleanup.hierarchies.tasks.pick.PickRoomForObjectActionT
 import edu.umbc.cs.maple.cleanup.state.CleanupAgent;
 import edu.umbc.cs.maple.cleanup.state.CleanupBlock;
 import edu.umbc.cs.maple.cleanup.state.CleanupRoom;
+import edu.umbc.cs.maple.hierarchy.framework.GoalFailRF;
+import edu.umbc.cs.maple.hierarchy.framework.GoalFailTF;
+import edu.umbc.cs.maple.taxi.functions.amdp.RootCompletedPF;
+import edu.umbc.cs.maple.taxi.functions.amdp.RootFailurePF;
 
 public class CleanupRoot implements DomainGenerator {
 
@@ -20,6 +24,10 @@ public class CleanupRoot implements DomainGenerator {
     private RewardFunction rf;
     private TerminalFunction tf;
 
+    public CleanupRoot(){
+        this.tf = new GoalFailTF(new RootCompletedPF(), null, new RootFailurePF(), null);
+        this.rf = new GoalFailRF((GoalFailTF) tf);
+    }
     public CleanupRoot(RewardFunction rf, TerminalFunction tf) {
         this.rf = rf;
         this.tf = tf;

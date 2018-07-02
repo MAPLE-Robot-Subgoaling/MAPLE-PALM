@@ -4,6 +4,9 @@ import burlap.mdp.core.oo.state.OOState;
 
 public class ObjectInRegionFailPF extends ObjectInRegionGoalPF {
 
+    public ObjectInRegionFailPF(){
+        super("moveFail", new String[]{});
+    }
     public ObjectInRegionFailPF(String name, String[] parameterClasses) {
         super(name, parameterClasses);
     }

@@ -5,6 +5,9 @@ import burlap.mdp.core.oo.state.OOState;
 
 public class CleanupRootFailPF extends PropositionalFunction {
 
+    public CleanupRootFailPF(){
+        super("rootFail", new String[]{});
+    }
     public CleanupRootFailPF(String name, String[] parameterClasses) {
         super(name, parameterClasses);
     }
