@@ -1,4 +1,4 @@
-domain: !!config.cleanup.CleanupConfig
+domain: !!edu.umbc.cs.maple.config.cleanup.CleanupConfig
     state: threeRooms
     num_blocks: 1
     minX: 0

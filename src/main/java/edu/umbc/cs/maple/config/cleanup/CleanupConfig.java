@@ -4,6 +4,7 @@ import burlap.debugtools.RandomFactory;
 import burlap.mdp.auxiliary.DomainGenerator;
 import burlap.mdp.core.state.State;
 import burlap.visualizer.Visualizer;
+import edu.umbc.cs.maple.cleanup.Cleanup;
 import edu.umbc.cs.maple.cleanup.CleanupVisualizer;
 import edu.umbc.cs.maple.cleanup.state.CleanupRandomStateGenerator;
 import edu.umbc.cs.maple.cleanup.state.CleanupState;
@@ -65,7 +66,7 @@ public class CleanupConfig extends DomainConfig {
 
     @Override
     public DomainGenerator getDomainGenerator() {
-        return null;
+        return new Cleanup(minX, minY, maxX, maxY);
     }
 
 }
