@@ -17,6 +17,7 @@ import edu.umbc.cs.maple.palm.agent.PossibleOutcome;
 import edu.umbc.cs.maple.utilities.BurlapConstants;
 import edu.umbc.cs.maple.utilities.DiscountProvider;
 import edu.umbc.cs.maple.utilities.ExpectedStepsDiscountProvider;
+import edu.umbc.cs.maple.utilities.OnlyInternalDiscountProvider;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -85,19 +86,23 @@ public abstract class RmaxModel extends PALMModel {
             }
         }
 
+//        transitions(s, a);
+//        throw new RuntimeException("Probabilities do not sum to 1.0 in RmaxModel");
+        return sample(s,a);
+
         // IMPORTANT:
         // with the Multi-time model, the totalProbability will not sum to 1.0 but to GAMMA, or less even
 //        throw new RuntimeException("Probabilities don't sum to 1.0: " + sum);
         // thus, handle edge case here
-        sample = RandomFactory.getMapped(BurlapConstants.DEFAULT_RNG_INDEX).nextDouble()*sum;
-        sum = 0;
-        for(TransitionProb tp : tps){
-            sum += tp.p;
-            if(sample <= sum){
-                return tp.eo;
-            }
-        }
-        throw new RuntimeException("Error: incorrect RNG logic inside RmaxModel");
+//        sample = RandomFactory.getMapped(BurlapConstants.DEFAULT_RNG_INDEX).nextDouble()*sum;
+//        sum = 0;
+//        for(TransitionProb tp : tps){
+//            sum += tp.p;
+//            if(sample <= sum){
+//                return tp.eo;
+//            }
+//        }
+//        throw new RuntimeException("Error: incorrect RNG logic inside RmaxModel");
     }
 
     //the model is terminal if the task is completed or if it fails, or is the imagined state
@@ -137,7 +142,7 @@ public abstract class RmaxModel extends PALMModel {
         // IMPORTANT:
         // with the Multi-time model, the totalProbability will not sum to 1.0 but to GAMMA, or less even
         // the rationale for this is explained in Jong's RMAXQ paper (essentially the remainder is prob. of termination)
-//        if (totalProbability < 0.99999999999 || totalProbability > 1.00000000001) {
+//        if (totalProbability != 1.0 && totalProbability != getDiscountProvider().getGamma()) {
 //            System.err.println("total probability does not sum to 1.0: " + totalProbability);
 //        }
         return tps;

@@ -146,26 +146,8 @@ public class PALMLearningAgent implements LearningAgent {
 
         // run a rollout on the models resulting from the episode just computed,
         // to check if the root AMDP has reached a solution yet
-        State abstractInitialState = groundedRoot.mapState(initialState);
-        PALMModel model = getModel(groundedRoot);
-        String[] params = getParams(groundedRoot);
-        OOSADomain domain = groundedRoot.getDomain(model, params);
-//		double discount = model.gamma();
-        DiscountProvider discountProvider = model.getDiscountProvider();
-        ValueIterationMultiStep planner = new ValueIterationMultiStep(domain, hashingFactory, maxDelta, maxIterationsInModelPlanner, discountProvider);
-        planner.toggleReachabiltiyTerminalStatePruning(true);
-        ValueFunction knownValueFunction = groundedRoot.valueFunction;
-        if (knownValueFunction != null) {
-            planner.setValueFunctionInitialization(knownValueFunction);
-        }
-        Policy policy = planner.planFromState(abstractInitialState);
-        Episode ep = PolicyUtils.rollout(policy, abstractInitialState, model, maxSteps);
-        OOState last = (OOState) ep.stateSequence.get(ep.stateSequence.size()-1);
-        if (last.numObjects() > 0) {
-            System.out.println("    Root policy converged, rollout: " + ep.actionSequence);
-        } else {
-            System.out.println("    unconverged...");
-        }
+        Action action = runDebugRollout(groundedRoot, initialState, maxSteps);
+        runDebugRollout(taskNames.get(action.toString()), initialState, maxSteps);
 
         ///for a chart of runtime
         long estimatedTime = System.nanoTime() - start;
@@ -175,6 +157,31 @@ public class PALMLearningAgent implements LearningAgent {
         System.out.println("Clock time elapsed: " + actualTimeElapsed);
 
         return e;
+    }
+
+    private Action runDebugRollout(GroundedTask groundedTask, State fromState, int maxSteps) {
+
+        State abstractInitialState = groundedTask.mapState(fromState);
+        PALMModel model = getModel(groundedTask);
+        String[] params = getParams(groundedTask);
+        OOSADomain domain = groundedTask.getDomain(model, params);
+//		double discount = model.gamma();
+        DiscountProvider discountProvider = model.getDiscountProvider();
+        ValueIterationMultiStep planner = new ValueIterationMultiStep(domain, hashingFactory, maxDelta, maxIterationsInModelPlanner, discountProvider);
+        planner.toggleReachabiltiyTerminalStatePruning(true);
+        ValueFunction knownValueFunction = groundedTask.valueFunction;
+        if (knownValueFunction != null) {
+            planner.setValueFunctionInitialization(knownValueFunction);
+        }
+        Policy policy = planner.planFromState(abstractInitialState);
+        Episode ep = PolicyUtils.rollout(policy, abstractInitialState, model, maxSteps);
+        OOState last = (OOState) ep.stateSequence.get(ep.stateSequence.size()-1);
+        if (last.numObjects() > 0) {
+            System.out.println("    Policy converged, rollout: " + ep.actionSequence);
+        } else {
+            System.out.println("    unconverged...");
+        }
+        return ep.actionSequence.get(0);
     }
 
     private String tabLevel = "";
@@ -275,17 +282,17 @@ public class PALMLearningAgent implements LearningAgent {
 
             baseState = e.stateSequence.get(e.stateSequence.size() - 1);
             currentState = task.mapState(baseState);
-            double sumChildRewards = e.rewardSequence.subList(stepsBefore, stepsAfter).stream().mapToDouble(Double::doubleValue).sum();
-            double discount = 1.0;// getModel(task).getDiscountProvider().yield(pastState, a, currentState);
-            double discountOverTime = Math.pow(discount, stepsTaken);
-            double discountedReward = sumChildRewards * discountOverTime;
+//            double sumChildRewards = e.rewardSequence.subList(stepsBefore, stepsAfter).stream().mapToDouble(Double::doubleValue).sum();
+//            double discount = 1.0;// getModel(task).getDiscountProvider().yield(pastState, a, currentState);
+//            double discountOverTime = Math.pow(discount, stepsTaken);
+//            double discountedReward = sumChildRewards * discountOverTime;
             String[] params = getParams(task);
-//            double pseudoReward = task.getReward(pastState, a, currentState, params);
+            double pseudoReward = task.getReward(pastState, a, currentState, params);
 //            System.out.println(sumChildRewards + " " + discount + " " + discountOverTime + " " + discountedReward);
 //            double taskReward = discountedReward + task.getReward(pastState, a, currentState);
-//            double taskReward = pseudoReward;//task.getReward(pastState, a, currentState);
+            double taskReward = pseudoReward;//task.getReward(pastState, a, currentState);
 //            double taskReward = pseudoReward <= PSEUDOREWARD_ON_FAIL || pseudoReward >= PSEUDOREWARD_ON_GOAL ? pseudoReward : discountedReward;
-            double taskReward = discountedReward;
+//            double taskReward = discountedReward;
             result = new EnvironmentOutcome(pastState, a, currentState, taskReward, false);
 
             // update task model if the subtask completed correctly
@@ -299,9 +306,9 @@ public class PALMLearningAgent implements LearningAgent {
             }
         }
 
-        if (task.toString().contains("solve")) {
+//        if (task.toString().contains("solve")) {
             System.out.println(subtasksExecuted.size() + " " + subtasksExecuted);
-        }
+//        }
 
 		boolean parentShouldUpdateModel = task.isComplete(currentState) || actionCount == 0;
 		parentShouldUpdateModel = parentShouldUpdateModel && allChildrenBeyondThreshold;
