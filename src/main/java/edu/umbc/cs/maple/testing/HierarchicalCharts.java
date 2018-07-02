@@ -48,29 +48,11 @@ public class HierarchicalCharts {
             env.addObservers(obs);
         }
 
+        Task qLearningWrapper = new NonprimitiveTask(baseDomain);
         LearningAgentFactory[] agents = new LearningAgentFactory[config.agents.size()];
         for(int i = 0; i < config.agents.size(); i++) {
             String agent = config.agents.get(i);
-            if(agent.equals(PALM_EXPERT.getType())) {
-                agents[i] = PALM_EXPERT.generateLearningAgentFactory(expertRoot, config);
-            }
-//            else if(agent.equals(PALM_EXPERT_NAV_GIVEN.getType())) {
-//                agents[i] = PALM_EXPERT_NAV_GIVEN.generateLearningAgentFactory(expertRoot, config);
-//            }
-            else if(agent.equals(PALM_HIERGEN.getType())){
-                agents[i] = PALM_HIERGEN.generateLearningAgentFactory(hierGenRoot, config);
-            } else if(agent.equals(RMAXQ_EXPERT.getType())) {
-                agents[i] = RMAXQ_EXPERT.generateLearningAgentFactory(expertRoot, config);
-            } else if(agent.equals(RMAXQ_HIERGEN.getType())) {
-                agents[i] = RMAXQ_HIERGEN.generateLearningAgentFactory(hierGenRoot, config);
-            } else if(agent.equals(KAPPA_EXPERT.getType())) {
-                agents[i] = KAPPA_EXPERT.generateLearningAgentFactory(expertRoot, config);
-            } else if(agent.equals(KAPPA_HIERGEN.getType())) {
-                agents[i] = KAPPA_HIERGEN.generateLearningAgentFactory(hierGenRoot, config);
-            } else if(agent.equals(Q_LEARNING.getType())){
-                Task qLearningWrapper = new NonprimitiveTask(baseDomain);
-                agents[i] = Q_LEARNING.generateLearningAgentFactory(qLearningWrapper, config);
-            }
+            agents[i] = AgentType.generate(agent, config, expertRoot, hierGenRoot, qLearningWrapper);
         }
 
         LearningAlgorithmExperimenter exp = new LearningAlgorithmExperimenter(env, config.trials, config.episodes, config.max_steps, agents);

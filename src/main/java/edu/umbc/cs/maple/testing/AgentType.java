@@ -12,6 +12,7 @@ import edu.umbc.cs.maple.palm.agent.PALMLearningAgent;
 import edu.umbc.cs.maple.palm.agent.PALMModelGenerator;
 import edu.umbc.cs.maple.palm.rmax.agent.ExpectedRmaxModelGenerator;
 //import edu.umbc.cs.maple.palm.rmax.agent.ExpertNavModelGenerator;
+import edu.umbc.cs.maple.palm.rmax.agent.ExpertNavModelGenerator;
 import edu.umbc.cs.maple.palm.rmax.agent.PALMRmaxModelGenerator;
 import edu.umbc.cs.maple.rmaxq.agent.RmaxQLearningAgent;
 import edu.umbc.cs.maple.state.hashing.cached.CachedHashableStateFactory;
@@ -41,15 +42,15 @@ public enum AgentType {
             return agent;
         }
     },
-//    PALM_EXPERT_NAV_GIVEN("palmExpertWithNavGiven", "PALM-Expert w/ Nav"){
-//        @Override
-//        public LearningAgent getLearningAgent(Task root, HashableStateFactory hsf, ExperimentConfig config) {
-//            PALMModelGenerator modelGen = new ExpertNavModelGenerator(hsf, config);
-//            LearningAgent agent = new PALMLearningAgent(root, modelGen, hsf, config);
-//            return agent;
-//        }
-//
-//    },
+    PALM_EXPERT_NAV_GIVEN("palmExpertWithNavGiven", "PALM-Expert w/ Nav"){
+        @Override
+        public LearningAgent getLearningAgent(Task root, HashableStateFactory hsf, ExperimentConfig config) {
+            PALMModelGenerator modelGen = new ExpertNavModelGenerator(hsf, config);
+            LearningAgent agent = new PALMLearningAgent(root, modelGen, hsf, config);
+            return agent;
+        }
+
+    },
     RMAXQ_EXPERT("rmaxqExpert", "RMAXQ-Expert"){
         @Override
         public LearningAgent getLearningAgent(Task root, HashableStateFactory hsf, ExperimentConfig config) {
@@ -83,9 +84,6 @@ public enum AgentType {
         }
 
     },
-
-
-
     Q_LEARNING("qLearning", "QL"){
         @Override
         public LearningAgent getLearningAgent(Task root, HashableStateFactory hsf, ExperimentConfig config) {
@@ -130,6 +128,30 @@ public enum AgentType {
     public static HashableStateFactory initializeHashableStateFactory(boolean identifierIndependent) {
 //        return new CachedHashableStateFactory(identifierIndependent);
         return new SimpleHashableStateFactory(identifierIndependent);
+    }
+
+    public static LearningAgentFactory generate(String agentTypeString, ExperimentConfig config, Task expertRoot, Task hierGenRoot, Task qLearningWrapper) {
+        AgentType agentType = AgentType.getByType(agentTypeString);
+        Task root = null;
+        if (agentTypeString.contains("Expert")) {
+            root = expertRoot;
+        } else if (agentTypeString.contains("HierGen")) {
+            root = hierGenRoot;
+        } else if (agentTypeString.contains("qLearning")) {
+            root = qLearningWrapper;
+        } else {
+            throw new RuntimeException("Unknown root task for " + agentType + " in AgentType");
+        }
+        return agentType.generateLearningAgentFactory(root, config);
+    }
+
+    public static AgentType getByType(String name) {
+        for (AgentType type : values()) {
+            if (type.type.equals(name)) {
+                return type;
+            }
+        }
+        throw new IllegalArgumentException(name);
     }
 
     public static final boolean DEFAULT_IDENTIFIER_INDEPENDENT = false;

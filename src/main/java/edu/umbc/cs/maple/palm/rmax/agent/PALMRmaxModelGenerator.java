@@ -28,7 +28,7 @@ public class PALMRmaxModelGenerator implements PALMModelGenerator {
     }
 
     @Override
-    public PALMModel getModelForTask(Task t) {
-        return new HierarchicalRmaxModel(t, this.threshold, this.rmax, this.hashingFactory, this.gamma, this.useMultitimeModel);
+    public PALMModel getModelForTask(GroundedTask t) {
+        return new HierarchicalRmaxModel(t.getTask(), this.threshold, this.rmax, this.hashingFactory, this.gamma, this.useMultitimeModel);
     }
 }

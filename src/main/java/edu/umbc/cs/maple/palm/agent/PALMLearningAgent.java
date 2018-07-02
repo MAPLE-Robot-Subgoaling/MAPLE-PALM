@@ -27,6 +27,7 @@ import edu.umbc.cs.maple.palm.rmax.agent.RmaxModel;
 import edu.umbc.cs.maple.taxi.Taxi;
 import edu.umbc.cs.maple.taxi.TaxiModel;
 import edu.umbc.cs.maple.utilities.DiscountProvider;
+import edu.umbc.cs.maple.utilities.IntegerParameterizedAction;
 import edu.umbc.cs.maple.utilities.ValueIterationMultiStep;
 
 import java.text.SimpleDateFormat;
@@ -384,7 +385,7 @@ public class PALMLearningAgent implements LearningAgent {
         String modelName = t.isMasked() && useModelSharing ? t.getAction().actionName() : t.toString();
         PALMModel model = models.get(modelName);
         if(model == null) {
-            model = modelGenerator.getModelForTask(t.getTask());
+            model = modelGenerator.getModelForTask(t);
             this.models.put(modelName, model);
         }
         return model;
@@ -398,6 +399,8 @@ public class PALMLearningAgent implements LearningAgent {
     protected String[] getParams(Action taskAction) {
         String[] params = null;
         if (taskAction instanceof ObjectParameterizedAction) {
+            params = Task.parseParams(taskAction);
+        } else if (taskAction instanceof IntegerParameterizedAction) {
             params = Task.parseParams(taskAction);
         }
         return params;
