@@ -31,7 +31,7 @@ public class ExpertPALMModel extends PALMModel {
     }
 
     @Override
-    public void updateModel(EnvironmentOutcome result, int stepsTaken) {}
+    public boolean updateModel(EnvironmentOutcome result, int stepsTaken, String[] params) { return true; }
 
     @Override
     public DiscountProvider getDiscountProvider() {

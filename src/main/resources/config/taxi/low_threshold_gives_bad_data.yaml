@@ -21,8 +21,8 @@ planning:
   rollouts: 1000
 
 rmax:
-  vmax: 10.0
-  threshold: 10
+  vmax: 1.0
+  threshold: 2
   max_delta: 0.000001
   max_delta_rmaxq: 0.000001
   max_iterations_in_model: 1000

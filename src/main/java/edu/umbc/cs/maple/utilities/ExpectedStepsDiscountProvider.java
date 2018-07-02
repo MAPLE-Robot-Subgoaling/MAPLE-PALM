@@ -28,4 +28,9 @@ public class ExpectedStepsDiscountProvider extends DiscountProvider {
         return gamma;
     }
 
+    @Override
+    public double getGamma() {
+        return gamma;
+    }
+
 }

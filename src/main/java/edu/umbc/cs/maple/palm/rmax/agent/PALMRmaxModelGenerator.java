@@ -3,6 +3,7 @@ package edu.umbc.cs.maple.palm.rmax.agent;
 import burlap.statehashing.HashableStateFactory;
 import edu.umbc.cs.maple.config.ExperimentConfig;
 import edu.umbc.cs.maple.hierarchy.framework.GroundedTask;
+import edu.umbc.cs.maple.hierarchy.framework.Task;
 import edu.umbc.cs.maple.palm.agent.PALMModel;
 import edu.umbc.cs.maple.palm.agent.PALMModelGenerator;
 
@@ -28,7 +29,6 @@ public class PALMRmaxModelGenerator implements PALMModelGenerator {
 
     @Override
     public PALMModel getModelForTask(GroundedTask t) {
-        return new HierarchicalRmaxModel(t, this.threshold, this.rmax,
-                this.hashingFactory, this.gamma, this.useMultitimeModel);
+        return new HierarchicalRmaxModel(t.getTask(), this.threshold, this.rmax, this.hashingFactory, this.gamma, this.useMultitimeModel);
     }
 }

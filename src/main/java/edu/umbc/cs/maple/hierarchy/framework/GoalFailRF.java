@@ -35,6 +35,15 @@ public class GoalFailRF implements RewardFunction {
         this.rewardNoop = rewardNoop;
     }
 
+    public double reward(State state, Action action, State sPrime, String[] params) {
+        tf.setGoalParams(params);
+        tf.setFailParams(params);
+        double r = reward(state, action, sPrime);
+        tf.setGoalParams(null);
+        tf.setFailParams(null);
+        return r;
+    }
+
     @Override
     public double reward(State state, Action action, State sPrime) {
         double r = rewardDefault;
@@ -47,7 +56,6 @@ public class GoalFailRF implements RewardFunction {
         } else {
             // neither goal nor failure
         }
-
         return r;
     }
 
