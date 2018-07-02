@@ -279,7 +279,7 @@ public class PALMLearningAgent implements LearningAgent {
 		Policy policy;
         ValueFunction knownValueFunction;
         SolverConfig solver = ((NonprimitiveTask)task.getTask()).getSolver();
-        solver.generateSolver();
+//        solver.generateSolver();
         {
             ValueIterationMultiStep planner = new ValueIterationMultiStep(domain, hashingFactory, maxDelta, maxIterationsInModelPlanner, discountProvider);
             planner.toggleReachabiltiyTerminalStatePruning(true);
@@ -290,18 +290,18 @@ public class PALMLearningAgent implements LearningAgent {
             }
             policy = planner.planFromState(s);
         }
-        {
-            FittedVI planner;
-            planner = new FittedVI(domain, gamma, SupervisedVFA, transitionSamples, maxDelta, maxIterationsInModelPlanner);
-            ValueIterationMultiStep planner = new ValueIterationMultiStep(domain, hashingFactory, maxDelta, maxIterationsInModelPlanner, discountProvider);
-            planner.toggleReachabiltiyTerminalStatePruning(true);
-//		planner.toggleReachabiltiyTerminalStatePruning(false);
-            knownValueFunction = task.valueFunction;
-            if (knownValueFunction != null) {
-                planner.setValueFunctionInitialization(knownValueFunction);
-            }
-            policy = planner.planFromState(s);
-        }
+//        {
+//            FittedVI planner;
+//            planner = new FittedVI(domain, gamma, SupervisedVFA, transitionSamples, maxDelta, maxIterationsInModelPlanner);
+//            ValueIterationMultiStep planner = new ValueIterationMultiStep(domain, hashingFactory, maxDelta, maxIterationsInModelPlanner, discountProvider);
+//            planner.toggleReachabiltiyTerminalStatePruning(true);
+////		planner.toggleReachabiltiyTerminalStatePruning(false);
+//            knownValueFunction = task.valueFunction;
+//            if (knownValueFunction != null) {
+//                planner.setValueFunctionInitialization(knownValueFunction);
+//            }
+//            policy = planner.planFromState(s);
+//        }
         Action action = policy.action(s);
 		if (debug) {
 			try {
