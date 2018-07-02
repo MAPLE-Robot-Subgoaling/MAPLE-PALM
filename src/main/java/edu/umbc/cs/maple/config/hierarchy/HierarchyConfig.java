@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 public class HierarchyConfig {
+    public String name;
     private Map<String,TaskConfig> hierarchyConfigMap;
     private Map<String,Task> taskMap;
     private DomainGenerator baseDomainGenerator;

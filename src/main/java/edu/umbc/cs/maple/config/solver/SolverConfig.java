@@ -3,9 +3,14 @@ package edu.umbc.cs.maple.config.solver;
 import burlap.behavior.singleagent.MDPSolver;
 import burlap.mdp.singleagent.SADomain;
 
-public abstract class SolverConfig {
+public class SolverConfig {
+    String type;
 
-    public abstract MDPSolver generateSolver();
+    public MDPSolver generateSolver(){
 
-    public abstract void setDomain(SADomain domain);
+    }
+
+    public void setDomain(SADomain domain){
+
+    }
 }

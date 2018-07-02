@@ -102,12 +102,12 @@ public enum AgentType {
     }
 
     public static final boolean DEFAULT_IDENTIFIER_INDEPENDENT = false;
-    public LearningAgentFactory generateLearningAgentFactory(Task root, ExperimentConfig config) {
+    public LearningAgentFactory generateLearningAgentFactory(Task root, ExperimentConfig config, String inName) {
         LearningAgentFactory agent = new LearningAgentFactory() {
-
+            String name = inName;
             @Override
             public String getAgentName() {
-                return getPlotterDisplayName();
+                return name;
             }
 
             @Override

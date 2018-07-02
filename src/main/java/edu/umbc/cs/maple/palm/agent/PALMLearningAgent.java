@@ -1,10 +1,13 @@
 
 package edu.umbc.cs.maple.palm.agent;
 
+import burlap.behavior.functionapproximation.supervised.SupervisedVFA;
 import burlap.behavior.policy.Policy;
 import burlap.behavior.policy.PolicyUtils;
 import burlap.behavior.singleagent.Episode;
 import burlap.behavior.singleagent.learning.LearningAgent;
+import burlap.behavior.singleagent.learning.tdmethods.vfa.GradientDescentSarsaLam;
+import burlap.behavior.singleagent.planning.vfa.fittedvi.FittedVI;
 import burlap.behavior.valuefunction.ValueFunction;
 import burlap.mdp.core.action.Action;
 import burlap.mdp.core.oo.ObjectParameterizedAction;
@@ -14,7 +17,9 @@ import burlap.mdp.singleagent.environment.EnvironmentOutcome;
 import burlap.mdp.singleagent.oo.OOSADomain;
 import burlap.statehashing.HashableStateFactory;
 import edu.umbc.cs.maple.config.ExperimentConfig;
+import edu.umbc.cs.maple.config.solver.SolverConfig;
 import edu.umbc.cs.maple.hierarchy.framework.GroundedTask;
+import edu.umbc.cs.maple.hierarchy.framework.NonprimitiveTask;
 import edu.umbc.cs.maple.hierarchy.framework.StringFormat;
 import edu.umbc.cs.maple.hierarchy.framework.Task;
 import edu.umbc.cs.maple.palm.rmax.agent.PALMRmaxModelGenerator;
@@ -271,14 +276,32 @@ public class PALMLearningAgent implements LearningAgent {
 		OOSADomain domain = task.getDomain(model);
 //		double discount = model.gamma();
 		DiscountProvider discountProvider = model.getDiscountProvider();
-		ValueIterationMultiStep planner = new ValueIterationMultiStep(domain, hashingFactory, maxDelta, maxIterationsInModelPlanner, discountProvider);
-		planner.toggleReachabiltiyTerminalStatePruning(true);
+		Policy policy;
+        ValueFunction knownValueFunction;
+        SolverConfig solver = ((NonprimitiveTask)task.getTask()).getSolver();
+        solver.generateSolver();
+        {
+            ValueIterationMultiStep planner = new ValueIterationMultiStep(domain, hashingFactory, maxDelta, maxIterationsInModelPlanner, discountProvider);
+            planner.toggleReachabiltiyTerminalStatePruning(true);
 //		planner.toggleReachabiltiyTerminalStatePruning(false);
-		ValueFunction knownValueFunction = task.valueFunction;
-		if (knownValueFunction != null) {
-			planner.setValueFunctionInitialization(knownValueFunction);
-		}
-		Policy policy = planner.planFromState(s);
+            knownValueFunction = task.valueFunction;
+            if (knownValueFunction != null) {
+                planner.setValueFunctionInitialization(knownValueFunction);
+            }
+            policy = planner.planFromState(s);
+        }
+        {
+            FittedVI planner;
+            planner = new FittedVI(domain, gamma, SupervisedVFA, transitionSamples, maxDelta, maxIterationsInModelPlanner);
+            ValueIterationMultiStep planner = new ValueIterationMultiStep(domain, hashingFactory, maxDelta, maxIterationsInModelPlanner, discountProvider);
+            planner.toggleReachabiltiyTerminalStatePruning(true);
+//		planner.toggleReachabiltiyTerminalStatePruning(false);
+            knownValueFunction = task.valueFunction;
+            if (knownValueFunction != null) {
+                planner.setValueFunctionInitialization(knownValueFunction);
+            }
+            policy = planner.planFromState(s);
+        }
         Action action = policy.action(s);
 		if (debug) {
 			try {

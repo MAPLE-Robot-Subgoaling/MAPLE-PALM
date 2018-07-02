@@ -5,11 +5,11 @@ domain: !!edu.umbc.cs.maple.config.taxi.TaxiConfig
 
 agents:
  # rmaxq: {taxi-expert}
-  palm: { taxi-hiergen}
- # kappa: {taxi-expert, taxi-hiergen}
+  palm: {taxi-expert, taxi-hiergen}
+  kappa: {taxi-expert, taxi-hiergen}
  # qLearning: {taxi-expert}
 
-seed: 2320942930
+seed: 4
 episodes: 200
 max_steps: 1000
 trials: 1

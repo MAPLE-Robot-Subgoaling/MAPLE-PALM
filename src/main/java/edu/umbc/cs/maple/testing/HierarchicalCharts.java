@@ -35,7 +35,7 @@ import static edu.umbc.cs.maple.testing.AgentType.*;
 public class HierarchicalCharts {
 
 
-    public static void createCharts(final ExperimentConfig config, OOSADomain baseDomain, Task[] hierarchies, StateGenerator stateGenerator) {
+    public static void createCharts(final ExperimentConfig config, OOSADomain baseDomain,  StateGenerator stateGenerator) {
         SimulatedEnvironment env;
 
         env = new SimulatedEnvironment(baseDomain, stateGenerator);
@@ -63,14 +63,14 @@ public class HierarchicalCharts {
 
                 }
                 if(agentName.equals(PALM.getType())) {
-                    agents.add(PALM.generateLearningAgentFactory(hierarchyMap.get(hierarchy), config));
+                    agents.add(PALM.generateLearningAgentFactory(hierarchyMap.get(hierarchy), config, hierarchy+"-"+agentName));
                 } else if(agentName.equals(RMAXQ.getType())) {
-                    agents.add( RMAXQ.generateLearningAgentFactory(hierarchyMap.get(hierarchy), config));
+                    agents.add( RMAXQ.generateLearningAgentFactory(hierarchyMap.get(hierarchy), config, hierarchy+"-"+agentName));
                 } else if(agentName.equals(KAPPA.getType())) {
-                    agents.add(KAPPA.generateLearningAgentFactory(hierarchyMap.get(hierarchy), config));
+                    agents.add(KAPPA.generateLearningAgentFactory(hierarchyMap.get(hierarchy), config, hierarchy+"-"+agentName));
                 } else if(agentName.equals(Q_LEARNING.getType())){
                     Task qLearningWrapper = new NonprimitiveTask(baseDomain);
-                    agents.add( Q_LEARNING.generateLearningAgentFactory(qLearningWrapper, config));
+                    agents.add( Q_LEARNING.generateLearningAgentFactory(qLearningWrapper, config, hierarchy+"-"+agentName));
                 }
             }
         }
@@ -106,31 +106,31 @@ public class HierarchicalCharts {
         State source = config.generateState();
         StateGenerator stateGenerator = new ConstantStateGenerator(source);
 
-        OOSADomain base;
-        Task[] hierarchies = new Task[2];
-        if (config.domain instanceof TaxiConfig) {
-            TaxiHierarchy expert = new TaxiHierarchyExpert();
-            TaxiHierarchy hierGen = new TaxiHierarchyHierGen();
-            Task expertRoot = expert.createHierarchy(config, false);
-            Task hierGenRoot = hierGen.createHierarchy(config, false);
-            base = expert.getBaseDomain();
-            expert.setBaseDomain(base);
-            expert.setBaseDomain(base);
-            hierarchies[0] = expertRoot;
-            hierarchies[1] = hierGenRoot;
-        } else if (config.domain instanceof CleanupConfig) {
-            CleanupHierarchyAMDP expert = new CleanupHierarchyAMDP();
-//            CleanupHierarchyHierGen hierGen = new CleanupHierarchyHierGen();
-            Task expertRoot = expert.createHierarchy(config, false);
-//            Task hierGenRoot = hierGen.createHierarchy(config, false);
-            base = expert.getBaseDomain();
-            expert.setBaseDomain(base);
-//            hierGen.setBaseDomain(base);
-            hierarchies[0] = expertRoot;
-//            hierarchies[1] = hierGenRoot;
-        } else {
-            throw new RuntimeException("Error: unknown domain in config file");
-        }
+        OOSADomain base = (OOSADomain) config.domain.getDomainGenerator().generateDomain();
+//        Task[] hierarchies = new Task[2];
+////        if (config.domain instanceof TaxiConfig) {
+////
+//////            Task expertRoot = expert.createHierarchy(config, false);
+//////            Task hierGenRoot = hierGen.createHierarchy(config, false);
+//////            base = expert.getBaseDomain();
+//////            expert.setBaseDomain(base);
+//////            expert.setBaseDomain(base);
+//////            hierarchies[0] = expertRoot;
+//////            hierarchies[1] = hierGenRoot;
+////        } else if (config.domain instanceof CleanupConfig) {
+////
+////            CleanupHierarchyAMDP expert = new CleanupHierarchyAMDP();
+//////            CleanupHierarchyHierGen hierGen = new CleanupHierarchyHierGen();
+////            Task expertRoot = expert.createHierarchy(config, false);
+//////            Task hierGenRoot = hierGen.createHierarchy(config, false);
+////            base = expert.getBaseDomain();
+////            expert.setBaseDomain(base);
+//////            hierGen.setBaseDomain(base);
+////            hierarchies[0] = expertRoot;
+//////            hierarchies[1] = hierGenRoot;
+////        } else {
+////            throw new RuntimeException("Error: unknown domain in config file");
+////        }
 
 //        //runtime
 //        //get the starting time from execution
@@ -141,7 +141,7 @@ public class HierarchicalCharts {
 //        long startTime = System.nanoTime();
 //        System.out.println("Trial current nano time: " + startTime);
 
-        createCharts(config, base, hierarchies, stateGenerator);
+        createCharts(config, base, stateGenerator);
 
 //        long estimatedTime = System.nanoTime() - startTime;
 //        System.out.println("The estimated elapsed trial time is " + estimatedTime);

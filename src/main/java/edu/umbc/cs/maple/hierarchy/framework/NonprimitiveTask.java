@@ -17,7 +17,10 @@ public class NonprimitiveTask extends Task {
     // default rewardTotal used in nonprimitive task's pseudo-rewardTotal function
     public static double DEFAULT_REWARD = 0.000;//1;//0.000001;
     public static double NOOP_REWARD = 0.0;//-0.0001;
+
+
     SolverConfig solver;
+
     protected TerminalFunction tf;
     protected RewardFunction rf;
 
@@ -109,5 +112,13 @@ public class NonprimitiveTask extends Task {
 
     public GoalFailRF getGoalFailRF() {
         return (GoalFailRF)rf;
+    }
+
+    public SolverConfig getSolver() {
+        return solver;
+    }
+
+    public void setSolver(SolverConfig solver) {
+        this.solver = solver;
     }
 }

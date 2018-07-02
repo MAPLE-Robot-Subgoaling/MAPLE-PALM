@@ -1,3 +1,4 @@
+name: hiergen
 hierarchyConfigMap:
    root:
       children:

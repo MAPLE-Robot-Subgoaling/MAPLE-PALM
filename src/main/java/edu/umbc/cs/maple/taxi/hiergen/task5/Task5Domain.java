@@ -4,6 +4,7 @@ import burlap.mdp.auxiliary.DomainGenerator;
 import burlap.mdp.auxiliary.common.NullTermination;
 import burlap.mdp.core.TerminalFunction;
 import burlap.mdp.core.action.ActionType;
+import burlap.mdp.core.action.UniversalActionType;
 import burlap.mdp.singleagent.common.NullRewardFunction;
 import burlap.mdp.singleagent.model.RewardFunction;
 import burlap.mdp.singleagent.oo.OOSADomain;
@@ -64,7 +65,10 @@ public class Task5Domain implements DomainGenerator {
         }
 
         domain.addActionTypes(
-
+                new UniversalActionType(ACTION_NORTH),
+                new UniversalActionType(ACTION_SOUTH),
+                new UniversalActionType(ACTION_EAST),
+                new UniversalActionType(ACTION_WEST)
         );
 
         return domain;

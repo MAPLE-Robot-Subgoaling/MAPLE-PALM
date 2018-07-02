@@ -191,4 +191,7 @@ public class GroundedTask {
         return hashCodeBuilder.toHashCode();
     }
 
+    public Task getTask() {
+        return t;
+    }
 }

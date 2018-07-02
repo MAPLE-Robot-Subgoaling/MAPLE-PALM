@@ -1,3 +1,4 @@
+name: expert
 hierarchyConfigMap:
    root:
       children:
