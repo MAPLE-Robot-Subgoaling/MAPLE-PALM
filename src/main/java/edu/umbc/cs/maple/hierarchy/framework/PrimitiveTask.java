@@ -18,7 +18,7 @@ public class PrimitiveTask extends Task{
     }
 
     @Override
-    public double reward(State s, Action a, State sPrime) {
+    public double reward(State s, Action a, State sPrime, String[] params) {
         return ((FactoredModel)this.domain.getModel()).getRf().reward(s, a, sPrime);
     }
 
@@ -28,11 +28,11 @@ public class PrimitiveTask extends Task{
     }
 
     @Override
-    public boolean isFailure(State s, String[] params) {
+    public boolean isFailure(State s, String[] params, boolean unsetParams) {
         return false;
     }
     @Override
-    public boolean isComplete(State s, String[] params){
+    public boolean isComplete(State s, String[] params, boolean unsetParams){
         return true;
     }
 

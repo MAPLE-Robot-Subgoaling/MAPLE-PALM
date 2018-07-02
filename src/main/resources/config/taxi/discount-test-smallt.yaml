@@ -1,5 +1,5 @@
 domain: !!edu.umbc.cs.maple.config.taxi.TaxiConfig
-  state: tiny-6passengers
+  state: discounttestsmall-5passengers
   correct_move: 1.0
   fickle: 0.0
 
@@ -9,12 +9,12 @@ agents:
 #  - kappaExpert
 #  - kappaHierGen
 
-episodes: 150
+episodes: 500
 max_steps: 10000
 trials: 1
 gamma: 0.95
 
-seed: 432232
+seed: 99430
 
 identifier_independent: false
 planning:
@@ -22,7 +22,7 @@ planning:
 
 rmax:
   vmax: 10.0
-  threshold: 1
+  threshold: 3
   max_delta: 0.000001
   max_delta_rmaxq: 0.000001
   max_iterations_in_model: 1000

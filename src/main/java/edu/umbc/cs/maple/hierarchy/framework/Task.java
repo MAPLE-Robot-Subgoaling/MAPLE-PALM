@@ -132,18 +132,19 @@ public abstract class Task {
      * determines if the current task is terminated in state s which parameterization a
      * @param s the current state
      * @param params the parameters from the specific grounding of the task
+     * @param unsetParamsWhenFinished if true, ensures that the goal/fail tf/rf will have null params after this call
      * @return boolean indicating if the action a is terminated in state s
      */
-    public abstract boolean isFailure(State s, String[] params);
+    public abstract boolean isFailure(State s, String[] params, boolean unsetParamsWhenFinished);
 
     public final boolean isFailure(State s, Action a) {
         String[] params = parseParams(a);
-        return isFailure(s, params);
+        return isFailure(s, params, true);
     }
 
     public final boolean isComplete(State s, Action a) {
         String[] params = parseParams(a);
-        return isComplete(s, params);
+        return isComplete(s, params, true);
     }
 
     /**
@@ -152,9 +153,9 @@ public abstract class Task {
      * @param params the parameters of the specific grounded task
      * @return wether a is complete in s
      */
-    public abstract boolean isComplete(State s, String[] params);
+    public abstract boolean isComplete(State s, String[] params, boolean unsetParamsWhenFinished);
 
-    public abstract double reward(State s, Action a, State sPrime);
+    public abstract double reward(State s, Action a, State sPrime, String[] params);
 
     public static String[] parseParams(Action action) {
         String[] params = null;

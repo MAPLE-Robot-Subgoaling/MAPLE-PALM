@@ -52,11 +52,12 @@ public class NonprimitiveTask extends Task {
      * @param s the original state that is being transitioned from
      * @param a the action associated with the grounded version of this task
      * @param sPrime the next state that is being transitioned into
+     * @param params the parameters of the grounded version of this task
      * @return the rewardTotal assigned to s by the rewardTotal function
      */
     @Override
-    public double reward(State s, Action a, State sPrime){
-        return goalFailRF.reward(s, a, sPrime);
+    public double reward(State s, Action a, State sPrime, String[] params){
+        return goalFailRF.reward(s, a, sPrime, params);
     }
 
     /**
@@ -69,14 +70,18 @@ public class NonprimitiveTask extends Task {
     }
 
     @Override
-    public boolean isFailure(State s, String[] params) {
+    public boolean isFailure(State s, String[] params, boolean unsetParams) {
         boolean atFailure = goalFailTF.atFailure(s, params);
+        goalFailTF.setGoalParams(null);
+        goalFailTF.setFailParams(null);
         return atFailure;
     }
 
     @Override
-    public boolean isComplete(State s, String[] params){
+    public boolean isComplete(State s, String[] params, boolean unsetParams){
         boolean atGoal = goalFailTF.atGoal(s, params);
+        goalFailTF.setGoalParams(null);
+        goalFailTF.setFailParams(null);
         return atGoal;
     }
 

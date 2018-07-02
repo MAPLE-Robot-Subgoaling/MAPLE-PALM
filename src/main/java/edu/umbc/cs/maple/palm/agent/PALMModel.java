@@ -6,14 +6,16 @@ import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.environment.EnvironmentOutcome;
 import burlap.mdp.singleagent.model.FactoredModel;
 import burlap.mdp.singleagent.model.TransitionProb;
+import edu.umbc.cs.maple.hierarchy.framework.ParameterizedFullModel;
 import edu.umbc.cs.maple.utilities.DiscountProvider;
 
 import java.util.List;
 
-public abstract class PALMModel extends FactoredModel {
+public abstract class PALMModel extends FactoredModel implements ParameterizedFullModel {
 
     protected String[] params;
 
+    @Override
     public void setParams(String[] params) {
         this.params = params;
     }
@@ -43,7 +45,7 @@ public abstract class PALMModel extends FactoredModel {
     @Override
     public abstract List<TransitionProb> transitions(State s, Action a);
 
-    public abstract void updateModel(EnvironmentOutcome result, int stepsTaken);
+    public abstract boolean updateModel(EnvironmentOutcome result, int stepsTaken, String[] params);
 
     public abstract DiscountProvider getDiscountProvider();
 

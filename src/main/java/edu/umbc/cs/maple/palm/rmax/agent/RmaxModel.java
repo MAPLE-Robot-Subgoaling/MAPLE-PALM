@@ -103,7 +103,7 @@ public abstract class RmaxModel extends PALMModel {
     //the model is terminal if the task is completed or if it fails, or is the imagined state
     @Override
     public boolean terminal(State s) {
-        boolean failOrComplete = task.isFailure(s, params) || task.isComplete(s, params);
+        boolean failOrComplete = task.isFailure(s, params, true) || task.isComplete(s, params, true);
         if (failOrComplete) { return true; }
         if (hImaginedState == null) { return false; }
         HashableState hs = hashingFactory.hashState(s);
@@ -148,7 +148,10 @@ public abstract class RmaxModel extends PALMModel {
      * information in the outcome
      * @param result the outcome of the latest action specific to the task rewards and abstractions
      */
-    public void updateModel(EnvironmentOutcome result, int stepsTaken){
+    public boolean updateModel(EnvironmentOutcome result, int stepsTaken, String[] params){
+
+        // set any parameterized variables for this model (from the grounding of the task)
+        setParams(params);
 
         HashableState hs = this.hashingFactory.hashState(result.o);
         double reward = result.r;
@@ -169,16 +172,9 @@ public abstract class RmaxModel extends PALMModel {
         if (stateActionCount >= mThreshold) {
             updateApproximationModels(hsPrimeToOutcomes, hs, a, hsPrime, outcome, stateActionCount);
             // remove imagined transition
-//            PossibleOutcome imaginedOutcome = getPossibleOutcome(hsPrimeToOutcomes, hs, a, hImaginedState);
             hsPrimeToOutcomes.remove(hImaginedState);
         } else {
             hsPrimeToOutcomes = getHsPrimeToOutcomes(hs, a);
-//            double imaginedR = 0.0;
-//            double equalP = 1.0 / (1.0 * hsPrimeToOutcomes.size());
-//            outcome.setReward(imaginedR);
-//            outcome.setTransitionProbability(equalP);
-//            outcome.setReward(imaginedR);
-//            outcome.setTransitionProbability(equalP);
             double ignoreR = 0.0;
             double ignoreP = 0.0;
             double imaginedR = rmax;
@@ -200,6 +196,8 @@ public abstract class RmaxModel extends PALMModel {
                 otherOutcome.setTransitionProbability(ignoreP);
             }
         }
+        setParams(null);
+        return true;
     }
 
     @Override
