@@ -89,8 +89,6 @@ public class PALMLearningAgent implements LearningAgent {
 
     private PALMModelGenerator modelGenerator;
 
-    private long actualTimeElapsed = 0;
-
     /**
      * create a PALM agent on a given task
      * @param root the root of the hierarchy to learn
@@ -124,19 +122,13 @@ public class PALMLearningAgent implements LearningAgent {
         //runtime
         long start = System.nanoTime();
         System.out.println("PALM episode start time: " + start);
-        actualTimeElapsed = System.currentTimeMillis();
+        long actualTimeElapsed = System.currentTimeMillis();
         SimpleDateFormat sdf = new SimpleDateFormat("MMM dd,yyyy HH:mm:ss");
         Date resultdate = new Date(actualTimeElapsed);
         System.out.println(sdf.format(resultdate));
 
         steps = 0;
         State initialState = env.currentObservation();
-
-//        Taxi taxi = new Taxi();
-//        taxi.generateDomain();
-//        OOSADomain temp = taxi.generateDomain();
-//        List<State> state = StateReachability.getReachableStates(initialState, temp, hashingFactory);
-//        System.out.println(state.size());
 
         e = new Episode(initialState);
         groundedRoot = root.getAllGroundedTasks(initialState).get(0);
@@ -154,8 +146,8 @@ public class PALMLearningAgent implements LearningAgent {
         long estimatedTime = System.nanoTime() - start;
         System.out.println("Nano time elapsed:  " + estimatedTime);
 
-        actualTimeElapsed = System.currentTimeMillis() - actualTimeElapsed;
-        System.out.println("Clock time elapsed: " + actualTimeElapsed);
+//        actualTimeElapsed = System.currentTimeMillis() - actualTimeElapsed;
+//        System.out.println("Clock time elapsed: " + actualTimeElapsed);
 
         return e;
     }
@@ -198,121 +190,117 @@ public class PALMLearningAgent implements LearningAgent {
 
         tabLevel += "\t";
 
-        State baseState = e.stateSequence.get(e.stateSequence.size() - 1);
-        State currentState = task.mapState(baseState);
-        State pastState = currentState;
+        State currentStateGrounded = e.stateSequence.get(e.stateSequence.size() - 1);
+        State currentStateAbstract = task.mapState(currentStateGrounded);
+        State pastStateAbstract = currentStateAbstract;
         PALMModel model = getModel(task);
         int actionCount = 0;
 
         if(task.isPrimitive()) {
             EnvironmentOutcome result;
-            Action a = task.getAction();
-            Action unMaskedAction = a;
+            Action maskedAction = task.getAction();
             //somewhat generalized unmasking:
             //copy the action, and unmask the copy, execute the unmasked action
             //this allows the task to always store the masked version for model/planning purposes
+            Action action;
             if (parent.isMasked()) {
-                unMaskedAction = a.copy();
+                action = maskedAction.copy();
                 //for now, reliant on parent of masked task to be unmasked. This may not be a safe assumption
                 //there may be a need to traverse arbitrarily far up the task hierarchy to find an unmasked ancestor
                 //in order to recover the true parameters.
                 String trueParameters = ((ObjectParameterizedAction)parent.getAction()).getObjectParameters()[0];
-                ((ObjectParameterizedAction) unMaskedAction).getObjectParameters()[0] = trueParameters;
+                ((ObjectParameterizedAction) action).getObjectParameters()[0] = trueParameters;
+            } else {
+                // action was not masked
+                action = maskedAction;
             }
-//            System.out.println(tabLevel + "    " + a.toString());
-            result = baseEnv.executeAction(unMaskedAction);
+
+            result = baseEnv.executeAction(action);
 
             SimulatedEnvironment simEnv = (SimulatedEnvironment)((EnvironmentServer)baseEnv).getEnvironmentDelegate();
             simEnv.setAllowActionFromTerminalStates(false);
 
             e.transition(result);
-            baseState = result.op;
-            currentState = task.mapState(result.op);
-            result.o = pastState;
-            result.op = currentState;
-            result.a = unMaskedAction;
+            currentStateAbstract = task.mapState(result.op);
+            result.o = pastStateAbstract;
+            result.a = action;
+            result.op = currentStateAbstract;
             String[] params = getParams(task);
-            result.r = task.getReward(pastState, unMaskedAction, currentState, params);
+            result.r = task.getReward(pastStateAbstract, action, currentStateAbstract, params);
             steps++;
+
             return true;
         }
 
         List<String> subtasksExecuted = new ArrayList<>();
-
-        boolean allChildrenBeyondThreshold = true;
+        boolean allChildrenAtOrBeyondThreshold = true;
 
 		while(
 			// while task still valid
-		        !(task.isFailure(currentState) || task.isComplete(currentState))
+		        !(task.isFailure(currentStateAbstract) || task.isComplete(currentStateAbstract))
 			// and still have steps it can take
                 && (steps < maxSteps || maxSteps == -1)
             // and it hasn't solved the root goal, keep planning
-            //    && !(groundedRoot.isComplete(groundedRoot.mapState(baseState)))
-        ){
+            //  disabled for now: //  && !(groundedRoot.isComplete(groundedRoot.mapState(baseState)))
+        ) {
+
             actionCount++;
-            boolean subtaskCompleted = false;
-            pastState = currentState;
-            EnvironmentOutcome result;
 
-            Action a = nextAction(task, currentState);
-            String actionName = StringFormat.parameterizedActionName(a);
-            GroundedTask action = this.taskNames.get(actionName);
-            if(action == null){
-                addChildrenToMap(task, currentState);
-                action = this.taskNames.get(actionName);
-            }
+            pastStateAbstract = currentStateAbstract;
 
-			if (waitForChildren && allChildrenBeyondThreshold && !action.isPrimitive()) {
-				State s = currentState;
-				PALMModel m = getModel(task);
-				if (!m.isConvergedFor(s, a, null)) {
-					allChildrenBeyondThreshold = false;
-				}
-			}
-            // solve this task's next chosen subtask, recursively
-            int stepsBefore = steps;
+            Action action = nextAction(task, currentStateAbstract);
+            GroundedTask childTask = nextSubtask(task, action, currentStateAbstract);
+
 //            System.out.println(tabLevel + ">>>>> " + task.toString() + " >>>>> " + action);
-            subtaskCompleted = solveTask(task, action, baseEnv, maxSteps);
+
+            int stepsBefore = steps;
+            boolean subtaskCompleted = solveTask(task, childTask, baseEnv, maxSteps);
+
             int stepsAfter = steps;
             int stepsTaken = stepsAfter - stepsBefore;
             if (stepsTaken == 0) {
                 System.err.println("took a 0 step action");
             }
 
-            tabLevel = tabLevel.substring(0,tabLevel.length()-1);
+            tabLevel = tabLevel.substring(0, tabLevel.length() - 1);
 
-            baseState = e.stateSequence.get(e.stateSequence.size() - 1);
-            currentState = task.mapState(baseState);
+            currentStateGrounded = e.stateSequence.get(e.stateSequence.size() - 1);
+            currentStateAbstract = task.mapState(currentStateGrounded);
+
+            // reward rollup scheme
 //            double sumChildRewards = e.rewardSequence.subList(stepsBefore, stepsAfter).stream().mapToDouble(Double::doubleValue).sum();
 //            double discount = 1.0;// getModel(task).getDiscountProvider().yield(pastState, a, currentState);
 //            double discountOverTime = Math.pow(discount, stepsTaken);
 //            double discountedReward = sumChildRewards * discountOverTime;
-            String[] params = getParams(task);
-            double pseudoReward = task.getReward(pastState, a, currentState, params);
 //            System.out.println(sumChildRewards + " " + discount + " " + discountOverTime + " " + discountedReward);
-//            double taskReward = discountedReward + task.getReward(pastState, a, currentState);
+//            double taskReward = discountedReward + task.getReward(pastStateAbstract, a, currentStateAbstract, params);
+//            double taskReward = discountedReward;
+
+            String[] params = getParams(task);
+            double pseudoReward = task.getReward(pastStateAbstract, action, currentStateAbstract, params);
             double taskReward = pseudoReward;//task.getReward(pastState, a, currentState);
 //            double taskReward = pseudoReward <= PSEUDOREWARD_ON_FAIL || pseudoReward >= PSEUDOREWARD_ON_GOAL ? pseudoReward : discountedReward;
-//            double taskReward = discountedReward;
-            result = new EnvironmentOutcome(pastState, a, currentState, taskReward, false);
+            EnvironmentOutcome result = new EnvironmentOutcome(pastStateAbstract, action, currentStateAbstract, taskReward, false);
 
-            // update task model if the subtask completed correctly
-            // the case in which this is NOT updated is if the subtask failed or did not take at least one step
-            // for example, the root "solve" task may not complete
-			if(subtaskCompleted) {
-				model.updateModel(result, stepsTaken, params);
-				subtasksExecuted.add(action.toString()+"++");
-			} else {
-                subtasksExecuted.add(action.toString()+"--");
+            StringBuilder resultString = new StringBuilder(action.toString());
+            resultString.append(subtaskCompleted ? "+" : "--");
+            if (subtaskCompleted) {
+                boolean atOrBeyondThreshold = model.updateModel(result, stepsTaken, params);
+                resultString.append(atOrBeyondThreshold ? "+" : "-");
+                if (!atOrBeyondThreshold) {
+                    allChildrenAtOrBeyondThreshold = false;
+                }
             }
+            subtasksExecuted.add(resultString.toString());
         }
 
 //        if (task.toString().contains("solve")) {
             System.out.println(subtasksExecuted.size() + " " + subtasksExecuted);
 //        }
 
-		boolean parentShouldUpdateModel = task.isComplete(currentState) || actionCount == 0;
-		parentShouldUpdateModel = parentShouldUpdateModel && allChildrenBeyondThreshold;
+        boolean taskCompleted = task.isComplete(currentStateAbstract);
+        boolean parentShouldUpdateModel = taskCompleted || actionCount == 0;
+		parentShouldUpdateModel = parentShouldUpdateModel && allChildrenAtOrBeyondThreshold;
 		return parentShouldUpdateModel;
 	}
 	
@@ -328,7 +316,16 @@ public class PALMLearningAgent implements LearningAgent {
 		}
 	}
 
-	public static boolean PRINT = false;
+	protected GroundedTask nextSubtask(GroundedTask task, Action action, State currentStateAbstract) {
+        String actionName = StringFormat.parameterizedActionName(action);
+        GroundedTask subtask = this.taskNames.get(actionName);
+        if(subtask == null){
+            addChildrenToMap(task, currentStateAbstract);
+            subtask = this.taskNames.get(actionName);
+        }
+        return subtask;
+    }
+
 	/**
 	 * plan over the given task's model and pick the best action to do next favoring unmodeled actions
 	 * @param task the current task

@@ -41,7 +41,7 @@ output:
     width: 300
     height: 200
     columns: 2
-    max_height: 900
+    max_height: 693
     trial_mode: MOST_RECENT_AND_AVERAGE
 
     metrics:

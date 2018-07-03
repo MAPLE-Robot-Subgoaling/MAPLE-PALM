@@ -386,8 +386,8 @@ public class TaxiStateFactory {
 
         List<TaxiLocation> locations = new ArrayList<TaxiLocation>();
         locations.add(new TaxiLocation(CLASS_LOCATION + 0, 0, 0, COLOR_RED));
-        locations.add(new TaxiLocation(CLASS_LOCATION + 1, 1, 1, COLOR_GREEN));
-        locations.add(new TaxiLocation(CLASS_LOCATION + 2, 2, 1, COLOR_YELLOW));
+        locations.add(new TaxiLocation(CLASS_LOCATION + 1, 0, 1, COLOR_GREEN));
+        locations.add(new TaxiLocation(CLASS_LOCATION + 2, 4, 1, COLOR_YELLOW));
         locations.add(new TaxiLocation(CLASS_LOCATION + 3, 3, 0, COLOR_BLUE));
 
         List<TaxiPassenger> passengers = new ArrayList<TaxiPassenger>();
