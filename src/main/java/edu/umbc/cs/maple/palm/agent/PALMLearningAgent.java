@@ -89,8 +89,6 @@ public class PALMLearningAgent implements LearningAgent {
 
     private PALMModelGenerator modelGenerator;
 
-    private long actualTimeElapsed = 0;
-
     /**
      * create a PALM agent on a given task
      * @param root the root of the hierarchy to learn
@@ -124,7 +122,7 @@ public class PALMLearningAgent implements LearningAgent {
         //runtime
         long start = System.nanoTime();
         System.out.println("PALM episode start time: " + start);
-        actualTimeElapsed = System.currentTimeMillis();
+        long actualTimeElapsed = System.currentTimeMillis();
         SimpleDateFormat sdf = new SimpleDateFormat("MMM dd,yyyy HH:mm:ss");
         Date resultdate = new Date(actualTimeElapsed);
         System.out.println(sdf.format(resultdate));
@@ -148,8 +146,8 @@ public class PALMLearningAgent implements LearningAgent {
         long estimatedTime = System.nanoTime() - start;
         System.out.println("Nano time elapsed:  " + estimatedTime);
 
-        actualTimeElapsed = System.currentTimeMillis() - actualTimeElapsed;
-        System.out.println("Clock time elapsed: " + actualTimeElapsed);
+//        actualTimeElapsed = System.currentTimeMillis() - actualTimeElapsed;
+//        System.out.println("Clock time elapsed: " + actualTimeElapsed);
 
         return e;
     }
