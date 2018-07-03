@@ -82,6 +82,11 @@ public class PALMLearningAgent implements LearningAgent {
     // if true, uses model sharing, forcing the same model regardless of the parameterized object
     private boolean useModelSharing;
 
+    // if true, update all models which share actions regardless of hierarchy relationship
+    private boolean crossPolicyLearning;
+
+    // if true, update all ancestor models with mid-policy behavior of children -- potentially allows replanning
+    private boolean ancestorPolicyLearning;
     /**
      * the current episode
      */
@@ -105,6 +110,8 @@ public class PALMLearningAgent implements LearningAgent {
         this.modelGenerator = modelGenerator;
         this.waitForChildren = waitForChildren;
         this.useModelSharing = useModelSharing;
+        this.crossPolicyLearning = useModelSharing;
+        this.ancestorPolicyLearning = useModelSharing;
     }
 
     public PALMLearningAgent(Task root, PALMModelGenerator modelGenerator, HashableStateFactory hsf, ExperimentConfig config) {
@@ -193,6 +200,8 @@ public class PALMLearningAgent implements LearningAgent {
         State currentStateGrounded = e.stateSequence.get(e.stateSequence.size() - 1);
         State currentStateAbstract = task.mapState(currentStateGrounded);
         State pastStateAbstract = currentStateAbstract;
+
+        State pastStateGrounded = currentStateGrounded;
         int actionCount = 0;
 
         if(task.isPrimitive()) {
@@ -242,7 +251,6 @@ public class PALMLearningAgent implements LearningAgent {
             // and it hasn't solved the root goal, keep planning
             //  disabled for now: //  && !(groundedRoot.isComplete(groundedRoot.mapState(baseState)))
         ) {
-
             actionCount++;
 
             pastStateAbstract = currentStateAbstract;
@@ -285,6 +293,12 @@ public class PALMLearningAgent implements LearningAgent {
             resultString.append(subtaskCompleted ? "+" : "--");
             PALMModel model = getModel(task);
             if (subtaskCompleted) {
+
+                if(crossPolicyLearning){
+			        updateAllPossibleModels(pastStateGrounded, action, currentStateGrounded, stepsTaken);
+                }else {
+                    model.updateModel(result, stepsTaken, params);
+                }
                 boolean atOrBeyondThreshold = model.updateModel(result, stepsTaken, params);
                 resultString.append(atOrBeyondThreshold ? "+" : "-");
                 if (!atOrBeyondThreshold) {
@@ -373,7 +387,34 @@ public class PALMLearningAgent implements LearningAgent {
         model.setParams(null);
     	return action;
 	}
-
+    protected void updateAllPossibleModels(State pastStateGrounded, Action a, State currentBaseState, int stepsTaken){
+	    List<PALMModel> updatedModels = new ArrayList<>();
+	    PALMModel m;
+	    GroundedTask parent;
+	    EnvironmentOutcome result;
+	    String[] params;
+	    State taskPastState, taskCurrentState;
+	   for(Map.Entry<String, GroundedTask> e : this.taskNames.entrySet()){
+	       parent = e.getValue();
+	       m = getModel(parent);
+	       if(updatedModels.contains(m) || parent.isPrimitive()) continue;
+	       params = getParams(parent);
+	       taskPastState = parent.mapState(pastStateGrounded);
+	       taskCurrentState = parent.mapState(currentBaseState);
+	       List<GroundedTask> children = parent.getGroundedChildTasks(taskPastState);
+	       for(GroundedTask t : children){
+	           if(t.getAction().actionName().equals(a.actionName()) && Arrays.equals(getParams(t), getParams(a))){
+	               double psuedoreward = parent.getReward(taskPastState, a, taskCurrentState, params);
+	               result = new EnvironmentOutcome(taskPastState, a, taskCurrentState, psuedoreward, true);
+	               m.updateModel(result,stepsTaken, params);
+	               updatedModels.add(m);
+	               break;
+               }
+           }
+       }
+       System.out.println(a.actionName() +", updated " + updatedModels.size());
+	   System.out.print("[");
+    }
     protected PALMModel getModel(GroundedTask t){
 //        PALMModel model = models.get(t);
         // idea: try to do lookup such that models are shared across certain AMDP classes
