@@ -174,7 +174,8 @@ public abstract class RmaxModel extends PALMModel {
         outcome.setRewardTotal(stepsTaken, newRewardTotalSASP);
 
         int stateActionCount = getStateActionCount(hsPrimeToOutcomes, hs, a);
-        if (stateActionCount >= mThreshold) {
+        boolean atOrBeyondThreshold = stateActionCount >= mThreshold;
+        if (atOrBeyondThreshold) {
             updateApproximationModels(hsPrimeToOutcomes, hs, a, hsPrime, outcome, stateActionCount);
             // remove imagined transition
             hsPrimeToOutcomes.remove(hImaginedState);
@@ -202,7 +203,7 @@ public abstract class RmaxModel extends PALMModel {
             }
         }
         setParams(null);
-        return true;
+        return atOrBeyondThreshold;
     }
 
     @Override

@@ -35,9 +35,9 @@ output:
     enabled: true
 
     width: 500
-    height: 300
+    height: 230
     columns: 2
-    max_height: 900
+    max_height: 693
     trial_mode: MOST_RECENT_AND_AVERAGE
 
     metrics:

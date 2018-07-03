@@ -235,6 +235,7 @@ public class PALMLearningAgent implements LearningAgent {
         }
 
         List<String> subtasksExecuted = new ArrayList<>();
+        boolean allChildrenAtOrBeyondThreshold = true;
 
 		while(
 			// while task still valid
@@ -243,7 +244,7 @@ public class PALMLearningAgent implements LearningAgent {
                 && (steps < maxSteps || maxSteps == -1)
             // and it hasn't solved the root goal, keep planning
             //  disabled for now: //  && !(groundedRoot.isComplete(groundedRoot.mapState(baseState)))
-        ){
+        ) {
 
             actionCount++;
 
@@ -263,37 +264,36 @@ public class PALMLearningAgent implements LearningAgent {
                 System.err.println("took a 0 step action");
             }
 
-            tabLevel = tabLevel.substring(0,tabLevel.length()-1);
+            tabLevel = tabLevel.substring(0, tabLevel.length() - 1);
 
             currentStateGrounded = e.stateSequence.get(e.stateSequence.size() - 1);
             currentStateAbstract = task.mapState(currentStateGrounded);
 
-            double sumChildRewards = e.rewardSequence.subList(stepsBefore, stepsAfter).stream().mapToDouble(Double::doubleValue).sum();
-            double discount = 1.0;// getModel(task).getDiscountProvider().yield(pastState, a, currentState);
-            double discountOverTime = Math.pow(discount, stepsTaken);
-            double discountedReward = sumChildRewards * discountOverTime;
+            // reward rollup scheme
+//            double sumChildRewards = e.rewardSequence.subList(stepsBefore, stepsAfter).stream().mapToDouble(Double::doubleValue).sum();
+//            double discount = 1.0;// getModel(task).getDiscountProvider().yield(pastState, a, currentState);
+//            double discountOverTime = Math.pow(discount, stepsTaken);
+//            double discountedReward = sumChildRewards * discountOverTime;
+//            System.out.println(sumChildRewards + " " + discount + " " + discountOverTime + " " + discountedReward);
+//            double taskReward = discountedReward + task.getReward(pastStateAbstract, a, currentStateAbstract, params);
+//            double taskReward = discountedReward;
+
             String[] params = getParams(task);
             double pseudoReward = task.getReward(pastStateAbstract, action, currentStateAbstract, params);
-            System.out.println(sumChildRewards + " " + discount + " " + discountOverTime + " " + discountedReward);
-//            double taskReward = discountedReward + task.getReward(pastStateAbstract, a, currentStateAbstract, params);
             double taskReward = pseudoReward;//task.getReward(pastState, a, currentState);
 //            double taskReward = pseudoReward <= PSEUDOREWARD_ON_FAIL || pseudoReward >= PSEUDOREWARD_ON_GOAL ? pseudoReward : discountedReward;
-//            double taskReward = discountedReward;
             EnvironmentOutcome result = new EnvironmentOutcome(pastStateAbstract, action, currentStateAbstract, taskReward, false);
 
-//            boolean subtaskCompleted = results[0];
-//            boolean shouldUpdateModel = results[1];
-
+            StringBuilder resultString = new StringBuilder(action.toString());
+            resultString.append(subtaskCompleted ? "+" : "--");
             if (subtaskCompleted) {
-                model.updateModel(result, stepsTaken, params);
+                boolean atOrBeyondThreshold = model.updateModel(result, stepsTaken, params);
+                resultString.append(atOrBeyondThreshold ? "+" : "-");
+                if (!atOrBeyondThreshold) {
+                    allChildrenAtOrBeyondThreshold = false;
+                }
             }
-
-//            allChildrenBeyondThreshold &= subtaskCompleted & shouldUpdateModel;
-//
-//            StringBuilder resultString = new StringBuilder(action.toString());
-//            resultString.append(subtaskCompleted ? "+" : "-");
-//            resultString.append(shouldUpdateModel ? "+" : "-");
-//            subtasksExecuted.add(resultString.toString());
+            subtasksExecuted.add(resultString.toString());
         }
 
 //        if (task.toString().contains("solve")) {
@@ -302,8 +302,8 @@ public class PALMLearningAgent implements LearningAgent {
 
         boolean taskCompleted = task.isComplete(currentStateAbstract);
         boolean parentShouldUpdateModel = taskCompleted || actionCount == 0;
-		parentShouldUpdateModel = parentShouldUpdateModel;// && allChildrenBeyondThreshold;
-		return taskCompleted;//new boolean[]{taskCompleted, parentShouldUpdateModel};
+		parentShouldUpdateModel = parentShouldUpdateModel && allChildrenAtOrBeyondThreshold;
+		return parentShouldUpdateModel;
 	}
 	
 	/**
