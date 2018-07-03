@@ -12,6 +12,7 @@ import edu.umbc.cs.maple.cleanup.hierarchies.CleanupHierarchy;
 import edu.umbc.cs.maple.cleanup.hierarchies.CleanupHierarchyAMDP;
 import edu.umbc.cs.maple.config.ExperimentConfig;
 import edu.umbc.cs.maple.hierarchy.framework.Task;
+import edu.umbc.cs.maple.state.hashing.bugfix.BugfixHashableStateFactory;
 import edu.umbc.cs.maple.state.hashing.cached.CachedHashableStateFactory;
 import edu.umbc.cs.maple.taxi.TaxiVisualizer;
 import edu.umbc.cs.maple.taxi.hierarchies.TaxiHierarchy;
@@ -70,7 +71,7 @@ public class AMDPPlanTest {
 //        CleanupHierarchy hierarchy = new CleanupHierarchyAMDP();
         Task palmRoot = hierarchy.createHierarchy(config, true);
         OOSADomain base = hierarchy.getBaseDomain();
-        HashableStateFactory hashingFactory = new SimpleHashableStateFactory(false);
+        HashableStateFactory hashingFactory = new BugfixHashableStateFactory(false);
 //        HashableStateFactory hashingFactory = new CachedHashableStateFactory(false);
         plan(config, palmRoot, s, hashingFactory, base);
     }

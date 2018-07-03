@@ -1,5 +1,5 @@
 domain: !!edu.umbc.cs.maple.config.taxi.TaxiConfig
-  state: medium-4passengers
+  state: medium-3passengers
   correct_move: 1.0
   fickle: 0.00
 
@@ -13,11 +13,11 @@ agents:
 #  - kappaHierGen
 #  - qLearning
 
-seed: 86520100
-episodes: 100
+seed: 3344567
+episodes: 200
 max_steps: 100000
 trials: 1
-gamma: 0.99
+gamma: 0.95
 
 identifier_independent: false
 planning:
@@ -31,7 +31,7 @@ rmax:
   max_iterations_in_model: 1000
   use_multitime_model: true
   wait_for_children: true
-  use_model_sharing: false
+  use_model_sharing: true
 
 
 output:

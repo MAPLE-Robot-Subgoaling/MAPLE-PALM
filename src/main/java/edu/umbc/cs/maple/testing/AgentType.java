@@ -15,6 +15,7 @@ import edu.umbc.cs.maple.palm.rmax.agent.ExpectedRmaxModelGenerator;
 import edu.umbc.cs.maple.palm.rmax.agent.ExpertNavModelGenerator;
 import edu.umbc.cs.maple.palm.rmax.agent.PALMRmaxModelGenerator;
 import edu.umbc.cs.maple.rmaxq.agent.RmaxQLearningAgent;
+import edu.umbc.cs.maple.state.hashing.bugfix.BugfixHashableStateFactory;
 import edu.umbc.cs.maple.state.hashing.cached.CachedHashableStateFactory;
 
 import java.util.Arrays;
@@ -127,7 +128,8 @@ public enum AgentType {
 
     public static HashableStateFactory initializeHashableStateFactory(boolean identifierIndependent) {
 //        return new CachedHashableStateFactory(identifierIndependent);
-        return new SimpleHashableStateFactory(identifierIndependent);
+//        return new SimpleHashableStateFactory(identifierIndependent);
+        return new BugfixHashableStateFactory(identifierIndependent);
     }
 
     public static LearningAgentFactory generate(String agentTypeString, ExperimentConfig config, Task expertRoot, Task hierGenRoot, Task qLearningWrapper) {
