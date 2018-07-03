@@ -62,7 +62,7 @@ public class TaxiNavState implements MutableOOState, DeepCopyForShallowCopyState
     }
 
     public Map<String, TaxiNavWall> touchWalls(){
-        this.walls = new HashMap<String, TaxiNavWall>(walls);
+        this.walls = new HashMap<>(walls);
         return walls;
     }
 
@@ -108,11 +108,11 @@ public class TaxiNavState implements MutableOOState, DeepCopyForShallowCopyState
     @Override
     public List<ObjectInstance> objectsOfClass(String oclass) {
         if(oclass.equals(CLASS_TAXI))
-            return taxi == null ? new ArrayList<ObjectInstance>() : Arrays.<ObjectInstance>asList(taxi);
+            return taxi == null ? new ArrayList<>() : Arrays.<ObjectInstance>asList(taxi);
         else if(oclass.equals(CLASS_LOCATION))
-            return new ArrayList<ObjectInstance>(locations.values());
+            return new ArrayList<>(locations.values());
         else if(oclass.equals(CLASS_WALL))
-            return new ArrayList<ObjectInstance>(walls.values());
+            return new ArrayList<>(walls.values());
         throw new RuntimeException("No object class " + oclass);
     }
 

@@ -193,7 +193,6 @@ public class PALMLearningAgent implements LearningAgent {
         State currentStateGrounded = e.stateSequence.get(e.stateSequence.size() - 1);
         State currentStateAbstract = task.mapState(currentStateGrounded);
         State pastStateAbstract = currentStateAbstract;
-        PALMModel model = getModel(task);
         int actionCount = 0;
 
         if(task.isPrimitive()) {
@@ -218,7 +217,7 @@ public class PALMLearningAgent implements LearningAgent {
             result = baseEnv.executeAction(action);
 
             SimulatedEnvironment simEnv = (SimulatedEnvironment)((EnvironmentServer)baseEnv).getEnvironmentDelegate();
-            simEnv.setAllowActionFromTerminalStates(false);
+            simEnv.setAllowActionFromTerminalStates(true);
 
             e.transition(result);
             currentStateAbstract = task.mapState(result.op);
@@ -284,6 +283,7 @@ public class PALMLearningAgent implements LearningAgent {
 
             StringBuilder resultString = new StringBuilder(action.toString());
             resultString.append(subtaskCompleted ? "+" : "--");
+            PALMModel model = getModel(task);
             if (subtaskCompleted) {
                 boolean atOrBeyondThreshold = model.updateModel(result, stepsTaken, params);
                 resultString.append(atOrBeyondThreshold ? "+" : "-");
@@ -294,9 +294,9 @@ public class PALMLearningAgent implements LearningAgent {
             subtasksExecuted.add(resultString.toString());
         }
 
-//        if (task.toString().contains("solve")) {
+        if (task.toString().contains("solve")) {
             System.out.println(subtasksExecuted.size() + " " + subtasksExecuted);
-//        }
+        }
 
         boolean taskCompleted = task.isComplete(currentStateAbstract);
         boolean parentShouldUpdateModel = taskCompleted || actionCount == 0;

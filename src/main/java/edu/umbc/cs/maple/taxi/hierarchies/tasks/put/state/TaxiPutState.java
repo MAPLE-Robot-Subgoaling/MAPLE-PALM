@@ -82,11 +82,11 @@ public class TaxiPutState extends TaxiGetPutState implements DeepCopyForShallowC
     @Override
     public List<ObjectInstance> objectsOfClass(String oclass) {
         if(oclass.equals(CLASS_TAXI))
-            return taxi == null ? new ArrayList<ObjectInstance>() : Arrays.<ObjectInstance>asList(taxi);
+            return taxi == null ? new ArrayList<>() : Arrays.<ObjectInstance>asList(taxi);
         if(oclass.equals(CLASS_PASSENGER))
-            return new ArrayList<ObjectInstance>(passengers.values());
+            return new ArrayList<>(passengers.values());
         if(oclass.equals(CLASS_LOCATION))
-            return new ArrayList<ObjectInstance>(locations.values());
+            return new ArrayList<>(locations.values());
         throw new RuntimeException("No object class " + oclass);
     }
 
@@ -174,7 +174,7 @@ public class TaxiPutState extends TaxiGetPutState implements DeepCopyForShallowC
     }
 
     public Map<String, TaxiPutPassenger> touchPassengers(){
-        this.passengers = new HashMap<String, TaxiPutPassenger>(passengers);
+        this.passengers = new HashMap<>(passengers);
         return passengers;
     }
 
@@ -188,13 +188,6 @@ public class TaxiPutState extends TaxiGetPutState implements DeepCopyForShallowC
     public Map<String, TaxiPutLocation> touchLocations(){
         this.locations = new HashMap<>(locations);
         return locations;
-    }
-
-    public Object getTaxiAtt(String attName) {
-        if (taxi == null) {
-            return null;
-        }
-        return taxi.get(attName);
     }
 
     @Override
@@ -227,8 +220,8 @@ public class TaxiPutState extends TaxiGetPutState implements DeepCopyForShallowC
     @Override
     public int hashCode() {
         int result = taxi != null ? taxi.hashCode() : 0;
-        result = 31 * result + (passengers != null ? passengers.hashCode() : 0);
-        result = 31 * result + (locations != null ? locations.hashCode() : 0);
+        result = 17 * result + (passengers != null ? passengers.hashCode() : 0);
+        result = 73 * result + (locations != null ? locations.hashCode() : 0);
         return result;
     }
 
@@ -239,5 +232,9 @@ public class TaxiPutState extends TaxiGetPutState implements DeepCopyForShallowC
         copy.touchPassengers();
         copy.touchLocations();
         return copy;
+    }
+
+    public TaxiPutAgent getTaxi() {
+        return taxi;
     }
 }

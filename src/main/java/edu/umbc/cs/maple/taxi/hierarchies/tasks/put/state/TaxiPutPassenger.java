@@ -10,10 +10,6 @@ import static edu.umbc.cs.maple.taxi.TaxiConstants.*;
 
 public class TaxiPutPassenger extends MutableObject {
 
-    /**
-     * current location, whether they are in taxi, the goal, whether they haven been picked up
-     * whether they have just been picked up and haven't changed goal
-     */
     private final static List<Object> keys = Arrays.<Object>asList(
             ATT_GOAL_LOCATION,
             ATT_LOCATION
