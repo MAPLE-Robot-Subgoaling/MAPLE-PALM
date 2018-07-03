@@ -17,6 +17,13 @@ public class CleanupRootGoalPF extends PropositionalFunction {
         this.goal = goal;
     }
 
+    public void setGoal(CleanupGoal goal){
+        this.goal=goal;
+    }
+
+    public CleanupGoal getGoal(){
+        return goal;
+    }
     @Override
     public boolean isTrue(OOState state, String[] params) {
         CleanupGoalDescription[] goals = goal.getGoals();

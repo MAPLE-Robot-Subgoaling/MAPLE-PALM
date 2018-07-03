@@ -8,6 +8,9 @@ public class CleanupGoalDescription {
     private String[] params;
     private PropositionalFunction pf;
 
+    public CleanupGoalDescription(){
+
+    }
     public CleanupGoalDescription(String[] params, PropositionalFunction pf) {
         this.params = params;
         this.pf = pf;

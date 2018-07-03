@@ -641,8 +641,8 @@ public class Cleanup implements DomainGenerator {
 //        Visualizer v = CleanupVisualizer.getVisualizer(cleanup.getWidth(), cleanup.getHeight());
 //        EpisodeSequenceVisualizer esv = new EpisodeSequenceVisualizer(v, domain, episodes);
 //        esv.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-
+//
+//
 //        System.out.println(state1);
 //        System.out.println(state2);
 //
@@ -673,85 +673,85 @@ public class Cleanup implements DomainGenerator {
 //        System.out.println(hs2.equals(hs2));
 //        System.out.println(hs1.equals(hs2));
 //
-////
-////        Visualizer v = CleanupVisualizer.getVisualizer(cleanup.getWidth(), cleanup.getHeight());
-////		VisualExplorer exp = new VisualExplorer(domain, v, state2);
-////		exp.addKeyAction("w", ACTION_NORTH, "");
-////		exp.addKeyAction("s", ACTION_SOUTH, "");
-////		exp.addKeyAction("d", ACTION_EAST, "");
-////		exp.addKeyAction("a", ACTION_WEST, "");
-////		exp.addKeyAction("r", ACTION_PULL, "");
-////		exp.initGUI();
-////		exp.requestFocus();
-////		exp.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 //
-////		OOSADomain domain;
+//        Visualizer v = CleanupVisualizer.getVisualizer(cleanup.getWidth(), cleanup.getHeight());
+//		VisualExplorer exp = new VisualExplorer(domain, v, state2);
+//		exp.addKeyAction("w", ACTION_NORTH, "");
+//		exp.addKeyAction("s", ACTION_SOUTH, "");
+//		exp.addKeyAction("d", ACTION_EAST, "");
+//		exp.addKeyAction("a", ACTION_WEST, "");
+//		exp.addKeyAction("r", ACTION_PULL, "");
+//		exp.initGUI();
+//		exp.requestFocus();
+//		exp.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//
+//		OOSADomain domain;
 //		RewardFunction rf;
 //		TerminalFunction tf;
 //		CleanupGoal goalCondition;
 //		OOState initialState;
 //		HashableStateFactory hashingFactory;
 //		SimulatedEnvironment env;
-////		int minX = 0;
-////		int minY = 0;
-////		int width = 9;
-////		int height = 9;
-////		goalCondition = new CleanupGoal();
-////		rf = new CleanupRF(goalCondition);
-////		tf = new GoalConditionTF(goalCondition);
-////		Cleanup gen = new Cleanup(minX, minY, minX + width, minY + height);
-////		gen.setRf(rf);
-////		gen.setTf(tf);
-////		domain = (OOSADomain) gen.generateDomain();
-////		CleanupGoalDescription[] goals = new CleanupGoalDescription[]{
-////				new CleanupGoalDescription(new String[]{"block0", "room1"}, domain.propFunction(PF_BLOCK_IN_ROOM)),
-////				new CleanupGoalDescription(new String[]{"block1", "room1"}, domain.propFunction(PF_BLOCK_IN_ROOM)),
-////				new CleanupGoalDescription(new String[]{"block2", "room0"}, domain.propFunction(PF_BLOCK_IN_ROOM))
-////		};
-////		goalCondition.setGoals(goals);
-////		initialState = gen.getClassicState(2, 1);
+//		int minX = 0;
+//		int minY = 0;
+//		int width = 9;
+//		int height = 9;
+//		goalCondition = new CleanupGoal();
+//		rf = new CleanupRF(goalCondition);
+//		tf = new GoalConditionTF(goalCondition);
+//		Cleanup gen = new Cleanup(minX, minY, minX + width, minY + height);
+//		gen.setRf(rf);
+//		gen.setTf(tf);
+//		domain = (OOSADomain) gen.generateDomain();
+//		CleanupGoalDescription[] goals = new CleanupGoalDescription[]{
+//				new CleanupGoalDescription(new String[]{"block0", "room1"}, domain.propFunction(PF_BLOCK_IN_ROOM)),
+//				new CleanupGoalDescription(new String[]{"block1", "room1"}, domain.propFunction(PF_BLOCK_IN_ROOM)),
+//				new CleanupGoalDescription(new String[]{"block2", "room0"}, domain.propFunction(PF_BLOCK_IN_ROOM))
+//		};
+//		goalCondition.setGoals(goals);
+//		initialState = gen.getClassicState(2, 1);
 //		hashingFactory = new SimpleHashableStateFactory();
 //        initialState = (OOState) state2;
 //		env = new SimulatedEnvironment(domain, initialState);
-////
-////		Visualizer v = CleanupVisualizer.getVisualizer(width, height);
-////		VisualExplorer exp = new VisualExplorer(domain, v, initialState);
-////		exp.addKeyAction("w", ACTION_NORTH, "");
-////		exp.addKeyAction("s", ACTION_SOUTH, "");
-////		exp.addKeyAction("d", ACTION_EAST, "");
-////		exp.addKeyAction("a", ACTION_WEST, "");
-////		exp.addKeyAction("r", ACTION_PULL, "");
-////		exp.initGUI();
-////		exp.requestFocus();
-////		exp.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//
+//		Visualizer v = CleanupVisualizer.getVisualizer(width, height);
+//		VisualExplorer exp = new VisualExplorer(domain, v, initialState);
+//		exp.addKeyAction("w", ACTION_NORTH, "");
+//		exp.addKeyAction("s", ACTION_SOUTH, "");
+//		exp.addKeyAction("d", ACTION_EAST, "");
+//		exp.addKeyAction("a", ACTION_WEST, "");
+//		exp.addKeyAction("r", ACTION_PULL, "");
+//		exp.initGUI();
+//		exp.requestFocus();
+//		exp.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 //
 //
 //
-////        VisualActionObserver observer = new VisualActionObserver(domain, CleanupVisualizer.getVisualizer(cleanup.getWidth(), cleanup.getHeight()));
-////        observer.initGUI();
-////        env.addObservers(observer);
-////		String outputPath = "./output/";
-////		double gamma = 0.9;
-////		double qInit = 0;
-////		double learningRate = 0.01;
-////		int nEpisodes = 100;
-////		int maxEpisodeSize = 1001;
-////		int writeEvery = 1;
-////        LearningAgent agent = new QLearning(domain, gamma, hashingFactory, qInit, learningRate, maxEpisodeSize);
-////		for(int i = 0; i < nEpisodes; i++){
-////			Episode e = agent.runLearningEpisode(env, maxEpisodeSize);
-////			if (i % writeEvery == 0) {
-////				e.write(outputPath + "ql_" + i);
-////			}
-////			System.out.println(i + ": " + e.maxTimeStep());
-////			env.resetEnvironment();
-////		}
+//        VisualActionObserver observer = new VisualActionObserver(domain, CleanupVisualizer.getVisualizer(cleanup.getWidth(), cleanup.getHeight()));
+//        observer.initGUI();
+//        env.addObservers(observer);
+//		String outputPath = "./output/";
+//		double gamma = 0.9;
+//		double qInit = 0;
+//		double learningRate = 0.01;
+//		int nEpisodes = 100;
+//		int maxEpisodeSize = 1001;
+//		int writeEvery = 1;
+//        LearningAgent agent = new QLearning(domain, gamma, hashingFactory, qInit, learningRate, maxEpisodeSize);
+//		for(int i = 0; i < nEpisodes; i++){
+//			Episode e = agent.runLearningEpisode(env, maxEpisodeSize);
+//			if (i % writeEvery == 0) {
+//				e.write(outputPath + "ql_" + i);
+//			}
+//			System.out.println(i + ": " + e.maxTimeStep());
+//			env.resetEnvironment();
+//		}
 //
 //
 //
-////		Visualizer v = CleanupVisualizer.getVisualizer(width, height);
-////		EpisodeSequenceVisualizer esv = new EpisodeSequenceVisualizer(v, domain, outputPath);
-////		esv.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//		Visualizer v = CleanupVisualizer.getVisualizer(width, height);
+//		EpisodeSequenceVisualizer esv = new EpisodeSequenceVisualizer(v, domain, outputPath);
+//		esv.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
     public TerminalFunction getTf() {
