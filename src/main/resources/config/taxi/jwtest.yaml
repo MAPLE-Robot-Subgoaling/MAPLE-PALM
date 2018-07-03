@@ -1,5 +1,5 @@
 domain: !!edu.umbc.cs.maple.config.taxi.TaxiConfig
-  state: discounttestsmall-1passengers
+  state: tiny-1passengers
   correct_move: 1.0
   fickle: 0.0
 
@@ -22,7 +22,7 @@ planning:
 
 rmax:
   vmax: 10.0
-  threshold: 10
+  threshold: 2
   max_delta: 0.000001
   max_delta_rmaxq: 0.000001
   max_iterations_in_model: 1000
