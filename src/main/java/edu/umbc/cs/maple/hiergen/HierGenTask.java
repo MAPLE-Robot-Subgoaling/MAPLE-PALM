@@ -1,48 +1,44 @@
 package edu.umbc.cs.maple.hiergen;
 
+import burlap.mdp.core.oo.state.OOVariableKey;
+
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
  * Created by khalil8500 on 3/25/2018.
+ * Modified by jwinder1 on 7/9/2018.
  */
 public class HierGenTask {
-    Map<Object, Object> goal;
-    ArrayList<String> actions;
-    ArrayList<Object> variables;
-    ArrayList<HierGenTask> subTasks;
 
+    Map<OOVariableKey, Object> goal;
+    List<String> actions;
+    List<OOVariableKey> variables;
+    List<HierGenTask> subTasks;
 
-    public HierGenTask() {
-        goal = null;
-        actions = new ArrayList<String>();
-        variables = new ArrayList<Object>();
+    public HierGenTask(Map<OOVariableKey, Object> goal, List<String> actions, List<OOVariableKey> variables) {
+        this(goal, actions, variables, null);
     }
 
-    public HierGenTask(Map<Object, Object> g, ArrayList<String> a, ArrayList<Object> v) {
-        goal = g;
-        actions = a;
-        variables = v;
-        subTasks = null;
-    }
-
-    public HierGenTask(Map<Object, Object> g, ArrayList<String> a, ArrayList<Object> v, ArrayList<HierGenTask> subTasks) {
-        goal = g;
-        actions = a;
-        variables = v;
+    public HierGenTask(Map<OOVariableKey, Object> goal, List<String> actions, List<OOVariableKey> variables, List<HierGenTask> subTasks) {
+        this.goal = goal;
+        this.actions = actions;
+        this.variables = variables;
         this.subTasks = subTasks;
     }
 
     public String toString() {
-
         return "\n--------------Task----------\n" +
                 actions.toString() + variables.toString();
     }
 
     public String actionName() {
         String action = "";
-        for (Object var : variables)
+        for (Object var : variables) {
             action += var + " ";
+        }
         return action + "\n";
     }
+
 }

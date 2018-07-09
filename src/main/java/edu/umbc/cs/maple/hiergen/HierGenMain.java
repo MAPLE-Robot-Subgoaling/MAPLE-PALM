@@ -43,7 +43,7 @@ public class HierGenMain {
         ArrayList<CATrajectory> CATs = new ArrayList<>();
         Map<String, Map<String, VariableTree>> actionModels = CreateActionModels.createModels(episodes);
 
-        System.out.println("Cauaslly annotating the trajectories");
+        System.out.println("Causally annotating the trajectories");
         for (Episode e : episodes) {
             CATrajectory temp = new CATrajectory();
             temp.annotateTrajectory(e, actionModels, (FullModel) domain.getModel());

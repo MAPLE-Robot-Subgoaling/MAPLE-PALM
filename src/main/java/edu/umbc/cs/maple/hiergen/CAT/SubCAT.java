@@ -1,5 +1,7 @@
 package edu.umbc.cs.maple.hiergen.CAT;
 
+import burlap.mdp.core.oo.state.OOVariableKey;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,7 +9,7 @@ import java.util.List;
  * Created by khalil8500 on 3/25/2018.
  */
 public class SubCAT extends CATrajectory {
-    private List<Object> relVars;
+    private List<OOVariableKey> relVars;
     CATrajectory c;
 
     public SubCAT() {
@@ -19,7 +21,7 @@ public class SubCAT extends CATrajectory {
         c = null;
     }
 
-    public SubCAT(int s, int e, List<Integer> actionInds, List<Object> relVars, CATrajectory CAT) {
+    public SubCAT(int s, int e, List<Integer> actionInds, List<OOVariableKey> relVars, CATrajectory CAT) {
         start = s;
         end = e;
         //if(start == 0 && end == 0)
@@ -90,9 +92,10 @@ public class SubCAT extends CATrajectory {
         if (this.end > a.end)
             unification.end = a.end;
 
-        for (Object var : a.relVars) {
-            if (!unification.relVars.contains(var))
+        for (OOVariableKey var : a.relVars) {
+            if (!unification.relVars.contains(var)) {
                 unification.relVars.add(var);
+            }
         }
 
         return unification;
@@ -128,11 +131,11 @@ public class SubCAT extends CATrajectory {
         return ultimate;
     }*/
 
-    public List<Object> getRelVars() {
+    public List<OOVariableKey> getRelVars() {
         return relVars;
     }
 
-    public void setRelVars(List<Object> relVars) {
+    public void setRelVars(List<OOVariableKey> relVars) {
         this.relVars = relVars;
     }
 }

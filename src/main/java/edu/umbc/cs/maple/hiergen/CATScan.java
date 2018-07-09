@@ -1,5 +1,6 @@
 package edu.umbc.cs.maple.hiergen;
 
+import burlap.mdp.core.oo.state.OOVariableKey;
 import edu.umbc.cs.maple.hiergen.CAT.*;
 
 import java.util.ArrayList;
@@ -8,7 +9,7 @@ import java.util.List;
 
 public class CATScan {
 
-    public static List<SubCAT> scan(ArrayList<CATrajectory> trajectories, List<Object> variables) {
+    public static List<SubCAT> scan(ArrayList<CATrajectory> trajectories, List<OOVariableKey> variables) {
         //System.out.println("Scan");
         List<SubCAT> subCATs = new ArrayList<SubCAT>();
         int start, end = -1;
@@ -83,17 +84,17 @@ public class CATScan {
         return subCATs;
     }
 
-    public static SubCAT scan(CATrajectory trajectory, List<Object> variables) {
-        ArrayList<CATrajectory> cats = new ArrayList<>();
-        cats.add(trajectory);
-        List<SubCAT> temp = scan(cats, variables);
-        if (!temp.isEmpty()) {
-            return temp.get(0);
-        }
-
-        return null;
-
-    }
+//    public static SubCAT scan(CATrajectory trajectory, List<OOVariableKey> variables) {
+//        ArrayList<CATrajectory> cats = new ArrayList<>();
+//        cats.add(trajectory);
+//        List<SubCAT> temp = scan(cats, variables);
+//        if (!temp.isEmpty()) {
+//            return temp.get(0);
+//        }
+//
+//        return null;
+//
+//    }
 
 
 }

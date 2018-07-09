@@ -2,6 +2,7 @@ package edu.umbc.cs.maple.hiergen.CAT;
 
 import burlap.behavior.singleagent.Episode;
 import burlap.mdp.core.action.Action;
+import burlap.mdp.core.oo.state.OOVariableKey;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.model.FullModel;
 import burlap.mdp.singleagent.model.TransitionProb;
@@ -288,16 +289,16 @@ public class CATrajectory {
         return traj;
     }
 
-    public CATrajectory getUltimateActions(Map<Object, Object> goal) {
-        ArrayList<Integer> actionInds = new ArrayList<>();
+    public CATrajectory getUltimateActions(Map<OOVariableKey, Object> goal) {
+        ArrayList<Integer> actionIndexes = new ArrayList<>();
         if (lastAction == 0)
             return null;
         if (sub != null) {
-            actionInds.add(lastAction);
-            return new SubCAT(lastAction, lastAction, actionInds, new ArrayList<>(goal.keySet()), this);
+            actionIndexes.add(lastAction);
+            return new SubCAT(lastAction, lastAction, actionIndexes, new ArrayList<>(goal.keySet()), this);
         } else {
-            actionInds.add(lastAction - 1);
-            return new SubCAT(lastAction - 1, lastAction - 1, actionInds, new ArrayList<>(goal.keySet()), this);
+            actionIndexes.add(lastAction - 1);
+            return new SubCAT(lastAction - 1, lastAction - 1, actionIndexes, new ArrayList<>(goal.keySet()), this);
         }
     }
 
