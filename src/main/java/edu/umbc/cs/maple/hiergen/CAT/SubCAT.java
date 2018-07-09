@@ -9,17 +9,9 @@ import java.util.List;
  * Created by khalil8500 on 3/25/2018.
  */
 public class SubCAT extends CATrajectory {
-    private List<OOVariableKey> relVars;
-    CATrajectory c;
 
-    public SubCAT() {
-        start = 1000000;
-        end = -1;
-        lastAction = end;
-        actionInds = new ArrayList<>();
-        relVars = new ArrayList<>();
-        c = null;
-    }
+    private List<OOVariableKey> relVars;
+    private CATrajectory c;
 
     public SubCAT(int s, int e, List<Integer> actionInds, List<OOVariableKey> relVars, CATrajectory CAT) {
         start = s;

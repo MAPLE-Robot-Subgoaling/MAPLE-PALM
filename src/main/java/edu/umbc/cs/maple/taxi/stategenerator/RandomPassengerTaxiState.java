@@ -10,7 +10,7 @@ import java.util.List;
 
 import static edu.umbc.cs.maple.taxi.TaxiConstants.*;
 
-public class RandomPassengerTaxiState implements StateGenerator{
+public class RandomPassengerTaxiState implements StateGenerator {
 
     @Override
     public State generateState() {
