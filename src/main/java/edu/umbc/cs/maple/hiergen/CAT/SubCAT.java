@@ -1,4 +1,4 @@
-package hiergen.CAT;
+package edu.umbc.cs.maple.hiergen.CAT;
 
 import java.util.ArrayList;
 import java.util.List;

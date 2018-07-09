@@ -1,4 +1,4 @@
-package hiergen;
+package edu.umbc.cs.maple.hiergen;
 
 import burlap.mdp.auxiliary.stateconditiontest.StateConditionTest;
 import burlap.mdp.core.action.Action;

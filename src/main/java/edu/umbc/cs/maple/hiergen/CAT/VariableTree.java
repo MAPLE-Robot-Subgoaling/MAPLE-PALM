@@ -1,4 +1,4 @@
-package hiergen.CAT;
+package edu.umbc.cs.maple.hiergen.CAT;
 
 import burlap.mdp.core.state.State;
 

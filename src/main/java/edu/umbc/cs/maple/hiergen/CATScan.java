@@ -1,4 +1,4 @@
-package hiergen;
+package edu.umbc.cs.maple.hiergen;
 
 import hiergen.CAT.CATrajectory;
 import hiergen.CAT.CausalEdge;

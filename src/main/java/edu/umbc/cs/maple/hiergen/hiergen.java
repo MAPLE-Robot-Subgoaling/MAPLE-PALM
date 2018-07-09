@@ -1,4 +1,4 @@
-package hiergen;
+package edu.umbc.cs.maple.hiergen;
 
 import burlap.behavior.singleagent.Episode;
 import burlap.mdp.auxiliary.stateconditiontest.StateConditionTest;

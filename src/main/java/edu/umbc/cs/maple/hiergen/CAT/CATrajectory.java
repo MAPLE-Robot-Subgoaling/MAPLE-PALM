@@ -1,4 +1,4 @@
-package hiergen.CAT;
+package edu.umbc.cs.maple.hiergen.CAT;
 
 import burlap.behavior.singleagent.Episode;
 import burlap.mdp.core.action.Action;

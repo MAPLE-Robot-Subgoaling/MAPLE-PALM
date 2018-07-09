@@ -1,4 +1,4 @@
-package hiergen.CAT;
+package edu.umbc.cs.maple.hiergen.CAT;
 
 import burlap.behavior.policy.Policy;
 import burlap.behavior.policy.PolicyUtils;
