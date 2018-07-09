@@ -1,8 +1,5 @@
 package edu.umbc.cs.maple.hiergen;
 
-import burlap.mdp.auxiliary.stateconditiontest.StateConditionTest;
-import burlap.mdp.core.action.Action;
-
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -16,8 +13,7 @@ public class Task {
     ArrayList<Task> subTasks;
 
 
-    public Task()
-    {
+    public Task() {
         goal = null;
         actions = new ArrayList<String>();
         variables = new ArrayList<Object>();
@@ -30,26 +26,23 @@ public class Task {
         subTasks = null;
     }
 
-    public Task(Map<Object, Object> g, ArrayList<String> a, ArrayList<Object> v, ArrayList<Task> subTasks)
-    {
+    public Task(Map<Object, Object> g, ArrayList<String> a, ArrayList<Object> v, ArrayList<Task> subTasks) {
         goal = g;
         actions = a;
         variables = v;
         this.subTasks = subTasks;
     }
 
-    public String toString()
-    {
+    public String toString() {
 
         return "\n--------------Task----------\n" +
                 actions.toString() + variables.toString();
     }
 
-    public String actionName()
-    {
+    public String actionName() {
         String action = "";
-        for(Object var: variables)
-            action += var+ " ";
+        for (Object var : variables)
+            action += var + " ";
         return action + "\n";
     }
 }

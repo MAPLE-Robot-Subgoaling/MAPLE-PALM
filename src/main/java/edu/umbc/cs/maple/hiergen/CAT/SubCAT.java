@@ -10,22 +10,20 @@ public class SubCAT extends CATrajectory {
     private List<Object> relVars;
     CATrajectory c;
 
-    public SubCAT()
-    {
+    public SubCAT() {
         start = 1000000;
         end = -1;
         lastAction = end;
-        actionInds  = new ArrayList<>();
+        actionInds = new ArrayList<>();
         relVars = new ArrayList<>();
         c = null;
     }
 
-    public SubCAT(int s, int e, List<Integer> actionInds, List<Object> relVars, CATrajectory CAT)
-    {
+    public SubCAT(int s, int e, List<Integer> actionInds, List<Object> relVars, CATrajectory CAT) {
         start = s;
         end = e;
         //if(start == 0 && end == 0)
-           // System.out.println("why???");
+        // System.out.println("why???");
         lastAction = end;
         this.relVars = new ArrayList<>();
         this.actionInds = new ArrayList<>();
@@ -40,8 +38,7 @@ public class SubCAT extends CATrajectory {
         edges = c.edges;
     }
 
-    public SubCAT(SubCAT s)
-    {
+    public SubCAT(SubCAT s) {
         start = s.start;
         end = s.end;
         //if(start == 0 && end == 0)
@@ -60,8 +57,7 @@ public class SubCAT extends CATrajectory {
         edges = c.edges;
     }
 
-    public int getStart()
-    {
+    public int getStart() {
         return start;
     }
 
@@ -69,53 +65,52 @@ public class SubCAT extends CATrajectory {
         return c;
     }
 
-    public int getEnd()
-    {
+    public int getEnd() {
         return end;
     }
-    public List<Integer> getActionInds(){ return actionInds; };
 
-    public SubCAT Unify(SubCAT a)
-    {
+    public List<Integer> getActionInds() {
+        return actionInds;
+    }
+
+    ;
+
+    public SubCAT Unify(SubCAT a) {
         //System.out.println("Unity");
         //System.out.println(a.CAT);
         SubCAT unification = new SubCAT(a.start, a.end, a.actionInds, relVars, c);
 
-        for(Integer i:this.actionInds)
-        {
-            if(!unification.actionInds.contains(i))
+        for (Integer i : this.actionInds) {
+            if (!unification.actionInds.contains(i))
                 unification.actionInds.add(i);
         }
 
-        if(this.start < a.start)
+        if (this.start < a.start)
             unification.start = a.start;
-        if(this.end > a.end)
+        if (this.end > a.end)
             unification.end = a.end;
 
-        for(Object var: a.relVars)
-        {
-            if(!unification.relVars.contains(var))
+        for (Object var : a.relVars) {
+            if (!unification.relVars.contains(var))
                 unification.relVars.add(var);
         }
 
         return unification;
     }
 
-    public static SubCAT Unify(SubCAT a, SubCAT b)
-    {
+    public static SubCAT Unify(SubCAT a, SubCAT b) {
         //System.out.println("Unity");
         //System.out.println(a.CAT);
         SubCAT unification = new SubCAT(a.start, a.end, a.actionInds, a.relVars, a.c);
 
-        for(Integer i:b.actionInds)
-        {
-            if(!unification.actionInds.contains(i))
+        for (Integer i : b.actionInds) {
+            if (!unification.actionInds.contains(i))
                 unification.actionInds.add(i);
         }
 
-        if(b.start < a.start)
+        if (b.start < a.start)
             unification.start = a.start;
-        if(b.end > a.end)
+        if (b.end > a.end)
             unification.end = a.end;
 
         unification.relVars.addAll(a.relVars);
@@ -133,13 +128,11 @@ public class SubCAT extends CATrajectory {
         return ultimate;
     }*/
 
-    public List<Object> getRelVars()
-    {
+    public List<Object> getRelVars() {
         return relVars;
     }
 
-    public void setRelVars(List<Object> relVars)
-    {
+    public void setRelVars(List<Object> relVars) {
         this.relVars = relVars;
     }
 }
