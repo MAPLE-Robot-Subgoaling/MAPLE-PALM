@@ -16,7 +16,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class HierGenDriver {
+public class HierGenMain {
+
     public static void main(String[] args) {
         Taxi test = new Taxi();
         int numTrajectories = 5;
@@ -25,6 +26,11 @@ public class HierGenDriver {
 
         System.out.println("Generating trajectories");
         List<Episode> episodes = TrajectoryGenerator.generateQLearnedTrajectories(new RandomPassengerTaxiState(), numTrajectories, domain, gamma, new SimpleHashableStateFactory());
+
+//        Episode one = episodes.get(0);
+//        System.out.println(one.stateSequence.get(one.stateSequence.size()-1));
+//        System.out.println(one.rewardSequence.get(one.rewardSequence.size()-1));
+//        System.out.println(one.actionSequence.get(one.actionSequence.size()-1));
 
         /*
         EpisodeSequenceVisualizer v = new EpisodeSequenceVisualizer(TaxiVisualizer.getVisualizer(5, 5),
@@ -45,7 +51,9 @@ public class HierGenDriver {
         }
 
         System.out.println("Running the main HierGenAlgorithm");
-        HierGenAlgorithm.generate(actionModels, CATs);
+        HierGenTask root = HierGenAlgorithm.generate(actionModels, CATs);
+        System.out.println(root);
+
 
     }
 }
