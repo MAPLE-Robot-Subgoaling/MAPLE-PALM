@@ -9,3 +9,4 @@ out/
 target/
 results/
 .DS_Store
+data.arff
