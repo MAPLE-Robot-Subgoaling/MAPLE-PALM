@@ -11,112 +11,134 @@ import java.util.*;
  */
 public class HierGenAlgorithm {
 
-    public static Task generate(Map<String, Map<String, VariableTree>> trees, ArrayList<CATrajectory> CATrajectories) {
-        System.out.println("Gen");
-        Map<Object, Object> goalVars = determineGoal(CATrajectories);
-        if (goalVars.isEmpty())
-            return null;
-        ArrayList<Task> tasks = new ArrayList<>();
-        boolean mult = true;
-        ArrayList<String> uniqActions = new ArrayList<>();
+    public static HierGenTask generate(Map<String, Map<String, VariableTree>> trees, ArrayList<CATrajectory> CATrajectories) {
 
-        for (CATrajectory c : CATrajectories) {
-            List<String> uniq = c.uniqueActions();
-            for (String u : uniq) {
-                if (!uniqActions.contains(u))
-                    uniqActions.add(u);
+        System.out.println("Gen");
+
+        Map<Object, Object> goalVariables = determineGoal(CATrajectories);
+        if (goalVariables.isEmpty()) {
+            return null;
+        }
+
+        ArrayList<HierGenTask> tasks;
+
+        ArrayList<String> uniqueActions = new ArrayList<>();
+
+        for (CATrajectory cat : CATrajectories) {
+            List<String> catActions = cat.uniqueActions();
+            for (String catAction : catActions) {
+                if (!uniqueActions.contains(catAction)) {
+                    uniqueActions.add(catAction);
+                }
             }
         }
 
-        if (uniqActions.size() > 1) {
+        if (uniqueActions.size() > 1) {
             tasks = builder(trees, CATrajectories);
             if (tasks != null && !tasks.isEmpty()) {
                 ArrayList<String> actions = new ArrayList<>();
-                ArrayList<Object> vars = new ArrayList<>();
-                for (Task t : tasks) {
-                    for (Object var : t.variables) {
-                        if (!vars.contains(var))
-                            vars.add(var);
+                ArrayList<Object> variables = new ArrayList<>();
+                for (HierGenTask task : tasks) {
+                    for (Object variable : task.variables) {
+                        if (!variables.contains(variable))
+                            variables.add(variable);
                     }
-                    for (String a : t.actions) {
-                        if (!actions.contains(a))
-                            actions.add(a);
+                    for (String action : task.actions) {
+                        if (!actions.contains(action)) {
+                            actions.add(action);
+                        }
                     }
                 }
-                return new Task(goalVars, actions, vars, tasks);
+                return new HierGenTask(goalVariables, actions, variables, tasks);
             }
 
-            ArrayList<CATrajectory> ult = new ArrayList<>();
-            ArrayList<CATrajectory> nonUlt = new ArrayList<>();
+            ArrayList<CATrajectory> ultimateCATs = new ArrayList<>();
+            ArrayList<CATrajectory> nonUltimateCATs = new ArrayList<>();
             for (CATrajectory c : CATrajectories) {
-                ult.add(c.getUltimateActions(goalVars));
-                nonUlt.add(extractPreceeding((SubCAT) ult.get(ult.size() - 1)));
+                CATrajectory ultimateCAT = c.getUltimateActions(goalVariables);
+                ultimateCATs.add(ultimateCAT);
+                SubCAT subCAT = (SubCAT) ultimateCATs.get(ultimateCATs.size() - 1);
+                CATrajectory preceeding = extractPreceeding(subCAT);
+                nonUltimateCATs.add(preceeding);
             }
 
-            ArrayList<Task> Q = builder(trees, nonUlt);
-            if (Q != null && !Q.isEmpty()) {
-                Task fin = generate(trees, ult);
-                Map<Object, Object> goalQ = fin.goal;
+            ArrayList<HierGenTask> builtTasksQ = builder(trees, nonUltimateCATs);
+            if (builtTasksQ != null && !builtTasksQ.isEmpty()) {
 
-                Set<Object> k = goalQ.keySet();
-                ArrayList<Object> rv = new ArrayList<Object>(k);
+                // still need to parse / rename this
+
+                HierGenTask finalTask = generate(trees, ultimateCATs);
+                Map<Object, Object> goalQ = finalTask.goal;
+
+                Set<Object> keys = goalQ.keySet();
+                ArrayList<Object> rv = new ArrayList<>(keys);
                 for (Object v : rv) {
-                    if (!fin.actions.contains(v))
-                        fin.variables.add(v);
+                    if (!finalTask.actions.contains(v)) {
+                        finalTask.variables.add(v);
+                    }
                 }
 
-                for (Task s : Q) {
-                    fin.subTasks.add(s);
-                    for (Object var : s.variables) {
-                        if (!fin.variables.contains(var))
-                            fin.variables.add(var);
+                for (HierGenTask task : builtTasksQ) {
+                    finalTask.subTasks.add(task);
+                    for (Object variable : task.variables) {
+                        if (!finalTask.variables.contains(variable)) {
+                            finalTask.variables.add(variable);
+                        }
                     }
-                    for (String a : s.actions) {
-                        if (!fin.actions.contains(a))
-                            fin.actions.add(a);
+                    for (String action : task.actions) {
+                        if (!finalTask.actions.contains(action)) {
+                            finalTask.actions.add(action);
+                        }
                     }
                 }
-                return fin;
+                return finalTask;
             }
 
         }
 
-        Set<Object> k = goalVars.keySet();
+        Set<Object> k = goalVariables.keySet();
         ArrayList<Object> rv = new ArrayList<Object>(k);
-        return new Task(goalVars, uniqActions, rv);
+        return new HierGenTask(goalVariables, uniqueActions, rv);
+
     }
 
-    public static ArrayList<Task> builder(Map<String, Map<String, VariableTree>> trees, ArrayList<CATrajectory> CATrajectories) {
-        //System.out.println("Builder");
+    public static ArrayList<HierGenTask> builder(Map<String, Map<String, VariableTree>> trees, ArrayList<CATrajectory> CATrajectories) {
+
+        System.out.println("Builder");
 
         Map<Object, Object> goal = HierGenAlgorithm.determineGoal(CATrajectories);
-        ArrayList<Task> finalTasks = new ArrayList<>();
-        if (goal.isEmpty())
+        ArrayList<HierGenTask> finalTasks = new ArrayList<>();
+        if (goal.isEmpty()) {
             return null;
-
-        Set<Object> keys = goal.keySet();
-        ArrayList<Object> relevantVars = new ArrayList<Object>(keys);
-        List<List<SubCAT>> subCATs = new ArrayList<>();
-        for (Object rv : relevantVars) {
-            ArrayList<Object> curr = new ArrayList<>();
-            curr.add(rv);
-            List<SubCAT> temp = CATScan.scan(CATrajectories, curr);
-            if (temp != null)
-                subCATs.add(temp);
         }
 
-        if (subCATs.isEmpty())
+        Set<Object> keys = goal.keySet();
+        ArrayList<Object> relevantVariables = new ArrayList<>(keys);
+        List<List<SubCAT>> subCATs = new ArrayList<>();
+        for (Object relevantVariable : relevantVariables) {
+            ArrayList<Object> currentVariables = new ArrayList<>();
+            currentVariables.add(relevantVariable);
+            List<SubCAT> tempCAT = CATScan.scan(CATrajectories, currentVariables);
+            if (tempCAT != null) {
+                subCATs.add(tempCAT);
+            }
+        }
+
+        if (subCATs.isEmpty()) {
             return null;
+        }
+
         List<SubCAT> unifiedSubCATs = new ArrayList<>();
 
         for (int i = 0; i < CATrajectories.size(); i++) {
             SubCAT unity = null;
             for (int j = 0; j < subCATs.size(); j++) {
                 if (subCATs.get(j) != null && !subCATs.get(j).isEmpty()) {
-                    if (unity == null)
+                    if (unity == null) {
                         unity = new SubCAT(subCATs.get(j).get(i));
-                    else
+                    } else {
                         unity = unity.Unify(subCATs.get(j).get(i));
+                    }
                 }
             }
             unifiedSubCATs.add(unity);
@@ -131,14 +153,14 @@ public class HierGenAlgorithm {
                 CATrajectory temp = extractPreceeding(sub);
                 if (temp != null)
                     extractedCATrajectories.add(temp);
-                ArrayList<Task> Q = null;
+                ArrayList<HierGenTask> Q = null;
                 if (extractedCATrajectories != null && !extractedCATrajectories.isEmpty())
                     Q = builder(trees, extractedCATrajectories);
                 if (Q != null && Q.size() > 0) {
                     CATrajectory ct = CATrajectory.subCATToCAT(sub);
                     ArrayList<CATrajectory> fin = new ArrayList<>();
                     fin.add(ct);
-                    Task q = generate(trees, fin);
+                    HierGenTask q = generate(trees, fin);
                     Map<Object, Object> goalQ = q.goal;
 
                     Set<Object> k = goalQ.keySet();
@@ -148,7 +170,7 @@ public class HierGenAlgorithm {
                             q.variables.add(v);
                     }
 
-                    for (Task s : Q) {
+                    for (HierGenTask s : Q) {
                         q.subTasks.add(s);
                         for (Object var : s.variables) {
                             if (!q.variables.contains(var))
@@ -184,7 +206,7 @@ public class HierGenAlgorithm {
                     }
                 }
 
-                List<Task> Q = null;
+                List<HierGenTask> Q = null;
                 if (!nonMerged.isEmpty()) {
                     Q = builder(trees, nonMerged);
                 }
@@ -192,7 +214,7 @@ public class HierGenAlgorithm {
                     return null;
                 else {
 
-                    Task q = generate(trees, ooSubCAT);
+                    HierGenTask q = generate(trees, ooSubCAT);
                     Map<Object, Object> goalQ = q.goal;
 
                     Set<Object> k = goalQ.keySet();
@@ -202,7 +224,7 @@ public class HierGenAlgorithm {
                             q.variables.add(v);
                     }
 
-                    for (Task s : Q) {
+                    for (HierGenTask s : Q) {
                         q.subTasks.add(s);
 
                         for (Object var : s.variables) {

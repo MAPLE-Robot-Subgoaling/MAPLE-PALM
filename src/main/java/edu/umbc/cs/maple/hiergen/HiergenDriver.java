@@ -1,6 +1,7 @@
 package edu.umbc.cs.maple.hiergen;
 
 import burlap.behavior.singleagent.Episode;
+import burlap.debugtools.DPrint;
 import burlap.mdp.singleagent.model.FullModel;
 import burlap.mdp.singleagent.oo.OOSADomain;
 import burlap.statehashing.simple.SimpleHashableStateFactory;
@@ -21,6 +22,8 @@ public class HierGenDriver {
         int numTrajectories = 5;
         double gamma = 0.01;
         OOSADomain domain = test.generateDomain();
+
+        System.out.println("Generating trajectories");
         List<Episode> episodes = TrajectoryGenerator.generateQLearnedTrajectories(new RandomPassengerTaxiState(), numTrajectories, domain, gamma, new SimpleHashableStateFactory());
 
         /*
@@ -30,15 +33,19 @@ public class HierGenDriver {
         v.initGUI();
         */
 
-        ArrayList<CATrajectory> CATs = new ArrayList<CATrajectory>();
+        System.out.println("Learning the action models");
+        ArrayList<CATrajectory> CATs = new ArrayList<>();
         Map<String, Map<String, VariableTree>> actionModels = CreateActionModels.createModels(episodes);
 
+        System.out.println("Cauaslly annotating the trajectories");
         for (Episode e : episodes) {
             CATrajectory temp = new CATrajectory();
             temp.annotateTrajectory(e, actionModels, (FullModel) domain.getModel());
             CATs.add(temp);
         }
 
-        HierGenAlgorithm.generate(actionModels, CATs).toString();
+        System.out.println("Running the main HierGenAlgorithm");
+        HierGenAlgorithm.generate(actionModels, CATs);
+
     }
 }

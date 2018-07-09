@@ -6,27 +6,27 @@ import java.util.Map;
 /**
  * Created by khalil8500 on 3/25/2018.
  */
-public class Task {
+public class HierGenTask {
     Map<Object, Object> goal;
     ArrayList<String> actions;
     ArrayList<Object> variables;
-    ArrayList<Task> subTasks;
+    ArrayList<HierGenTask> subTasks;
 
 
-    public Task() {
+    public HierGenTask() {
         goal = null;
         actions = new ArrayList<String>();
         variables = new ArrayList<Object>();
     }
 
-    public Task(Map<Object, Object> g, ArrayList<String> a, ArrayList<Object> v) {
+    public HierGenTask(Map<Object, Object> g, ArrayList<String> a, ArrayList<Object> v) {
         goal = g;
         actions = a;
         variables = v;
         subTasks = null;
     }
 
-    public Task(Map<Object, Object> g, ArrayList<String> a, ArrayList<Object> v, ArrayList<Task> subTasks) {
+    public HierGenTask(Map<Object, Object> g, ArrayList<String> a, ArrayList<Object> v, ArrayList<HierGenTask> subTasks) {
         goal = g;
         actions = a;
         variables = v;
