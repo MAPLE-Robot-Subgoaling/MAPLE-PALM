@@ -5,14 +5,14 @@ domain: !!edu.umbc.cs.maple.config.taxi.TaxiConfig
 
 agents:
   - palmExpert
-  - kappaExpert
-  - palmHierGen
-  - kappaHierGen
+#  - kappaExpert
+#  - palmHierGen
+#  - kappaHierGen
 
 seed: 829138219
 episodes: 50
 max_steps: 1000
-trials: 30
+trials: 100
 gamma: 0.95
 
 identifier_independent: false
@@ -25,9 +25,9 @@ rmax:
   max_delta: 0.000001
   max_delta_rmaxq: 0.000001
   max_iterations_in_model: 1000
-  use_multitime_model: true
-  wait_for_children: true
-  use_model_sharing: false
+  use_multitime_model: false
+  wait_for_children: false
+  use_model_sharing: true
 
 
 output:

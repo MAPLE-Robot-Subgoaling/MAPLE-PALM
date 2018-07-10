@@ -16,7 +16,7 @@ agents:
 seed: 6674931
 episodes: 50
 max_steps: 100000
-trials: 1
+trials: 10
 gamma: 0.99
 
 identifier_independent: false
@@ -31,7 +31,7 @@ rmax:
   max_iterations_in_model: 1000
   use_multitime_model: true
   wait_for_children: true
-  use_model_sharing: false
+  use_model_sharing: true
 
 
 output:
