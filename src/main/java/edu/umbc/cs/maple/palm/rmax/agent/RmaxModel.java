@@ -168,6 +168,8 @@ public abstract class RmaxModel extends PALMModel {
         HashableState hsPrime = this.hashingFactory.hashState(result.op);
         Map<HashableState, PossibleOutcome> hsPrimeToOutcomes = getHsPrimeToOutcomes(hs, a);
 
+        if (hImaginedState == null) { makeImaginedTransition(hs, a); }
+
         //add to the transitionCount the information in the outcome
         PossibleOutcome outcome = getPossibleOutcome(hsPrimeToOutcomes, hs, a, hsPrime);
         int newTransitionCountSASP = outcome.getTransitionCount(stepsTaken) + 1;
@@ -197,7 +199,7 @@ public abstract class RmaxModel extends PALMModel {
                 if (otherHsPrime.equals(hsPrime)) {
                     // this is the transition we just updated, so skip it
                     continue;
-                } else if (otherHsPrime.equals(hImaginedState)) {
+                } else if (hImaginedState.equals(otherHsPrime)) {
                     PossibleOutcome imaginedOutcome = getPossibleOutcome(hsPrimeToOutcomes, hs, a, otherHsPrime);
                     imaginedOutcome.setReward(imaginedR);
                     imaginedOutcome.setTransitionProbability(imaginedP);
