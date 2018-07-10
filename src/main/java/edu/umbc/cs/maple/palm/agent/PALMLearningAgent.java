@@ -53,7 +53,7 @@ public class PALMLearningAgent implements LearningAgent {
     /**
      * lookup grounded tasks by name task
      */
-    private Map<String, GroundedTask> taskNames;
+    protected Map<String, GroundedTask> taskNames;
 
     /**
      * provided state hashing factory
@@ -186,6 +186,7 @@ public class PALMLearningAgent implements LearningAgent {
         State currentStateGrounded = e.stateSequence.get(e.stateSequence.size() - 1);
         State currentStateAbstract = task.mapState(currentStateGrounded);
         State pastStateAbstract = currentStateAbstract;
+
         int actionCount = 0;
 
         if (task.isPrimitive()) {
@@ -238,6 +239,7 @@ public class PALMLearningAgent implements LearningAgent {
 
             actionCount++;
 
+            State pastStateGrounded = currentStateGrounded;
             pastStateAbstract = currentStateAbstract;
 
             Action action = nextAction(task, currentStateAbstract);
@@ -259,30 +261,15 @@ public class PALMLearningAgent implements LearningAgent {
             currentStateGrounded = e.stateSequence.get(e.stateSequence.size() - 1);
             currentStateAbstract = task.mapState(currentStateGrounded);
 
-            // reward rollup scheme
-//            double sumChildRewards = e.rewardSequence.subList(stepsBefore, stepsAfter).stream().mapToDouble(Double::doubleValue).sum();
-//            double discount = 1.0;// getModel(task).getDiscountProvider().yield(pastState, a, currentState);
-//            double discountOverTime = Math.pow(discount, stepsTaken);
-//            double discountedReward = sumChildRewards * discountOverTime;
-//            System.out.println(sumChildRewards + " " + discount + " " + discountOverTime + " " + discountedReward);
-//            double taskReward = discountedReward + task.getReward(pastStateAbstract, a, currentStateAbstract, params);
-//            double taskReward = discountedReward;
-
-            String[] params = getParams(task);
-            double pseudoReward = task.getReward(pastStateAbstract, action, currentStateAbstract, params);
-            double taskReward = pseudoReward;//task.getReward(pastState, a, currentState);
-//            double taskReward = pseudoReward <= PSEUDOREWARD_ON_FAIL || pseudoReward >= PSEUDOREWARD_ON_GOAL ? pseudoReward : discountedReward;
-            EnvironmentOutcome result = new EnvironmentOutcome(pastStateAbstract, action, currentStateAbstract, taskReward, false);
-
             StringBuilder resultString = new StringBuilder(action.toString());
             resultString.append(subtaskCompleted ? "+" : "--");
-            PALMModel model = getModel(task);
             if (subtaskCompleted) {
-                boolean atOrBeyondThreshold = model.updateModel(result, stepsTaken, params);
+                boolean atOrBeyondThreshold = updateModel(task, pastStateGrounded, pastStateAbstract, action, currentStateGrounded, currentStateAbstract, stepsTaken);
                 resultString.append(atOrBeyondThreshold ? "+" : "-");
                 if (!atOrBeyondThreshold) {
                     allChildrenAtOrBeyondThreshold = false;
                 }
+
             }
             subtasksExecuted.add(resultString.toString());
         }
@@ -295,6 +282,30 @@ public class PALMLearningAgent implements LearningAgent {
         boolean parentShouldUpdateModel = taskCompleted || actionCount == 0;
         parentShouldUpdateModel = parentShouldUpdateModel && allChildrenAtOrBeyondThreshold;
         return parentShouldUpdateModel;
+    }
+
+    protected boolean updateModel(GroundedTask task, State state, State abstractState, Action action, State statePrime, State abstractStatePrime, int stepsTaken) {
+        String[] params = getParams(task);
+        double taskReward = getTaskReward(task, abstractState, action, abstractStatePrime, params);
+        PALMModel model = getModel(task);
+        EnvironmentOutcome result = new EnvironmentOutcome(abstractState, action, abstractStatePrime, taskReward, false);
+        boolean atOrBeyondThreshold = model.updateModel(result, stepsTaken, params);
+        return atOrBeyondThreshold;
+    }
+
+    protected double getTaskReward(GroundedTask task, State abstractState, Action action, State abstractStatePrime, String[] params) {
+        // reward rollup scheme
+//            double sumChildRewards = e.rewardSequence.subList(stepsBefore, stepsAfter).stream().mapToDouble(Double::doubleValue).sum();
+//            double discount = 1.0;// getModel(task).getDiscountProvider().yield(pastState, a, currentState);
+//            double discountOverTime = Math.pow(discount, stepsTaken);
+//            double discountedReward = sumChildRewards * discountOverTime;
+//            System.out.println(sumChildRewards + " " + discount + " " + discountOverTime + " " + discountedReward);
+//            double taskReward = discountedReward + task.getReward(pastStateAbstract, a, currentStateAbstract, params);
+//            double taskReward = discountedReward;
+        double pseudoReward = task.getReward(abstractState, action, abstractStatePrime, params);
+//            double taskReward = pseudoReward <= PSEUDOREWARD_ON_FAIL || pseudoReward >= PSEUDOREWARD_ON_GOAL ? pseudoReward : discountedReward;
+        //task.getReward(pastState, a, currentState);
+        return pseudoReward;
     }
 
     /**

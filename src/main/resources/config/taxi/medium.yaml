@@ -7,16 +7,17 @@ agents:
 #  - rmaxqExpert
 #  - rmaxqHierGen
   - palmExpert
+  - palmExpertCross
 #  - palmExpertWithNavGiven
 #  - palmHierGen
 #  - kappaExpert
 #  - kappaHierGen
 #  - qLearning
 
-seed: 6674931
+seed: 2233445
 episodes: 50
 max_steps: 100000
-trials: 1
+trials: 10
 gamma: 0.99
 
 identifier_independent: false
