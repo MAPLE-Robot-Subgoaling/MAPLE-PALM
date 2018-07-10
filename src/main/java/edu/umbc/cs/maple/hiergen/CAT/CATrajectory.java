@@ -2,6 +2,7 @@ package edu.umbc.cs.maple.hiergen.CAT;
 
 import burlap.behavior.singleagent.Episode;
 import burlap.mdp.core.action.Action;
+import burlap.mdp.core.oo.state.OOState;
 import burlap.mdp.core.oo.state.OOVariableKey;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.model.FullModel;
@@ -11,50 +12,64 @@ import java.util.*;
 
 public class CATrajectory {
 
-    protected int start, end;
-    protected List<String> actions;
+    public static final String CAT_PSEUDOACTION_START = "START";
+    public static final String CAT_PSEUDOACTION_END = "END";
+
+    protected int start;
+    protected int end;
     protected List<Integer> actionInds = null;
-    protected SubCAT sub = null;
-    protected List<CausalEdge> edges;
-    protected Set<String>[] checkedVariables, changedVariables;
-    protected Episode baseTrajectory;
     public int lastAction;
 
+    protected String[] actions;
+    protected List<CausalEdge> edges;
+    protected Set[] checkedVariables;
+    protected Set[] changedVariables;
+    protected Episode baseTrajectory;
+
     public CATrajectory() {
-        this.actions = new ArrayList<String>();
-        this.edges = new ArrayList<CausalEdge>();
+        this.edges = new ArrayList<>();
     }
 
     //parent structure  action -> variable/ R(reward) -> relevant var
     public void annotateTrajectory(Episode e, Map<String, Map<String, VariableTree>> decisions, FullModel model) {
         baseTrajectory = e;
-        actions.add("START");
-        for (Action a : e.actionSequence) {
-            actions.add(a.actionName());
+        int numActions = e.actionSequence.size() + 2; // two pseudoactions
+        actions = new String[numActions];
+
+        // there are always two pseudoactions, START and END bookending the action trajectory
+        actions[0] = CAT_PSEUDOACTION_START;
+        actions[numActions - 1] = CAT_PSEUDOACTION_END;
+
+        // the rest of the actions are sandwiched in between START and END in order
+        int offset = 1;
+        for (int i = 0; i < e.actionSequence.size(); i++) {
+            Action action = e.actionSequence.get(i);
+            actions[i + offset] = action.actionName();
         }
-        actions.add("END");
-        lastAction = actions.size() - 1;
 
-        checkedVariables = new Set[actions.size()];
-        changedVariables = new Set[actions.size()];
+        checkedVariables = new Set[numActions];
+        changedVariables = new Set[numActions];
 
-        for (int i = 0; i < actions.size(); i++) {
-            String action = actions.get(i);
+        for (int i = 0; i < actions.length; i++) {
+            String action = actions[i];
             checkedVariables[i] = new HashSet<String>();
             changedVariables[i] = new HashSet<String>();
 
-            if (action.equals("START") || action.equals("END")) {
+            // both pseudoaction always check/change the variables from the starting state (?)
+            if (action.equals(CAT_PSEUDOACTION_START) || action.equals(CAT_PSEUDOACTION_END)) {
                 State s = e.stateSequence.get(0);
-                for (Object var : s.variableKeys()) {
-                    checkedVariables[i].add(var.toString());
-                    changedVariables[i].add(var.toString());
+                OOState oos = (OOState) s;
+                for (Object variableKey : oos.variableKeys()) {
+                    String variable = variableKey.toString();
+                    checkedVariables[i].add(variable);
+                    changedVariables[i].add(variable);
                 }
                 continue;
-
             }
 
-            State s = e.stateSequence.get(i - 1);
-            Action a = e.actionSequence.get(i - 1);
+            State state = e.stateSequence.get(i - 1);
+            Action action = e.actionSequence.get(i - 1);
+            State sPrime = e.stateSequence.get(i);
 
             //add the vars which were used to get reward
             VariableTree rewardTree = decisions.get(action).get("R");
