@@ -304,7 +304,7 @@ public class HierGenAlgorithm {
             actionIndexes.add(i);
         }
 
-        return new SubCAT(0, extractee.getStart() - 1, actionIndexes, extractee.getRelVars(), extractee.getCAT());
+        return new SubCAT(0, extractee.getStart() - 1, actionIndexes, extractee.getRelevantVariables(), extractee.getCAT());
     }
 
     public static List<SubCAT> merge(List<SubCAT> subCATs) {
@@ -318,7 +318,7 @@ public class HierGenAlgorithm {
             if (!cats.contains(subCAT.getCAT())) {
                 cats.add(subCAT.getCAT());
             }
-            for (OOVariableKey relevantVariable : subCAT.getRelVars()) {
+            for (OOVariableKey relevantVariable : subCAT.getRelevantVariables()) {
                 if (!relevantVariables.contains(relevantVariable)) {
                     relevantVariables.add(relevantVariable);
                 }
@@ -340,7 +340,7 @@ public class HierGenAlgorithm {
                     if (unity == null) {
                         unity = new SubCAT(basis);
                     } else {
-                        unity = unity.Unify(basis);
+                        unity = unity.unify(basis);
                     }
                 }
             }

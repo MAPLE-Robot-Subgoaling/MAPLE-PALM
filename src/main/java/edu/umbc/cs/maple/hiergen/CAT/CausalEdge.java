@@ -19,7 +19,7 @@ public class CausalEdge {
         return end;
     }
 
-    public String getRelavantVariable() {
+    public String getRelevantVariable() {
         return relavantVariable;
     }
 }

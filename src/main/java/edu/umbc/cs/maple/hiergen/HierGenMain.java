@@ -14,7 +14,6 @@ import edu.umbc.cs.maple.hiergen.CAT.VariableTree;
 import edu.umbc.cs.maple.taxi.Taxi;
 import edu.umbc.cs.maple.taxi.TaxiVisualizer;
 import edu.umbc.cs.maple.taxi.stategenerator.HierGenTrajectorySource;
-import edu.umbc.cs.maple.taxi.stategenerator.RandomPassengerTaxiState;
 import edu.umbc.cs.maple.utilities.BurlapConstants;
 
 import java.util.ArrayList;
@@ -35,6 +34,7 @@ public class HierGenMain {
         int numTrajectories = 5;
         double gamma = 0.01;
         OOSADomain domain = test.generateDomain();
+        domain.setModel(null);
 
         System.out.println("Generating trajectories");
         List<Episode> episodes = TrajectoryGenerator.generateQLearnedTrajectories(new HierGenTrajectorySource(), numTrajectories, domain, gamma, new SimpleHashableStateFactory());
@@ -60,8 +60,8 @@ public class HierGenMain {
         }
 
         System.out.println("Running the main HierGenAlgorithm");
-        HierGenTask root = HierGenAlgorithm.generate(actionModels, CATs);
-        System.out.println(root);
+//        HierGenTask root = HierGenAlgorithm.generate(actionModels, CATs);
+//        System.out.println(root);
 
 
     }

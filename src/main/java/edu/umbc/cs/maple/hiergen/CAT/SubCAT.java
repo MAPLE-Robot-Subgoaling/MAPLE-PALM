@@ -10,107 +10,55 @@ import java.util.List;
  */
 public class SubCAT extends CATrajectory {
 
-    private List<OOVariableKey> relVars;
-    private CATrajectory c;
+    private List<OOVariableKey> relevantVariables;
 
-    public SubCAT(int s, int e, List<Integer> actionInds, List<OOVariableKey> relVars, CATrajectory CAT) {
-        start = s;
-        end = e;
-        //if(start == 0 && end == 0)
-        // System.out.println("why???");
-        lastAction = end;
-        this.relVars = new ArrayList<>();
-        this.actionInds = new ArrayList<>();
-        this.relVars.addAll(relVars);
-        this.actionInds.addAll(actionInds);
-        this.actions = CAT.actions;
-        c = CAT;
-        sub = this;
-        checkedVariables = c.checkedVariables;
-        changedVariables = c.changedVariables;
-        baseTrajectory = c.baseTrajectory;
-        edges = c.edges;
+    public SubCAT( ) {
+
     }
 
-    public SubCAT(SubCAT s) {
-        start = s.start;
-        end = s.end;
-        //if(start == 0 && end == 0)
-        // System.out.println("why???");
-        lastAction = end;
-        this.relVars = new ArrayList<>();
-        this.actionInds = new ArrayList<>();
-        this.relVars.addAll(s.relVars);
-        this.actionInds.addAll(s.actionInds);
-        this.actions = s.actions;
-        c = s.getCAT();
-        sub = this;
-        checkedVariables = c.checkedVariables;
-        changedVariables = c.changedVariables;
-        baseTrajectory = c.baseTrajectory;
-        edges = c.edges;
+    public SubCAT unify(SubCAT a) {
+
+        throw new RuntimeException("Not implenmented");
+//        SubCAT unification = new SubCAT(a.start, a.end, a.actionInds, relevantVariables, c);
+//
+//        for (Integer i : this.actionInds) {
+//            if (!unification.actionInds.contains(i))
+//                unification.actionInds.add(i);
+//        }
+//
+//        if (this.start < a.start)
+//            unification.start = a.start;
+//        if (this.end > a.end)
+//            unification.end = a.end;
+//
+//        for (OOVariableKey var : a.relevantVariables) {
+//            if (!unification.relevantVariables.contains(var)) {
+//                unification.relevantVariables.add(var);
+//            }
+//        }
+//
+//        return unification;
     }
 
-    public int getStart() {
-        return start;
-    }
-
-    public CATrajectory getCAT() {
-        return c;
-    }
-
-    public int getEnd() {
-        return end;
-    }
-
-    public List<Integer> getActionInds() {
-        return actionInds;
-    }
-
-    ;
-
-    public SubCAT Unify(SubCAT a) {
+    public static SubCAT unify(SubCAT a, SubCAT b) {
+        throw new RuntimeException("Not implemented");
         //System.out.println("Unity");
         //System.out.println(a.CAT);
-        SubCAT unification = new SubCAT(a.start, a.end, a.actionInds, relVars, c);
-
-        for (Integer i : this.actionInds) {
-            if (!unification.actionInds.contains(i))
-                unification.actionInds.add(i);
-        }
-
-        if (this.start < a.start)
-            unification.start = a.start;
-        if (this.end > a.end)
-            unification.end = a.end;
-
-        for (OOVariableKey var : a.relVars) {
-            if (!unification.relVars.contains(var)) {
-                unification.relVars.add(var);
-            }
-        }
-
-        return unification;
-    }
-
-    public static SubCAT Unify(SubCAT a, SubCAT b) {
-        //System.out.println("Unity");
-        //System.out.println(a.CAT);
-        SubCAT unification = new SubCAT(a.start, a.end, a.actionInds, a.relVars, a.c);
-
-        for (Integer i : b.actionInds) {
-            if (!unification.actionInds.contains(i))
-                unification.actionInds.add(i);
-        }
-
-        if (b.start < a.start)
-            unification.start = a.start;
-        if (b.end > a.end)
-            unification.end = a.end;
-
-        unification.relVars.addAll(a.relVars);
-
-        return unification;
+//        SubCAT unification = new SubCAT(a.start, a.end, a.actionInds, a.relevantVariables, a.c);
+//
+//        for (Integer i : b.actionInds) {
+//            if (!unification.actionInds.contains(i))
+//                unification.actionInds.add(i);
+//        }
+//
+//        if (b.start < a.start)
+//            unification.start = a.start;
+//        if (b.end > a.end)
+//            unification.end = a.end;
+//
+//        unification.relevantVariables.addAll(a.relevantVariables);
+//
+//        return unification;
     }
 
     /*public CATrajectory getUltimateActions()
@@ -123,11 +71,11 @@ public class SubCAT extends CATrajectory {
         return ultimate;
     }*/
 
-    public List<OOVariableKey> getRelVars() {
-        return relVars;
+    public List<OOVariableKey> getRelevantVariables() {
+        return relevantVariables;
     }
 
-    public void setRelVars(List<OOVariableKey> relVars) {
-        this.relVars = relVars;
+    public void setRelevantVariables(List<OOVariableKey> relevantVariables) {
+        this.relevantVariables = relevantVariables;
     }
 }
