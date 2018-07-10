@@ -14,11 +14,14 @@ import burlap.behavior.valuefunction.ValueFunction;
 import burlap.mdp.core.action.Action;
 import burlap.mdp.core.oo.ObjectParameterizedAction;
 import burlap.mdp.core.state.State;
+import burlap.mdp.singleagent.SADomain;
 import burlap.mdp.singleagent.environment.Environment;
 import burlap.mdp.singleagent.environment.EnvironmentOutcome;
 import burlap.mdp.singleagent.oo.OOSADomain;
 import burlap.statehashing.HashableStateFactory;
 import edu.umbc.cs.maple.config.ExperimentConfig;
+import edu.umbc.cs.maple.config.solver.FittedVIConfig;
+import edu.umbc.cs.maple.config.solver.SarsaLambdaConfig;
 import edu.umbc.cs.maple.config.solver.SolverConfig;
 import edu.umbc.cs.maple.hierarchy.framework.GroundedTask;
 import edu.umbc.cs.maple.hierarchy.framework.NonprimitiveTask;
@@ -85,6 +88,8 @@ public class PALMLearningAgent implements LearningAgent {
 
     private long actualTimeElapsed = 0;
 
+    private double gamma = 0;
+
     /**
      * create a PALM agent on a given task
      * @param root the root of the hierarchy to learn
@@ -104,6 +109,7 @@ public class PALMLearningAgent implements LearningAgent {
 
     public PALMLearningAgent(Task root, PALMModelGenerator modelGenerator, HashableStateFactory hsf, ExperimentConfig config) {
         this(root, modelGenerator, hsf, config.rmax.max_delta, config.rmax.max_iterations_in_model, config.rmax.wait_for_children);
+        gamma = config.gamma;
     }
 
     @Override
@@ -287,24 +293,20 @@ public class PALMLearningAgent implements LearningAgent {
             solverConfig.setHashingFactory(hashingFactory);
             solverConfig.setMaxDelta(maxDelta);
             solverConfig.setMaxIterations(maxIterationsInModelPlanner);
+        } else if(solverConfig.getType() == "FittedVI"){
+            solverConfig.setDomain(domain);
+            solverConfig.setMaxDelta(maxDelta);
+            solverConfig.setMaxIterations(maxIterationsInModelPlanner);
+            ((FittedVIConfig)solverConfig).setGamma(gamma);
+        } else if(solverConfig.getType() == "SarsaLambda"){
+            solverConfig.setDomain(domain);
+            ((SarsaLambdaConfig)solverConfig).setGamma(gamma);
         }
         knownValueFunction = task.valueFunction;
         Planner solver = solverConfig.generateSolver(knownValueFunction);
 
         policy = solver.planFromState(s);
 
-//        {
-//            FittedVI planner;
-//            planner = new FittedVI(domain, gamma, SupervisedVFA, transitionSamples, maxDelta, maxIterationsInModelPlanner);
-//            ValueIterationMultiStep planner = new ValueIterationMultiStep(domain, hashingFactory, maxDelta, maxIterationsInModelPlanner, discountProvider);
-//            planner.toggleReachabiltiyTerminalStatePruning(true);
-////		planner.toggleReachabiltiyTerminalStatePruning(false);
-//            knownValueFunction = task.valueFunction;
-//            if (knownValueFunction != null) {
-//                planner.setValueFunctionInitialization(knownValueFunction);
-//            }
-//            policy = planner.planFromState(s);
-//        }
         Action action = policy.action(s);
         if (debug) {
             try {

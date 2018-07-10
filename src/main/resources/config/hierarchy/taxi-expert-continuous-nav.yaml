@@ -1,0 +1,75 @@
+name: expert
+hierarchyConfigMap:
+   root:
+      children:
+        - get_np
+        - put_np
+      domainGenerator: !!edu.umbc.cs.maple.taxi.hierarchies.tasks.root.TaxiRootDomain {}
+      stateMapper: !!edu.umbc.cs.maple.taxi.hierarchies.tasks.root.state.RootStateMapper {}
+      tf: &tf !!edu.umbc.cs.maple.hierarchy.framework.GoalFailTF
+        goalPF: !!edu.umbc.cs.maple.taxi.functions.amdp.RootCompletedPF {}
+        failPF: !!edu.umbc.cs.maple.taxi.functions.amdp.RootFailurePF {}
+      rf: !!edu.umbc.cs.maple.hierarchy.framework.GoalFailRF
+        tf: *tf
+        rewardDefault: 0.0
+        rewardNoop: 0.0
+      solver: !!edu.umbc.cs.maple.config.solver.ValueIterationMultistepConfig
+        maxDelta: 0.0001
+        maxIterations: 1000
+
+   get:
+      children:
+        - nav_np
+        - pickup_p
+      domainGenerator: !!edu.umbc.cs.maple.taxi.hierarchies.tasks.get.TaxiGetDomain {}
+      stateMapper: !!edu.umbc.cs.maple.taxi.hierarchies.tasks.get.state.GetStateMapper {}
+      tf: &tf !!edu.umbc.cs.maple.hierarchy.framework.GoalFailTF
+        goalPF: !!edu.umbc.cs.maple.taxi.functions.amdp.GetCompletedPF {}
+        failPF: !!edu.umbc.cs.maple.taxi.functions.amdp.GetFailurePF {}
+
+      rf: !!edu.umbc.cs.maple.hierarchy.framework.GoalFailRF
+        tf: *tf
+        rewardDefault: 0.0
+        rewardNoop: 0.0
+      solver: !!edu.umbc.cs.maple.config.solver.ValueIterationMultistepConfig
+        maxDelta: 0.0001
+        maxIterations: 1000
+
+   put:
+      children:
+        - nav_np
+        - putdown_p
+      domainGenerator: !!edu.umbc.cs.maple.taxi.hierarchies.tasks.put.TaxiPutDomain {}
+      stateMapper: !!edu.umbc.cs.maple.taxi.hierarchies.tasks.put.state.PutStateMapper {}
+      tf: &tf !!edu.umbc.cs.maple.hierarchy.framework.GoalFailTF
+        goalPF: !!edu.umbc.cs.maple.taxi.functions.amdp.PutCompletedPF {}
+        failPF: !!edu.umbc.cs.maple.taxi.functions.amdp.PutFailurePF {}
+
+      rf: !!edu.umbc.cs.maple.hierarchy.framework.GoalFailRF
+        tf: *tf
+        rewardDefault: 0.0
+        rewardNoop: 0.0
+      solver: !!edu.umbc.cs.maple.config.solver.ValueIterationMultistepConfig
+        maxDelta: 0.0001
+        maxIterations: 1000
+
+   nav:
+      children:
+        - north_p
+        - south_p
+        - east_p
+        - west_p
+      domainGenerator: !!edu.umbc.cs.maple.taxi.hierarchies.tasks.nav.TaxiNavDomain {}
+      stateMapper: !!edu.umbc.cs.maple.taxi.hierarchies.tasks.nav.state.NavStateMapper {}
+      tf: &tf !!edu.umbc.cs.maple.hierarchy.framework.GoalFailTF
+        goalPF: !!edu.umbc.cs.maple.taxi.functions.amdp.NavCompletedPF {}
+        failPF: !!edu.umbc.cs.maple.taxi.functions.amdp.NavFailurePF {}
+      rf: !!edu.umbc.cs.maple.hierarchy.framework.GoalFailRF
+        tf: *tf
+        rewardDefault: 0.0
+        rewardNoop: 0.0
+      solver: !!edu.umbc.cs.maple.config.solver.SarsaLambdaConfig
+        maxDelta: 0.0001
+        maxIterations: 1000
+        lambda: 0.0
+        learningRate: 0.0
