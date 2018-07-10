@@ -38,7 +38,7 @@ public class CrossPALMLearningAgent extends PALMLearningAgent {
                         double taskReward = getTaskReward(task, abstractState, action, abstractStatePrime, params);//groundedTask.getReward(pastStateAbstract, action, currentStateAbstract, params);
                         EnvironmentOutcome result = new EnvironmentOutcome(abstractState, action, abstractStatePrime, taskReward, false);
                         model.updateModel(result, stepsTaken, params);
-                        System.out.println("just updated: " + taskName);
+//                        System.out.println("just updated: " + taskName);
                     }
                 }
             }
@@ -49,7 +49,7 @@ public class CrossPALMLearningAgent extends PALMLearningAgent {
     @Override
     protected boolean updateModel(GroundedTask actualTask, State state, State abstractState, Action action, State statePrime, State abstractStatePrime, int stepsTaken) {
 
-        System.out.println("\n*****\nUpdating models:\n*****\n");
+//        System.out.println("\n*****\nUpdating models:\n*****\n");
 
         String[] actualParams = getParams(actualTask);
         double actualTaskReward = getTaskReward(actualTask, abstractState, action, abstractStatePrime, actualParams);
@@ -57,7 +57,7 @@ public class CrossPALMLearningAgent extends PALMLearningAgent {
         EnvironmentOutcome actualResult = new EnvironmentOutcome(abstractState, action, abstractStatePrime, actualTaskReward, false);
         boolean atOrBeyondThreshold = actualModel.updateModel(actualResult, stepsTaken, actualParams);
 
-        System.out.println("just updated: " + actualTask + "***");
+//        System.out.println("just updated: " + actualTask + "***");
 
         updateAllOtherPossibleModels(actualTask, state, action, statePrime, stepsTaken);
 
