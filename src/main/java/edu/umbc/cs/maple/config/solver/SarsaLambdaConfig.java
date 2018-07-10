@@ -4,13 +4,14 @@ import burlap.behavior.functionapproximation.DifferentiableStateActionValue;
 import burlap.behavior.singleagent.learning.tdmethods.vfa.GradientDescentSarsaLam;
 import burlap.behavior.singleagent.planning.Planner;
 import burlap.behavior.valuefunction.ValueFunction;
+import edu.umbc.cs.maple.config.TileCoding.TileCodingConfig;
 
 
 public class SarsaLambdaConfig extends SolverConfig{
     double gamma;
     public double lambda;
     public double learningRate;
-    DifferentiableStateActionValue vfa;
+    public TileCodingConfig TCC;
 
     public SarsaLambdaConfig(){
         this.setType("SarsaLambda");
@@ -20,7 +21,7 @@ public class SarsaLambdaConfig extends SolverConfig{
         if(knownValueFunction instanceof GradientDescentSarsaLam){
             return (GradientDescentSarsaLam)knownValueFunction;
         }else{
-            GradientDescentSarsaLam planner = new GradientDescentSarsaLam(domain, gamma, (DifferentiableStateActionValue) vfa, learningRate, lambda);
+            GradientDescentSarsaLam planner = new GradientDescentSarsaLam(domain, gamma, TCC.generateVFA(), learningRate, lambda);
         }
         return null;
     }
@@ -31,14 +32,6 @@ public class SarsaLambdaConfig extends SolverConfig{
 
     public void setGamma(double gamma) {
         this.gamma = gamma;
-    }
-
-    public int getTransitionSamples() {
-        return transitionSamples;
-    }
-
-    public void setTransitionSamples(int transitionSamples) {
-        this.transitionSamples = transitionSamples;
     }
 
 }
