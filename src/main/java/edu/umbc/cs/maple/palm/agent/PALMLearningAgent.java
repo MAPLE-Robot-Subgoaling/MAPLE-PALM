@@ -287,12 +287,10 @@ public class PALMLearningAgent implements LearningAgent {
             PALMModel model = getModel(task);
             if (subtaskCompleted) {
 
-                if(crossPolicyLearning){
-			        updateAllPossibleModels(pastStateGrounded, action, currentStateGrounded, stepsTaken);
-                }else {
-                    model.updateModel(result, stepsTaken, params);
-                }
                 boolean atOrBeyondThreshold = model.updateModel(result, stepsTaken, params);
+                if (crossPolicyLearning) {
+                    updateAllPossibleModels(pastStateGrounded, action, currentStateGrounded, stepsTaken, model);
+                }
                 resultString.append(atOrBeyondThreshold ? "+" : "-");
                 if (!atOrBeyondThreshold) {
                     allChildrenAtOrBeyondThreshold = false;
@@ -380,36 +378,37 @@ public class PALMLearningAgent implements LearningAgent {
 
         // clear the model parameters (sanity check)
         model.setParams(null);
-    	return action;
-	}
+        return action;
+    }
 
-    protected void updateAllPossibleModels(State pastStateGrounded, Action a, State currentBaseState, int stepsTaken){
-	    List<PALMModel> updatedModels = new ArrayList<>();
-	    PALMModel m;
-	    GroundedTask parent;
-	    EnvironmentOutcome result;
-	    String[] params;
-	    State taskPastState, taskCurrentState;
-	   for(Map.Entry<String, GroundedTask> e : this.taskNames.entrySet()){
-	       parent = e.getValue();
-	       m = getModel(parent);
-	       if(updatedModels.contains(m) || parent.isPrimitive()) continue;
-	       params = getParams(parent);
-	       taskPastState = parent.mapState(pastStateGrounded);
-	       taskCurrentState = parent.mapState(currentBaseState);
-	       List<GroundedTask> children = parent.getGroundedChildTasks(taskPastState);
-	       for(GroundedTask t : children){
-	           if(t.getAction().actionName().equals(a.actionName()) && Arrays.equals(getParams(t), getParams(a))){
-	               double psuedoreward = parent.getReward(taskPastState, a, taskCurrentState, params);
-	               result = new EnvironmentOutcome(taskPastState, a, taskCurrentState, psuedoreward, true);
-	               m.updateModel(result,stepsTaken, params);
-	               updatedModels.add(m);
-	               break;
-               }
-           }
-       }
-       System.out.println(a.actionName() +", updated " + updatedModels.size());
-	   System.out.print("[");
+    protected void updateAllPossibleModels(State pastStateGrounded, Action a, State currentBaseState, int stepsTaken, PALMModel actualModel) {
+        List<PALMModel> updatedModels = new ArrayList<>();
+        PALMModel m;
+        GroundedTask parent;
+        EnvironmentOutcome result;
+        String[] params;
+        State taskPastState, taskCurrentState;
+        for (Map.Entry<String, GroundedTask> e : this.taskNames.entrySet()) {
+            parent = e.getValue();
+            m = getModel(parent);
+            if (updatedModels.contains(m)) continue;
+            if (actualModel == m || parent.isPrimitive()) continue;
+            params = getParams(parent);
+            taskPastState = parent.mapState(pastStateGrounded);
+            taskCurrentState = parent.mapState(currentBaseState);
+            List<GroundedTask> children = parent.getGroundedChildTasks(taskPastState);
+            for (GroundedTask t : children) {
+                if (t.getAction().actionName().equals(a.actionName()) && Arrays.equals(getParams(t), getParams(a))) {
+                    double psuedoreward = parent.getReward(taskPastState, a, taskCurrentState, params);
+                    result = new EnvironmentOutcome(taskPastState, a, taskCurrentState, psuedoreward, false);
+                    m.updateModel(result, stepsTaken, params);
+                    updatedModels.add(m);
+                    break;
+                }
+            }
+        }
+//        System.out.println(a.actionName() + ", updated " + updatedModels.size());
+//        System.out.print("[");
     }
 
     protected PALMModel getModel(GroundedTask t) {
