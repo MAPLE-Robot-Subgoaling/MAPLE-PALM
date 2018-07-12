@@ -4,15 +4,17 @@ import burlap.mdp.core.oo.state.OOVariableKey;
 import edu.umbc.cs.maple.hiergen.CAT.*;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 
 public class CATScan {
 
     // input: a CAT, the relevant variables
     // output: a seeded set of action indexes
-    public static List<Integer> seedActionIndexes(CATrajectory cat, List<OOVariableKey> variables) {
-        ArrayList<Integer> actionIndexes = new ArrayList<>();
+    protected static Set<Integer> seedActionIndexes(CATrajectory cat, List<OOVariableKey> variables) {
+        Set<Integer> actionIndexes = new HashSet<>();
         List<CausalEdge> edges = cat.getEdges();
         for (Object variable : variables) {
 
@@ -45,35 +47,58 @@ public class CATScan {
         return actionIndexes;
     }
 
-    public static List<Integer> computeActionIndexes(CATrajectory cat, List<OOVariableKey> variables, List<Integer> actionIndexes) {
+    protected static Set<Integer> computeActionIndexes(CATrajectory cat, Set<Integer> actionIndexes) {
         String[] actions = cat.getActions();
-
-        // check all actions with outgoing edges to the subCAT
-        // only have outgoing edges maintained in the subCAT
+        int prevSize;
         do {
+            prevSize = actionIndexes.size();
             for (int i = 0; i < actions.length; i++) {
-                boolean contained = false;
-                if (!(actionIndexes.contains(i))) {
-                    List<Integer> nextEdges = cat.findEdges(i);
-                    if (nextEdges != null) {
-                        contained = true;
-                        for (Integer e : nextEdges) {
-                            if (!actionIndexes.contains(e)) {
-                                contained = false;
-                                break;
-                            }
-                        }
-                    }
-                }
-                if (contained) {
+                boolean connectedInto = isConnectedToKnownAction(cat, actionIndexes, i);
+                boolean connectedOutOf = isConnectedToUnknownAction(cat, actionIndexes, i);
+                if (connectedInto && !connectedOutOf) {
                     actionIndexes.add(i);
-                    if (i < start) {
-                        start = i;
-                    }
                 }
             }
         } while (actionIndexes.size() != prevSize);
+        return actionIndexes;
+    }
 
+    protected static boolean isConnectedToKnownAction(CATrajectory cat, Set<Integer> actionIndexes, int iIndex) {
+        boolean connected = false;
+        List<Integer> nextEdges = cat.findEdges(iIndex);
+        for (Integer jIndex : nextEdges) {
+            if (actionIndexes.contains(jIndex)) {
+                // if there exists some action index, jIndex, in the known set to which
+                // iIndex is connected, then it is true
+                connected = true;
+                break;
+            }
+        }
+        return connected;
+
+    }
+
+    protected static Set<Integer> getUnknownActionIndexes(CATrajectory cat, Set<Integer> knownActionIndexes) {
+        Set<Integer> unknownActionIndexes = new HashSet<>();
+        for (int i = 0; i < cat.getActions().length; i++) {
+            if (!knownActionIndexes.contains(i)) { unknownActionIndexes.add(i); }
+        }
+        return unknownActionIndexes;
+    }
+
+    protected static boolean isConnectedToUnknownAction(CATrajectory cat, Set<Integer> actionIndexes, int iIndex) {
+        Set<Integer> unknownActionIndexes = getUnknownActionIndexes(cat, actionIndexes);
+        boolean connected = false;
+        List<Integer> nextEdges = cat.findEdges(iIndex);
+        for (Integer jIndex : nextEdges) {
+            if (unknownActionIndexes.contains(jIndex)) {
+                // there exists some action not in the known set of action indexes to which
+                // iIndex is connected
+                connected = true;
+                break;
+            }
+        }
+        return connected;
     }
 
     public static List<SubCAT> scan(ArrayList<CATrajectory> cats, List<OOVariableKey> variables) {
@@ -83,7 +108,7 @@ public class CATScan {
         List<SubCAT> subCATs = new ArrayList<SubCAT>();
         for (CATrajectory cat : cats) {
 
-            List<Integer> actionIndexes = seedActionIndexes(cat, variables);
+            Set<Integer> actionIndexes = seedActionIndexes(cat, variables);
 
             actionIndexes = computeActionIndexes(cat, variables, actionIndexes);
 
@@ -91,22 +116,14 @@ public class CATScan {
                 SubCAT subCAT = new SubCAT(start, end, actionIndexes, variables, cat);
                 subCATs.add(subCAT);
             }
+
+//            for (OOVariableKey variable : variables) {
+//                if
+//            }
         }
 
         return subCATs;
     }
-
-//    public static SubCAT scan(CATrajectory trajectory, List<OOVariableKey> variables) {
-//        ArrayList<CATrajectory> cats = new ArrayList<>();
-//        cats.add(trajectory);
-//        List<SubCAT> temp = scan(cats, variables);
-//        if (!temp.isEmpty()) {
-//            return temp.get(0);
-//        }
-//
-//        return null;
-//
-//    }
 
 
 }
