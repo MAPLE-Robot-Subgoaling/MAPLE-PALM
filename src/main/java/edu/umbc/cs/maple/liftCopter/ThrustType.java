@@ -33,7 +33,7 @@ public class ThrustType implements ActionType {
     }
 
     public Action associatedAction(String strRep) {
-        String[] tokens = strRep.split("_");
+        String[] tokens = strRep.split("|");
         return new ThrustAction(Double.parseDouble(tokens[1]),Double.parseDouble(tokens[2])*Math.PI);
     }
 
@@ -54,7 +54,7 @@ public class ThrustType implements ActionType {
         }
 
         public String actionName() {
-            return "thrust_" + this.thrust + "_" + (this.direction/Math.PI);
+            return "thrust|" + this.thrust + "|" + (this.direction/Math.PI);
         }
 
         public Action copy() {

@@ -12,10 +12,10 @@ public class LiftCopterConstants {
     public static final String ACTION_NAV = "nav";
     public static final String ACTION_GET = "get";
     public static final String ACTION_PUT = "put";
-    public static final String ACTION_THRUST_NORTH = "tn";
-    public static final String ACTION_THRUST_SOUTH = "ts";
-    public static final String ACTION_THRUST_EAST = "te";
-    public static final String ACTION_THRUST_WEST = "tw";
+    public static final String ACTION_THRUST_NORTH = "thrust|0.02|.5";
+    public static final String ACTION_THRUST_SOUTH = "thrust|0.02|1.5";
+    public static final String ACTION_THRUST_EAST = "thrust|0.02|0.0";
+    public static final String ACTION_THRUST_WEST = "thrust|0.02|1";
     public static final String ACTION_THRUST = "thrust";
     public static final String ACTION_IDLE = "noop";
     public static final String ACTION_PICKUP = "pickup";

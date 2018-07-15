@@ -3,7 +3,9 @@ package edu.umbc.cs.maple.liftCopter.hierarchies.functions;
 import burlap.mdp.core.oo.propositional.PropositionalFunction;
 import burlap.mdp.core.oo.state.OOState;
 import burlap.mdp.core.oo.state.ObjectInstance;
+import edu.umbc.cs.maple.liftCopter.hierarchies.expert.tasks.root.state.LCRootState;
 import edu.umbc.cs.maple.liftCopter.state.LiftCopterState;
+import edu.umbc.cs.maple.taxi.hierarchies.tasks.root.state.TaxiRootState;
 
 import java.util.List;
 
@@ -17,6 +19,7 @@ public class RootFailurePF extends PropositionalFunction {
 
     @Override
     public boolean isTrue(OOState s, String... params) {
+        if (!(s instanceof LCRootState)) { return false; }
         LiftCopterState state = (LiftCopterState) s;
         List<ObjectInstance> walls = state.objectsOfClass(CLASS_WALL);
         double ax = (double) state.getCopter().get(ATT_X);

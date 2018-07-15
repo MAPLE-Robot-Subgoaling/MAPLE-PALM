@@ -139,10 +139,10 @@ public class LiftCopter implements DomainGenerator {
 
         VisualExplorer exp = new VisualExplorer(domain, v, s);
 
-        exp.addKeyAction("w", "thrust", "thrust_0.02_0.5");
-        exp.addKeyAction("d", "thrust", "thrust_0.02_0.0");
-        exp.addKeyAction("a", "thrust", "thrust_0.02_1");
-        exp.addKeyAction("s", "thrust", "thrust_0.02_1.5");
+        exp.addKeyAction("w", "thrust", ACTION_THRUST_NORTH);
+        exp.addKeyAction("d", "thrust", ACTION_THRUST_EAST);
+        exp.addKeyAction("a", "thrust", ACTION_THRUST_SOUTH);
+        exp.addKeyAction("s", "thrust", ACTION_THRUST_WEST);
         exp.addKeyAction("e", ACTION_PUTDOWN, "cargo0");
         exp.addKeyAction("q", ACTION_PICKUP, "cargo0");
         exp.addKeyAction("x", ACTION_IDLE,"");
