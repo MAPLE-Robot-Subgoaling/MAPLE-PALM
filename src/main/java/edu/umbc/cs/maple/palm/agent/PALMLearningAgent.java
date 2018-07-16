@@ -350,6 +350,7 @@ public class PALMLearningAgent implements LearningAgent {
             planner.setValueFunctionInitialization(knownValueFunction);
         }
         Policy policy = planner.planFromState(s);
+        Action action = policy.action(s);
         boolean debug = false;
         if (debug) {
             try {
