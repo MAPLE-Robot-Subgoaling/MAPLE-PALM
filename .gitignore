@@ -7,3 +7,4 @@ trees/
 .project
 out/
 target/
+*.DS_Store
