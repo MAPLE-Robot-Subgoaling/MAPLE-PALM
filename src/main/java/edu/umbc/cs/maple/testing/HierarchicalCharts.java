@@ -142,7 +142,7 @@ public class HierarchicalCharts {
 
     public static void main(String[] args) {
 
-        String configFile = "config/taxi/classic.yaml";
+        String configFile = "config/liftCopter/classic.yaml";
         if(args.length > 0) {
             configFile = args[0];
         }

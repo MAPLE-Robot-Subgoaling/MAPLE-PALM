@@ -5,18 +5,23 @@ import burlap.behavior.functionapproximation.supervised.SupervisedVFA;
 import burlap.behavior.policy.Policy;
 import burlap.behavior.policy.PolicyUtils;
 import burlap.behavior.singleagent.Episode;
+import burlap.behavior.singleagent.MDPSolver;
 import burlap.behavior.singleagent.learning.LearningAgent;
 import burlap.behavior.singleagent.learning.tdmethods.vfa.GradientDescentSarsaLam;
+import burlap.behavior.singleagent.planning.Planner;
 import burlap.behavior.singleagent.planning.vfa.fittedvi.FittedVI;
 import burlap.behavior.valuefunction.ValueFunction;
 import burlap.mdp.core.action.Action;
 import burlap.mdp.core.oo.ObjectParameterizedAction;
 import burlap.mdp.core.state.State;
+import burlap.mdp.singleagent.SADomain;
 import burlap.mdp.singleagent.environment.Environment;
 import burlap.mdp.singleagent.environment.EnvironmentOutcome;
 import burlap.mdp.singleagent.oo.OOSADomain;
 import burlap.statehashing.HashableStateFactory;
 import edu.umbc.cs.maple.config.ExperimentConfig;
+import edu.umbc.cs.maple.config.solver.FittedVIConfig;
+import edu.umbc.cs.maple.config.solver.SarsaLambdaConfig;
 import edu.umbc.cs.maple.config.solver.SolverConfig;
 import edu.umbc.cs.maple.hierarchy.framework.GroundedTask;
 import edu.umbc.cs.maple.hierarchy.framework.NonprimitiveTask;
@@ -83,6 +88,8 @@ public class PALMLearningAgent implements LearningAgent {
 
     private long actualTimeElapsed = 0;
 
+    private double gamma = 0;
+
     /**
      * create a PALM agent on a given task
      * @param root the root of the hierarchy to learn
@@ -102,6 +109,7 @@ public class PALMLearningAgent implements LearningAgent {
 
     public PALMLearningAgent(Task root, PALMModelGenerator modelGenerator, HashableStateFactory hsf, ExperimentConfig config) {
         this(root, modelGenerator, hsf, config.rmax.max_delta, config.rmax.max_iterations_in_model, config.rmax.wait_for_children);
+        gamma = config.gamma;
     }
 
     @Override
@@ -188,14 +196,14 @@ public class PALMLearningAgent implements LearningAgent {
 
         boolean allChildrenBeyondThreshold = true;
 
-		while(
-			// while task still valid
-		        !(task.isFailure(currentState) || task.isComplete(currentState))
-			// and still have steps it can take
-                && (steps < maxSteps || maxSteps == -1)
-            // and it hasn't solved the root goal, keep planning
-                && !(groundedRoot.isComplete(groundedRoot.mapState(baseState)))
-        ){
+        while(
+            // while task still valid
+                !(task.isFailure(currentState) || task.isComplete(currentState))
+                        // and still have steps it can take
+                        && (steps < maxSteps || maxSteps == -1)
+                        // and it hasn't solved the root goal, keep planning
+                        && !(groundedRoot.isComplete(groundedRoot.mapState(baseState)))
+                ){
             actionCount++;
             boolean subtaskCompleted = false;
             pastState = currentState;
@@ -209,13 +217,13 @@ public class PALMLearningAgent implements LearningAgent {
                 action = this.taskNames.get(actionName);
             }
 
-			if (waitForChildren && allChildrenBeyondThreshold && !action.isPrimitive()) {
-				State s = currentState;
-				PALMModel m = getModel(task);
-				if (!m.isConvergedFor(s, a, null)) {
-					allChildrenBeyondThreshold = false;
-				}
-			}
+            if (waitForChildren && allChildrenBeyondThreshold && !action.isPrimitive()) {
+                State s = currentState;
+                PALMModel m = getModel(task);
+                if (!m.isConvergedFor(s, a, null)) {
+                    allChildrenBeyondThreshold = false;
+                }
+            }
             // solve this task's next chosen subtask, recursively
             int stepsBefore = steps;
             subtaskCompleted = solveTask(task, action, baseEnv, maxSteps);
@@ -233,10 +241,10 @@ public class PALMLearningAgent implements LearningAgent {
             // update task model if the subtask completed correctly
             // the case in which this is NOT updated is if the subtask failed or did not take at least one step
             // for example, the root "solve" task may not complete
-			if(subtaskCompleted) {
-				model.updateModel(result, stepsTaken);
-				subtasksExecuted.add(action.toString()+"++");
-			} else {
+            if(subtaskCompleted) {
+                model.updateModel(result, stepsTaken);
+                subtasksExecuted.add(action.toString()+"++");
+            } else {
                 subtasksExecuted.add(action.toString()+"--");
             }
         }
@@ -247,80 +255,77 @@ public class PALMLearningAgent implements LearningAgent {
 
 //        tabLevel = tabLevel.substring(0, (tabLevel.length() - 1));
 
-		boolean parentShouldUpdateModel = task.isComplete(currentState) ||actionCount == 0;
-		parentShouldUpdateModel = parentShouldUpdateModel && allChildrenBeyondThreshold;
-		return parentShouldUpdateModel;
-	}
-	
-	/**
-	 * add the children of the given task to the action name lookup
-	 * @param gt the current grounded task
-	 * @param s the current state
-	 */
-	protected void addChildrenToMap(GroundedTask gt, State s){
-		List<GroundedTask> children = gt.getGroundedChildTasks(s);
-		for(GroundedTask child : children){
-			taskNames.put(child.toString(), child);
-		}
-	}
+        boolean parentShouldUpdateModel = task.isComplete(currentState) ||actionCount == 0;
+        parentShouldUpdateModel = parentShouldUpdateModel && allChildrenBeyondThreshold;
+        return parentShouldUpdateModel;
+    }
 
-	public static boolean PRINT = false;
-	/**
-	 * plan over the given task's model and pick the best action to do next favoring unmodeled actions
-	 * @param task the current task
-	 * @param s the current state
-	 * @return the best action to take
-	 */
-	protected Action nextAction(GroundedTask task, State s){
-        PALMModel model = getModel(task);
-		OOSADomain domain = task.getDomain(model);
-//		double discount = model.gamma();
-		DiscountProvider discountProvider = model.getDiscountProvider();
-		Policy policy;
-        ValueFunction knownValueFunction;
-        SolverConfig solver = ((NonprimitiveTask)task.getTask()).getSolver();
-//        solver.generateSolver();
-        {
-            ValueIterationMultiStep planner = new ValueIterationMultiStep(domain, hashingFactory, maxDelta, maxIterationsInModelPlanner, discountProvider);
-            planner.toggleReachabiltiyTerminalStatePruning(true);
-//		planner.toggleReachabiltiyTerminalStatePruning(false);
-            knownValueFunction = task.valueFunction;
-            if (knownValueFunction != null) {
-                planner.setValueFunctionInitialization(knownValueFunction);
-            }
-            policy = planner.planFromState(s);
+    /**
+     * add the children of the given task to the action name lookup
+     * @param gt the current grounded task
+     * @param s the current state
+     */
+    protected void addChildrenToMap(GroundedTask gt, State s){
+        List<GroundedTask> children = gt.getGroundedChildTasks(s);
+        for(GroundedTask child : children){
+            taskNames.put(child.toString(), child);
         }
-//        {
-//            FittedVI planner;
-//            planner = new FittedVI(domain, gamma, SupervisedVFA, transitionSamples, maxDelta, maxIterationsInModelPlanner);
-//            ValueIterationMultiStep planner = new ValueIterationMultiStep(domain, hashingFactory, maxDelta, maxIterationsInModelPlanner, discountProvider);
-//            planner.toggleReachabiltiyTerminalStatePruning(true);
-////		planner.toggleReachabiltiyTerminalStatePruning(false);
-//            knownValueFunction = task.valueFunction;
-//            if (knownValueFunction != null) {
-//                planner.setValueFunctionInitialization(knownValueFunction);
-//            }
-//            policy = planner.planFromState(s);
-//        }
+    }
+
+    public static boolean PRINT = false;
+    /**
+     * plan over the given task's model and pick the best action to do next favoring unmodeled actions
+     * @param task the current task
+     * @param s the current state
+     * @return the best action to take
+     */
+    protected Action nextAction(GroundedTask task, State s){
+        PALMModel model = getModel(task);
+        OOSADomain domain = task.getDomain(model);
+//		double discount = model.gamma();
+        DiscountProvider discountProvider = model.getDiscountProvider();
+        Policy policy;
+        ValueFunction knownValueFunction;
+        SolverConfig solverConfig = ((NonprimitiveTask)task.getTask()).getSolver();
+        if(solverConfig.getType() == "ValueIterationMultiStep"){
+            solverConfig.setDomain(domain);
+            solverConfig.setDiscountProvider(discountProvider);
+            solverConfig.setHashingFactory(hashingFactory);
+            solverConfig.setMaxDelta(maxDelta);
+            solverConfig.setMaxIterations(maxIterationsInModelPlanner);
+        } else if(solverConfig.getType() == "FittedVI"){
+            solverConfig.setDomain(domain);
+            solverConfig.setMaxDelta(maxDelta);
+            solverConfig.setMaxIterations(maxIterationsInModelPlanner);
+            ((FittedVIConfig)solverConfig).setGamma(gamma);
+        } else if(solverConfig.getType() == "SarsaLambda"){
+            solverConfig.setDomain(domain);
+            ((SarsaLambdaConfig)solverConfig).setGamma(gamma);
+        }
+        knownValueFunction = task.valueFunction;
+        Planner solver = solverConfig.generateSolver(knownValueFunction);
+
+        policy = solver.planFromState(s);
+
         Action action = policy.action(s);
-		if (debug) {
-			try {
-				if (task.toString().contains("solve")) {
-					Episode e = PolicyUtils.rollout(policy, s, model, 10);
+        if (debug) {
+            try {
+                if (task.toString().contains("solve")) {
+                    Episode e = PolicyUtils.rollout(policy, s, model, 10);
 //					System.out.println(tabLevel + "    Debug rollout: " + e.actionSequence);
 //					System.out.println(tabLevel + action + ", ");
-				}
-			} catch (Exception e) {
-				//             ignore, temp debug to assess palm
-				System.out.println(e);
-				e.printStackTrace();
-			}
-		}
-		double defaultValue = 0.0;
+                }
+            } catch (Exception e) {
+                //             ignore, temp debug to assess palm
+                System.out.println(e);
+                e.printStackTrace();
+            }
+        }
+        double defaultValue = 0.0;
 //		valueFunction = planner.saveValueFunction(defaultValue, rmax);
-		task.valueFunction = knownValueFunction;
-    	return action;
-	}
+        task.valueFunction = knownValueFunction;
+        return action;
+    }
 
     protected PALMModel getModel(GroundedTask t){
 //        PALMModel model = models.get(t);
