@@ -168,7 +168,7 @@ public class TaxiNavState implements MutableOOState, DeepCopyForShallowCopyState
     @Override
     public String toString() {
         String out = "{ " + this.getClass().getSimpleName() + "\n";
-        out += taxi.toString();
+        if (taxi != null) { out += taxi.toString(); }
         for(TaxiNavLocation loc : locations.values()){
             out += loc.toString() + "\n";
         }

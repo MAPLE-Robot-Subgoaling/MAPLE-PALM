@@ -67,9 +67,6 @@ public class PALMLearningAgent implements LearningAgent {
 
     private int maxIterationsInModelPlanner = -1;
 
-    // if true, AMDP models will not update until all actions they took were also beyond RMAX threshold
-    private boolean waitForChildren;
-
     // if true, uses model sharing, forcing the same model regardless of the parameterized object
     private boolean useModelSharing;
 
@@ -87,7 +84,7 @@ public class PALMLearningAgent implements LearningAgent {
      * @param hsf      a state hashing factory
      * @param maxDelta the max error for the planner
      */
-    public PALMLearningAgent(Task root, PALMModelGenerator modelGenerator, HashableStateFactory hsf, double maxDelta, int maxIterationsInModelPlanner, boolean waitForChildren, boolean useModelSharing) {
+    public PALMLearningAgent(Task root, PALMModelGenerator modelGenerator, HashableStateFactory hsf, double maxDelta, int maxIterationsInModelPlanner, boolean useModelSharing) {
         this.root = root;
         this.hashingFactory = hsf;
         this.models = new HashMap<>();
@@ -95,12 +92,11 @@ public class PALMLearningAgent implements LearningAgent {
         this.maxDelta = maxDelta;
         this.maxIterationsInModelPlanner = maxIterationsInModelPlanner;
         this.modelGenerator = modelGenerator;
-        this.waitForChildren = waitForChildren;
         this.useModelSharing = useModelSharing;
     }
 
     public PALMLearningAgent(Task root, PALMModelGenerator modelGenerator, HashableStateFactory hsf, ExperimentConfig config) {
-        this(root, modelGenerator, hsf, config.rmax.max_delta, config.rmax.max_iterations_in_model, config.rmax.wait_for_children, config.rmax.use_model_sharing);
+        this(root, modelGenerator, hsf, config.rmax.max_delta, config.rmax.max_iterations_in_model, config.rmax.use_model_sharing);
     }
 
     @Override
@@ -128,6 +124,8 @@ public class PALMLearningAgent implements LearningAgent {
         solveTask(null, groundedRoot, env, maxSteps);
         System.out.println(e.actionSequence.size() + " " + e.actionSequence);
         System.out.println("Discounted return: " + e.discountedReturn(getModel(groundedRoot).getDiscountProvider().getGamma()));
+
+        System.out.println(models.size() + " models, " + taskNames.size() + " named tasks");
 
         // run a rollout on the models resulting from the episode just computed,
         // to check if the root AMDP has reached a solution yet
@@ -339,6 +337,7 @@ public class PALMLearningAgent implements LearningAgent {
      * @return the best action to take
      */
     protected Action nextAction(GroundedTask task, State s) {
+        System.out.println("\nnext action\n");
         PALMModel model = getModel(task);
         String[] params = getParams(task);
         OOSADomain domain = task.getDomain(model, params);
@@ -351,12 +350,11 @@ public class PALMLearningAgent implements LearningAgent {
             planner.setValueFunctionInitialization(knownValueFunction);
         }
         Policy policy = planner.planFromState(s);
-        Action action = policy.action(s);
         boolean debug = false;
         if (debug) {
             try {
 //				if (task.toString().contains("solve")) {
-                System.out.println(tabLevel + "    Task:    " + task.toString() + " " + s.toString());
+                System.out.println("*****\n" + tabLevel + "    Task:    " + task.toString() + " " + s.toString());
                 Episode e = PolicyUtils.rollout(policy, s, model, 100);
                 OOState last = (OOState) e.stateSequence.get(e.stateSequence.size() - 1);
                 if (last.numObjects() > 0) {
@@ -381,7 +379,6 @@ public class PALMLearningAgent implements LearningAgent {
     }
 
     protected PALMModel getModel(GroundedTask t) {
-//        PALMModel model = models.get(t);
         // idea: try to do lookup such that models are shared across certain AMDP classes
         // for example, instead of 4 put passenger AMDPs, one for each passenger
         // we mask the name of the passenger and share models, treating every passenger the same
