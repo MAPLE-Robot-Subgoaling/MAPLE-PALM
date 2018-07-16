@@ -59,7 +59,7 @@ public class PALMLearningAgent implements LearningAgent {
     /**
      * provided state hashing factory
      */
-    private HashableStateFactory hashingFactory;
+    protected HashableStateFactory hashingFactory;
 
     /**
      * the max error allowed for the planner
@@ -74,7 +74,7 @@ public class PALMLearningAgent implements LearningAgent {
     /**
      * the current episode
      */
-    private Episode e;
+    protected Episode e;
 
     private PALMModelGenerator modelGenerator;
 

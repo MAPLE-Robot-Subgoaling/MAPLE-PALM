@@ -8,6 +8,7 @@ import burlap.statehashing.HashableStateFactory;
 import burlap.statehashing.simple.SimpleHashableStateFactory;
 import edu.umbc.cs.maple.config.ExperimentConfig;
 import edu.umbc.cs.maple.hierarchy.framework.Task;
+import edu.umbc.cs.maple.palm.agent.AncestorPALMLearningAgent;
 import edu.umbc.cs.maple.palm.agent.CrossPALMLearningAgent;
 import edu.umbc.cs.maple.palm.agent.PALMLearningAgent;
 import edu.umbc.cs.maple.palm.agent.PALMModelGenerator;
@@ -15,6 +16,7 @@ import edu.umbc.cs.maple.palm.rmax.agent.ExpectedRmaxModelGenerator;
 //import edu.umbc.cs.maple.palm.rmax.agent.ExpertNavModelGenerator;
 import edu.umbc.cs.maple.palm.rmax.agent.ExpertNavModelGenerator;
 import edu.umbc.cs.maple.palm.rmax.agent.PALMRmaxModelGenerator;
+import edu.umbc.cs.maple.palm.rmax.agent.UpdatePALMRmaxModelGenerator;
 import edu.umbc.cs.maple.rmaxq.agent.RmaxQLearningAgent;
 import edu.umbc.cs.maple.state.hashing.bugfix.BugfixHashableStateFactory;
 import edu.umbc.cs.maple.state.hashing.cached.CachedHashableStateFactory;
@@ -33,6 +35,14 @@ public enum AgentType {
         public LearningAgent getLearningAgent(Task root, HashableStateFactory hsf, ExperimentConfig config) {
             PALMModelGenerator modelGen = new PALMRmaxModelGenerator(hsf, config);
             LearningAgent agent = new CrossPALMLearningAgent(root, modelGen, hsf, config);
+            return agent;
+        }
+    },
+    PALM_EXPERT_ANCESTOR("palmExpertAncestor", "PALM-Ex-Ancestor"){
+        @Override
+        public LearningAgent getLearningAgent(Task root, HashableStateFactory hsf, ExperimentConfig config) {
+            PALMModelGenerator modelGen = new UpdatePALMRmaxModelGenerator(hsf, config);
+            LearningAgent agent = new AncestorPALMLearningAgent(root, modelGen, hsf, config);
             return agent;
         }
     },

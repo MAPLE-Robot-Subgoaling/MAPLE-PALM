@@ -127,12 +127,13 @@ public abstract class RmaxModel extends PALMModel {
         HashableState hs = this.hashingFactory.hashState(s);
         Map<HashableState, PossibleOutcome> hsPrimeToOutcomes = getHsPrimeToOutcomes(hs, a);
         List<TransitionProb> tps = new ArrayList<>();
-        int transitionCount = getStateActionCount(hsPrimeToOutcomes, hs, a);
-        if (transitionCount < mThreshold || hsPrimeToOutcomes.size() < 1) {
+        //add the imagined rmax transition to all unconverged state action pairs
+        if ( !this.isConvergedFor(s, a, null) ) {
             TransitionProb imaginedTransition = makeImaginedTransition(hs, a);
             tps.add(imaginedTransition);
             return tps;
         }
+        //otherwise, sample from the actual recorded data
         double totalProbability = 0.0;
         for (HashableState hsPrime : hsPrimeToOutcomes.keySet()) {
             PossibleOutcome outcome = getPossibleOutcome(hsPrimeToOutcomes, hs, a, hsPrime);
@@ -182,7 +183,8 @@ public abstract class RmaxModel extends PALMModel {
         // must recompute the hsPrimeToOutcomes now
         hsPrimeToOutcomes = getHsPrimeToOutcomes(hs, a);
         int stateActionCount = getStateActionCount(hsPrimeToOutcomes, hs, a);
-        boolean atOrBeyondThreshold = stateActionCount >= mThreshold;
+        boolean atOrBeyondThreshold = isConvergedFor(result.o, a, result.op);
+
         if (atOrBeyondThreshold) {
             updateApproximationModels(hsPrimeToOutcomes, hs, a, hsPrime, outcome, stateActionCount);
             // remove imagined transition

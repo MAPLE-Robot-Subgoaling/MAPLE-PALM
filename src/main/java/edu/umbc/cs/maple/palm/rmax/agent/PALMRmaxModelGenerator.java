@@ -9,11 +9,11 @@ import edu.umbc.cs.maple.palm.agent.PALMModelGenerator;
 
 public class PALMRmaxModelGenerator implements PALMModelGenerator {
 
-    private int threshold;
-    private double rmax;
-    private double gamma;
-    private boolean useMultitimeModel;
-    private HashableStateFactory hashingFactory;
+    protected int threshold;
+    protected double rmax;
+    protected double gamma;
+    protected boolean useMultitimeModel;
+    protected HashableStateFactory hashingFactory;
 
     public PALMRmaxModelGenerator(HashableStateFactory hsf, double gamma, int threshold, double rmax, boolean useMultitimeModel) {
         this.hashingFactory = hsf;
