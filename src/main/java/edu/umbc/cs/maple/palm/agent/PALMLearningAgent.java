@@ -337,7 +337,6 @@ public class PALMLearningAgent implements LearningAgent {
      * @return the best action to take
      */
     protected Action nextAction(GroundedTask task, State s) {
-        System.out.println("\nnext action\n");
         PALMModel model = getModel(task);
         String[] params = getParams(task);
         OOSADomain domain = task.getDomain(model, params);

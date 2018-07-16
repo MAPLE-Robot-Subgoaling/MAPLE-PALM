@@ -6,15 +6,15 @@ domain: !!edu.umbc.cs.maple.config.taxi.TaxiConfig
 agents:
 #  - rmaxqExpert
 #  - rmaxqHierGen
-  - palmExpert
-#  - palmExpertCross
+#  - palmExpert
+  - palmExpertCross
 #  - palmExpertWithNavGiven
 #  - palmHierGen
 #  - kappaExpert
 #  - kappaHierGen
 #  - qLearning
 
-seed: 6657575
+seed: 99999
 episodes: 500
 max_steps: 10000
 trials: 1
@@ -31,7 +31,7 @@ rmax:
   max_delta_rmaxq: 0.0000001
   max_iterations_in_model: 1000
   use_multitime_model: true
-  use_model_sharing: true
+  use_model_sharing: false
 
 
 output:
