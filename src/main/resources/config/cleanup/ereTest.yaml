@@ -9,8 +9,18 @@ domain: !!edu.umbc.cs.maple.config.cleanup.CleanupConfig
     rewardBase: 0.0
     rewardNoop: 0.0
     rewardPull: 0.0
-    goalParams:
-      - [block0, room1]
+    
+goal: !!edu.umbc.cs.maple.config.cleanup.CleanupGoalConfig
+    goalDescriptions:
+      - pf: !! edu.umbc.cs.maple.cleanup.functions.amdp.BlockInRoomPF {}
+        params:
+         - block0
+         - room1
+        countBoundary: true
+      - !! BlockInRoom
+        params:
+         - block1
+         - room1
 
 agents:
   palm: {cleanup-expert}
