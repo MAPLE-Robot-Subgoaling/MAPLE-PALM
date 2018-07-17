@@ -11,6 +11,7 @@ import java.util.Objects;
 
 public class ThrustType implements ActionType {
     List<Action> actions;
+    String typeName = "thrust";
 
     public ThrustType(List<Double> thrustValues, List<Double> directions) {
         this.actions = new ArrayList(thrustValues.size()*directions.size());
@@ -29,7 +30,7 @@ public class ThrustType implements ActionType {
     }
 
     public String typeName() {
-        return "thrust";
+        return typeName;
     }
 
     public Action associatedAction(String strRep) {
@@ -44,6 +45,7 @@ public class ThrustType implements ActionType {
     public static class ThrustAction implements Action {
         public double thrust;
         public double direction;
+        String typeName = "thrust";
 
         public ThrustAction() {
         }
@@ -51,6 +53,7 @@ public class ThrustType implements ActionType {
         public ThrustAction(double thrust, double direction) {
             this.thrust = thrust;
             this.direction = direction;
+            typeName = "thrust|" + this.thrust + "|" + (this.direction/Math.PI);
         }
 
         public String actionName() {

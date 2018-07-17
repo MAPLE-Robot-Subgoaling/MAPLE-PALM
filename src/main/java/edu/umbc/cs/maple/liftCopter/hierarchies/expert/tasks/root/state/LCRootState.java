@@ -15,7 +15,7 @@ import java.util.Map;
 import static edu.umbc.cs.maple.liftCopter.LiftCopterConstants.*;
 
 public class LCRootState implements MutableOOState, DeepCopyForShallowCopyState {
-
+    public boolean hasFailed = false;
     //this state has cargos
     private Map<String, LCRootCargo> cargos;
 

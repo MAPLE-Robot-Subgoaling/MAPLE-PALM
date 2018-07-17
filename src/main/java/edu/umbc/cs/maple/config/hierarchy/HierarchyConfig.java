@@ -50,6 +50,10 @@ public class HierarchyConfig {
                 if(childTaskName.endsWith("_np")){
                     childTasksList.add(buildTask(childTaskName.split("_")[0], childActionType));
                 }else if(childTaskName.endsWith("_p")){
+                    if(childTaskName.startsWith("thrust")){
+                        childActionType = homeDomain.getAction("thrust");
+                        System.out.println("aaaahhhhh");
+                    }
                  //   childActionType = ((SADomain)baseDomain).getAction(childTaskName.split("_")[0]);
                     childTasksList.add(new PrimitiveTask(childActionType, ((OOSADomain)baseDomain)));
                 }
