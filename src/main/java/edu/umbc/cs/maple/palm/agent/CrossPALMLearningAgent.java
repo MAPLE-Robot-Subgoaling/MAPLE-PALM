@@ -29,6 +29,15 @@ public class CrossPALMLearningAgent extends PALMLearningAgent {
             String[] params = getParams(task);
             State abstractState = task.mapState(state);
             State abstractStatePrime = task.mapState(statePrime);
+
+
+            if (abstractState.equals(abstractStatePrime)) {
+                // if the states map to the same abstract state,
+                // it is a self-transition, so ignore the update
+                continue;
+            }
+
+
             List<GroundedTask> children = task.getGroundedChildTasks(abstractState);
             for (GroundedTask childTask : children) {
                 String childActionName = childTask.getAction().actionName();

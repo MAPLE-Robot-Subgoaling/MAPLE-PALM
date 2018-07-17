@@ -13,7 +13,6 @@ public class RmaxConfig {
     public double max_delta_rmaxq = UNSET_DOUBLE;
     public int max_iterations_in_model = UNSET_INT;
     public Boolean use_multitime_model = null;
-    public Boolean wait_for_children = null;
     public Boolean use_model_sharing = null;
 
     public boolean validate() {
@@ -24,7 +23,6 @@ public class RmaxConfig {
         if (max_delta_rmaxq == UNSET_DOUBLE) { return false; }
         if (max_iterations_in_model== UNSET_INT) { return false; }
         if (use_multitime_model == null) { return false; }
-        if (wait_for_children == null) { return false; }
         if (use_model_sharing == null) { return false; }
         return true;
     }

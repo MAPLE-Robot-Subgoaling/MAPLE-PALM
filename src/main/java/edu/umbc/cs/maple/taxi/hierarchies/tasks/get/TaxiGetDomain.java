@@ -32,7 +32,6 @@ import static edu.umbc.cs.maple.taxi.TaxiConstants.*;
 
 public class TaxiGetDomain implements DomainGenerator {
 
-
     private RewardFunction rf;
     private TerminalFunction tf;
 

@@ -57,8 +57,9 @@ public class TaxiRootState implements MutableOOState, DeepCopyForShallowCopyStat
 
     @Override
     public List<ObjectInstance> objectsOfClass(String oclass) {
-        if(oclass.equals(CLASS_PASSENGER))
+        if(oclass.equals(CLASS_PASSENGER)) {
             return new ArrayList<>(passengers.values());
+        }
         throw new RuntimeException("No object class " + oclass);
     }
 
@@ -134,7 +135,7 @@ public class TaxiRootState implements MutableOOState, DeepCopyForShallowCopyStat
         for (TaxiRootPassenger passenger : passengers.values()) {
             buf.append("P");
             buf.append(passenger.name().charAt(passenger.name().length()-1));
-            buf.append(", at:");
+            buf.append(":{");
             String at = (String) passenger.get(ATT_LOCATION);
             if (at.contains("Location")) {
                 buf.append("L");
@@ -142,7 +143,7 @@ public class TaxiRootState implements MutableOOState, DeepCopyForShallowCopyStat
             } else {
                 buf.append(at);
             }
-            buf.append(", goal:");
+            buf.append("->");
             String goal = (String) passenger.get(ATT_GOAL_LOCATION);
             if (goal.contains("Location")) {
                 buf.append("L");
@@ -150,8 +151,9 @@ public class TaxiRootState implements MutableOOState, DeepCopyForShallowCopyStat
             } else {
                 buf.append(goal);
             }
-            buf.append("; ");
+            buf.append("} ");
         }
+        buf.append(";\n");
         return buf.toString();
     }
 

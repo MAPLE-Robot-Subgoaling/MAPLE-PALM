@@ -1,7 +1,3 @@
-//
-// Source code recreated from a .class file by IntelliJ IDEA
-// (powered by Fernflower decompiler)
-//
 package edu.umbc.cs.maple.utilities;
 
 import burlap.behavior.policy.EnumerablePolicy;

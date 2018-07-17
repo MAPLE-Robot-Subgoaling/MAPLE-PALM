@@ -58,13 +58,13 @@ public class IIBugfixHashableState extends WrappedHashableState {
             ObjectInstance o = objects.get(i);
             int oHash = this.computeFlatHashCode(o);
             int classNameHash = o.className().hashCode();
-            int totalHash = oHash + 31*classNameHash;
+            int totalHash = oHash + 73*classNameHash;
             hashCodes[i] = totalHash;
         }
 
         //sort for invariance to order
         Arrays.sort(hashCodes);
-        HashCodeBuilder hashCodeBuilder = new HashCodeBuilder(17, 31);
+        HashCodeBuilder hashCodeBuilder = new HashCodeBuilder(31, 41);
         hashCodeBuilder.append(hashCodes);
         return hashCodeBuilder.toHashCode();
 
@@ -72,7 +72,7 @@ public class IIBugfixHashableState extends WrappedHashableState {
 
     protected int computeFlatHashCode(State s){
 
-        HashCodeBuilder hashCodeBuilder = new HashCodeBuilder(17, 31);
+        HashCodeBuilder hashCodeBuilder = new HashCodeBuilder(67, 83);
 
         List<Object> keys = s.variableKeys();
         for(Object key : keys){
