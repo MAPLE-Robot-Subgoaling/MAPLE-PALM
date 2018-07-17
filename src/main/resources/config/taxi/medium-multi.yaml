@@ -1,5 +1,5 @@
 domain: !!edu.umbc.cs.maple.config.taxi.TaxiConfig
-  state: classic-4passengers
+  state: medium-4passengers
   correct_move: 1.0
   fickle: 0.00
 
@@ -8,6 +8,7 @@ agents:
 #  - rmaxqHierGen
   - palmExpert
   - palmExpertCross
+  - palmExpertAncestor
 #  - palmExpertWithNavGiven
 #  - palmHierGen
 #  - kappaExpert
@@ -15,7 +16,7 @@ agents:
 #  - qLearning
 
 seed: 77665544
-episodes: 200
+episodes: 500
 max_steps: 100000
 trials: 1
 gamma: 0.95
@@ -26,7 +27,7 @@ planning:
 
 rmax:
   vmax: 10.0
-  threshold: 3
+  threshold: 5
   max_delta: 0.0000001
   max_delta_rmaxq: 0.0001
   max_iterations_in_model: 1000
