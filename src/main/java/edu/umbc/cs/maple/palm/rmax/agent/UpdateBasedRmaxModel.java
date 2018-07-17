@@ -55,7 +55,7 @@ public class UpdateBasedRmaxModel extends HierarchicalRmaxModel {
             HashableStateActionPair hsap = hashStateActionPair(s, a);
             this.updateCounts.merge(hsap,1,Integer::sum);
             for( TimedEnvironmentOutcome teo : e.getValue()){
-                allConverged = allConverged && updateModel(teo,teo.stepsTaken, params);
+                allConverged = updateModel(teo,teo.stepsTaken, params) && allConverged;
             }
         }
         return allConverged;

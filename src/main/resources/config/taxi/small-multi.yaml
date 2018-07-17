@@ -7,8 +7,9 @@ agents:
 #  - rmaxqExpert
 #  - rmaxqHierGen
 #  - palmExpert
+  - palmExpertAncestor
 #  - palmExpertWithNavGiven
-  - palmHierGen
+# - palmHierGen
 #  - kappaExpert
 #  - kappaHierGen
 #  - qLearning
