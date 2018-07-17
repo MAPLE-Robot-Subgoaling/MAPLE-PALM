@@ -37,7 +37,6 @@ public class HierarchyConfig {
         taskMap = new HashMap<String,Task>();
         baseDomain = baseDomainGenerator.generateDomain();
         Task root = buildTask("root", new SolveActionType());
-        ((NonprimitiveTask)root).setTF();
         return root;
     }
 

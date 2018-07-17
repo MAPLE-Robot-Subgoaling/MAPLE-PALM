@@ -1,11 +1,11 @@
 package edu.umbc.cs.maple.cleanup;
 
-import burlap.mdp.auxiliary.stateconditiontest.StateConditionTest;
 import burlap.mdp.core.oo.propositional.GroundedProp;
 import burlap.mdp.core.state.State;
 import edu.umbc.cs.maple.cleanup.state.CleanupState;
+import edu.umbc.cs.maple.config.DomainGoal;
 
-public class CleanupGoal implements StateConditionTest {
+public class CleanupGoal extends DomainGoal {
 
     public CleanupGoalDescription[] goals = {};
 

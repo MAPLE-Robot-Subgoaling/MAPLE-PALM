@@ -1,9 +1,6 @@
-package edu.umbc.cs.maple.cleanup.functions.amdp;
+package edu.umbc.cs.maple.cleanup.pfs;
 
-import burlap.mdp.core.oo.propositional.PropositionalFunction;
-import burlap.mdp.core.oo.state.OOState;
 import edu.umbc.cs.maple.cleanup.Cleanup;
-import edu.umbc.cs.maple.cleanup.Cleanup.InRegion;
 
 public class BlockInRoomPF extends InRegion {
 

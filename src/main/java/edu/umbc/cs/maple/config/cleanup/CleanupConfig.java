@@ -39,7 +39,6 @@ public class CleanupConfig extends DomainConfig {
     public int maxX = UNSET_INT;
     public int maxY = UNSET_INT;
     public int num_blocks = UNSET_INT;
-    public String[][] goalParams;
 
     @Override
     public boolean validate() {
@@ -69,11 +68,8 @@ public class CleanupConfig extends DomainConfig {
 
     @Override
     public DomainGenerator getDomainGenerator() {
-        return new Cleanup(minX, minY, maxX, maxY, goalParams);
+        return new Cleanup(minX, minY, maxX, maxY);
     }
 
-    public void setGoalParams(String[][] g){goalParams=g; }
-
-    public String[][] getGoalParams(){return goalParams;}
 
 }

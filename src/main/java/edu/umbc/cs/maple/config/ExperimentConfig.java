@@ -9,14 +9,9 @@ import edu.umbc.cs.maple.config.rmax.RmaxConfig;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 import org.yaml.snakeyaml.representer.Representer;
-import edu.umbc.cs.maple.taxi.TaxiVisualizer;
-import edu.umbc.cs.maple.testing.AgentType;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -41,6 +36,7 @@ public class ExperimentConfig {
     public RmaxConfig rmax;
     public OutputConfig output;
     public double gamma;
+    public DomainGoal goal;
 
 
     public static ExperimentConfig load(String configFile) throws FileNotFoundException {

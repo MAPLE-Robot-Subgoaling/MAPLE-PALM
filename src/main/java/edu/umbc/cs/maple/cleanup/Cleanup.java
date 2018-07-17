@@ -18,6 +18,7 @@ import burlap.mdp.singleagent.model.RewardFunction;
 import burlap.mdp.singleagent.oo.OOSADomain;
 import burlap.shell.visual.VisualExplorer;
 import burlap.visualizer.Visualizer;
+import edu.umbc.cs.maple.cleanup.pfs.InRegion;
 import edu.umbc.cs.maple.cleanup.state.*;
 
 import javax.swing.*;
@@ -124,17 +125,6 @@ public class Cleanup implements DomainGenerator {
         this.maxY = maxY;
     }
 
-    public Cleanup(int minX, int minY, int maxX, int maxY, String[][] g){
-        this.minX = minX;
-        this.minY = minY;
-        this.maxX = maxX;
-        this.maxY = maxY;
-        CleanupGoalDescription[] goals = new CleanupGoalDescription[g.length];
-        for(int i = 0; i<goals.length; i++){
-            goals[i] = new CleanupGoalDescription(g[i],new InRegion(PF_BLOCK_IN_ROOM, new String[]{CLASS_BLOCK,CLASS_ROOM},false));
-        }
-        cleanupGoal = new CleanupGoal(goals);
-    }
 
     public int getMinX() {
         return minX;
@@ -273,39 +263,6 @@ public class Cleanup implements DomainGenerator {
         String firstLetter = s.substring(0, 1);
         String remainder = s.substring(1);
         return firstLetter.toUpperCase() + remainder;
-    }
-
-
-    public class InRegion extends PropositionalFunction {
-
-        protected boolean countBoundary;
-
-        public InRegion(String name, String[] parameterClasses, boolean countBoundary) {
-            super(name, parameterClasses);
-            this.countBoundary = countBoundary;
-        }
-
-        @Override
-        public boolean isTrue(OOState s, String... params) {
-            CleanupState cws = (CleanupState) s;
-            ObjectInstance o = cws.object(params[0]);
-            ObjectInstance region = cws.object(params[1]);
-
-            if (o == null) { return false; }
-
-            String abstractInRegion = (String) o.get(ATT_REGION);
-            if (abstractInRegion != null) {
-                // this object is abstract, as in the Cleanup AMDP
-                return abstractInRegion.equals(region.name());
-            }
-
-            if (o == null || region == null) {
-                return false;
-            }
-            int x = (Integer) o.get(ATT_X);
-            int y = (Integer) o.get(ATT_Y);
-            return CleanupState.regionContainsPoint(region, x, y, countBoundary);
-        }
     }
 
     public class IsColor extends PropositionalFunction {
