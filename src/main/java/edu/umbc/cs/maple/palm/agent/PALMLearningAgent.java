@@ -229,8 +229,8 @@ public class PALMLearningAgent implements LearningAgent {
         while (
             // while task still valid
                 !(task.isFailure(currentStateAbstract) || task.isComplete(currentStateAbstract))
-                        // and still have steps it can take
-                        && (steps < maxSteps || maxSteps == -1)
+            // and still have steps it can take
+            && (steps < maxSteps || maxSteps == -1)
             // and it hasn't solved the root goal, keep planning
             //  disabled for now: //  && !(groundedRoot.isComplete(groundedRoot.mapState(baseState)))
                 ) {
@@ -250,7 +250,6 @@ public class PALMLearningAgent implements LearningAgent {
             boolean childComplete = results[0];
             boolean childFailed = results[1];
             boolean shouldUpdateModel = results[2];
-
 
             int stepsAfter = steps;
             int stepsTaken = stepsAfter - stepsBefore;
