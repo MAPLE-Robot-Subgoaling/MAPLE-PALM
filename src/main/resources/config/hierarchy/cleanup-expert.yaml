@@ -2,8 +2,8 @@ name: expert
 hierarchyConfigMap:
   root:
     children:
-      - pickroomagent_np
-      - pickroomblock_np
+      - pickRoomForAgent_np
+      - pickRoomForBlock_np
     domainGenerator: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.root.CleanupRoot {}
     stateMapper: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.root.CleanupRootMapper {}
     tf: &tf !!edu.umbc.cs.maple.hierarchy.framework.GoalFailTF
@@ -17,10 +17,10 @@ hierarchyConfigMap:
       maxDelta: 0.0001
       maxIterations: 1000
 
-  pickroomagent:
+  pickRoomForAgent:
     children:
-      - moveagentroom_np
-      - moveagentdoor_np
+      - moveAgentToRoom_np
+      - moveAgentToDoor_np
     domainGenerator: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.pick.CleanupPick {}
     stateMapper: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.pick.PickRoomAgentMapper {}
     tf: &tf !!edu.umbc.cs.maple.hierarchy.framework.GoalFailTF
@@ -34,10 +34,10 @@ hierarchyConfigMap:
       maxDelta: 0.0001
       maxIterations: 1000
 
-  pickroomblock:
+  pickRoomForBlock:
     children:
-      - moveblockroom_np
-      - moveblockdoor_np
+      - moveBlockToRoom_np
+      - moveBlockToDoor_np
     domainGenerator: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.pick.CleanupPick {}
     stateMapper: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.pick.PickRoomBlockMapper {}
     tf: &tf !!edu.umbc.cs.maple.hierarchy.framework.GoalFailTF
@@ -51,7 +51,7 @@ hierarchyConfigMap:
       maxDelta: 0.0001
       maxIterations: 1000
 
-  moveagentroom:
+  moveAgentToRoom:
     children:
       - north_p
       - south_p
@@ -71,7 +71,7 @@ hierarchyConfigMap:
       maxDelta: 0.0001
       maxIterations: 1000
 
-  moveagentdoor:
+  moveAgentToDoor:
     children:
       - north_p
       - south_p
@@ -91,7 +91,7 @@ hierarchyConfigMap:
       maxDelta: 0.0001
       maxIterations: 1000
 
-  moveblockroom:
+  moveBlockToRoom:
     children:
       - north_p
       - south_p
@@ -111,7 +111,7 @@ hierarchyConfigMap:
       maxDelta: 0.0001
       maxIterations: 1000
 
-  moveblockdoor:
+  moveBlockToDoor:
     children:
       - north_p
       - south_p
