@@ -410,8 +410,8 @@ public class Cleanup implements DomainGenerator {
         double discount = 0.99;
         // prop name if block -> block and room if
         CleanupGoal rfCondition = (CleanupGoal) ((CleanupRF) rf).getGoalCondition();
-        String PFName = rfCondition.goals[0].getPf().getName();
-        String[] params = rfCondition.goals[0].getParams();
+        String PFName = rfCondition.goals.get(0).getPf().getName();
+        String[] params = rfCondition.goals.get(0).getParams();
         if (PFName.equals(Cleanup.PF_AGENT_IN_ROOM)) {
             return new AgentToRegionHeuristic(params[1], discount, lockProb);
         } else if (PFName.equals(Cleanup.PF_AGENT_IN_DOOR)) {

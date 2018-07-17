@@ -3,9 +3,15 @@ package edu.umbc.cs.maple.config;
 import burlap.debugtools.RandomFactory;
 import burlap.mdp.core.state.State;
 import burlap.visualizer.Visualizer;
+import edu.umbc.cs.maple.cleanup.CleanupGoal;
+import edu.umbc.cs.maple.cleanup.CleanupGoalDescription;
+import edu.umbc.cs.maple.cleanup.pfs.BlockInRoomPF;
+import edu.umbc.cs.maple.config.hierarchy.HierarchyConfig;
+import edu.umbc.cs.maple.config.hierarchy.TaskConfig;
 import edu.umbc.cs.maple.config.output.OutputConfig;
 import edu.umbc.cs.maple.config.planning.PlanningConfig;
 import edu.umbc.cs.maple.config.rmax.RmaxConfig;
+import org.yaml.snakeyaml.TypeDescription;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 import org.yaml.snakeyaml.representer.Representer;
@@ -45,6 +51,10 @@ public class ExperimentConfig {
 
 //        TypeDescription typeEntityContextGenerator = new TypeDescription(DomainConfig.class);
 //        constructor.addTypeDescription(typeEntityContextGenerator);
+
+        TypeDescription typeCleanupGoalConfig = new TypeDescription(CleanupGoal.class);
+        typeCleanupGoalConfig.putListPropertyType("goals", CleanupGoalDescription.class);
+        constructor.addTypeDescription(typeCleanupGoalConfig);
 
         Representer representer = new Representer();
         representer.getPropertyUtils().setSkipMissingProperties(false);

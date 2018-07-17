@@ -8,7 +8,6 @@ hierarchyConfigMap:
     stateMapper: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.root.CleanupRootMapper {}
     tf: &tf !!edu.umbc.cs.maple.hierarchy.framework.GoalFailTF
       goalPF: &goalPF !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.root.CleanupRootGoalPF {}
-
       failPF: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.root.CleanupRootFailPF {}
     rf: !!edu.umbc.cs.maple.hierarchy.framework.GoalFailRF
       tf: *tf

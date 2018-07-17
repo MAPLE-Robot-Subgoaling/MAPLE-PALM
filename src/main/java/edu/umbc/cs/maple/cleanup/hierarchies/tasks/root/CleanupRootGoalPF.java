@@ -5,6 +5,8 @@ import burlap.mdp.core.oo.state.OOState;
 import edu.umbc.cs.maple.cleanup.CleanupGoal;
 import edu.umbc.cs.maple.cleanup.CleanupGoalDescription;
 
+import java.util.List;
+
 public class CleanupRootGoalPF extends PropositionalFunction {
 
     private CleanupGoal goal;
@@ -26,7 +28,7 @@ public class CleanupRootGoalPF extends PropositionalFunction {
     }
     @Override
     public boolean isTrue(OOState state, String[] params) {
-        CleanupGoalDescription[] goals = goal.getGoals();
+        List<CleanupGoalDescription> goals = goal.getGoals();
         for (CleanupGoalDescription goalDescription : goals) {
             PropositionalFunction pf = goalDescription.getPf();
             String[] pfParams = goalDescription.getParams();
