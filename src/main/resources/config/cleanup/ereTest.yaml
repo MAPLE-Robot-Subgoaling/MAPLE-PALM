@@ -5,10 +5,12 @@ domain: !!edu.umbc.cs.maple.config.cleanup.CleanupConfig
     minY: 0
     maxX: 10
     maxY: 10
-    rewardGoal: 500.0
-    rewardBase: -1.0
-    rewardNoop: -1.0
+    rewardGoal: 1.0
+    rewardBase: 0.0
+    rewardNoop: 0.0
     rewardPull: 0.0
+    goalParams:
+      - [block0, room1]
 
 agents:
   palm: {cleanup-expert}

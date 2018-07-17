@@ -98,6 +98,8 @@ public class Cleanup implements DomainGenerator {
 
     private RewardFunction rf;
     private TerminalFunction tf;
+    private String[] goalParams;
+    private CleanupGoal cleanupGoal;
 
     private int minX = 0;
     private int minY = 0;
@@ -120,6 +122,18 @@ public class Cleanup implements DomainGenerator {
         this.minY = minY;
         this.maxX = maxX;
         this.maxY = maxY;
+    }
+
+    public Cleanup(int minX, int minY, int maxX, int maxY, String[][] g){
+        this.minX = minX;
+        this.minY = minY;
+        this.maxX = maxX;
+        this.maxY = maxY;
+        CleanupGoalDescription[] goals = new CleanupGoalDescription[g.length];
+        for(int i = 0; i<goals.length; i++){
+            goals[i] = new CleanupGoalDescription(g[i],new InRegion(PF_BLOCK_IN_ROOM, new String[]{CLASS_BLOCK,CLASS_ROOM},false));
+        }
+        cleanupGoal = new CleanupGoal(goals);
     }
 
     public int getMinX() {
@@ -169,6 +183,7 @@ public class Cleanup implements DomainGenerator {
     public void setTf(TerminalFunction tf) {
         this.tf = tf;
     }
+
 
     public List<PropositionalFunction> generatePfs() {
         List<PropositionalFunction> pfs = new ArrayList<PropositionalFunction>();

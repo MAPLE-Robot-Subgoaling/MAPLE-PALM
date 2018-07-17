@@ -8,6 +8,7 @@ import burlap.mdp.singleagent.oo.OOSADomain;
 import edu.umbc.cs.maple.cleanup.CleanupGoal;
 import edu.umbc.cs.maple.cleanup.CleanupGoalDescription;
 import edu.umbc.cs.maple.config.ExperimentConfig;
+import edu.umbc.cs.maple.hierarchy.framework.NonprimitiveTask;
 import edu.umbc.cs.maple.hierarchy.framework.PrimitiveTask;
 import edu.umbc.cs.maple.hierarchy.framework.SolveActionType;
 import edu.umbc.cs.maple.hierarchy.framework.Task;
@@ -36,6 +37,7 @@ public class HierarchyConfig {
         taskMap = new HashMap<String,Task>();
         baseDomain = baseDomainGenerator.generateDomain();
         Task root = buildTask("root", new SolveActionType());
+        ((NonprimitiveTask)root).setTF();
         return root;
     }
 
@@ -89,10 +91,6 @@ public class HierarchyConfig {
         TypeDescription typeHierarchyConfig = new TypeDescription(HierarchyConfig.class);
         typeHierarchyConfig.putMapPropertyType("hierarchyConfigMap", String.class, TaskConfig.class);
         constructor.addTypeDescription(typeHierarchyConfig);
-
-        TypeDescription typeCleanupGoalDescription = new TypeDescription(CleanupGoal.class);
-        typeCleanupGoalDescription.putListPropertyType("goals", CleanupGoalDescription.class);
-        constructor.addTypeDescription(typeCleanupGoalDescription);
 
         Representer representer = new Representer();
         representer.getPropertyUtils().setSkipMissingProperties(true);

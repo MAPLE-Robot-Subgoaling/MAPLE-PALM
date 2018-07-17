@@ -83,6 +83,8 @@ public class NonprimitiveTask extends Task {
         this.rf = rf;
     }
 
+    public void setTF(GoalFailTF tf) { this.tf = tf; }
+
     @Override
     public boolean isFailure(State s, Action a) {
         String[] params = parseParams(a);

@@ -7,13 +7,8 @@ hierarchyConfigMap:
     domainGenerator: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.root.CleanupRoot {}
     stateMapper: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.root.CleanupRootMapper {}
     tf: &tf !!edu.umbc.cs.maple.hierarchy.framework.GoalFailTF
-      goalPF: &goalPF !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.root.CleanupRootGoalPF
-        goal: !!edu.umbc.cs.maple.cleanup.CleanupGoal
-          goals:
-          - params:
-              - block0
-              - room1
-            pf: *goalPF
+      goalPF: &goalPF !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.root.CleanupRootGoalPF {}
+
       failPF: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.root.CleanupRootFailPF {}
     rf: !!edu.umbc.cs.maple.hierarchy.framework.GoalFailRF
       tf: *tf
