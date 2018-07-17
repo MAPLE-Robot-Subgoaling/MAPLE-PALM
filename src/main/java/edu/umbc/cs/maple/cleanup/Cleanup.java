@@ -405,24 +405,24 @@ public class Cleanup implements DomainGenerator {
     */
 
 
-    public static ValueFunction getGroundHeuristic(State s, RewardFunction rf, double lockProb) {
-
-        double discount = 0.99;
-        // prop name if block -> block and room if
-        CleanupGoal rfCondition = (CleanupGoal) ((CleanupRF) rf).getGoalCondition();
-        String PFName = rfCondition.goals.get(0).getPf().getName();
-        String[] params = rfCondition.goals.get(0).getParams();
-        if (PFName.equals(Cleanup.PF_AGENT_IN_ROOM)) {
-            return new AgentToRegionHeuristic(params[1], discount, lockProb);
-        } else if (PFName.equals(Cleanup.PF_AGENT_IN_DOOR)) {
-            return new AgentToRegionHeuristic(params[1], discount, lockProb);
-        } else if (PFName.equals(Cleanup.PF_BLOCK_IN_ROOM)) {
-            return new BlockToRegionHeuristic(params[0], params[1], discount, lockProb);
-        } else if (PFName.equals(Cleanup.PF_BLOCK_IN_DOOR)) {
-            return new BlockToRegionHeuristic(params[0], params[1], discount, lockProb);
-        }
-        throw new RuntimeException("Unknown Reward Function with propositional function " + PFName + ". Cannot construct l0 heuristic.");
-    }
+//    public static ValueFunction getGroundHeuristic(State s, RewardFunction rf, double lockProb) {
+//
+//        double discount = 0.99;
+//        // prop name if block -> block and room if
+//        CleanupGoal rfCondition = (CleanupGoal) ((CleanupRF) rf).getGoalCondition();
+//        String PFName = rfCondition.getGoalDescriptions.get(0).getPf().getName();
+//        String[] params = rfCondition.goals.get(0).getParams();
+//        if (PFName.equals(Cleanup.PF_AGENT_IN_ROOM)) {
+//            return new AgentToRegionHeuristic(params[1], discount, lockProb);
+//        } else if (PFName.equals(Cleanup.PF_AGENT_IN_DOOR)) {
+//            return new AgentToRegionHeuristic(params[1], discount, lockProb);
+//        } else if (PFName.equals(Cleanup.PF_BLOCK_IN_ROOM)) {
+//            return new BlockToRegionHeuristic(params[0], params[1], discount, lockProb);
+//        } else if (PFName.equals(Cleanup.PF_BLOCK_IN_DOOR)) {
+//            return new BlockToRegionHeuristic(params[0], params[1], discount, lockProb);
+//        }
+//        throw new RuntimeException("Unknown Reward Function with propositional function " + PFName + ". Cannot construct l0 heuristic.");
+//    }
 
     public static class AgentToRegionHeuristic implements ValueFunction {
 

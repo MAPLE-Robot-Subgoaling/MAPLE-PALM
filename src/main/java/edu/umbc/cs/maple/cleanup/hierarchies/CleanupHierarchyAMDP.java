@@ -207,7 +207,7 @@ public class CleanupHierarchyAMDP extends CleanupHierarchy {
 
         List<CleanupGoalDescription> goals = new ArrayList();
         goals.add(new CleanupGoalDescription(new String[]{"block0", "room1"}, baseDomain.propFunction(PF_BLOCK_IN_ROOM)));
-        goalCondition.setGoals(goals);
+        goalCondition.setGoalDescriptions(goals);
 
         return root;
     }

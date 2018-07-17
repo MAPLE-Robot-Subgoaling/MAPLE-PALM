@@ -36,8 +36,8 @@ hierarchyConfigMap:
 
   pickroomblock:
     children:
-      - moveagentroom_np
-      - moveagentdoor_np
+      - moveblockroom_np
+      - moveblockdoor_np
     domainGenerator: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.pick.CleanupPick {}
     stateMapper: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.pick.PickRoomBlockMapper {}
     tf: &tf !!edu.umbc.cs.maple.hierarchy.framework.GoalFailTF

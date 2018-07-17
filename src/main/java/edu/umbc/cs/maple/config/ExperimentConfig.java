@@ -53,7 +53,7 @@ public class ExperimentConfig {
 //        constructor.addTypeDescription(typeEntityContextGenerator);
 
         TypeDescription typeCleanupGoalConfig = new TypeDescription(CleanupGoal.class);
-        typeCleanupGoalConfig.putListPropertyType("goals", CleanupGoalDescription.class);
+        typeCleanupGoalConfig.putListPropertyType("goalDescriptions", CleanupGoalDescription.class);
         constructor.addTypeDescription(typeCleanupGoalConfig);
 
         Representer representer = new Representer();

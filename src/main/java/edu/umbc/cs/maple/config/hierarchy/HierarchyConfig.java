@@ -8,10 +8,7 @@ import burlap.mdp.singleagent.oo.OOSADomain;
 import edu.umbc.cs.maple.cleanup.CleanupGoal;
 import edu.umbc.cs.maple.cleanup.CleanupGoalDescription;
 import edu.umbc.cs.maple.config.ExperimentConfig;
-import edu.umbc.cs.maple.hierarchy.framework.NonprimitiveTask;
-import edu.umbc.cs.maple.hierarchy.framework.PrimitiveTask;
-import edu.umbc.cs.maple.hierarchy.framework.SolveActionType;
-import edu.umbc.cs.maple.hierarchy.framework.Task;
+import edu.umbc.cs.maple.hierarchy.framework.*;
 import org.yaml.snakeyaml.TypeDescription;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
@@ -33,10 +30,12 @@ public class HierarchyConfig {
 
     public HierarchyConfig(){}
 
-    public Task buildRoot(){
+    public Task buildRoot(ExperimentConfig e){
         taskMap = new HashMap<String,Task>();
         baseDomain = baseDomainGenerator.generateDomain();
-        Task root = buildTask("root", new SolveActionType());
+        NonprimitiveTask root = (NonprimitiveTask) buildTask("root", new SolveActionType());
+        AMDPRootGoalPF goalPF= (AMDPRootGoalPF) root.getGoalFailTF().getGoalPF();
+        goalPF.setGoal(e.goal);
         return root;
     }
 
@@ -76,9 +75,9 @@ public class HierarchyConfig {
     public void setDoPlanOnly(boolean doPlanOnly) {
         this.doPlanOnly = doPlanOnly;
     }
-    public Task getRoot(){
+    public Task getRoot(ExperimentConfig e){
         if(!(taskMap.keySet().contains("root"))){
-            return buildRoot();
+            return buildRoot(e);
         }else{
             return taskMap.get("root");
         }
@@ -98,7 +97,7 @@ public class HierarchyConfig {
         InputStream input = ClassLoader.getSystemResourceAsStream(configPath);
         HierarchyConfig config = (HierarchyConfig) yaml.load(input);
         config.baseDomainGenerator = experimentConfig.domain.getDomainGenerator();
-        config.buildRoot();
+        config.buildRoot(experimentConfig);
         return config;
     }
 

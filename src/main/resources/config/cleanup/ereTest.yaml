@@ -11,7 +11,7 @@ domain: !!edu.umbc.cs.maple.config.cleanup.CleanupConfig
     rewardPull: 0.0
     
 goal: !!edu.umbc.cs.maple.cleanup.CleanupGoal
-    goals:
+    goalDescriptions:
       - pf: !!edu.umbc.cs.maple.cleanup.pfs.BlockInRoomPF {}
         params:
          - block0

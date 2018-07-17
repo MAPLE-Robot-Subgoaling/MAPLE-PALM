@@ -4,12 +4,11 @@ import burlap.mdp.core.oo.propositional.PropositionalFunction;
 import burlap.mdp.core.oo.state.OOState;
 import edu.umbc.cs.maple.cleanup.CleanupGoal;
 import edu.umbc.cs.maple.cleanup.CleanupGoalDescription;
+import edu.umbc.cs.maple.hierarchy.framework.AMDPRootGoalPF;
 
 import java.util.List;
 
-public class CleanupRootGoalPF extends PropositionalFunction {
-
-    private CleanupGoal goal;
+public class CleanupRootGoalPF extends AMDPRootGoalPF {
 
     public CleanupRootGoalPF(){
         super("root", new String[]{});
@@ -19,16 +18,9 @@ public class CleanupRootGoalPF extends PropositionalFunction {
         this.goal = goal;
     }
 
-    public void setGoal(CleanupGoal goal){
-        this.goal=goal;
-    }
-
-    public CleanupGoal getGoal(){
-        return goal;
-    }
     @Override
     public boolean isTrue(OOState state, String[] params) {
-        List<CleanupGoalDescription> goals = goal.getGoals();
+        List<CleanupGoalDescription> goals = goal.getGoalDescriptions();
         for (CleanupGoalDescription goalDescription : goals) {
             PropositionalFunction pf = goalDescription.getPf();
             String[] pfParams = goalDescription.getParams();

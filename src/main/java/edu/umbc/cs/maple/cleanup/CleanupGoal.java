@@ -5,33 +5,21 @@ import burlap.mdp.core.state.State;
 import edu.umbc.cs.maple.cleanup.state.CleanupState;
 import edu.umbc.cs.maple.config.DomainGoal;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class CleanupGoal extends DomainGoal {
+public class CleanupGoal extends DomainGoal<CleanupGoalDescription> {
 
-    public List<CleanupGoalDescription> goals=new ArrayList();
 
-    public CleanupGoal(List<CleanupGoalDescription> goals) {
-        this.goals = goals;
-    }
+    public CleanupGoal(List<CleanupGoalDescription> goals) {this.goalDescriptions = goals;}
 
     public CleanupGoal() {
 
     }
 
-    public List<CleanupGoalDescription> getGoals() {
-        return goals;
-    }
-
-    public void setGoals(List<CleanupGoalDescription> goals) {
-        this.goals = goals;
-    }
-
     @Override
     public boolean satisfies(State s) {
-        for (int i = 0; i < goals.size(); i++) {
-            GroundedProp gp = new GroundedProp(goals.get(i).getPf(), goals.get(i).getParams());
+        for (int i = 0; i < goalDescriptions.size(); i++) {
+            GroundedProp gp = new GroundedProp(goalDescriptions.get(i).getPf(), goalDescriptions.get(i).getParams());
             if (!gp.isTrue((CleanupState) s)) {
                 return false;
             }
@@ -41,8 +29,10 @@ public class CleanupGoal extends DomainGoal {
 
     public String toString() {
         String out = "";
-        for (CleanupGoalDescription desc : goals) {
-            out += desc.toString();
+        if(goalDescriptions!=null) {
+            for (CleanupGoalDescription desc : goalDescriptions) {
+                out += desc.toString();
+            }
         }
         return out;
     }

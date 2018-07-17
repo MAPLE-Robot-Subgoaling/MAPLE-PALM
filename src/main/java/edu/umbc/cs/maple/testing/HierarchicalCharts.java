@@ -50,7 +50,7 @@ public class HierarchicalCharts {
             for ( String hierarchy : (LinkedHashSet<String>)config.agents.get(agentName)){
                 if(! (hierarchyMap.keySet().contains(hierarchy))){
                     HierarchyConfig hierarchyConfig = HierarchyConfig.load(config,"config/hierarchy/"+hierarchy+".yaml");
-                    hierarchyMap.put(hierarchy, hierarchyConfig.getRoot());
+                    hierarchyMap.put(hierarchy, hierarchyConfig.getRoot(config));
 
                 }
                 if(agentName.equals(PALM.getType())) {
