@@ -20,6 +20,7 @@ import edu.umbc.cs.maple.config.ExperimentConfig;
 import edu.umbc.cs.maple.hierarchy.framework.GroundedTask;
 import edu.umbc.cs.maple.hierarchy.framework.StringFormat;
 import edu.umbc.cs.maple.hierarchy.framework.Task;
+import edu.umbc.cs.maple.taxi.hierarchies.tasks.put.state.TaxiPutState;
 import edu.umbc.cs.maple.utilities.DiscountProvider;
 import edu.umbc.cs.maple.utilities.IntegerParameterizedAction;
 import edu.umbc.cs.maple.utilities.ValueIterationMultiStep;
@@ -132,12 +133,8 @@ public class PALMLearningAgent implements LearningAgent {
         Action action = runDebugRollout(groundedRoot, initialState, maxSteps);
         runDebugRollout(taskNames.get(action.toString()), initialState, maxSteps);
 
-        ///for a chart of runtime
         long estimatedTime = System.nanoTime() - start;
         System.out.println("Nano time elapsed:  " + estimatedTime);
-
-//        actualTimeElapsed = System.currentTimeMillis() - actualTimeElapsed;
-//        System.out.println("Clock time elapsed: " + actualTimeElapsed);
 
         return e;
     }
@@ -148,7 +145,6 @@ public class PALMLearningAgent implements LearningAgent {
         PALMModel model = getModel(groundedTask);
         String[] params = getParams(groundedTask);
         OOSADomain domain = groundedTask.getDomain(model, params);
-//		double discount = model.gamma();
         DiscountProvider discountProvider = model.getDiscountProvider();
         ValueIterationMultiStep planner = new ValueIterationMultiStep(domain, hashingFactory, maxDelta, maxIterationsInModelPlanner, discountProvider);
         planner.toggleReachabiltiyTerminalStatePruning(true);
@@ -177,7 +173,7 @@ public class PALMLearningAgent implements LearningAgent {
      * @param maxSteps the max number of primitive actions that can be taken
      * @return whether the task was completed
      */
-    protected boolean solveTask(GroundedTask parent, GroundedTask task, Environment baseEnv, int maxSteps) {
+    protected boolean[] solveTask(GroundedTask parent, GroundedTask task, Environment baseEnv, int maxSteps) {
 
         tabLevel += "\t";
 
@@ -220,7 +216,11 @@ public class PALMLearningAgent implements LearningAgent {
             result.r = task.getReward(pastStateAbstract, action, currentStateAbstract, params);
             steps++;
 
-            return true;
+            boolean taskComplete = task.isComplete(currentStateAbstract);
+            boolean taskFailed = task.isFailure(currentStateAbstract);
+            boolean parentShouldUpdate = true;
+            boolean[] results = new boolean[]{taskComplete, taskFailed, parentShouldUpdate};
+            return results;
         }
 
         List<String> subtasksExecuted = new ArrayList<>();
@@ -246,7 +246,11 @@ public class PALMLearningAgent implements LearningAgent {
 //            System.out.println(tabLevel + ">>>>> " + task.toString() + " >>>>> " + action);
 
             int stepsBefore = steps;
-            boolean subtaskCompleted = solveTask(task, childTask, baseEnv, maxSteps);
+            boolean[] results = solveTask(task, childTask, baseEnv, maxSteps);
+            boolean childComplete = results[0];
+            boolean childFailed = results[1];
+            boolean shouldUpdateModel = results[2];
+
 
             int stepsAfter = steps;
             int stepsTaken = stepsAfter - stepsBefore;
@@ -260,14 +264,15 @@ public class PALMLearningAgent implements LearningAgent {
             currentStateAbstract = task.mapState(currentStateGrounded);
 
             StringBuilder resultString = new StringBuilder(action.toString());
-            resultString.append(subtaskCompleted ? "+" : "--");
-            if (subtaskCompleted) {
+            resultString.append(childComplete ? "+" : "-");
+            if (shouldUpdateModel) {
                 boolean atOrBeyondThreshold = updateModel(task, pastStateGrounded, pastStateAbstract, action, currentStateGrounded, currentStateAbstract, stepsTaken);
                 resultString.append(atOrBeyondThreshold ? "+" : "-");
                 if (!atOrBeyondThreshold) {
                     allChildrenAtOrBeyondThreshold = false;
                 }
-
+            } else {
+                resultString.append("-");
             }
             subtasksExecuted.add(resultString.toString());
         }
@@ -277,9 +282,11 @@ public class PALMLearningAgent implements LearningAgent {
         }
 
         boolean taskCompleted = task.isComplete(currentStateAbstract);
-        boolean parentShouldUpdateModel = taskCompleted || actionCount == 0;
+        boolean taskFailed = task.isFailure(currentStateAbstract);
+        boolean parentShouldUpdateModel = taskCompleted || taskFailed || actionCount == 0;
         parentShouldUpdateModel = parentShouldUpdateModel && allChildrenAtOrBeyondThreshold;
-        return parentShouldUpdateModel;
+        boolean[] results = new boolean[]{taskCompleted, taskFailed, parentShouldUpdateModel};
+        return results;
     }
 
     protected boolean updateModel(GroundedTask task, State state, State abstractState, Action action, State statePrime, State abstractStatePrime, int stepsTaken) {
