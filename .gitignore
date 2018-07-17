@@ -6,3 +6,4 @@ trees/
 .classpath
 .project
 out/
+target/
