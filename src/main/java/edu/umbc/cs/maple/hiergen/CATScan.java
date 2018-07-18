@@ -101,6 +101,13 @@ public class CATScan {
         return connected;
     }
 
+    public static Set<Integer> enforceUniquePreconditions(CATrajectory cat, Set<Integer> actionIndexes) {
+
+
+
+        return actionIndexes;
+    }
+
     public static List<SubCAT> scan(ArrayList<CATrajectory> cats, List<OOVariableKey> variables) {
 
         System.out.println("CATScan");
@@ -110,16 +117,11 @@ public class CATScan {
 
             Set<Integer> actionIndexes = seedActionIndexes(cat, variables);
 
-            actionIndexes = computeActionIndexes(cat, variables, actionIndexes);
+            actionIndexes = computeActionIndexes(cat, actionIndexes);
 
-            if (start != 0 || end != 0) {
-                SubCAT subCAT = new SubCAT(start, end, actionIndexes, variables, cat);
-                subCATs.add(subCAT);
-            }
+            // enforce unique preconditions (line 8 in CAT-Scan)
+            actionIndexes = enforceUniquePreconditions(cat, actionIndexes);
 
-//            for (OOVariableKey variable : variables) {
-//                if
-//            }
         }
 
         return subCATs;

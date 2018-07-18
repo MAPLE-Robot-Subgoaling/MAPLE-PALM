@@ -19,6 +19,10 @@ public class TaxiState implements MutableOOState, DeepCopyForShallowCopyState {
     private Map<String, TaxiLocation> locations;
     private Map<String, TaxiWall> walls;
 
+    public TaxiState() {
+        // for de/serialization
+    }
+
     public TaxiState(TaxiAgent taxi, List<TaxiPassenger> passengers, List<TaxiLocation> locations,
             List<TaxiWall> walls) {
         this.taxi = taxi;
@@ -74,24 +78,25 @@ public class TaxiState implements MutableOOState, DeepCopyForShallowCopyState {
 
     @Override
     public List<ObjectInstance> objects() {
-            List<ObjectInstance> objs = new ArrayList<ObjectInstance>();
-            if (taxi != null) { objs.add(taxi); }
-            objs.addAll(passengers.values());
-            objs.addAll(locations.values());
-            objs.addAll(walls.values());
-            return objs;
+        List<ObjectInstance> objs = new ArrayList<ObjectInstance>();
+        if (taxi != null) { objs.add(taxi); }
+        if (passengers != null) { objs.addAll(passengers.values()); }
+        if (locations != null) { objs.addAll(locations.values()); }
+        if (walls != null) { objs.addAll(walls.values()); }
+        return objs;
     }
 
     @Override
     public List<ObjectInstance> objectsOfClass(String oclass) {
-        if(oclass.equals(CLASS_TAXI))
+        if(oclass.equals(CLASS_TAXI)) {
             return Arrays.asList(taxi);
-        else if(oclass.equals(CLASS_PASSENGER))
+        } else if(oclass.equals(CLASS_PASSENGER)) {
             return new ArrayList<>(passengers.values());
-        else if(oclass.equals(CLASS_LOCATION))
+        } else if(oclass.equals(CLASS_LOCATION)) {
             return new ArrayList<>(locations.values());
-        else if(oclass.equals(CLASS_WALL))
+        } else if(oclass.equals(CLASS_WALL)) {
             return new ArrayList<>(walls.values());
+        }
         throw new RuntimeException("No object class " + oclass);
     }
 
@@ -311,6 +316,34 @@ public class TaxiState implements MutableOOState, DeepCopyForShallowCopyState {
 
     public TaxiAgent getTaxi() {
         return taxi;
+    }
+
+    public void setTaxi(TaxiAgent taxi) {
+        this.taxi = taxi;
+    }
+
+    public Map<String, TaxiPassenger> getPassengers() {
+        return passengers;
+    }
+
+    public void setPassengers(Map<String, TaxiPassenger> passengers) {
+        this.passengers = passengers;
+    }
+
+    public Map<String, TaxiLocation> getLocations() {
+        return locations;
+    }
+
+    public void setLocations(Map<String, TaxiLocation> locations) {
+        this.locations = locations;
+    }
+
+    public Map<String, TaxiWall> getWalls() {
+        return walls;
+    }
+
+    public void setWalls(Map<String, TaxiWall> walls) {
+        this.walls = walls;
     }
 }
 

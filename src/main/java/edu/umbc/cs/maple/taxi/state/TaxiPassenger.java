@@ -20,6 +20,10 @@ public class TaxiPassenger extends MutableObject{
             ATT_GOAL_LOCATION
             );
 
+    public TaxiPassenger() {
+        // for de/serialization
+    }
+
     public TaxiPassenger(String name, int x, int y, String goalLocation){
         this(name, (Object) x, (Object) y, (Object) goalLocation, false);
     }
@@ -28,17 +32,11 @@ public class TaxiPassenger extends MutableObject{
         this(name, (Object) x, (Object) y, (Object) goalLocation, (Object) inTaxi);
     }
 
-    public TaxiPassenger(String name, int x, int y, String goalLocation, boolean inTaxi,
-            boolean pickedUpAlLeastOnce, boolean justPickedUp){
-        this(name, (Object) x, (Object) y, (Object) goalLocation, (Object) inTaxi);
-    }
-
     private TaxiPassenger(String name, Object x, Object y, Object goalLocation, Object inTaxi){
         this.set(ATT_X, x);
         this.set(ATT_Y, y);
         this.set(ATT_GOAL_LOCATION, goalLocation);
         this.set(ATT_IN_TAXI, inTaxi);
-//		this.set(ATT_JUST_PICKED_UP, justpickedUp);
         this.setName(name);
     }
 

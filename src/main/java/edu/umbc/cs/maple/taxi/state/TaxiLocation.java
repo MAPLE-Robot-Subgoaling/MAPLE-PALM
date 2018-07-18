@@ -19,6 +19,10 @@ public class TaxiLocation extends MutableObject{
             ATT_COLOR
             );
 
+    public TaxiLocation() {
+        // for de/serialization
+    }
+
     public TaxiLocation(String name, int x, int y, String color) {
         this(name, (Object) x, (Object) y, (Object) color);
     }

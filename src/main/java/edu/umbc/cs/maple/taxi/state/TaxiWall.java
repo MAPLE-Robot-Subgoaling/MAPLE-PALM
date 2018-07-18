@@ -20,6 +20,10 @@ public class TaxiWall extends MutableObject {
             ATT_IS_HORIZONTAL
             );
 
+    public TaxiWall() {
+        // for de/serialization
+    }
+
     public TaxiWall(String name, int startX, int startY, int length, boolean isHorizontal) {
         this(name, (Object) startX, (Object) startY, (Object) length, (Object) isHorizontal);
     }

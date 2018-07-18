@@ -6,11 +6,13 @@ import burlap.debugtools.DPrint;
 import burlap.debugtools.RandomFactory;
 import burlap.mdp.singleagent.model.FullModel;
 import burlap.mdp.singleagent.oo.OOSADomain;
+import burlap.statehashing.HashableStateFactory;
 import burlap.statehashing.simple.SimpleHashableStateFactory;
 import edu.umbc.cs.maple.hiergen.CAT.CATrajectory;
 import edu.umbc.cs.maple.hiergen.CAT.CreateActionModels;
 import edu.umbc.cs.maple.hiergen.CAT.TrajectoryGenerator;
 import edu.umbc.cs.maple.hiergen.CAT.VariableTree;
+import edu.umbc.cs.maple.state.hashing.bugfix.BugfixHashableStateFactory;
 import edu.umbc.cs.maple.taxi.Taxi;
 import edu.umbc.cs.maple.taxi.TaxiVisualizer;
 import edu.umbc.cs.maple.taxi.stategenerator.HierGenTrajectorySource;
@@ -22,6 +24,26 @@ import java.util.Map;
 
 public class HierGenMain {
 
+    public static final String TRAJECTORY_DIRECTORY_PATH = "./output_hiergen/";
+    public static final String TRAJECTORY_FILE_PREFIX = "trajectory";
+
+    public static void generateTrajectories(int trajectoryCount) {
+
+        HashableStateFactory hsf = new BugfixHashableStateFactory(false);
+
+        HierGenTrajectorySource trajectorySource = new HierGenTrajectorySource();
+
+        Taxi test = new Taxi();
+        OOSADomain domain = test.generateDomain();
+
+        System.out.println("Generating trajectories");
+        double gamma = 0.95;
+        List<Episode> episodes = TrajectoryGenerator.generateQLearnedTrajectories(trajectorySource, trajectoryCount, domain, gamma, hsf);
+
+        Episode.writeEpisodes(episodes, TRAJECTORY_DIRECTORY_PATH, TRAJECTORY_FILE_PREFIX);
+
+    }
+
     public static void main(String[] args) {
 
         long seed = 20948304976L;
@@ -30,36 +52,34 @@ public class HierGenMain {
 
         RandomFactory.getMapped(BurlapConstants.DEFAULT_RNG_INDEX).setSeed(seed);
 
-        Taxi test = new Taxi();
-        int numTrajectories = 5;
-        double gamma = 0.01;
-        OOSADomain domain = test.generateDomain();
-        domain.setModel(null);
+        int trajectoryCount = 30;
+        generateTrajectories(trajectoryCount);
 
-        System.out.println("Generating trajectories");
-        List<Episode> episodes = TrajectoryGenerator.generateQLearnedTrajectories(new HierGenTrajectorySource(), numTrajectories, domain, gamma, new SimpleHashableStateFactory());
+        List<Episode> trajectories = Episode.readEpisodes(TRAJECTORY_DIRECTORY_PATH);
 
-        Episode one = episodes.get(0);
+        Episode one = trajectories.get(0);
         System.out.println(one.stateSequence.get(one.stateSequence.size()-1));
         System.out.println(one.rewardSequence.get(one.rewardSequence.size()-1));
         System.out.println(one.actionSequence.get(one.actionSequence.size()-1));
 
-        EpisodeSequenceVisualizer v = new EpisodeSequenceVisualizer(TaxiVisualizer.getVisualizer(5, 5), domain, episodes);
-        v.setDefaultCloseOperation(v.EXIT_ON_CLOSE);
-        v.initGUI();
-
-        System.out.println("Learning the action models");
-        ArrayList<CATrajectory> CATs = new ArrayList<>();
-        Map<String, Map<String, VariableTree>> actionModels = CreateActionModels.createModels(episodes);
-
-        System.out.println("Causally annotating the trajectories");
-        for (Episode e : episodes) {
-            CATrajectory temp = new CATrajectory();
-            temp.annotateTrajectory(e, actionModels, (FullModel) domain.getModel());
-            CATs.add(temp);
-        }
-
-        System.out.println("Running the main HierGenAlgorithm");
+//        EpisodeSequenceVisualizer v = new EpisodeSequenceVisualizer(TaxiVisualizer.getVisualizer(5, 5), domain, episodes);
+//        v.setDefaultCloseOperation(v.EXIT_ON_CLOSE);
+//        v.initGUI();
+//
+//        System.out.println("Learning the action models");
+//        ArrayList<CATrajectory> CATs = new ArrayList<>();
+//        Map<String, Map<String, VariableTree>> actionModels = CreateActionModels.createModels(episodes);
+//
+//        domain.setModel(null);
+//
+//        System.out.println("Causally annotating the trajectories");
+//        for (Episode e : episodes) {
+//            CATrajectory temp = new CATrajectory();
+//            temp.annotateTrajectory(e, actionModels, (FullModel) domain.getModel());
+//            CATs.add(temp);
+//        }
+//
+//        System.out.println("Running the main HierGenAlgorithm");
 //        HierGenTask root = HierGenAlgorithm.generate(actionModels, CATs);
 //        System.out.println(root);
 

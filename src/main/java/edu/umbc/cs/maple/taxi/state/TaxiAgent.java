@@ -27,6 +27,10 @@ public class TaxiAgent extends MutableObject {
 //		this(name, (Object) x, (Object) y, (Object) taxiOccupied);
 //	}
 
+    public TaxiAgent() {
+        // for de/serialization
+    }
+
     public TaxiAgent(String name, int x, int y) { //}, Object taxiOccupied) {
         this.set(ATT_X, x);
         this.set(ATT_Y, y);
