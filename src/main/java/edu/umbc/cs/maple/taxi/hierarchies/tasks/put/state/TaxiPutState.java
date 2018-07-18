@@ -81,12 +81,15 @@ public class TaxiPutState extends TaxiGetPutState implements DeepCopyForShallowC
 
     @Override
     public List<ObjectInstance> objectsOfClass(String oclass) {
-        if(oclass.equals(CLASS_TAXI))
+        if(oclass.equals(CLASS_TAXI)) {
             return taxi == null ? new ArrayList<>() : Arrays.<ObjectInstance>asList(taxi);
-        if(oclass.equals(CLASS_PASSENGER))
+        }
+        if(oclass.equals(CLASS_PASSENGER)) {
             return new ArrayList<>(passengers.values());
-        if(oclass.equals(CLASS_LOCATION))
+        }
+        if(oclass.equals(CLASS_LOCATION)) {
             return new ArrayList<>(locations.values());
+        }
         throw new RuntimeException("No object class " + oclass);
     }
 
