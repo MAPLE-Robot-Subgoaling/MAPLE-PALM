@@ -1,12 +1,11 @@
 package edu.umbc.cs.maple.hiergen;
 
+import burlap.behavior.singleagent.Episode;
 import burlap.mdp.core.oo.state.OOVariableKey;
+import burlap.mdp.core.state.State;
 import edu.umbc.cs.maple.hiergen.CAT.*;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 
 public class CATScan {
@@ -127,5 +126,53 @@ public class CATScan {
         return subCATs;
     }
 
+    public static Map<OOVariableKey, Object> determineGoal(List<CATrajectory> CATrajectories) {
+        CATrajectory firstCAT = CATrajectories.get(0);
+        State firstState = firstCAT.getBaseTrajectory().state(0);
+        List<OOVariableKey> variables = (List<OOVariableKey>) (List<?>) firstState.variableKeys();
+        Map<OOVariableKey, Object> goal = new HashMap<>();
+        for (OOVariableKey variable : variables) {
+            Object attributeValue;
+            Episode baseTrajectory = firstCAT.getBaseTrajectory();
+            int lastStateIndex = -99;//subOfFirstCAT != null ? subOfFirstCAT.getEnd() - 1 : baseTrajectory.stateSequence.size() - 1;
+            State lastState = baseTrajectory.state(lastStateIndex);
+            attributeValue = lastState.get(variable);
+            goal.put(variable, attributeValue);
+        }
+        for (CATrajectory cat : CATrajectories) {
+            List<OOVariableKey> keysToRemove = new ArrayList<>();
+            for (OOVariableKey key : goal.keySet()) {
+                Object attributeValue;
+                Episode baseTrajectory = cat.getBaseTrajectory();
+                int lastStateIndex = -99;//sub != null ? cat.getSub().getEnd() - 1 : cat.getBaseTrajectory().stateSequence.size() - 1;
+                attributeValue = baseTrajectory.state(lastStateIndex).get(key);
+                if (!attributeValue.equals(goal.get(key))) {
+                    keysToRemove.add(key);
+                }
+            }
 
+            for (OOVariableKey keyToRemove : keysToRemove) {
+                goal.remove(keyToRemove);
+            }
+        }
+        return goal;
+    }
+
+    public static void test(List<CATrajectory> cats) {
+        Map<OOVariableKey, Object> goal = determineGoal(cats);
+
+        ArrayList<HierGenTask> finalTasks = new ArrayList<>();
+        if (goal.isEmpty()) {
+            return;
+        }
+
+//        List<List<SubCAT>> listOfSubCATs = new ArrayList<>();
+//        for (OOVariableKey relevantVariable : goal.keySet()) {
+//            ArrayList<OOVariableKey> currentVariables = new ArrayList<>();
+//            currentVariables.add(relevantVariable);
+//            List<SubCAT> subCATs = CATScan.scan(cat, currentVariables);
+//            listOfSubCATs.add(subCATs);
+//        }
+
+    }
 }

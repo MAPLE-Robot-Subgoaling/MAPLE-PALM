@@ -58,8 +58,8 @@ public class HierGenMain {
 
         RandomFactory.getMapped(BurlapConstants.DEFAULT_RNG_INDEX).setSeed(seed);
 
-        int trajectoryCount = 30;
-        generateTrajectories(pathToTrajectories, trajectoryCount);
+//        int trajectoryCount = 30;
+//        generateTrajectories(pathToTrajectories, trajectoryCount);
 
         List<Episode> trajectories = Episode.readEpisodes(pathToTrajectories);
 
@@ -72,26 +72,29 @@ public class HierGenMain {
 //        v.setDefaultCloseOperation(v.EXIT_ON_CLOSE);
 //        v.initGUI();
 //
-        System.out.println("Learning the action models");
-        ArrayList<CATrajectory> CATs = new ArrayList<>();
-        CreateActionModels.createModels(pathToTrees, trajectories);
+//        System.out.println("Learning the action models");
+//        CreateActionModels.createModels(pathToTrees, trajectories);
 
         Map<String, Map<String, VariableTree>> actionModels = CreateActionModels.readTreeFiles(pathToTrees);
 
-//        domain.setModel(null);
         SADomain domain = new Taxi().generateDomain();
+//        domain.setModel(null); // for Causal Annotation, we assume access to the model
         FullModel model = (FullModel) domain.getModel();
 
+        ArrayList<CATrajectory> cats = new ArrayList<>();
         System.out.println("Causally annotating the trajectories");
         for (Episode trajectory : trajectories) {
             CATrajectory cat = new CATrajectory();
             cat.annotateTrajectory(trajectory, actionModels, model);//
-            CATs.add(cat);
+            cats.add(cat);
         }
 
+        System.out.println("Testing CAT-Scan");
+        CATScan.test(cats);
+
         System.out.println("Running the main HierGenAlgorithm");
-//        HierGenTask root = HierGenAlgorithm.generate(actionModels, CATs);
-//        System.out.println(root);
+        HierGenTask root = HierGenAlgorithm.generate(actionModels, cats);
+        System.out.println(root);
 
 
     }
