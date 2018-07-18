@@ -24,7 +24,7 @@ public class AncestorPALMLearningAgent extends PALMLearningAgent {
 
     protected boolean updateAncestorModel(GroundedTask task, Action a, int stepsTaken){
         Map<HashableState, List<TimedEnvironmentOutcome>> updateByState = new HashMap<>();
-        System.out.println("Task "+task.toString() + " took "+a.toString()+" in "+ stepsTaken + " steps, with:");
+//        System.out.println("Task "+task.toString() + " took "+a.toString()+" in "+ stepsTaken + " steps, with:");
 int updateCount = 0;
         int l = e.stateSequence.size();
 
@@ -44,7 +44,7 @@ int updateCount = 0;
            updateByState.putIfAbsent(hs,new ArrayList<>());
            updateByState.get(hs).add(teo);
        }
-       System.out.println(updateCount +" updates!");
+//       System.out.println(updateCount +" updates!");
        PALMModel model = getModel(task);
        return ((UpdateBasedRmaxModel) model).batchUpdateModel(updateByState, getParams(task));
     }

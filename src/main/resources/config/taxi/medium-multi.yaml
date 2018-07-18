@@ -6,8 +6,8 @@ domain: !!edu.umbc.cs.maple.config.taxi.TaxiConfig
 agents:
 #  - rmaxqExpert
 #  - rmaxqHierGen
-  - palmExpert
-  - palmExpertCross
+#  - palmExpert
+#  - palmExpertCross
   - palmExpertAncestor
 #  - palmExpertWithNavGiven
 #  - palmHierGen
@@ -15,10 +15,10 @@ agents:
 #  - kappaHierGen
 #  - qLearning
 
-seed: 77665544
+seed: 1029384756
 episodes: 500
 max_steps: 100000
-trials: 1
+trials: 3
 gamma: 0.95
 
 identifier_independent: false
