@@ -74,7 +74,8 @@ public class CATrajectory {
 //            State sPrime = e.stateSequence.get(stateActionIndex + 1);
 
             //add the vars which were used to get reward
-            VariableTree rewardTree = decisions.get(action).get(CAT_REWARD_NAME);
+            Map<String, VariableTree> treeMap = decisions.get(action.actionName());
+            VariableTree rewardTree = treeMap.get(CAT_REWARD_NAME);
             List<String> rewardChecked = rewardTree.getCheckedVariables(state);
             checkedVariables[trajectoryIndex].addAll(rewardChecked);
 
@@ -93,7 +94,7 @@ public class CATrajectory {
 
                 if (changed) {
                     changedVariables[trajectoryIndex].add(variable.toString());
-                    VariableTree tree = decisions.get(action).get(variable.toString());
+                    VariableTree tree = treeMap.get(variable.toString());
                     List<String> checked = tree.getCheckedVariables(state);
                     checkedVariables[trajectoryIndex].addAll(checked);
                 }

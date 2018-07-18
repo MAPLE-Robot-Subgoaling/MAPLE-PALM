@@ -1,4 +1,4 @@
-package utils;
+package edu.umbc.cs.maple.utilities;
 
 /** Murmur hash 2.0.
  *

@@ -1,7 +1,7 @@
 package edu.umbc.cs.maple.hiergen.CAT;
 
 import burlap.mdp.core.state.State;
-import utils.MurmurHash;
+import edu.umbc.cs.maple.utilities.MurmurHash;
 
 import java.util.ArrayList;
 import java.util.List;

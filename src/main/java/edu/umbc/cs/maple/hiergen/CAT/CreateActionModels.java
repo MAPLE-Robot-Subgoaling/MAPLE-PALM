@@ -3,7 +3,7 @@ package edu.umbc.cs.maple.hiergen.CAT;
 import burlap.behavior.singleagent.Episode;
 import burlap.mdp.core.action.Action;
 import burlap.mdp.core.state.State;
-import utils.MurmurHash;
+import edu.umbc.cs.maple.utilities.MurmurHash;
 import weka.classifiers.trees.J48;
 import weka.core.Attribute;
 import weka.core.DenseInstance;
@@ -27,7 +27,7 @@ public class CreateActionModels {
 
     private static Map<String, Map<String, VariableTree>> trees;
 
-    public static Map<String, Map<String, VariableTree>> createModels(List<Episode> trajectories) {
+    public static Map<String, Map<String, VariableTree>> createModels(String pathToTrees, List<Episode> trajectories) {
         trees = new HashMap<String, Map<String, VariableTree>>();
 
 
@@ -83,7 +83,7 @@ public class CreateActionModels {
                         dataset.add(dataPoint);
                     }
                     J48 tree = buildTree(dataset);
-                    writeTreeToFile(action, var.toString(), tree);
+                    writeTreeToFile(pathToTrees, action, var.toString(), tree);
                     addTree(action, var.toString(), tree);
                 }
             }
@@ -110,7 +110,7 @@ public class CreateActionModels {
             }
             J48 tree = buildTree(dataset);
             if (tree != null) {
-                writeTreeToFile(action, "R", tree);
+                writeTreeToFile(pathToTrees, action, "R", tree);
                 addTree(action, "R", tree);
             }
         }
@@ -192,10 +192,9 @@ public class CreateActionModels {
         return tree;
     }
 
-    private static void writeTreeToFile(String action, String variable, J48 tree) {
-        String fname = "trees/" + action + "_" + variable.replace(":", "_") + ".txt";
+    private static void writeTreeToFile(String path, String action, String variable, J48 tree) {
+        String fname = path + action + "_" + variable.replace(":", "_") + ".txt";
         try {
-//            OPODriver.log("Tree created for " + action + " and " + variable);
             String out = getCleanTreeString(tree);
 
             File file = new File(fname);
