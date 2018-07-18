@@ -11,23 +11,14 @@ import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.common.VisualActionObserver;
 import burlap.mdp.singleagent.environment.SimulatedEnvironment;
 import burlap.mdp.singleagent.oo.OOSADomain;
-import edu.umbc.cs.maple.cleanup.hierarchies.CleanupHierarchyAMDP;
 import edu.umbc.cs.maple.config.ExperimentConfig;
-import edu.umbc.cs.maple.config.cleanup.CleanupConfig;
 import edu.umbc.cs.maple.config.hierarchy.HierarchyConfig;
 import edu.umbc.cs.maple.config.output.ChartConfig;
-import edu.umbc.cs.maple.config.taxi.TaxiConfig;
-import edu.umbc.cs.maple.hierarchy.framework.Hierarchy;
 import edu.umbc.cs.maple.hierarchy.framework.NonprimitiveTask;
 import edu.umbc.cs.maple.hierarchy.framework.Task;
-import edu.umbc.cs.maple.taxi.hierarchies.TaxiHierarchy;
-import edu.umbc.cs.maple.taxi.hierarchies.TaxiHierarchyExpert;
-import edu.umbc.cs.maple.taxi.hierarchies.TaxiHierarchyHierGen;
 import edu.umbc.cs.maple.utilities.LearningAlgorithmExperimenter;
-import sun.management.resources.agent;
 
 import javax.swing.*;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static edu.umbc.cs.maple.testing.AgentType.*;
