@@ -77,4 +77,12 @@ public abstract class MutableObject implements MutableObjectInstance, Serializab
         }
         return name.equals(o.name);
     }
+
+    public Map<String, Object> getValues() {
+        return values;
+    }
+
+    public void setValues(Map<String, Object> values) {
+        this.values = values;
+    }
 }

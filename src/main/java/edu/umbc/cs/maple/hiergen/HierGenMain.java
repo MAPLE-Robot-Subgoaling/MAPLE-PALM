@@ -57,14 +57,14 @@ public class HierGenMain {
 
         List<Episode> trajectories = Episode.readEpisodes(TRAJECTORY_DIRECTORY_PATH);
 
-        Episode one = trajectories.get(0);
-        System.out.println(one.stateSequence.get(one.stateSequence.size()-1));
-        System.out.println(one.rewardSequence.get(one.rewardSequence.size()-1));
-        System.out.println(one.actionSequence.get(one.actionSequence.size()-1));
+//        Episode one = trajectories.get(0);
+//        System.out.println(one.stateSequence.get(one.stateSequence.size()-1));
+//        System.out.println(one.rewardSequence.get(one.rewardSequence.size()-1));
+//        System.out.println(one.actionSequence.get(one.actionSequence.size()-1));
 
-//        EpisodeSequenceVisualizer v = new EpisodeSequenceVisualizer(TaxiVisualizer.getVisualizer(5, 5), domain, episodes);
-//        v.setDefaultCloseOperation(v.EXIT_ON_CLOSE);
-//        v.initGUI();
+        EpisodeSequenceVisualizer v = new EpisodeSequenceVisualizer(TaxiVisualizer.getVisualizer(5, 5), new Taxi().generateDomain(), trajectories);
+        v.setDefaultCloseOperation(v.EXIT_ON_CLOSE);
+        v.initGUI();
 //
 //        System.out.println("Learning the action models");
 //        ArrayList<CATrajectory> CATs = new ArrayList<>();
