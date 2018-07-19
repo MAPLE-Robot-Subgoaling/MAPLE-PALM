@@ -17,8 +17,7 @@ import java.util.List;
 
 public class TrajectoryGenerator {
 
-    public static List<Episode> generateQLearnedTrajectories(StateGenerator stateGen, int numTrajectories,
-                                                             SADomain domain, double gamma, HashableStateFactory hashingFactory) {
+    public static List<Episode> generateQLearnedTrajectories(StateGenerator stateGen, int numTrajectories, SADomain domain, double gamma, HashableStateFactory hashingFactory) {
 
         LearningAgent qlearner = new QLearning(domain, gamma, hashingFactory, 0, 0.01);
         SimulatedEnvironment env = new SimulatedEnvironment(domain, stateGen);

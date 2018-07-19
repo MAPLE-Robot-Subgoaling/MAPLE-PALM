@@ -155,20 +155,21 @@ public class CleanupState implements MutableOOState, DeepCopyForShallowCopyState
 
     @Override
     public MutableState set(Object variableKey, Object value) {
-
-        OOVariableKey key = OOStateUtilities.generateKey(variableKey);
-        if (key.obName.equals(agent.name())) {
-            touchAgent().set(variableKey, value);
-        } else if (blocks.get(key.obName) != null) {
-            touchBlock(key.obName).set(variableKey, value);
-        } else if (rooms.get(key.obName) != null) {
-            touchRoom(key.obName).set(variableKey, value);
-        } else if (doors.get(key.obName) != null) {
-            touchDoor(key.obName).set(variableKey, value);
-        } else {
-            throw new RuntimeException("ERROR: unable to set value for " + variableKey);
-        }
-        return this;
+        throw new RuntimeException("not implemented");
+//
+//        OOVariableKey key = OOStateUtilities.generateKey(variableKey);
+//        if (key.obName.equals(agent.name())) {
+//            touchAgent().set(variableKey, value);
+//        } else if (blocks.get(key.obName) != null) {
+//            touchBlock(key.obName).set(variableKey, value);
+//        } else if (rooms.get(key.obName) != null) {
+//            touchRoom(key.obName).set(variableKey, value);
+//        } else if (doors.get(key.obName) != null) {
+//            touchDoor(key.obName).set(variableKey, value);
+//        } else {
+//            throw new RuntimeException("ERROR: unable to set value for " + variableKey);
+//        }
+//        return this;
     }
 
     @Override

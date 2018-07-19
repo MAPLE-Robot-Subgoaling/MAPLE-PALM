@@ -79,14 +79,15 @@ public class TaxiRootState implements MutableOOState, DeepCopyForShallowCopyStat
 
     @Override
     public MutableState set(Object variableKey, Object value) {
-        OOVariableKey key = OOStateUtilities.generateKey(variableKey);
-
-        if(passengers.get(key.obName) != null){
-            touchPassenger(key.obName).set(variableKey, value);
-        } else {
-            throw new RuntimeException("ERROR: unable to set value for " + variableKey);
-        }
-        return this;
+        throw new RuntimeException("not implemented");
+//        OOVariableKey key = OOStateUtilities.generateKey(variableKey);
+//
+//        if(passengers.get(key.obName) != null){
+//            touchPassenger(key.obName).set(variableKey, value);
+//        } else {
+//            throw new RuntimeException("ERROR: unable to set value for " + variableKey);
+//        }
+//        return this;
     }
 
     @Override

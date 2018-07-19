@@ -103,18 +103,19 @@ public class TaxiGetState extends TaxiGetPutState implements DeepCopyForShallowC
 
     @Override
     public MutableState set(Object variableKey, Object value) {
-        OOVariableKey key = OOStateUtilities.generateKey(variableKey);
-
-        if(key.obName.equals(taxi.name())) {
-            touchTaxi().set(variableKey, value);
-        } else if(passengers.get(key.obName) != null){
-            touchPassenger(key.obName).set(variableKey, value);
-        } else if(locations.get(key.obName) != null){
-            touchLocation(key.obName).set(variableKey, value);
-        } else {
-            throw new RuntimeException("ERROR: unable to set value for " + variableKey);
-        }
-        return this;
+        throw new RuntimeException("not implemented");
+//        OOVariableKey key = OOStateUtilities.generateKey(variableKey);
+//
+//        if(key.obName.equals(taxi.name())) {
+//            touchTaxi().set(variableKey, value);
+//        } else if(passengers.get(key.obName) != null){
+//            touchPassenger(key.obName).set(variableKey, value);
+//        } else if(locations.get(key.obName) != null){
+//            touchLocation(key.obName).set(variableKey, value);
+//        } else {
+//            throw new RuntimeException("ERROR: unable to set value for " + variableKey);
+//        }
+//        return this;
     }
 
     @Override

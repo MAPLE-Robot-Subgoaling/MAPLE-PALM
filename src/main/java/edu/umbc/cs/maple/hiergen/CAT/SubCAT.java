@@ -12,6 +12,6 @@ public class SubCAT {
     protected Set<Integer> actionIndexes;
 
     public SubCAT( ) {
-        actionIndexes = new HashSet<Integer>();
+        actionIndexes = new HashSet<>();
     }
 }

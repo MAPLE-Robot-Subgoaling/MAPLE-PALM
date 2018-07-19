@@ -118,12 +118,6 @@ public class CATrajectory {
                 }
             }
         }
-//        end = numActionsSansFinal;
-//        lastAction = numActionsSansFinal;
-//        actionInds = new ArrayList<>();
-//        for (int i = 0; i < actions.length; i++) {
-//            actionInds.add(i);
-//        }
     }
 
 //    public int findEdge(int s, String variable) {
@@ -207,12 +201,6 @@ public class CATrajectory {
         return uniqActs;
     }
 
-//    public int edges() {
-//        if (actions != null)
-//            return actions.size();
-//        return 0;
-//    }
-
     @Override
     public String toString() {
         String out = "";
@@ -232,6 +220,30 @@ public class CATrajectory {
             }
         }
         return out;
+    }
+
+    public Set<String> getNontrivialCheckedVariables() {
+        return getNontrivialVariables(checkedVariables);
+    }
+
+    public Set<String> getNontrivialChangedVariable() {
+        return getNontrivialVariables(changedVariables);
+    }
+
+    protected Set<String> getNontrivialVariables(Set<String>[] setOfVariables) {
+        int skipStart = 1; // don't read the 0th entry
+        int skipEnd = setOfVariables.length-1; // don't read the last entry
+        Set<String> nontrivialVariables = new HashSet<>();
+        for (int i = skipStart; i < skipEnd; i++ ) {
+            Set<String> variables = setOfVariables[i];
+            nontrivialVariables.addAll(variables);
+        }
+        return nontrivialVariables;
+    }
+
+    public State getUltimateState() {
+        int lastIndex = baseTrajectory.stateSequence.size() - 1;
+        return baseTrajectory.stateSequence.get(lastIndex);
     }
 
     public State getState(int index) {
@@ -290,74 +302,4 @@ public class CATrajectory {
         return actions.length - 1;
     }
 
-//    public List<Integer> getActionInds() {
-//        return actionInds;
-//    }
-//
-//    public void setActionInds(List<Integer> actionInds) {
-//        this.actionInds = actionInds;
-//    }
-//
-//    public SubCAT getSub() {
-//        return sub;
-//    }
-//
-//    public void setSub(SubCAT sub) {
-//        this.sub = sub;
-//    }
-//
-//    public static CATrajectory subCATToCAT(SubCAT sc) {
-//        CATrajectory traj = sc.getCAT();
-//        traj.setSub(sc);
-//        ArrayList<CausalEdge> convertEdges = new ArrayList<>();
-//        for (Integer i : sc.getActionInds()) {
-//            List<CausalEdge> tempEdges = traj.findCausalEdges(i);
-//            for (CausalEdge ce : tempEdges) {
-//                convertEdges.add(ce);
-//            }
-//        }
-//        traj.setEdges(convertEdges);
-//        traj.setActionInds(sc.getActionInds());
-//        return traj;
-//    }
-//
-//    public CATrajectory getUltimateActions(Map<OOVariableKey, Object> goal) {
-//        ArrayList<Integer> actionIndexes = new ArrayList<>();
-//        if (lastAction == 0)
-//            return null;
-//        if (sub != null) {
-//            actionIndexes.add(lastAction);
-//            return new SubCAT(lastAction, lastAction, actionIndexes, new ArrayList<>(goal.keySet()), this);
-//        } else {
-//            actionIndexes.add(lastAction - 1);
-//            return new SubCAT(lastAction - 1, lastAction - 1, actionIndexes, new ArrayList<>(goal.keySet()), this);
-//        }
-//    }
-//
-//    public CATrajectory getNonUltimateActions() {
-//        ArrayList<Integer> actionInds = new ArrayList<>();
-//        for (int i = 0; i < lastAction; i++) {
-//            actionInds.add(i);
-//        }
-//        SubCAT antiLast = new SubCAT(0, lastAction - 1, actionInds, null, this);
-//
-//        return antiLast;
-//    }
-//
-//    public void setEnd(int end) {
-//        this.end = end;
-//        this.lastAction = end;
-//    }
-//
-//    public void setStart(int start) {
-//        this.start = start;
-//    }
-//
-//    public int getEnd() {
-//        return end;
-//    }
-//
-//    public int getStart() {
-//        return start;
-//    }
 }

@@ -27,8 +27,8 @@ public class CreateActionModels {
 
     private static Map<String, Map<String, VariableTree>> trees;
 
-    public static Map<String, Map<String, VariableTree>> createModels(String pathToTrees, List<Episode> trajectories) {
-        trees = new HashMap<String, Map<String, VariableTree>>();
+    public static Map<String, Map<String, VariableTree>> createModels(String pathToTrees, String pathToARFF, List<Episode> trajectories) {
+        trees = new HashMap<>();
 
 
         List<String> actions = new ArrayList<String>();
@@ -82,7 +82,7 @@ public class CreateActionModels {
                         addSStateVars(variables, dataPoint, prior);
                         dataset.add(dataPoint);
                     }
-                    J48 tree = buildTree(dataset);
+                    J48 tree = buildTree(pathToARFF, dataset);
                     writeTreeToFile(pathToTrees, action, var.toString(), tree);
                     addTree(action, var.toString(), tree);
                 }
@@ -108,7 +108,7 @@ public class CreateActionModels {
                 addSStateVars(variables, dataPoint, prior);
                 dataset.add(dataPoint);
             }
-            J48 tree = buildTree(dataset);
+            J48 tree = buildTree(pathToARFF, dataset);
             if (tree != null) {
                 writeTreeToFile(pathToTrees, action, "R", tree);
                 addTree(action, "R", tree);
@@ -155,7 +155,7 @@ public class CreateActionModels {
     }
 
 
-    private static J48 buildTree(Instances dataset) {
+    private static J48 buildTree(String pathToARFF, Instances dataset) {
         //apply filters
         try {
             NumericToNominal numericToNominal = new NumericToNominal();
@@ -179,7 +179,7 @@ public class CreateActionModels {
         J48 tree = new J48();
         try {
             ArffSaver save = new ArffSaver();
-            save.setFile(new File("data.arff"));
+            save.setFile(new File(pathToARFF));
             save.setInstances(dataset);
             save.writeBatch();
 
