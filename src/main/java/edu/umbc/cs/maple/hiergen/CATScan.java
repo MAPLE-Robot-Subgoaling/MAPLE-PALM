@@ -132,8 +132,10 @@ public class CATScan {
     // the input CATs *must* be successful trajectories, meaning their final state is a goal state
     public static Map<OOVariableKey, Object> determineGoal(List<CATrajectory> goalCats) {
 
-        Map<OOVariableKey, Object> predicates = new HashMap<>();
+        Map<OOVariableKey, Object> globalPredicates = new HashMap<>();
         for (CATrajectory cat : goalCats) {
+            Map<OOVariableKey, Object> constantPredicates = new HashMap<>();
+            List<Object> equalToRelations = new ArrayList<>();
             Set<String> nontrivialChangedVariables = cat.getNontrivialChangedVariable();
             OOState ultimateState = (OOState) cat.getUltimateState();
             for (ObjectInstance objectInstance : ultimateState.objects()) {
@@ -144,9 +146,15 @@ public class CATScan {
                     if (nontrivialChangedVariables.contains(variable)) {
                         Object attributeValue = objectInstance.get(variableKey);
                         System.out.println(variable + " : " + attributeValue);
-                        predicates.put(new OOVariableKey(objectName, variable), attributeValue);
+                        constantPredicates.put(new OOVariableKey(objectName, variable), attributeValue);
                     }
                 }
+            }
+            if (globalPredicates.isEmpty()) {
+                globalPredicates.putAll(constantPredicates);
+            } else {
+                // keep only the objectName:attributeName:attributeValue that are constant across all goal states
+                globalPredicates.keySet().retainAll(constantPredicates.keySet());
             }
         }
 
