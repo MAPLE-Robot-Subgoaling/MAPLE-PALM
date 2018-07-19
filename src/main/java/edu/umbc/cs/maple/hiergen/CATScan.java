@@ -142,7 +142,9 @@ public class CATScan {
                 for (Object variableKey : variableKeys) {
                     String variable = objectName + ":" + variableKey;
                     if (nontrivialChangedVariables.contains(variable)) {
-                        System.out.println(variable + " : " + objectInstance.get(variableKey));
+                        Object attributeValue = objectInstance.get(variableKey);
+                        System.out.println(variable + " : " + attributeValue);
+                        predicates.put(new OOVariableKey(objectName, variable), attributeValue);
                     }
                 }
             }

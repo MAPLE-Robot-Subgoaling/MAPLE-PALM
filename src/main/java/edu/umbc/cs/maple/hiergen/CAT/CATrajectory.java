@@ -6,7 +6,11 @@ import burlap.mdp.core.oo.state.OOState;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.model.FullModel;
 import burlap.mdp.singleagent.model.TransitionProb;
+import org.yaml.snakeyaml.Yaml;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.util.*;
 
 public class CATrajectory {
@@ -300,6 +304,46 @@ public class CATrajectory {
 
     public int getEndIndex() {
         return actions.length - 1;
+    }
+
+    public String serialize(){
+        Yaml yaml = new Yaml();
+        String yamlOut = yaml.dump(this);
+        return yamlOut;
+    }
+
+    public static CATrajectory read(String path) {
+        String fcont = null;
+        try{
+            fcont = new Scanner(new File(path)).useDelimiter("\\Z").next();
+        }catch(Exception E){
+            System.out.println(E);
+        }
+        Yaml yaml = new Yaml();
+        CATrajectory cat = (CATrajectory)yaml.load(fcont);
+        return cat;
+    }
+
+    public void write(String path){
+
+        File f = (new File(path)).getParentFile();
+        if(f != null){
+            f.mkdirs();
+        }
+
+
+        try{
+
+            String str = this.serialize();
+            BufferedWriter out = new BufferedWriter(new FileWriter(path));
+            out.write(str);
+            out.close();
+
+
+        }catch(Exception e){
+            System.out.println(e);
+        }
+
     }
 
 }
