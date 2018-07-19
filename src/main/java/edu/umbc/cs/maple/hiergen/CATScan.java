@@ -133,20 +133,43 @@ public class CATScan {
     public static Map<OOVariableKey, Object> determineGoal(List<CATrajectory> goalCats) {
 
         Map<OOVariableKey, Object> globalPredicates = new HashMap<>();
+        Set<AttributeRelation> globalRelations = new HashSet<>();
         for (CATrajectory cat : goalCats) {
             Map<OOVariableKey, Object> constantPredicates = new HashMap<>();
-            List<Object> equalToRelations = new ArrayList<>();
+            Set<AttributeRelation> equalToRelations = new HashSet<>();
             Set<String> nontrivialChangedVariables = cat.getNontrivialChangedVariable();
             OOState ultimateState = (OOState) cat.getUltimateState();
-            for (ObjectInstance objectInstance : ultimateState.objects()) {
+            List<ObjectInstance> objectInstances = ultimateState.objects();
+            for (int i = 0; i < objectInstances.size(); i++) {
+                ObjectInstance objectInstance = objectInstances.get(i);
                 String objectName = objectInstance.name();
                 List<Object> variableKeys = (List) objectInstance.variableKeys();
-                for (Object variableKey : variableKeys) {
+                for (int v = 0; v < variableKeys.size(); v++) {
+                    Object variableKey = variableKeys.get(v);
+                    Object attributeValue = objectInstance.get(variableKey);
+                    OOVariableKey ooVariableKey = new OOVariableKey(objectName, variableKey);
+
+                    // now consider the variable as potentially a constant goal predicate
                     String variable = objectName + ":" + variableKey;
                     if (nontrivialChangedVariables.contains(variable)) {
-                        Object attributeValue = objectInstance.get(variableKey);
                         System.out.println(variable + " : " + attributeValue);
-                        constantPredicates.put(new OOVariableKey(objectName, variable), attributeValue);
+                        constantPredicates.put(ooVariableKey, attributeValue);
+                    }
+
+                    // now consider if the variable is equal to any other variables on other objects
+                    for (int j = i+1; j < objectInstances.size(); j++) {
+                        ObjectInstance otherObjectInstance = objectInstances.get(j);
+                        String otherObjectName = otherObjectInstance.name();
+                        List<Object> otherVariableKeys = (List) otherObjectInstance.variableKeys();
+
+                        for (int w = 0; w < otherVariableKeys.size(); w++) {
+                            Object otherVariableKey = otherVariableKeys.get(w);
+                            Object otherAttributeValue = otherObjectInstance.get(otherVariableKey);
+                            if (attributeValue.equals(otherAttributeValue)) {
+                                OOVariableKey otherOOVariableKey = new OOVariableKey(otherObjectName, otherVariableKey);
+                                equalToRelations.add(new AttributeRelation(ooVariableKey, otherOOVariableKey, Relation.EQUAL_TO));
+                            }
+                        }
                     }
                 }
             }
@@ -156,6 +179,7 @@ public class CATScan {
                 // keep only the objectName:attributeName:attributeValue that are constant across all goal states
                 globalPredicates.keySet().retainAll(constantPredicates.keySet());
             }
+            globalRelations.addAll(equalToRelations);
         }
 
         return null;
