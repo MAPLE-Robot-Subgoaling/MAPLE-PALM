@@ -1,12 +1,12 @@
 domain: !!edu.umbc.cs.maple.config.taxi.TaxiConfig
-  state: medium-4passengers
+  state: medium-3passengers
   correct_move: 1.0
   fickle: 0.00
 
 agents:
 #  - rmaxqExpert
 #  - rmaxqHierGen
-#  - palmExpert
+  - palmExpert
   - palmExpertCross
 #  - palmExpertWithNavGiven
 #  - palmHierGen

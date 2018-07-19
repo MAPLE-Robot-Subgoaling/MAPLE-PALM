@@ -157,6 +157,10 @@ public class GroundedTask {
         return t.isMasked();
     }
 
+    public String[] getMaskedParameters() {
+        return t.getMaskedParameters();
+    }
+
     @Override
     public String toString(){
         return formattedName;

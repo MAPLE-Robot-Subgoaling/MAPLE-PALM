@@ -121,6 +121,9 @@ public abstract class Task {
      */
     public boolean isMasked() {return this.masked;}
 
+    public String[] getMaskedParameters() {
+        return this.maskedParameters;
+    }
     /**
      * tells whether this task is in the base MDP
      * @return boolean indicating whether the task is
