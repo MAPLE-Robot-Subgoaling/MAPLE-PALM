@@ -17,7 +17,7 @@ public class PutStateMapper implements MaskedParameterizedStateMapping {
 
     @Override
     public String[] getMaskedParameters() {
-        return new String[]{CLASS_PASSENGER};
+        return new String[]{PUT_PASSENGER_ALIAS};
     }
 
     @Override
