@@ -1,14 +1,14 @@
 domain: !!edu.umbc.cs.maple.config.taxi.TaxiConfig
-  state: medium-4passengers
+  state: medium-3passengers
   correct_move: 1.0
   fickle: 0.00
 
 agents:
 #  - rmaxqExpert
 #  - rmaxqHierGen
-#  - palmExpert
-  - palmExpertCross
+  - palmExpert
   - palmExpertAncestor
+  - palmExpertCross
 #  - palmExpertWithNavGiven
 #  - palmHierGen
 #  - kappaExpert
@@ -18,7 +18,7 @@ agents:
 seed: 77665544
 episodes: 300
 max_steps: 100000
-trials: 1
+trials: 4
 gamma: 0.95
 
 identifier_independent: false

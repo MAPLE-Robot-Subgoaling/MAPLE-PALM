@@ -13,9 +13,10 @@ domain: !!edu.umbc.cs.maple.config.cleanup.CleanupConfig
 seed: 3667
 
 agents:
-  - palmExpert
+ # - palmExpert
+  - palmExpertAncestor
 
-episodes: 52
+episodes: 17
 max_steps: 10000
 trials: 1
 gamma: 0.99
@@ -26,9 +27,9 @@ planning:
 
 rmax:
   vmax: 10.0
-  threshold: 2
-  max_delta: 0.0001
-  max_delta_rmaxq: 0.0001
+  threshold: 5
+  max_delta: 0.000001
+  max_delta_rmaxq: 0.000001
   max_iterations_in_model: 1000
   use_multitime_model: true
   use_model_sharing: false
@@ -53,7 +54,7 @@ output:
       - CUMULATIVE_REWARD_PER_EPISODE
 
   visualizer:
-    enabled: true
+    enabled: false
     episodes: true
     width: 5
     height: 5
