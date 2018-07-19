@@ -48,13 +48,13 @@ public class UpdateBasedRmaxModel extends HierarchicalRmaxModel {
         State s;
         Action a;
         boolean allConverged = true;
-        for(Map.Entry<HashableState, List<TimedEnvironmentOutcome>> e : results.entrySet()){
+        for(Map.Entry<HashableState, List<TimedEnvironmentOutcome>> e : results.entrySet()) {
             s = e.getKey().s();
             if( e.getValue().size() < 1) continue;
             a = e.getValue().get(0).a;
             HashableStateActionPair hsap = hashStateActionPair(s, a);
             this.updateCounts.merge(hsap,1,Integer::sum);
-            for( TimedEnvironmentOutcome teo : e.getValue()){
+            for(TimedEnvironmentOutcome teo : e.getValue()) {
                 allConverged = updateModel(teo,teo.stepsTaken, params) && allConverged;
             }
         }
@@ -64,7 +64,7 @@ public class UpdateBasedRmaxModel extends HierarchicalRmaxModel {
     public boolean updateModel(EnvironmentOutcome result, int stepsTaken, String[] params) {
         return super.updateModel(result, stepsTaken, params);
     }
-    public static class TimedEnvironmentOutcome extends EnvironmentOutcome{
+    public static class TimedEnvironmentOutcome extends EnvironmentOutcome {
         protected int stepsTaken;
         public TimedEnvironmentOutcome(State o, Action a, State op, double r, int stepsTaken, boolean terminated) {
             super(o, a, op, r, terminated);
@@ -74,6 +74,6 @@ public class UpdateBasedRmaxModel extends HierarchicalRmaxModel {
 
     @Override
     public boolean isConvergedFor(State s, Action a, State sPrime) {
-        return this.updateCounts.getOrDefault(this.hashStateActionPair(s, a),0) >= super.mThreshold;
+        return this.getUpdateCount(s,a) >= super.mThreshold;
     }
 }

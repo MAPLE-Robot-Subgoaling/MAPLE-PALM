@@ -25,20 +25,20 @@ public class AncestorPALMLearningAgent extends PALMLearningAgent {
     protected boolean updateAncestorModel(GroundedTask task, Action a, int stepsTaken){
         Map<HashableState, List<TimedEnvironmentOutcome>> updateByState = new HashMap<>();
 //        System.out.println("Task "+task.toString() + " took "+a.toString()+" in "+ stepsTaken + " steps, with:");
-int updateCount = 0;
-        int l = e.stateSequence.size();
+//      int updateCount = 0;
+        int last = e.stateSequence.size()-1;
 
         State baseStartState;
         State abstractStartState;
-        State baseEndState = e.stateSequence.get(l-1);
+        State baseEndState = e.stateSequence.get(last);
         State abstractEndState = task.mapState(baseEndState);
         int pathLength;
-       for(int startStateIndex = l-(1+stepsTaken); startStateIndex < l-1; startStateIndex++){
-           pathLength = l-(startStateIndex+1);
+       for(int startStateIndex = last - stepsTaken; startStateIndex < last; startStateIndex++){
+           pathLength = last-startStateIndex;
            baseStartState = e.stateSequence.get(startStateIndex);
            abstractStartState = task.mapState(baseStartState);
            double taskReward = task.getReward(abstractStartState, a, abstractEndState, getParams(task));
-           updateCount++;
+//           updateCount++;
            TimedEnvironmentOutcome teo = new TimedEnvironmentOutcome(abstractStartState, a, abstractEndState,taskReward, pathLength, false);
            HashableState hs = this.hashingFactory.hashState(abstractStartState);
            updateByState.putIfAbsent(hs,new ArrayList<>());
