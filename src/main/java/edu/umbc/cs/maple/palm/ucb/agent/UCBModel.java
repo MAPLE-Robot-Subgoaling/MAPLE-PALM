@@ -1,5 +1,6 @@
 package edu.umbc.cs.maple.palm.ucb.agent;
 
+import burlap.mdp.core.TerminalFunction;
 import burlap.mdp.core.action.Action;
 import burlap.mdp.core.oo.state.MutableOOState;
 import burlap.mdp.core.oo.state.ObjectInstance;
@@ -34,7 +35,7 @@ public class UCBModel extends PALMModel {
             year = {2012},
             note = {arXiv: 1202.3890},
             keywords = {Computer Science - Machine Learning},
-        }
+        }0
      */
 
     // n(s,a), n(s, a, s') - total counts
@@ -53,6 +54,8 @@ public class UCBModel extends PALMModel {
 
     protected HashableState imaginedState;
     protected double rmax;
+    protected double gamma;
+    protected double epsilon;
 
     //t
     protected int timestep = 0;
@@ -60,17 +63,48 @@ public class UCBModel extends PALMModel {
     //k
     protected int batchCount = 0;
 
+    protected int actionDelay = 0;
+    protected boolean delaying;
+    protected int H_delay;
+
     protected HashableStateFactory hashingFactory;
 
     protected DiscountProvider discountProvider;
 
     protected GroundedTask task;
+    protected TerminalFunction tf;
+    //knownness constants
 
-    public UCBModel(GroundedTask task, double gamma, double rmax, HashableStateFactory hashableStateFactory){
-        this.task = task;
+    protected int MAG_S;
+    protected int MAG_A;
+    protected double W_MIN;
+    protected int L_MAX;
+    protected List<Integer> K_SET;
+    protected double m;
+    protected double l_1;
+    protected double delta_1;
+    protected double delta;
+    protected int U_max
+    protected int beta;
+
+    public UCBModel(double gamma, double rmax, double epsilon, HashableStateFactory hashableStateFactory){
         this.initializeDiscountProvider(gamma);
+        this.gamma = gamma;
         this.rmax = rmax;
+        this.epsilon = epsilon;
         this.hashingFactory = hashableStateFactory;
+        this.delaying = false;
+        defineConstants();
+    }
+
+    public UCBModel(GroundedTask task, double gamma, double rmax, double epsilon, HashableStateFactory hashableStateFactory){
+        this(gamma, rmax, epsilon, hashableStateFactory);
+        this.task = task;
+    }
+
+    public UCBModel(TerminalFunction tf, double gamma, double rmax, double epsilon, HashableStateFactory hashableStateFactory){
+        this(gamma, rmax, epsilon, hashableStateFactory);
+        this.tf = tf;
     }
 
     public void initializeDiscountProvider(double gamma) {
@@ -79,12 +113,26 @@ public class UCBModel extends PALMModel {
 
     @Override
     public boolean terminal(State s) {
-        return task.isFailure(s) || task.isComplete(s);
+        if(task != null) {
+            return task.isFailure(s) || task.isComplete(s);
+        }else {
+            return tf.isTerminal(s);
+        }
     }
 
     //TODO figure out where main loop in algo #1 goes
     @Override
     public List<TransitionProb> transitions(State s, Action a) {
+        if(!delaying){
+            //set converged values in the model
+            boolean noUsefulBatchInfo = checkKnowness();
+            if(!noUsefulBatchInfo){
+                // there is a transition which the current batch has info about
+                delaying = true;
+                actionDelay = H_delay;
+            }
+        }
+
         List<TransitionProb> tps = new ArrayList<TransitionProb>();
         HashableState hs = hashingFactory.hashState(s);
         if(! isConfident(hs, a)) {
@@ -113,7 +161,15 @@ public class UCBModel extends PALMModel {
         incrementBatchStateAction(hs, a);
         incrementBatchStateActionState(hs, a, hsp);
         addBatchReward(hs, a, reward);
+
         timestep++;
+        if(delaying){
+            actionDelay--;
+            if(actionDelay == 0){
+                batchUpdate();
+                delaying = false;
+            }
+        }
     }
 
     protected void batchUpdate(){
@@ -131,22 +187,57 @@ public class UCBModel extends PALMModel {
                 for(HashableState hsp : batchStateActionState.get(hs).get(a).keySet()){
                     prevCount = getTotalStateActionState(hs, a, hsp);
                     batchCount = getBatchStateActionState(hs, a, hsp);
-                    setBatchStateActionState(hs, a, hsp, prevCount + batchCount);
+                    setTotalStateActionState(hs, a, hsp, prevCount + batchCount);
                 }
             }
         }
+        updateConvergedTransitions();
         batchCount++;
     }
 
-    protected void updateConvergedTransition(HashableState hs, Action a){
-        if(!isConfident(hs, a)){
-            throw new RuntimeException("Transition not converged");
+    protected void updateConvergedTransitions(){
+        for(HashableState hs : totalStateAction.keySet()){
+            Map<Action, Map<HashableState, Integer>> stateInfo = totalStateActionState.get(hs);
+            for (Action a : stateInfo.keySet()){
+                if(isConfident(hs, a)){
+                    double totReward = getTotalSAReward(hs, a);
+                    int saCount = getBatchStateAction(hs, a);
+                    double avgReward = (double) totReward / saCount;
+                    setModelReward(hs, a, avgReward);
+
+                    Map<HashableState, Integer> possibleOutcomes = stateInfo.get(a);
+                    for(HashableState hsp : possibleOutcomes.keySet()){
+                        double totsasCount = getTotalStateActionState(hs, a, hsp);
+                        double avgTransition = (double) totsasCount / saCount;
+                        setModelTransition(hs, a, hsp, avgTransition);
+                    }
+                }
+            }
         }
+
 
     }
     //TODO: Implement formula from defn #1
-    protected int knownness(int i, int n){
+    protected int knownness(int levrl, int known){
 
+    }
+
+    protected boolean checkKnowness(){
+        for(HashableState hs : totalStateAction.keySet()) {
+            Map<Action, Map<HashableState, Integer>> stateInfo = totalStateActionState.get(hs);
+            for (Action a : stateInfo.keySet()) {
+                int totSACount = getTotalStateAction(hs, a);
+                int batchSACount = getBatchStateAction(hs, a);
+                for (int level = 0; level <= L_MAX; level++){
+                    int batchTotKnowness = knownness(level, totSACount + batchSACount);
+                    int totKnowness = knownness(level, totSACount);
+                    if(batchTotKnowness != totKnowness){
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
     }
 
     //TODO: Define confidwence in transition
@@ -157,13 +248,36 @@ public class UCBModel extends PALMModel {
     //TODO: See how UCRL handles "convergence"
     @Override
     public boolean isConvergedFor(State s, Action a, State sPrime) {
-        return false;
+        HashableState hs = hashingFactory.hashState(s);
+        return isConfident((hs, a));
     }
 
 
     @Override
     public DiscountProvider getDiscountProvider() {
         return discountProvider;
+    }
+
+    protected void defineConstants(){
+        this.MAG_S = ;
+
+        this.W_MIN = epsilon * (1 - gamma) / 4 * ((double) MAG_S);
+
+        this.L_MAX = (int) Math.ceil((1 / Math.log(2)) * ( (8 * MAG_S) / (epsilon * Math.pow(1 - gamma, 2))));
+
+        this.K_SET = new ArrayList<Integer>();
+        for(int i = 0; i <= MAG_S; i++){
+            this.K_SET.add(i);
+            this.K_SET.add(-1 * i);
+        }
+
+        this.H_delay = (int) Math.ceil((1 / (1 - gamma)) * Math.log(8 * MAG_S / (epsilon * (1 - gamma))));
+
+        this.U_max = MAG_S * MAG_A * K_SET.size() * (L_MAX + 1)
+        this.beta = (int) Math.ceil(1 / (2 * Math.log(2)) * Math.log(1 / (1-gamma)));
+        this.delta_1 = delta / ((2 * MAG_S * MAG_A) * U_max);
+        this.l_1 = Math.log(2 / delta_1);
+        this.m = (20 * l_1 * K_SET.size() * (L_MAX + 1) * Math.pow(2 * beta + 1, 2)) / (Math.pow(epsilon, 2) * Math.pow(1 - gamma, 2 + 2 / beta));
     }
 
     protected TransitionProb createImaginedTransition(HashableState hs, Action a){
@@ -174,7 +288,10 @@ public class UCBModel extends PALMModel {
         TransitionProb tp = new TransitionProb(1., eo);
         return tp;
     }
-    //getters
+
+    //________________________________________Getters and Setters_______________________
+
+    // getters
     protected int getTotalStateAction(HashableState hs, Action a){
         Map<Action, Integer> stateInfo = totalStateAction.get(hs);
         if(stateInfo == null){
@@ -337,6 +454,17 @@ public class UCBModel extends PALMModel {
     }
 
     //setters
+
+    protected void setModelReward(HashableState hs, Action a, double reward){
+        getModelReward(hs, a);
+        rewards.get(hs).put(a, reward);
+    }
+
+    protected void setModelTransition(HashableState hs, Action a, HashableState hsp, double probability){
+        getModelTransition(hs, a, hsp);
+        transitionProbabilities.get(hs).get(a).put(hsp, probability);
+    }
+
     protected void incrementBatchStateAction(HashableState hs, Action a){
         Integer count = getBatchStateAction(hs, a);
         setBatchStateAction(hs, a, count + 1);
