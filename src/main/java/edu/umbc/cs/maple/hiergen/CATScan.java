@@ -12,8 +12,11 @@ import edu.umbc.cs.maple.utilities.MutableObjectInstance;
 
 import java.util.*;
 
+import static edu.umbc.cs.maple.utilities.BurlapConstants.POINTER_REFERENCE;
+
 
 public class CATScan {
+
 
     // input: a CAT, the relevant variables
     // output: a seeded set of action indexes
@@ -132,7 +135,7 @@ public class CATScan {
     }
 
     // the input CATs *must* be successful trajectories, meaning their final state is a goal state
-    public static Map<ObjectAttributePair, Object> determineGoal(List<CATrajectory> goalCats) {
+    public static Set<AttributeRelation> determineGoal(List<CATrajectory> goalCats) {
 
         Set<String> allChangedVariables = new HashSet<>();
         for (CATrajectory cat : goalCats) {
@@ -196,7 +199,9 @@ public class CATScan {
                                     for (Object bVariableKey : variableKeys) {
                                         Object bAttributeValue = otherObjectInstance.get(bVariableKey);
                                         if (aAttributeValue.equals(bAttributeValue)) {
-                                            ObjectAttributePair bObjectAttribute = new ObjectAttributePair(variableKey.toString(), bVariableKey.toString());
+                                            String referencedName = variableKey.toString();
+                                            referencedName = POINTER_REFERENCE + referencedName;
+                                            ObjectAttributePair bObjectAttribute = new ObjectAttributePair(referencedName, bVariableKey.toString());
                                             equalToRelations.add(new AttributeRelation(aObjectAttribute, bObjectAttribute, Relation.EQUAL_TO));
                                         }
                                     }
@@ -229,17 +234,18 @@ public class CATScan {
             System.out.println(relation);
         }
 
-        return null;
-
+        Set<AttributeRelation> globalRelations = new HashSet<>();
+        globalRelations.addAll(globalConstantRelations);
+        globalRelations.addAll(globalEqualToRelations);
+        return globalRelations;
     }
 
-    public static void test(List<CATrajectory> cats) {
-        Map<ObjectAttributePair, Object> goal = determineGoal(cats);
+    public static void test(List<CATrajectory> cats, Set<AttributeRelation> goals) {
 
-        ArrayList<HierGenTask> finalTasks = new ArrayList<>();
-        if (goal.isEmpty()) {
-            return;
-        }
+//        ArrayList<HierGenTask> finalTasks = new ArrayList<>();
+//        if (goal.isEmpty()) {
+//            return;
+//        }
 
 //        List<List<SubCAT>> listOfSubCATs = new ArrayList<>();
 //        for (OOVariableKey relevantVariable : goal.keySet()) {

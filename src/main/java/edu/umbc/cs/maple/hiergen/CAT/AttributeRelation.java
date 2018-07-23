@@ -50,6 +50,16 @@ public class AttributeRelation {
                 relation == that.relation;
     }
 
+//    @Override
+//    public boolean equals(Object o) {
+//        if (this == o) return true;
+//        if (o == null || getClass() != o.getClass()) return false;
+//        AttributeRelation that = (AttributeRelation) o;
+//        boolean sameSides = Objects.equals(left, that.left) && Objects.equals(right, that.right);
+//        boolean oppositeSides = Objects.equals(left, that.right) && Objects.equals(right, that.left);
+//        return  (sameSides || oppositeSides) && relation == that.relation;
+//    }
+
     @Override
     public int hashCode() {
 

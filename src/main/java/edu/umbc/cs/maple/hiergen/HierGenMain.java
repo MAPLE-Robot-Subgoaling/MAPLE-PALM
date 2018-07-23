@@ -20,6 +20,7 @@ import edu.umbc.cs.maple.utilities.BurlapConstants;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class HierGenMain {
 
@@ -108,7 +109,7 @@ public class HierGenMain {
         }
 
         System.out.println("Testing CAT-Scan");
-        Map<ObjectAttributePair, Object> map = CATScan.determineGoal(cats);
+        Set<AttributeRelation> map = CATScan.determineGoal(cats);
 
 //        CATScan.test(cats);
 //
