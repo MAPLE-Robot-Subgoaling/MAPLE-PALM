@@ -2,11 +2,13 @@ package edu.umbc.cs.maple.hiergen;
 
 import burlap.behavior.singleagent.Episode;
 import burlap.mdp.auxiliary.stateconditiontest.StateConditionTest;
+import burlap.mdp.core.action.ActionType;
+import burlap.mdp.core.action.UniversalActionType;
 import burlap.mdp.core.oo.state.OOState;
-import burlap.mdp.core.oo.state.OOVariableKey;
 import burlap.mdp.core.oo.state.ObjectInstance;
 import burlap.mdp.core.state.State;
 import edu.umbc.cs.maple.hiergen.CAT.*;
+import edu.umbc.cs.maple.utilities.MutableObjectInstance;
 
 import java.util.*;
 
@@ -15,7 +17,7 @@ public class CATScan {
 
     // input: a CAT, the relevant variables
     // output: a seeded set of action indexes
-    protected static Set<Integer> seedActionIndexes(CATrajectory cat, List<OOVariableKey> variables) {
+    protected static Set<Integer> seedActionIndexes(CATrajectory cat, List<ObjectAttributePair> variables) {
         Set<Integer> actionIndexes = new HashSet<>();
         List<CausalEdge> edges = cat.getEdges();
         for (Object variable : variables) {
@@ -110,7 +112,7 @@ public class CATScan {
         return actionIndexes;
     }
 
-    public static List<SubCAT> scan(ArrayList<CATrajectory> cats, List<OOVariableKey> variables) {
+    public static List<SubCAT> scan(ArrayList<CATrajectory> cats, List<ObjectAttributePair> variables) {
 
         System.out.println("CATScan");
 
@@ -130,12 +132,23 @@ public class CATScan {
     }
 
     // the input CATs *must* be successful trajectories, meaning their final state is a goal state
-    public static Map<OOVariableKey, Object> determineGoal(List<CATrajectory> goalCats) {
+    public static Map<ObjectAttributePair, Object> determineGoal(List<CATrajectory> goalCats) {
 
-        Map<OOVariableKey, Object> globalPredicates = new HashMap<>();
+        Set<String> allChangedVariables = new HashSet<>();
+        for (CATrajectory cat : goalCats) {
+            Set<String> nontrivialChangedVariables = cat.getNontrivialChangedVariable();
+            allChangedVariables.addAll(nontrivialChangedVariables);
+        }
+        Set<String> objectsWithChangingVariables = new HashSet<>();
+        for (String changedVariable : allChangedVariables) {
+            String objectName = changedVariable.split(":")[0];
+            objectsWithChangingVariables.add(objectName);
+        }
+
+        Map<ObjectAttributePair, Object> globalPredicates = new HashMap<>();
         Set<AttributeRelation> globalRelations = new HashSet<>();
         for (CATrajectory cat : goalCats) {
-            Map<OOVariableKey, Object> constantPredicates = new HashMap<>();
+            Map<ObjectAttributePair, Object> constantPredicates = new HashMap<>();
             Set<AttributeRelation> equalToRelations = new HashSet<>();
             Set<String> nontrivialChangedVariables = cat.getNontrivialChangedVariable();
             OOState ultimateState = (OOState) cat.getUltimateState();
@@ -143,34 +156,40 @@ public class CATScan {
             for (int i = 0; i < objectInstances.size(); i++) {
                 ObjectInstance objectInstance = objectInstances.get(i);
                 String objectName = objectInstance.name();
-                List<Object> variableKeys = (List) objectInstance.variableKeys();
-                for (int v = 0; v < variableKeys.size(); v++) {
-                    Object variableKey = variableKeys.get(v);
+                List variableKeys = (List) objectInstance.variableKeys();
+                for (Object variableKey : variableKeys) {
                     Object attributeValue = objectInstance.get(variableKey);
-                    OOVariableKey ooVariableKey = new OOVariableKey(objectName, variableKey);
+                    ObjectAttributePair objectAttribute = new ObjectAttributePair(objectName, variableKey.toString());
 
                     // now consider the variable as potentially a constant goal predicate
                     String variable = objectName + ":" + variableKey;
                     if (nontrivialChangedVariables.contains(variable)) {
-                        System.out.println(variable + " : " + attributeValue);
-                        constantPredicates.put(ooVariableKey, attributeValue);
+                        constantPredicates.put(objectAttribute, attributeValue);
                     }
 
                     // now consider if the variable is equal to any other variables on other objects
-                    for (int j = i+1; j < objectInstances.size(); j++) {
-                        ObjectInstance otherObjectInstance = objectInstances.get(j);
-                        String otherObjectName = otherObjectInstance.name();
-                        List<Object> otherVariableKeys = (List) otherObjectInstance.variableKeys();
-
-                        for (int w = 0; w < otherVariableKeys.size(); w++) {
-                            Object otherVariableKey = otherVariableKeys.get(w);
-                            Object otherAttributeValue = otherObjectInstance.get(otherVariableKey);
-                            if (attributeValue.equals(otherAttributeValue)) {
-                                OOVariableKey otherOOVariableKey = new OOVariableKey(otherObjectName, otherVariableKey);
-                                equalToRelations.add(new AttributeRelation(ooVariableKey, otherOOVariableKey, Relation.EQUAL_TO));
+                    // but only if the given object has SOME variable that changed
+                    if (objectsWithChangingVariables.contains(objectName)) {
+                        for (int j = 0; j < objectInstances.size(); j++) {
+                            if (i == j) { continue; }
+                            ObjectInstance otherObjectInstance = objectInstances.get(j);
+                            String otherObjectName = otherObjectInstance.name();
+                            List otherVariableKeys = (List) otherObjectInstance.variableKeys();
+                            for (Object otherVariableKey : otherVariableKeys) {
+                                Object otherAttributeValue = otherObjectInstance.get(otherVariableKey);
+                                if (attributeValue.equals(otherAttributeValue)) {
+                                    ObjectAttributePair otherObjectAttribute = new ObjectAttributePair(otherObjectName, otherVariableKey.toString());
+                                    equalToRelations.add(new AttributeRelation(objectAttribute, otherObjectAttribute, Relation.EQUAL_TO));
+                                }
+                            }
+                            // special case: also consider the other object's name as a variable
+                            if (attributeValue.equals(otherObjectName)) {
+                                ObjectAttributePair otherObjectAttribute = new ObjectAttributePair(otherObjectName, "name");
+                                equalToRelations.add(new AttributeRelation(objectAttribute, otherObjectAttribute, Relation.EQUAL_TO));
                             }
                         }
                     }
+
                 }
             }
             if (globalPredicates.isEmpty()) {
@@ -179,7 +198,20 @@ public class CATScan {
                 // keep only the objectName:attributeName:attributeValue that are constant across all goal states
                 globalPredicates.keySet().retainAll(constantPredicates.keySet());
             }
-            globalRelations.addAll(equalToRelations);
+//            if (globalRelations.isEmpty()) {
+                globalRelations.addAll(equalToRelations);
+//            } else {
+//                globalRelations.retainAll(equalToRelations);
+//            }
+        }
+
+        System.out.println("****");
+        for (ObjectAttributePair predicate : globalPredicates.keySet()) {
+            System.out.println(predicate + " EQUAL_TO " + globalPredicates.get(predicate));
+        }
+        System.out.println("****");
+        for (AttributeRelation relation : globalRelations) {
+            System.out.println(relation);
         }
 
         return null;
@@ -187,7 +219,7 @@ public class CATScan {
     }
 
     public static void test(List<CATrajectory> cats) {
-        Map<OOVariableKey, Object> goal = determineGoal(cats);
+        Map<ObjectAttributePair, Object> goal = determineGoal(cats);
 
         ArrayList<HierGenTask> finalTasks = new ArrayList<>();
         if (goal.isEmpty()) {

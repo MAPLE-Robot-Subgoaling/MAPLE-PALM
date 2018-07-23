@@ -6,29 +6,29 @@ import java.util.Objects;
 
 public class AttributeRelation {
 
-    private OOVariableKey left;
-    private OOVariableKey right;
+    private ObjectAttributePair left;
+    private ObjectAttributePair right;
     private Relation relation;
 
-    public AttributeRelation(OOVariableKey left, OOVariableKey right, Relation relation) {
+    public AttributeRelation(ObjectAttributePair left, ObjectAttributePair right, Relation relation) {
         this.left = left;
         this.right = right;
         this.relation = relation;
     }
 
-    public OOVariableKey getLeft() {
+    public ObjectAttributePair getLeft() {
         return left;
     }
 
-    public void setLeft(OOVariableKey left) {
+    public void setLeft(ObjectAttributePair left) {
         this.left = left;
     }
 
-    public OOVariableKey getRight() {
+    public ObjectAttributePair getRight() {
         return right;
     }
 
-    public void setRight(OOVariableKey right) {
+    public void setRight(ObjectAttributePair right) {
         this.right = right;
     }
 
@@ -54,5 +54,10 @@ public class AttributeRelation {
     public int hashCode() {
 
         return Objects.hash(left, right, relation);
+    }
+
+    @Override
+    public String toString() {
+        return left + " " + relation + " " + right;
     }
 }
