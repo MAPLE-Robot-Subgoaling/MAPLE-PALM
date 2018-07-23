@@ -17,6 +17,14 @@ public class ObjectToRegionActionType extends ObjectParameterizedActionType {
         super(name, parameterClasses);
     }
 
+    public ObjectToRegionActionType(){
+        super(null, null,null);
+    }
+
+    public void setParameterClasses(String[] parameterClasses){
+        this.parameterClasses= parameterClasses;
+    }
+
     @Override
     protected boolean applicableInState(State s, ObjectParameterizedAction objectParameterizedAction) {
         OOState state = (OOState) s;
