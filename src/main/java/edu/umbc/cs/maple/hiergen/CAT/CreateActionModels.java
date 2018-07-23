@@ -2,6 +2,9 @@ package edu.umbc.cs.maple.hiergen.CAT;
 
 import burlap.behavior.singleagent.Episode;
 import burlap.mdp.core.action.Action;
+import burlap.mdp.core.oo.state.OOState;
+import burlap.mdp.core.oo.state.OOVariableKey;
+import burlap.mdp.core.oo.state.ObjectInstance;
 import burlap.mdp.core.state.State;
 import edu.umbc.cs.maple.utilities.MurmurHash;
 import weka.classifiers.trees.J48;
@@ -71,7 +74,11 @@ public class CreateActionModels {
                     for (int i = 0; i < priorStates.size(); i++) {
                         Instance dataPoint = new DenseInstance(variables.size() + 1);
                         dataPoint.setDataset(dataset);
-                        Object label = postStates.get(i).get(var);
+                        OOState ooPostState = (OOState) postStates.get(i);
+                        OOVariableKey variableKey = (OOVariableKey) var;
+                        ObjectInstance objectInstance = ooPostState.object(variableKey.obName);
+                        if (objectInstance == null) { continue; }
+                        Object label = objectInstance.get(variableKey.obVarKey);
                         if (label instanceof Number) {
                             dataPoint.setValue(0, ((Number) label).doubleValue());
                         } else {
@@ -79,7 +86,7 @@ public class CreateActionModels {
                         }
 
                         State prior = priorStates.get(i);
-                        addSStateVars(variables, dataPoint, prior);
+                        addStateVars(variables, dataPoint, prior);
                         dataset.add(dataPoint);
                     }
                     J48 tree = buildTree(pathToARFF, dataset);
@@ -105,7 +112,7 @@ public class CreateActionModels {
                 dataPoint.setValue(0, label);
 
                 State prior = priorStates.get(i);
-                addSStateVars(variables, dataPoint, prior);
+                addStateVars(variables, dataPoint, prior);
                 dataset.add(dataPoint);
             }
             J48 tree = buildTree(pathToARFF, dataset);
@@ -142,10 +149,16 @@ public class CreateActionModels {
         return parsedTrees;
     }
 
-    private static void addSStateVars(List<Object> variables, Instance dataPoint, State prior) {
+    private static void addStateVars(List<Object> variables, Instance dataPoint, State prior) {
         int counter = 1;
         for (Object varKey : variables) {
-            Object value = prior.get(varKey);
+            OOVariableKey variableKey = (OOVariableKey) varKey;
+            OOState ooPrior = (OOState) prior;
+            ObjectInstance objectInstance = ooPrior.object(variableKey.obName);
+            if (objectInstance == null) {
+                continue;
+            }
+            Object value = objectInstance.get(variableKey.obVarKey);
             if (value instanceof Number) {
                 dataPoint.setValue(counter++, ((Number) value).doubleValue());
             } else {

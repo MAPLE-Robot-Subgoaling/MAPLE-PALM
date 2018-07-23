@@ -58,9 +58,9 @@ public class HierGenMain {
         String pathToARFF = DIRECTORY_PATH_HIERGEN_OUTPUT + DIRECTORY_PATH_ARFF + FILE_ARFF;
         String pathToCATs = DIRECTORY_PATH_HIERGEN_OUTPUT + DIRECTORY_PATH_CATS;
 
-        int trajectoryCount = 2;
+        int trajectoryCount = 50;
 
-        long seed = 35902L;//20948304976L;
+        long seed = 7777777L;//20948304976L;
 //        String stateType = "small-3passengers";
 //        String stateType = "medium-3passengers";
         String stateType = "random-4d-2p";
@@ -69,18 +69,18 @@ public class HierGenMain {
 
         RandomFactory.getMapped(BurlapConstants.DEFAULT_RNG_INDEX).setSeed(seed);
 
-        generateTrajectories(seed, stateType, pathToTrajectories, trajectoryCount);
+//        generateTrajectories(seed, stateType, pathToTrajectories, trajectoryCount);
 
         List<Episode> trajectories = Episode.readEpisodes(pathToTrajectories);
 
-        Episode one = trajectories.get(0);
-        System.out.println(one.stateSequence.get(one.stateSequence.size()-1));
-        System.out.println(one.rewardSequence.get(one.rewardSequence.size()-1));
-        System.out.println(one.actionSequence.get(one.actionSequence.size()-1));
-
-        EpisodeSequenceVisualizer v = new EpisodeSequenceVisualizer(TaxiVisualizer.getVisualizer(5, 5), new Taxi().generateDomain(), trajectories);
-        v.setDefaultCloseOperation(v.EXIT_ON_CLOSE);
-        v.initGUI();
+//        Episode one = trajectories.get(0);
+//        System.out.println(one.stateSequence.get(one.stateSequence.size()-1));
+//        System.out.println(one.rewardSequence.get(one.rewardSequence.size()-1));
+//        System.out.println(one.actionSequence.get(one.actionSequence.size()-1));
+//
+//        EpisodeSequenceVisualizer v = new EpisodeSequenceVisualizer(TaxiVisualizer.getVisualizer(5, 5), new Taxi().generateDomain(), trajectories);
+//        v.setDefaultCloseOperation(v.EXIT_ON_CLOSE);
+//        v.initGUI();
 //
 //        System.out.println("Learning the action models");
 //        CreateActionModels.createModels(pathToTrees, pathToARFF, trajectories);
@@ -99,16 +99,16 @@ public class HierGenMain {
 //            String filename = pathToCATs + FILE_PREFIX_CAT + "_" + i;
 //            cat.write(filename);
 //        }
-//
-//        ArrayList<CATrajectory> cats = new ArrayList<>();
-//        for (int i = 0; i < trajectoryCount; i++) {
-//            String filename = pathToCATs + FILE_PREFIX_CAT + "_" + i;
-//            CATrajectory cat = CATrajectory.read(filename);
-//            cats.add(cat);
-//        }
-//
-//        System.out.println("Testing CAT-Scan");
-//        Map<ObjectAttributePair, Object> map = CATScan.determineGoal(cats);
+
+        ArrayList<CATrajectory> cats = new ArrayList<>();
+        for (int i = 0; i < trajectoryCount; i++) {
+            String filename = pathToCATs + FILE_PREFIX_CAT + "_" + i;
+            CATrajectory cat = CATrajectory.read(filename);
+            cats.add(cat);
+        }
+
+        System.out.println("Testing CAT-Scan");
+        Map<ObjectAttributePair, Object> map = CATScan.determineGoal(cats);
 
 //        CATScan.test(cats);
 //

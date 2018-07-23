@@ -73,7 +73,8 @@ public class TaxiState implements MutableOOState, DeepCopyForShallowCopyState {
         o = walls.get(oname);
         if(o != null) { return o; }
 
-        throw new RuntimeException("Error: no object found with name: " + oname);
+//        throw new RuntimeException("Error: no object found with name: " + oname);
+        return null;
     }
 
     @Override

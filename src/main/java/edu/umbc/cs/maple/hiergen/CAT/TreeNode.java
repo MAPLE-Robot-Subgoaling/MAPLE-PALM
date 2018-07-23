@@ -1,5 +1,8 @@
 package edu.umbc.cs.maple.hiergen.CAT;
 
+import burlap.mdp.core.oo.state.OOState;
+import burlap.mdp.core.oo.state.OOVariableKey;
+import burlap.mdp.core.oo.state.ObjectInstance;
 import burlap.mdp.core.state.State;
 import edu.umbc.cs.maple.utilities.MurmurHash;
 
@@ -48,8 +51,15 @@ public class TreeNode {
     }
 
     public void getCheckedVariables(State s, List<String> vars) {
-        if (value != null)
+        if (value != null) {
             return;
+        }
+
+        String objectName = variable.split(":")[0];
+        ObjectInstance objectInstance = ((OOState)s).object(objectName);
+        if (objectInstance == null) {
+            return;
+        }
 
         vars.add(variable);
         Object val = s.get(variable);

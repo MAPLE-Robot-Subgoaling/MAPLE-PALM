@@ -20,6 +20,15 @@ import static edu.umbc.cs.maple.taxi.TaxiConstants.*;
 
 public class TaxiStateFactory {
 
+    public static boolean anyAt(List<TaxiLocation> depots, int x, int y) {
+        for (TaxiLocation depot : depots) {
+            int dX = (int) depot.get(ATT_X);
+            int dY = (int) depot.get(ATT_Y);
+            if (x == dX && y == dY) { return true; }
+        }
+        return false;
+    }
+
     //generates taxi states
 
     private static TaxiState createRandomState(int numPassengers, int numDepots) {
@@ -36,8 +45,12 @@ public class TaxiStateFactory {
 
         List<TaxiLocation> depots = new ArrayList<>();
         for (int i = 0; i < numDepots; i++) {
-            int depotX = rng.nextInt(5);
-            int depotY = rng.nextInt(5);
+            int depotX;
+            int depotY;
+            do {
+                depotX = rng.nextInt(5);
+                depotY = rng.nextInt(5);
+            } while (anyAt(depots, depotX, depotY));
             String depotColor = TaxiConstants.COLORS[rng.nextInt(TaxiConstants.COLORS.length)];
             TaxiLocation depot = new TaxiLocation(CLASS_LOCATION+i, depotX, depotY, depotColor);
             depots.add(depot);
