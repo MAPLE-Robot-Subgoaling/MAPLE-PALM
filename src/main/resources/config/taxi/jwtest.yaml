@@ -1,5 +1,5 @@
 domain: !!edu.umbc.cs.maple.config.taxi.TaxiConfig
-  state: medium-3passengers
+  state: random-4d-2p
   correct_move: 1.0
   fickle: 0.00
 

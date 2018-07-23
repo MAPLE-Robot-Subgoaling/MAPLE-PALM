@@ -2,19 +2,88 @@ package edu.umbc.cs.maple.taxi.stategenerator;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import burlap.debugtools.RandomFactory;
+import edu.umbc.cs.maple.taxi.TaxiConstants;
 import edu.umbc.cs.maple.taxi.state.TaxiAgent;
 import edu.umbc.cs.maple.taxi.state.TaxiLocation;
 import edu.umbc.cs.maple.taxi.state.TaxiPassenger;
 import edu.umbc.cs.maple.taxi.state.TaxiState;
 import edu.umbc.cs.maple.taxi.state.TaxiWall;
+import edu.umbc.cs.maple.utilities.Utils;
 
 import static edu.umbc.cs.maple.taxi.TaxiConstants.*;
 
 
 public class TaxiStateFactory {
+
     //generates taxi states
+
+    private static TaxiState createRandomState(int numPassengers, int numDepots) {
+
+        if (numDepots < 2 || numPassengers < 1) {
+            throw new RuntimeException("Error: must have 1+ passengers and 2+ depots");
+        }
+
+        Random rng = RandomFactory.getMapped(0);
+
+        int taxiX = rng.nextInt(5);
+        int taxiY = rng.nextInt(5);
+        TaxiAgent taxi = new TaxiAgent(CLASS_TAXI + 0, taxiX, taxiY);
+
+        List<TaxiLocation> depots = new ArrayList<>();
+        for (int i = 0; i < numDepots; i++) {
+            int depotX = rng.nextInt(5);
+            int depotY = rng.nextInt(5);
+            String depotColor = TaxiConstants.COLORS[rng.nextInt(TaxiConstants.COLORS.length)];
+            TaxiLocation depot = new TaxiLocation(CLASS_LOCATION+i, depotX, depotY, depotColor);
+            depots.add(depot);
+        }
+
+        List<TaxiPassenger> passengers = new ArrayList<>();
+        for (int i = 0; i < numPassengers; i++) {
+            TaxiLocation start = Utils.choice(depots, rng);
+            TaxiLocation goal;
+            do {
+                goal = Utils.choice(depots, rng);
+            } while(start == goal);
+            int passengerX = (int) start.get(ATT_X);
+            int passengerY = (int) start.get(ATT_Y);
+            String passengerGoal = goal.name();
+            TaxiPassenger passenger = new TaxiPassenger(CLASS_PASSENGER+i, passengerX, passengerY, passengerGoal);
+            passengers.add(passenger);
+        }
+
+        List<TaxiWall> walls = new ArrayList<TaxiWall>();
+        // a box always exists around the domain
+        walls.add(new TaxiWall(CLASS_WALL + 0, 0, 0, 5, false));
+        walls.add(new TaxiWall(CLASS_WALL + 1, 0, 0, 5, true));
+        walls.add(new TaxiWall(CLASS_WALL + 2, 5, 0, 5, false));
+        walls.add(new TaxiWall(CLASS_WALL + 3, 0, 5, 5, true));
+        int nextWallIndex = 4;
+
+        // now flip a coin for either vertical or horizontal mini-walls
+        boolean isHorizontal = rng.nextBoolean();
+        int numMiniWallsOnLeft = rng.nextInt(5);
+        int numMiniWallsOnRight = rng.nextInt(5);
+        for (int i = 0; i < numMiniWallsOnLeft + numMiniWallsOnRight; i++) {
+            int position = i;
+            int length = rng.nextInt(2) + 1;
+            int anchor = position < numMiniWallsOnLeft ? 0 : 5 - length;
+            position = position < numMiniWallsOnLeft ? position : position - numMiniWallsOnLeft;
+            int startX = isHorizontal ? anchor : position + 1;
+            int startY = isHorizontal ? position + 1 : anchor;
+            TaxiWall wall = new TaxiWall(CLASS_WALL + nextWallIndex, startX, startY, length, isHorizontal);
+            nextWallIndex += 1;
+            walls.add(wall);
+        }
+
+        TaxiState state = new TaxiState(taxi, passengers, depots, walls);
+        return state;
+    }
 
     public static TaxiState createClassicState() {
         return createClassicState(1);
@@ -503,4 +572,76 @@ public class TaxiStateFactory {
 
         return new TaxiState(taxi, passengers, locations, walls);
     }
+
+    public static TaxiState generateState(String state) {
+
+        String passengerNumberRegex = "\\-(\\d+)passengers";
+        Pattern r = Pattern.compile(passengerNumberRegex);
+        Matcher m = r.matcher(state);
+        String numPassengersString = "";
+        if (m.find()) {
+            numPassengersString = m.group(1);
+        }
+
+        String passengerDepotRegex = "\\-(\\d+)d\\-(\\d+)p";
+        Pattern r2 = Pattern.compile(passengerDepotRegex);
+        Matcher m2 = r2.matcher(state);
+        String numDepotsString = "";
+        if (m2.find()) {
+            numDepotsString = m2.group(1);
+            numPassengersString = m2.group(2);
+        }
+
+        int numPassengers = "".equals(numPassengersString) ? 1 : Integer.parseInt(numPassengersString);
+        int numDepots = "".equals(numDepotsString) ? 1 : Integer.parseInt(numDepotsString);
+
+        if        (state.equals("classic")) {
+            return TaxiStateFactory.createClassicState();
+        } else if (state.equals("tiny")) {
+            return TaxiStateFactory.createTinyState();
+        } else if (state.equals("small")) {
+            return TaxiStateFactory.createSmallState();
+        } else if (state.equals("medium")) {
+            return TaxiStateFactory.createMediumState();
+        } else if (state.equals("3depots")) {
+            return TaxiStateFactory.createThreeDepots();
+        } else if (state.equals("mehta-zigzag-1")) {
+            return TaxiStateFactory.createMehtaZigZag1State(1);
+        } else if (state.equals("mehta-zigzag-2")) {
+            return TaxiStateFactory.createMehtaZigZag2State(1);
+        } else if (state.equals("steptest")) {
+            return TaxiStateFactory.createStepTest(1);
+        } else if (state.matches("classic" + passengerNumberRegex)) {
+            return TaxiStateFactory.createClassicState(numPassengers);
+        } else if (state.matches("classic20" + passengerNumberRegex)) {
+            return TaxiStateFactory.createClassic20State(numPassengers);
+        } else if (state.matches("tiny" + passengerNumberRegex)) {
+            return TaxiStateFactory.createTinyState(numPassengers);
+        } else if (state.matches("tiny3" + passengerNumberRegex)) {
+            return TaxiStateFactory.createTiny3State(numPassengers);
+        } else if (state.matches("small" + passengerNumberRegex)) {
+            return TaxiStateFactory.createSmallState(numPassengers);
+        } else if (state.matches("medium" + passengerNumberRegex)) {
+            return TaxiStateFactory.createMediumState(numPassengers);
+        } else if (state.matches("3depots" + passengerNumberRegex)) {
+            return TaxiStateFactory.createThreeDepots(numPassengers);
+        } else if (state.matches("mehta-zigzag-1" + passengerNumberRegex)) {
+            return TaxiStateFactory.createMehtaZigZag1State(numPassengers);
+        } else if (state.matches("mehta-zigzag-2" + passengerNumberRegex)) {
+            return TaxiStateFactory.createMehtaZigZag2State(numPassengers);
+        } else if (state.matches("steptest" + passengerNumberRegex)) {
+            return TaxiStateFactory.createStepTest(numPassengers);
+        } else if (state.matches("discounttest" + passengerNumberRegex)) {
+            return TaxiStateFactory.createDiscountTest(numPassengers);
+        } else if (state.matches("discounttestbig" + passengerNumberRegex)) {
+            return TaxiStateFactory.createDiscountTestBig(numPassengers);
+        } else if (state.matches("discounttestsmall" + passengerNumberRegex)) {
+            return TaxiStateFactory.createDiscountTestSmall(numPassengers);
+        }  else if (state.matches("random" + passengerDepotRegex)) {
+            return TaxiStateFactory.createRandomState(numPassengers, numDepots);
+        } else {
+            throw new RuntimeException("ERROR: invalid state passed to generateState in TaxiConfig: " + state);
+        }
+    }
+
 }

@@ -30,6 +30,9 @@ public class TaxiVisualizer {
         colors.put(COLOR_MAGENTA, Color.MAGENTA);
         colors.put(COLOR_BLACK, Color.BLACK);
         colors.put(COLOR_GRAY, Color.DARK_GRAY);
+        colors.put(COLOR_CYAN, Color.CYAN);
+        colors.put(COLOR_PINK, Color.PINK);
+        colors.put(COLOR_ORANGE, Color.ORANGE);
     }
 
     public static Visualizer getVisualizer(int w, int h){

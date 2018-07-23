@@ -44,8 +44,15 @@ public class TaxiConstants {
     public static final String COLOR_GREEN = 				"green";
     public static final String COLOR_BLUE = 				"blue";
     public static final String COLOR_MAGENTA =				"magenta";
+    public static final String COLOR_PINK =                 "pink";
+    public static final String COLOR_ORANGE =               "orange";
+    public static final String COLOR_CYAN =                 "cyan";
     public static final String COLOR_BLACK = 				"black";
     public static final String COLOR_GRAY =					"gray";
+    public static final String[] COLORS = {
+            COLOR_RED, COLOR_YELLOW, COLOR_GREEN, COLOR_BLUE, COLOR_MAGENTA, COLOR_PINK,
+            COLOR_ORANGE, COLOR_CYAN, COLOR_BLACK, COLOR_GRAY
+    };
 
     //action indexes
     public static final int IND_NORTH = 0;
