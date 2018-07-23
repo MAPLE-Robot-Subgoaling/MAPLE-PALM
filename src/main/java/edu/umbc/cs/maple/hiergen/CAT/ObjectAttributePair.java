@@ -2,7 +2,7 @@ package edu.umbc.cs.maple.hiergen.CAT;
 
 import java.util.Objects;
 
-public class ObjectAttributePair {
+public class ObjectAttributePair extends RelationVariable {
 
     private String objectName;
     private String attributeName;

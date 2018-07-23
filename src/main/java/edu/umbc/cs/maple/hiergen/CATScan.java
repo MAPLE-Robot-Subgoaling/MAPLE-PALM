@@ -145,10 +145,10 @@ public class CATScan {
             objectsWithChangingVariables.add(objectName);
         }
 
-        Map<ObjectAttributePair, Object> globalPredicates = new HashMap<>();
-        Set<AttributeRelation> globalRelations = new HashSet<>();
+        Set<AttributeRelation> globalConstantRelations = new HashSet<>();
+        Set<AttributeRelation> globalEqualToRelations = new HashSet<>();
         for (CATrajectory cat : goalCats) {
-            Map<ObjectAttributePair, Object> constantPredicates = new HashMap<>();
+            Set<AttributeRelation> constantRelations = new HashSet<>();
             Set<AttributeRelation> equalToRelations = new HashSet<>();
             Set<String> nontrivialChangedVariables = cat.getNontrivialChangedVariable();
             OOState ultimateState = (OOState) cat.getUltimateState();
@@ -156,7 +156,7 @@ public class CATScan {
             for (int i = 0; i < objectInstances.size(); i++) {
                 ObjectInstance objectInstance = objectInstances.get(i);
                 String objectName = objectInstance.name();
-                List variableKeys = (List) objectInstance.variableKeys();
+                List variableKeys = objectInstance.variableKeys();
                 for (Object variableKey : variableKeys) {
                     Object attributeValue = objectInstance.get(variableKey);
                     ObjectAttributePair objectAttribute = new ObjectAttributePair(objectName, variableKey.toString());
@@ -164,7 +164,9 @@ public class CATScan {
                     // now consider the variable as potentially a constant goal predicate
                     String variable = objectName + ":" + variableKey;
                     if (nontrivialChangedVariables.contains(variable)) {
-                        constantPredicates.put(objectAttribute, attributeValue);
+                        RelationConstant constant = new RelationConstant(attributeValue);
+                        AttributeRelation equalToConstant = new AttributeRelation(objectAttribute, constant, Relation.EQUAL_TO);
+                        constantRelations.add(equalToConstant);
                     }
 
                     // now consider if the variable is equal to any other variables on other objects
@@ -174,7 +176,7 @@ public class CATScan {
                             if (i == j) { continue; }
                             ObjectInstance otherObjectInstance = objectInstances.get(j);
                             String otherObjectName = otherObjectInstance.name();
-                            List otherVariableKeys = (List) otherObjectInstance.variableKeys();
+                            List otherVariableKeys = otherObjectInstance.variableKeys();
                             for (Object otherVariableKey : otherVariableKeys) {
                                 Object otherAttributeValue = otherObjectInstance.get(otherVariableKey);
                                 if (attributeValue.equals(otherAttributeValue)) {
@@ -186,31 +188,44 @@ public class CATScan {
                             if (attributeValue.equals(otherObjectName)) {
                                 ObjectAttributePair otherObjectAttribute = new ObjectAttributePair(otherObjectName, "name");
                                 equalToRelations.add(new AttributeRelation(objectAttribute, otherObjectAttribute, Relation.EQUAL_TO));
+
+                                // then dereference the object, compare both att_vals
+                                for (Object aVariableKey : variableKeys) {
+                                    Object aAttributeValue = objectInstance.get(aVariableKey);
+                                    ObjectAttributePair aObjectAttribute = new ObjectAttributePair(objectName, aVariableKey.toString());
+                                    for (Object bVariableKey : variableKeys) {
+                                        Object bAttributeValue = otherObjectInstance.get(bVariableKey);
+                                        if (aAttributeValue.equals(bAttributeValue)) {
+                                            ObjectAttributePair bObjectAttribute = new ObjectAttributePair(variableKey.toString(), bVariableKey.toString());
+                                            equalToRelations.add(new AttributeRelation(aObjectAttribute, bObjectAttribute, Relation.EQUAL_TO));
+                                        }
+                                    }
+                                }
+
                             }
                         }
                     }
 
                 }
             }
-            if (globalPredicates.isEmpty()) {
-                globalPredicates.putAll(constantPredicates);
+            if (globalConstantRelations.isEmpty()) {
+                globalConstantRelations.addAll(constantRelations);
             } else {
-                // keep only the objectName:attributeName:attributeValue that are constant across all goal states
-                globalPredicates.keySet().retainAll(constantPredicates.keySet());
+                globalConstantRelations.retainAll(constantRelations);
             }
-//            if (globalRelations.isEmpty()) {
-                globalRelations.addAll(equalToRelations);
-//            } else {
-//                globalRelations.retainAll(equalToRelations);
-//            }
+            if (globalEqualToRelations.isEmpty()) {
+                globalEqualToRelations.addAll(equalToRelations);
+            } else {
+                globalEqualToRelations.retainAll(equalToRelations);
+            }
         }
 
         System.out.println("****");
-        for (ObjectAttributePair predicate : globalPredicates.keySet()) {
-            System.out.println(predicate + " EQUAL_TO " + globalPredicates.get(predicate));
+        for (AttributeRelation relation : globalConstantRelations) {
+            System.out.println(relation);
         }
         System.out.println("****");
-        for (AttributeRelation relation : globalRelations) {
+        for (AttributeRelation relation : globalEqualToRelations) {
             System.out.println(relation);
         }
 

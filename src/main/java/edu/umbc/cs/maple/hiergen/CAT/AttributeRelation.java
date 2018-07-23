@@ -6,29 +6,29 @@ import java.util.Objects;
 
 public class AttributeRelation {
 
-    private ObjectAttributePair left;
-    private ObjectAttributePair right;
+    private RelationVariable left;
+    private RelationVariable right;
     private Relation relation;
 
-    public AttributeRelation(ObjectAttributePair left, ObjectAttributePair right, Relation relation) {
+    public AttributeRelation(RelationVariable left, RelationVariable right, Relation relation) {
         this.left = left;
         this.right = right;
         this.relation = relation;
     }
 
-    public ObjectAttributePair getLeft() {
+    public RelationVariable getLeft() {
         return left;
     }
 
-    public void setLeft(ObjectAttributePair left) {
+    public void setLeft(RelationVariable left) {
         this.left = left;
     }
 
-    public ObjectAttributePair getRight() {
+    public RelationVariable getRight() {
         return right;
     }
 
-    public void setRight(ObjectAttributePair right) {
+    public void setRight(RelationVariable right) {
         this.right = right;
     }
 
