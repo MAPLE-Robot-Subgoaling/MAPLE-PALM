@@ -1,5 +1,5 @@
 domain: !!edu.umbc.cs.maple.config.cleanup.CleanupConfig
-    state: threeRooms
+    state: twoRooms
     num_blocks: 2
     minX: 0
     minY: 0
@@ -15,7 +15,7 @@ goal: !!edu.umbc.cs.maple.cleanup.CleanupGoal
       - pf: !!edu.umbc.cs.maple.cleanup.pfs.BlockInRoomPF {}
         params:
          - block0
-         - room1
+         - room0
 
 agents:
   palm: {cleanup-expert}
@@ -60,5 +60,5 @@ output:
   visualizer:
     enabled: true
     episodes: true
-    width: 5
-    height: 5
+    width: 10
+    height: 10

@@ -2,7 +2,8 @@ name: expert
 hierarchyConfigMap:
   root:
     children:
-      - moveAgentToRoom
+      - moveAgentToRoom_np
+      - moveAgentToDoor_np
     stateMapper: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.root.CleanupRootMapper {}
     tf: &tf !!edu.umbc.cs.maple.hierarchy.framework.GoalFailTF
       goalPF: &goalPF !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.root.CleanupRootGoalPF {}
@@ -11,7 +12,7 @@ hierarchyConfigMap:
       tf: *tf
       rewardDefault: 0.0
       rewardNoop: 0.0
-    domaingenerator: !!edu.umbc.cs.maple.hierarchy.framework.TaskDomainGenerator
+    domainGenerator: !!edu.umbc.cs.maple.hierarchy.framework.TaskDomainGenerator
       tf: *tf
       rf: *rf
       stateClasses:
@@ -19,14 +20,25 @@ hierarchyConfigMap:
           clasz: !!edu.umbc.cs.maple.cleanup.state.CleanupAgent {}
         - className: room
           clasz: !!edu.umbc.cs.maple.cleanup.state.CleanupRoom {}
-        - className: block
-          clasz: !!edu.umbc.cs.maple.cleanup.state.CleanupBlock {}
+        - className: door
+          clasz: !!edu.umbc.cs.maple.cleanup.state.CleanupDoor {}
       actions:
         - !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.move.ObjectToRegionActionType
             name: moveAgentToRoom
             parameterClasses:
               - agent
               - room
+            parameterOrderGroups:
+              - moveAgentToRoom.P0
+              - moveAgentToRoom.P1
+        - !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.move.ObjectToRegionActionType
+          name: moveAgentToDoor
+          parameterClasses:
+            - agent
+            - door
+          parameterOrderGroups:
+            - moveAgentToRoom.P0
+            - moveAgentToRoom.P1
     solver: !!edu.umbc.cs.maple.config.solver.ValueIterationMultistepConfig
       maxDelta: 0.0001
       maxIterations: 1000
@@ -85,25 +97,25 @@ hierarchyConfigMap:
       maxDelta: 0.0001
       maxIterations: 1000
 
-#  moveAgentToDoor:
-#    children:
-#      - north_p
-#      - south_p
-#      - east_p
-#      - west_p
-#      - pull_p
-#    domainGenerator: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.move.CleanupMove {}
-#    stateMapper: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.move.AgentDoorMapper {}
-#    tf: &tf !!edu.umbc.cs.maple.hierarchy.framework.GoalFailTF
-#      goalPF: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.move.ObjectInRegionGoalPF {}
-#      failPF: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.move.ObjectInRegionFailPF {}
-#    rf: !!edu.umbc.cs.maple.hierarchy.framework.GoalFailRF
-#      tf: *tf
-#      rewardDefault: 0.0
-#      rewardNoop: 0.0
-#    solver: !!edu.umbc.cs.maple.config.solver.ValueIterationMultistepConfig
-#      maxDelta: 0.0001
-#      maxIterations: 1000
+  moveAgentToDoor:
+    children:
+      - north_p
+      - south_p
+      - east_p
+      - west_p
+      - pull_p
+    domainGenerator: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.move.CleanupMove {}
+    stateMapper: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.move.AgentDoorMapper {}
+    tf: &tf !!edu.umbc.cs.maple.hierarchy.framework.GoalFailTF
+      goalPF: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.move.ObjectInRegionGoalPF {}
+      failPF: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.move.ObjectInRegionFailPF {}
+    rf: !!edu.umbc.cs.maple.hierarchy.framework.GoalFailRF
+      tf: *tf
+      rewardDefault: 0.0
+      rewardNoop: 0.0
+    solver: !!edu.umbc.cs.maple.config.solver.ValueIterationMultistepConfig
+      maxDelta: 0.0001
+      maxIterations: 1000
 #
 #  moveBlockToRoom:
 #    children:

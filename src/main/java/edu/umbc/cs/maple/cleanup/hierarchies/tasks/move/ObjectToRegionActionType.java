@@ -25,6 +25,10 @@ public class ObjectToRegionActionType extends ObjectParameterizedActionType {
         this.parameterClasses= parameterClasses;
     }
 
+    public void  setParameterOrderGroups(String[] parameterOrderGroups) {
+        this.parameterOrderGroup=parameterOrderGroups;
+    }
+
     @Override
     protected boolean applicableInState(State s, ObjectParameterizedAction objectParameterizedAction) {
         OOState state = (OOState) s;
