@@ -115,9 +115,14 @@ public class CATScan {
         return actionIndexes;
     }
 
-    public static List<SubCAT> scan(ArrayList<CATrajectory> cats, List<ObjectAttributePair> variables) {
+    public static List<SubCAT> scan(List<CATrajectory> cats, List<AttributeRelation> relations) {
 
         System.out.println("CATScan");
+
+        List<ObjectAttributePair> variables = new ArrayList<>();
+        for (AttributeRelation relation : relations) {
+            variables.add((ObjectAttributePair) relation.getLeft());
+        }
 
         List<SubCAT> subCATs = new ArrayList<SubCAT>();
         for (CATrajectory cat : cats) {
@@ -240,20 +245,14 @@ public class CATScan {
         return globalRelations;
     }
 
-    public static void test(List<CATrajectory> cats, Set<AttributeRelation> goals) {
-
-//        ArrayList<HierGenTask> finalTasks = new ArrayList<>();
-//        if (goal.isEmpty()) {
-//            return;
-//        }
-
-//        List<List<SubCAT>> listOfSubCATs = new ArrayList<>();
-//        for (OOVariableKey relevantVariable : goal.keySet()) {
-//            ArrayList<OOVariableKey> currentVariables = new ArrayList<>();
-//            currentVariables.add(relevantVariable);
-//            List<SubCAT> subCATs = CATScan.scan(cat, currentVariables);
-//            listOfSubCATs.add(subCATs);
-//        }
+    public static void prescan(List<CATrajectory> cats, Set<AttributeRelation> goals) {
+        List<List<SubCAT>> listOfSubCATs = new ArrayList<>();
+        for (AttributeRelation relation : goals) {
+            List<AttributeRelation> wrappedRelation = new ArrayList<>();
+            wrappedRelation.add(relation);
+            List<SubCAT> subCATs = CATScan.scan(cats, wrappedRelation);
+            listOfSubCATs.add(subCATs);
+        }
 
     }
 }

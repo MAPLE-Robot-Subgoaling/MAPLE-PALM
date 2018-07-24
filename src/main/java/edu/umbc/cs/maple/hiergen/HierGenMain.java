@@ -108,14 +108,14 @@ public class HierGenMain {
             cats.add(cat);
         }
 
-        System.out.println("Testing CAT-Scan");
+        System.out.println("CATScan: Determine Goal");
         Set<AttributeRelation> map = CATScan.determineGoal(cats);
 
-//        CATScan.test(cats);
-//
-//        System.out.println("Running the main HierGenAlgorithm");
-//        HierGenTask root = HierGenAlgorithm.generate(actionModels, cats);
-//        System.out.println(root);
+        CATScan.test(cats);
+
+        System.out.println("Running the main HierGenAlgorithm");
+        HierGenTask root = HierGenAlgorithm.generate(actionModels, cats);
+        System.out.println(root);
 
 
     }
