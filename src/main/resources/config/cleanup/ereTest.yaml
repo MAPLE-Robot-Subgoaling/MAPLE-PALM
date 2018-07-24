@@ -15,7 +15,7 @@ goal: !!edu.umbc.cs.maple.cleanup.CleanupGoal
       - pf: !!edu.umbc.cs.maple.cleanup.pfs.BlockInRoomPF {}
         params:
          - block0
-         - room0
+         - room1
 
 agents:
   palm: {cleanup-expert}
