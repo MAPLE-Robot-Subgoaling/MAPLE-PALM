@@ -11,13 +11,18 @@ import java.util.HashSet;
 import static edu.umbc.cs.maple.cleanup.Cleanup.ATT_CONNECTED;
 import static edu.umbc.cs.maple.cleanup.Cleanup.ATT_REGION;
 
-public class ObjectToRegionActionType extends ObjectParameterizedActionType {
+public class ObjectToObjectActionType extends ObjectParameterizedActionType{
 
-    public ObjectToRegionActionType(String name, String[] parameterClasses) {
+
+    public ObjectToObjectActionType(String name, String[] parameterClasses) {
         super(name, parameterClasses);
     }
 
-    public ObjectToRegionActionType(){
+    public ObjectToObjectActionType(String name, String[] parameterClasses, String[] parameterOrderGroups) {
+        super(name, parameterClasses, parameterOrderGroups);
+    }
+
+    public ObjectToObjectActionType(){
         super(null, null,null);
     }
 
@@ -31,20 +36,18 @@ public class ObjectToRegionActionType extends ObjectParameterizedActionType {
 
     @Override
     protected boolean applicableInState(State s, ObjectParameterizedAction objectParameterizedAction) {
+        //get region for object1 and object2 and compare
         OOState state = (OOState) s;
         String[] params = objectParameterizedAction.getObjectParameters();
-        String objectName = params[0];
-        String regionName = params[1];
-        ObjectInstance object = state.object(objectName);
-        String currentRegionName = (String) object.get(ATT_REGION);
-        //for some reason currentRegionName is null
-        boolean alreadyInRegion = currentRegionName.equals(regionName);
-        // not applicable if object already in the region
-        if (alreadyInRegion) { return false; }
-        ObjectInstance currentRegion = state.object(currentRegionName);
-        HashSet<String> connectedRegions = (HashSet<String>) currentRegion.get(ATT_CONNECTED);
-        // current region must be connected to next door/room
-        return connectedRegions.contains(regionName);
+        String object1Name = params[0];
+        String object2Name = params[1];
+        ObjectInstance object1 = state.object(object1Name);
+        ObjectInstance object2 = state.object(object2Name);
+        String currentRegionName = (String) object1.get(ATT_REGION);
+        String object2RegionName = (String) object2.get(ATT_REGION);
+        boolean shareRegion = currentRegionName.equals(object2RegionName);
+        // not applicable if object1 not in same region as object2
+        return shareRegion;
     }
 
 }
