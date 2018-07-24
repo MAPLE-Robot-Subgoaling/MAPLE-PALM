@@ -2,8 +2,8 @@ name: expert
 hierarchyConfigMap:
   root:
     children:
-      - moveBlockToRoom_np
-      - moveBlockToDoor_np
+      - pickRoomForAgent_np
+      - pickRoomForBlock_np
     stateMapper: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.pick.PickRoomAgentMapper {}
     tf: &tf !!edu.umbc.cs.maple.hierarchy.framework.GoalFailTF
       goalPF: &goalPF !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.root.CleanupRootGoalPF {}
@@ -22,103 +22,101 @@ hierarchyConfigMap:
           clasz: !!edu.umbc.cs.maple.cleanup.state.CleanupBlock {}
         - className: room
           clasz: !!edu.umbc.cs.maple.cleanup.state.CleanupRoom {}
-        - className: door
-          clasz: !!edu.umbc.cs.maple.cleanup.state.CleanupDoor {}
       actions:
-        - !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.move.ObjectToRegionActionType
-            name: moveBlockToRoom
+        - !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.pick.PickRoomForObjectActionType
+            name: pickRoomForAgent
             parameterClasses:
-              - block
+              - agent
               - room
-            parameterOrderGroups:
-              - moveBlockToRoom.P0
-              - moveBlockToRoom.P1
-        - !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.move.ObjectToRegionActionType
-          name: moveBlockToDoor
+            parameterOrderGroup:
+              - pickRoomForAgent.P0
+              - pickRoomForAgent.P1
+        - !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.pick.PickRoomForObjectActionType
+          name: pickRoomForBlock
           parameterClasses:
             - block
-            - door
-          parameterOrderGroups:
-            - moveBlockToDoor.P0
-            - moveBlockToDoor.P1
+            - room
+          parameterOrderGroup:
+            - pickRoomForBlock.P0
+            - pickRoomForBlock.P1
     solver: !!edu.umbc.cs.maple.config.solver.ValueIterationMultistepConfig
       maxDelta: 0.0001
       maxIterations: 1000
 
-#  pickRoomForAgent:
-#    children:
-#      - moveAgentToRoom_np
-#      - moveAgentToDoor_np
-#    domainGenerator: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.pick.CleanupPick {}
-#    stateMapper: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.pick.PickRoomAgentMapper {}
-#    tf: &tf !!edu.umbc.cs.maple.hierarchy.framework.GoalFailTF
-#      goalPF: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.pick.PickObjectRoomGoalPF {}
-#      failPF: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.pick.PickObjectRoomFailPF {}
-#    rf: !!edu.umbc.cs.maple.hierarchy.framework.GoalFailRF
-#      tf: *tf
-#      rewardDefault: 0.0
-#      rewardNoop: 0.0
-#    solver: !!edu.umbc.cs.maple.config.solver.ValueIterationMultistepConfig
-#      maxDelta: 0.0001
-#      maxIterations: 1000
-#
-#  pickRoomForBlock:
-#    children:
-#      - moveBlockToRoom_np
-#      - moveBlockToDoor_np
-#    domainGenerator: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.pick.CleanupPick {}
-#    stateMapper: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.pick.PickRoomBlockMapper {}
-#    tf: &tf !!edu.umbc.cs.maple.hierarchy.framework.GoalFailTF
-#      goalPF: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.pick.PickObjectRoomGoalPF {}
-#      failPF: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.pick.PickObjectRoomFailPF {}
-#    rf: !!edu.umbc.cs.maple.hierarchy.framework.GoalFailRF
-#      tf: *tf
-#      rewardDefault: 0.0
-#      rewardNoop: 0.0
-#    solver: !!edu.umbc.cs.maple.config.solver.ValueIterationMultistepConfig
-#      maxDelta: 0.0001
-#      maxIterations: 1000
-#
-#  moveAgentToRoom:
-#    children:
-#      - north_p
-#      - south_p
-#      - east_p
-#      - west_p
-#      - pull_p
-#    domainGenerator: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.move.CleanupMove {}
-#    stateMapper: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.move.AgentRoomMapper {}
-#    tf: &tf !!edu.umbc.cs.maple.hierarchy.framework.GoalFailTF
-#      goalPF: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.move.ObjectInRegionGoalPF {}
-#      failPF: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.move.ObjectInRegionFailPF {}
-#    rf: !!edu.umbc.cs.maple.hierarchy.framework.GoalFailRF
-#      tf: *tf
-#      rewardDefault: 0.0
-#      rewardNoop: 0.0
-#    solver: !!edu.umbc.cs.maple.config.solver.ValueIterationMultistepConfig
-#      maxDelta: 0.0001
-#      maxIterations: 1000
-#
-#  moveAgentToDoor:
-#    children:
-#      - north_p
-#      - south_p
-#      - east_p
-#      - west_p
-#      - pull_p
-#    domainGenerator: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.move.CleanupMove {}
-#    stateMapper: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.move.AgentDoorMapper {}
-#    tf: &tf !!edu.umbc.cs.maple.hierarchy.framework.GoalFailTF
-#      goalPF: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.move.ObjectInRegionGoalPF {}
-#      failPF: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.move.ObjectInRegionFailPF {}
-#    rf: !!edu.umbc.cs.maple.hierarchy.framework.GoalFailRF
-#      tf: *tf
-#      rewardDefault: 0.0
-#      rewardNoop: 0.0
-#    solver: !!edu.umbc.cs.maple.config.solver.ValueIterationMultistepConfig
-#      maxDelta: 0.0001
-#      maxIterations: 1000
-#
+  pickRoomForAgent:
+    children:
+      - moveAgentToRoom_np
+      - moveAgentToDoor_np
+    domainGenerator: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.pick.CleanupPick {}
+    stateMapper: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.pick.PickRoomAgentMapper {}
+    tf: &tf !!edu.umbc.cs.maple.hierarchy.framework.GoalFailTF
+      goalPF: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.pick.PickObjectRoomGoalPF {}
+      failPF: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.pick.PickObjectRoomFailPF {}
+    rf: !!edu.umbc.cs.maple.hierarchy.framework.GoalFailRF
+      tf: *tf
+      rewardDefault: 0.0
+      rewardNoop: 0.0
+    solver: !!edu.umbc.cs.maple.config.solver.ValueIterationMultistepConfig
+      maxDelta: 0.0001
+      maxIterations: 1000
+
+  pickRoomForBlock:
+    children:
+      - moveBlockToRoom_np
+      - moveBlockToDoor_np
+    domainGenerator: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.pick.CleanupPick {}
+    stateMapper: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.pick.PickRoomBlockMapper {}
+    tf: &tf !!edu.umbc.cs.maple.hierarchy.framework.GoalFailTF
+      goalPF: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.pick.PickObjectRoomGoalPF {}
+      failPF: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.pick.PickObjectRoomFailPF {}
+    rf: !!edu.umbc.cs.maple.hierarchy.framework.GoalFailRF
+      tf: *tf
+      rewardDefault: 0.0
+      rewardNoop: 0.0
+    solver: !!edu.umbc.cs.maple.config.solver.ValueIterationMultistepConfig
+      maxDelta: 0.0001
+      maxIterations: 1000
+
+  moveAgentToRoom:
+    children:
+      - north_p
+      - south_p
+      - east_p
+      - west_p
+      - pull_p
+    domainGenerator: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.move.CleanupMove {}
+    stateMapper: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.move.AgentRoomMapper {}
+    tf: &tf !!edu.umbc.cs.maple.hierarchy.framework.GoalFailTF
+      goalPF: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.move.ObjectInRegionGoalPF {}
+      failPF: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.move.ObjectInRegionFailPF {}
+    rf: !!edu.umbc.cs.maple.hierarchy.framework.GoalFailRF
+      tf: *tf
+      rewardDefault: 0.0
+      rewardNoop: 0.0
+    solver: !!edu.umbc.cs.maple.config.solver.ValueIterationMultistepConfig
+      maxDelta: 0.0001
+      maxIterations: 1000
+
+  moveAgentToDoor:
+    children:
+      - north_p
+      - south_p
+      - east_p
+      - west_p
+      - pull_p
+    domainGenerator: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.move.CleanupMove {}
+    stateMapper: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.move.AgentDoorMapper {}
+    tf: &tf !!edu.umbc.cs.maple.hierarchy.framework.GoalFailTF
+      goalPF: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.move.ObjectInRegionGoalPF {}
+      failPF: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.move.ObjectInRegionFailPF {}
+    rf: !!edu.umbc.cs.maple.hierarchy.framework.GoalFailRF
+      tf: *tf
+      rewardDefault: 0.0
+      rewardNoop: 0.0
+    solver: !!edu.umbc.cs.maple.config.solver.ValueIterationMultistepConfig
+      maxDelta: 0.0001
+      maxIterations: 1000
+
   moveBlockToRoom:
     children:
       - north_p

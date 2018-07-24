@@ -3,8 +3,8 @@ domain: !!edu.umbc.cs.maple.config.cleanup.CleanupConfig
     num_blocks: 2
     minX: 0
     minY: 0
-    maxX: 10
-    maxY: 10
+    maxX: 9
+    maxY: 9
     rewardGoal: 1.0
     rewardBase: 0.0
     rewardNoop: 0.0
@@ -20,7 +20,7 @@ goal: !!edu.umbc.cs.maple.cleanup.CleanupGoal
 agents:
   palm: {cleanup-expert}
 
-seed: 32552
+seed: 32558
 episodes: 100
 max_steps: 1000
 trials: 1
@@ -60,5 +60,5 @@ output:
   visualizer:
     enabled: true
     episodes: true
-    width: 10
-    height: 10
+    width: 9
+    height: 9

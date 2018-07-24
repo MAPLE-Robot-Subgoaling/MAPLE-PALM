@@ -25,8 +25,8 @@ public class ObjectToRegionActionType extends ObjectParameterizedActionType {
         this.parameterClasses= parameterClasses;
     }
 
-    public void  setParameterOrderGroups(String[] parameterOrderGroups) {
-        this.parameterOrderGroup=parameterOrderGroups;
+    public void  setParameterOrderGroup(String[] parameterOrderGroup) {
+        this.parameterOrderGroup=parameterOrderGroup;
     }
 
     @Override
