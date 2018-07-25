@@ -14,10 +14,7 @@ import edu.umbc.cs.maple.palm.agent.PALMModel;
 import edu.umbc.cs.maple.utilities.ConstantDiscountProvider;
 import edu.umbc.cs.maple.utilities.DiscountProvider;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class UCBModel extends PALMModel {
 
@@ -73,8 +70,9 @@ public class UCBModel extends PALMModel {
 
     protected GroundedTask task;
     protected TerminalFunction tf;
-    //knownness constants
+    protected Set<HashableState> stateSpace;
 
+    //knownness constants
     protected int MAG_S;
     protected int MAG_A;
     protected double W_MIN;
@@ -87,7 +85,8 @@ public class UCBModel extends PALMModel {
     protected int U_max
     protected int beta;
 
-    public UCBModel(double gamma, double rmax, double epsilon, HashableStateFactory hashableStateFactory){
+    public UCBModel(List<HashableState> baseStates, double gamma, double rmax, double epsilon,
+                    HashableStateFactory hashableStateFactory){
         this.initializeDiscountProvider(gamma);
         this.gamma = gamma;
         this.rmax = rmax;
@@ -97,15 +96,21 @@ public class UCBModel extends PALMModel {
         defineConstants();
     }
 
-    public UCBModel(GroundedTask task, double gamma, double rmax, double epsilon, HashableStateFactory hashableStateFactory){
-        this(gamma, rmax, epsilon, hashableStateFactory);
+    public UCBModel(GroundedTask task, List<HashableState> baseStates, double gamma, double rmax, double epsilon,
+                    HashableStateFactory hashableStateFactory){
+        this(baseStates, gamma, rmax, epsilon, hashableStateFactory);
         this.task = task;
+        defineStatesAndActions(baseStates);
     }
 
-    public UCBModel(TerminalFunction tf, double gamma, double rmax, double epsilon, HashableStateFactory hashableStateFactory){
-        this(gamma, rmax, epsilon, hashableStateFactory);
+    public UCBModel(TerminalFunction tf, List<HashableState> baseStates, List<Action> actions,
+                    double gamma, double rmax, double epsilon, HashableStateFactory hashableStateFactory){
+        this(baseStates, gamma, rmax, epsilon, hashableStateFactory);
         this.tf = tf;
+        this.stateSpace = new HashSet<HashableState>(baseStates);
+        this.MAG_A = actions.size();
     }
+
 
     public void initializeDiscountProvider(double gamma) {
         this.discountProvider = new ConstantDiscountProvider(gamma);
@@ -258,8 +263,26 @@ public class UCBModel extends PALMModel {
         return discountProvider;
     }
 
+    protected void defineStatesAndActions(List<HashableState> baseStates){
+        if(task == null){
+            // this should only run for use in modeling a task
+            return;
+        }
+        stateSpace = new HashSet<HashableState>();
+        Set<GroundedTask> actions = new HashSet<GroundedTask>();
+
+        for(HashableState hs : baseStates){
+            State abstractState = task.mapState(hs.s());
+            HashableState habstracte = hashingFactory.hashState(abstractState);
+            stateSpace.add(habstracte);
+            List<GroundedTask> stateActions = task.getGroundedChildTasks(abstractState);
+            actions.addAll(stateActions);
+        }
+        MAG_A = actions.size();
+    }
+
     protected void defineConstants(){
-        this.MAG_S = ;
+        this.MAG_S = stateSpace.size();
 
         this.W_MIN = epsilon * (1 - gamma) / 4 * ((double) MAG_S);
 
