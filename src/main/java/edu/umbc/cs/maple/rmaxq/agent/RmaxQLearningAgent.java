@@ -13,8 +13,7 @@ import burlap.statehashing.HashableStateFactory;
 import edu.umbc.cs.maple.config.ExperimentConfig;
 import edu.umbc.cs.maple.hierarchy.framework.GroundedTask;
 import edu.umbc.cs.maple.hierarchy.framework.Task;
-import edu.umbc.cs.maple.state.hashing.cached.CachedHashableStateFactory;
-
+import edu.umbc.cs.maple.state.hashing.bugfix.BugfixHashableStateFactory;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -603,7 +602,7 @@ public class RmaxQLearningAgent implements LearningAgent {
     }
 
     private Map<GroundedTask, HashMap<HashableState,Double>> cachedGoalRewards = new HashMap<>();
-    private HashableStateFactory cachingHSF = new CachedHashableStateFactory(false);
+    private HashableStateFactory cachingHSF = new BugfixHashableStateFactory(false);
     private double setV_eq2(RMAXQStateData taskStatePair) {
 
         double oldV = getStoredValue(taskStatePair);
