@@ -5,6 +5,7 @@ import burlap.behavior.functionapproximation.dense.ConcatenatedObjectFeatures;
 import burlap.behavior.functionapproximation.dense.NumericVariableFeatures;
 import burlap.behavior.functionapproximation.sparse.tilecoding.TileCodingFeatures;
 import burlap.behavior.functionapproximation.sparse.tilecoding.TilingArrangement;
+import edu.umbc.cs.maple.VariableObjectTileCoding.VariableObjectTileCoding;
 
 import static edu.umbc.cs.maple.liftCopter.LiftCopterConstants.*;
 
@@ -96,7 +97,7 @@ public class LCTileCodingConfig implements TileCodingConfig {
         double wall7HeightWidth = 1/res;
         double wall7WidthWidth = 1/res;
 
-        TileCodingFeatures tilecoding = new TileCodingFeatures(inputFeatures);
+        VariableObjectTileCoding tilecoding = new VariableObjectTileCoding(inputFeatures);
         tilecoding.addTilingsForAllDimensionsWithWidths(
                 new double[]{
                         agentXWidth,
