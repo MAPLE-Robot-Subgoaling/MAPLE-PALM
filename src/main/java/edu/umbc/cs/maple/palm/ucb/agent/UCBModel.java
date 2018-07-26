@@ -224,7 +224,18 @@ public class UCBModel extends PALMModel {
     }
     //TODO: Implement formula from defn #1
     protected int knownness(int levrl, int known){
-
+        if(levrl > L_MAX){
+            throw new RuntimeException("Level is out of bounds of l_max");
+        }
+        double w_i = Math.pow(2, levrl) * W_MIN;
+        double upper_bound = (double) known / (w_i * m);
+        for(int i = K_SET.size() - 1; i >= 0; i--){
+            int zi = K_SET.get(i);
+            if(zi <= upper_bound){
+                return zi;
+            }
+        }
+        throw new RuntimeException("Error occured in knowness calculation");
     }
 
     protected boolean checkKnowness(){
@@ -254,7 +265,7 @@ public class UCBModel extends PALMModel {
     @Override
     public boolean isConvergedFor(State s, Action a, State sPrime) {
         HashableState hs = hashingFactory.hashState(s);
-        return isConfident((hs, a));
+        return isConfident(hs, a);
     }
 
 
@@ -286,18 +297,21 @@ public class UCBModel extends PALMModel {
 
         this.W_MIN = epsilon * (1 - gamma) / 4 * ((double) MAG_S);
 
-        this.L_MAX = (int) Math.ceil((1 / Math.log(2)) * ( (8 * MAG_S) / (epsilon * Math.pow(1 - gamma, 2))));
+        this.L_MAX = (int) Math.ceil((1 / Math.log(2)) * Math.log( (8 * MAG_S) / (epsilon * Math.pow(1 - gamma, 2)) ) );
 
         this.K_SET = new ArrayList<Integer>();
-        for(int i = 0; i <= MAG_S; i++){
-            this.K_SET.add(i);
-            this.K_SET.add(-1 * i);
+        int i = 1;
+        int zi = 0;
+        while (zi <= MAG_S){
+            zi = (int) Math.pow(2, i) - 2;
+            K_SET.add(zi);
+            i++;
         }
 
         this.H_delay = (int) Math.ceil((1 / (1 - gamma)) * Math.log(8 * MAG_S / (epsilon * (1 - gamma))));
 
-        this.U_max = MAG_S * MAG_A * K_SET.size() * (L_MAX + 1)
-        this.beta = (int) Math.ceil(1 / (2 * Math.log(2)) * Math.log(1 / (1-gamma)));
+        this.U_max = MAG_S * MAG_A * K_SET.size() * (L_MAX + 1);
+        this.beta = (int) Math.ceil(1 / (2 * Math.log(2)) * Math.log(1 / (1 - gamma)));
         this.delta_1 = delta / ((2 * MAG_S * MAG_A) * U_max);
         this.l_1 = Math.log(2 / delta_1);
         this.m = (20 * l_1 * K_SET.size() * (L_MAX + 1) * Math.pow(2 * beta + 1, 2)) / (Math.pow(epsilon, 2) * Math.pow(1 - gamma, 2 + 2 / beta));
