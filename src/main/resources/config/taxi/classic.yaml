@@ -5,7 +5,7 @@ domain: !!edu.umbc.cs.maple.config.taxi.TaxiConfig
 
 agents:
  # rmaxq: {taxi-expert}
-  palm: {taxi-expert, taxi-hiergen}
+  palm: {taxi-hiergen}
   # kappa: {taxi-expert, taxi-hiergen}
  # qLearning: {taxi-expert}
 

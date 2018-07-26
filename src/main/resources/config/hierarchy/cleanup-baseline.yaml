@@ -1,0 +1,21 @@
+name: expert-baseline
+hierarchyConfigMap:
+  root:
+    children:
+      - north_p
+      - south_p
+      - east_p
+      - west_p
+      - pull_p
+    stateMapper: !!edu.umbc.cs.maple.hierarchy.framework.IdentityMap {}
+    tf: &tf !!edu.umbc.cs.maple.hierarchy.framework.GoalFailTF
+      goalPF: &goalPF !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.root.CleanupRootGoalPF {}
+      failPF: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.root.CleanupRootFailPF {}
+    rf: &rf !!edu.umbc.cs.maple.hierarchy.framework.GoalFailRF
+      tf: *tf
+      rewardDefault: 0.0
+      rewardNoop: 0.0
+    domainGenerator: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.move.CleanupMove {}
+    solver: !!edu.umbc.cs.maple.config.solver.ValueIterationMultistepConfig
+      maxDelta: 0.0001
+      maxIterations: 1000
