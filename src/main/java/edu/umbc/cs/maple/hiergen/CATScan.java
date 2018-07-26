@@ -106,6 +106,9 @@ public class CATScan {
     }
 
     public static Set<Integer> enforceUniquePreconditions(CATrajectory cat, Set<Integer> actionIndexes) {
+
+
+
         return actionIndexes;
     }
 

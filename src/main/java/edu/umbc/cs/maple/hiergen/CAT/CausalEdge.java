@@ -4,17 +4,24 @@ import java.util.Objects;
 
 public class CausalEdge implements Comparable<CausalEdge> {
 
-    private int start, end;
-    private String relavantVariable;
+    protected int start;
+    protected int end;
+    protected String relevantVariable;
 
     public CausalEdge() {
         // for de/serialization
     }
 
-    public CausalEdge(int start, int end, String var) {
+    public CausalEdge(CausalEdge source) {
+        this.start = source.start;
+        this.end = source.end;
+        this.relevantVariable = source.relevantVariable;
+    }
+
+    public CausalEdge(int start, int end, String variable) {
         this.start = start;
         this.end = end;
-        this.relavantVariable = var;
+        this.relevantVariable = variable;
     }
 
     public int getStart() {
@@ -26,7 +33,7 @@ public class CausalEdge implements Comparable<CausalEdge> {
     }
 
     public String getRelevantVariable() {
-        return relavantVariable;
+        return relevantVariable;
     }
 
     public void setStart(int start) {
@@ -37,12 +44,8 @@ public class CausalEdge implements Comparable<CausalEdge> {
         this.end = end;
     }
 
-    public String getRelavantVariable() {
-        return relavantVariable;
-    }
-
-    public void setRelavantVariable(String relavantVariable) {
-        this.relavantVariable = relavantVariable;
+    public void setRelevantVariable(String relevantVariable) {
+        this.relevantVariable = relevantVariable;
     }
 
     @Override

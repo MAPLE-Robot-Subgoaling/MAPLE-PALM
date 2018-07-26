@@ -22,8 +22,18 @@ public class HierBuilder {
         int counter = 0;
         for (AttributeRelation relation : container.keySet()) {
             List<SubCAT> list = container.get(relation);
-            for (SubCAT subCAT : list) {
-                System.out.println(counter + " " + relation + " " + subCAT.getActionIndexes());
+            for (int i = 0; i < list.size(); i++) {
+                CATrajectory cat = cats.get(i);
+                SubCAT subCAT = list.get(i);
+                System.out.print(counter + " " + relation + " ");// + subCAT.getActionIndexes());
+                Set<Integer> actionIndexes = subCAT.getActionIndexes();
+                for (Integer actionIndex : actionIndexes) {
+                    System.out.print(" " + cat.getActions()[actionIndex]);
+                    if (actionIndex == cat.getEndIndex()) {
+                        System.out.println("***");
+                    }
+                }
+                System.out.println("");
                 counter++;
             }
         }
