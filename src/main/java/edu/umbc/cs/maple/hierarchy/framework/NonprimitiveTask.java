@@ -18,12 +18,9 @@ public class NonprimitiveTask extends Task {
     public static double DEFAULT_REWARD = 0.000;//1;//0.000001;
     public static double NOOP_REWARD = 0.0;//-0.0001;
 
-
-    SolverConfig solver;
-
-    protected TerminalFunction tf;
-    protected RewardFunction rf;
-
+    protected GoalFailTF goalFailTF;
+    protected GoalFailRF goalFailRF;
+    public SolverConfig solver;
 
     //used for hierarchies with abstractions
     /**
@@ -32,22 +29,12 @@ public class NonprimitiveTask extends Task {
      * @param aType the set of actions this task represents in its parent task's domain
      * @param abstractDomain the domain this task executes actions in
      * @param map the state abstraction function into the domain
-     * @param tf
-     * @param rf
-     * @param solver
      */
     public NonprimitiveTask(Task[] children, ActionType aType, OOSADomain abstractDomain, StateMapping map,
-                            TerminalFunction tf , RewardFunction rf, SolverConfig solver) {
+                            TerminalFunction tf, RewardFunction rf) {
         super(children, aType, abstractDomain, map);
-        this.tf = tf;
-        this.rf = rf;
-        this.solver = solver;
-    }
-    public NonprimitiveTask(Task[] children, ActionType aType, OOSADomain abstractDomain, StateMapping map,
-                            PropositionalFunction fail, PropositionalFunction compl, double defaultReward, double noopReward) {
-        super(children, aType, abstractDomain, map);
-        this.tf = new GoalFailTF(compl, null, fail, null);
-        this.rf = new GoalFailRF((GoalFailTF) tf, defaultReward, noopReward);
+        this.goalFailTF = (GoalFailTF) tf;
+        this.goalFailRF = (GoalFailRF) rf;
     }
 
     public NonprimitiveTask(OOSADomain baseDomain) {
@@ -67,11 +54,12 @@ public class NonprimitiveTask extends Task {
      * @param s the original state that is being transitioned from
      * @param a the action associated with the grounded version of this task
      * @param sPrime the next state that is being transitioned into
+     * @param params the parameters of the grounded version of this task
      * @return the rewardTotal assigned to s by the rewardTotal function
      */
     @Override
-    public double reward(State s, Action a, State sPrime){
-        return rf.reward(s, a, sPrime);
+    public double reward(State s, Action a, State sPrime, String[] params){
+        return goalFailRF.reward(s, a, sPrime, params);
     }
 
     /**
@@ -80,45 +68,34 @@ public class NonprimitiveTask extends Task {
      * grounded action
      */
     public void setRF(GoalFailRF rf){
-        this.rf = rf;
+        this.goalFailRF = rf;
     }
 
     @Override
-    public boolean isFailure(State s, Action a) {
-        String[] params = parseParams(a);
-        boolean atFailure = ((GoalFailTF)tf).atFailure(s, params);
+    public boolean isFailure(State s, String[] params, boolean unsetParams) {
+        boolean atFailure = goalFailTF.atFailure(s, params);
+        goalFailTF.setGoalParams(null);
+        goalFailTF.setFailParams(null);
         return atFailure;
     }
 
     @Override
-    public boolean isComplete(State s, Action a){
-        String[] params = parseParams(a);
-        boolean atGoal = ((GoalFailTF)tf).atGoal(s, params);
+    public boolean isComplete(State s, String[] params, boolean unsetParams){
+        boolean atGoal = goalFailTF.atGoal(s, params);
+        goalFailTF.setGoalParams(null);
+        goalFailTF.setFailParams(null);
         return atGoal;
-    }
-    public static String[] parseParams(Action action) {
-        String[] params = null;
-        if (action instanceof ObjectParameterizedAction) {
-            params = ((ObjectParameterizedAction) action).getObjectParameters();
-        } else {
-            params = new String[]{StringFormat.parameterizedActionName(action)};
-        }
-        return params;
     }
 
     public GoalFailTF getGoalFailTF() {
-        return (GoalFailTF)tf;
+        return goalFailTF;
     }
 
     public GoalFailRF getGoalFailRF() {
-        return (GoalFailRF)rf;
+        return goalFailRF;
     }
 
     public SolverConfig getSolver() {
-        return solver;
-    }
-
-    public void setSolver(SolverConfig solver) {
-        this.solver = solver;
+        return this.solver;
     }
 }

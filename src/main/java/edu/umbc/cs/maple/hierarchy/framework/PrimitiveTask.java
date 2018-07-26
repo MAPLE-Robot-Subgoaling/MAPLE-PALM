@@ -17,19 +17,8 @@ public class PrimitiveTask extends Task{
         super(null, aType, abstractDomain, new IdentityMap());
     }
 
-    //primitive actions are assumed to always complete
     @Override
-    public boolean isFailure(State s, Action a) {
-        return false;
-    }
-
-    @Override
-    public boolean isComplete(State s, Action a){
-        return true;
-    }
-
-    @Override
-    public double reward(State s, Action a, State sPrime) {
+    public double reward(State s, Action a, State sPrime, String[] params) {
         return ((FactoredModel)this.domain.getModel()).getRf().reward(s, a, sPrime);
     }
 
@@ -37,4 +26,15 @@ public class PrimitiveTask extends Task{
     public boolean isPrimitive() {
         return true;
     }
+
+    @Override
+    public boolean isFailure(State s, String[] params, boolean unsetParams) {
+        return false;
+    }
+    @Override
+    public boolean isComplete(State s, String[] params, boolean unsetParams){
+        return true;
+    }
+
+
 }

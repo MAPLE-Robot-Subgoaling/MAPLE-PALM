@@ -7,6 +7,7 @@ import burlap.mdp.singleagent.oo.OOSADomain;
 import burlap.statehashing.HashableStateFactory;
 import edu.umbc.cs.maple.config.ExperimentConfig;
 import edu.umbc.cs.maple.hierarchy.framework.GroundedTask;
+import edu.umbc.cs.maple.hierarchy.framework.Task;
 import edu.umbc.cs.maple.palm.agent.ExpertPALMModel;
 import edu.umbc.cs.maple.palm.agent.PALMModel;
 import edu.umbc.cs.maple.palm.agent.PALMModelGenerator;
@@ -47,7 +48,7 @@ public class ExpertNavModelGenerator implements PALMModelGenerator {
             PALMModel nav = new ExpertPALMModel(nav_model, gamma);
             return  nav;
         }else{
-            return new HierarchicalRmaxModel(t, this.threshold, this.rmax,
+            return new HierarchicalRmaxModel(t.getTask(), this.threshold, this.rmax,
                     this.hashingFactory, this.gamma, this.useMultitimeModel);
         }
     }

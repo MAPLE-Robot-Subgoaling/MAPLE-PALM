@@ -11,18 +11,26 @@ import burlap.statehashing.HashableState;
 import burlap.statehashing.HashableStateFactory;
 import edu.umbc.cs.maple.hierarchy.framework.GroundedTask;
 import edu.umbc.cs.maple.hierarchy.framework.StringFormat;
+import edu.umbc.cs.maple.hierarchy.framework.Task;
 import edu.umbc.cs.maple.palm.agent.PALMModel;
 import edu.umbc.cs.maple.palm.agent.PossibleOutcome;
+import edu.umbc.cs.maple.taxi.hierarchies.tasks.put.state.TaxiPutState;
+import edu.umbc.cs.maple.utilities.BurlapConstants;
 import edu.umbc.cs.maple.utilities.DiscountProvider;
 import edu.umbc.cs.maple.utilities.ExpectedStepsDiscountProvider;
+import edu.umbc.cs.maple.utilities.OnlyInternalDiscountProvider;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static edu.umbc.cs.maple.taxi.TaxiConstants.ATT_GOAL_LOCATION;
+import static edu.umbc.cs.maple.taxi.hierarchies.tasks.put.state.PutStateMapper.PUT_PASSENGER_ALIAS;
+
 public abstract class RmaxModel extends PALMModel {
 
+    protected Task task;
 
     protected HashableState hImaginedState;
     /**
@@ -46,11 +54,6 @@ public abstract class RmaxModel extends PALMModel {
 
 
     /**
-     * the grounded task that is being modeled
-     */
-    protected GroundedTask task;
-
-    /**
      * the max rewardTotal for the domain
      */
     protected double rmax;
@@ -62,13 +65,13 @@ public abstract class RmaxModel extends PALMModel {
      * @param task the grounded task to model
      * @param threshold rmax sample threshold
      * @param rmax max rewardTotal in domain
-     * @param hs provided hashing factory
+     * @param hsf provided hashing factory
      */
-    public RmaxModel( GroundedTask task, int threshold, double rmax, HashableStateFactory hs, double gamma) {
-        this.hashingFactory = hs;
+    public RmaxModel(Task task, int threshold, double rmax, HashableStateFactory hsf, double gamma) {
+        this.task = task;
+        this.hashingFactory = hsf;
         this.mThreshold = threshold;
         this.approximateTransitions = new HashMap<>();
-        this.task = task;
         this.rmax = rmax;
         this.initializeDiscountProvider(gamma);
     }
@@ -87,13 +90,29 @@ public abstract class RmaxModel extends PALMModel {
             }
         }
 
-        throw new RuntimeException("Probabilities don't sum to 1.0: " + sum);
+//        transitions(s, a);
+//        throw new RuntimeException("Probabilities do not sum to 1.0 in RmaxModel");
+        return sample(s,a);
+
+        // IMPORTANT:
+        // with the Multi-time model, the totalProbability will not sum to 1.0 but to GAMMA, or less even
+//        throw new RuntimeException("Probabilities don't sum to 1.0: " + sum);
+        // thus, handle edge case here
+//        sample = RandomFactory.getMapped(BurlapConstants.DEFAULT_RNG_INDEX).nextDouble()*sum;
+//        sum = 0;
+//        for(TransitionProb tp : tps){
+//            sum += tp.p;
+//            if(sample <= sum){
+//                return tp.eo;
+//            }
+//        }
+//        throw new RuntimeException("Error: incorrect RNG logic inside RmaxModel");
     }
 
     //the model is terminal if the task is completed or if it fails, or is the imagined state
     @Override
     public boolean terminal(State s) {
-        boolean failOrComplete = task.isFailure(s) || task.isComplete(s);
+        boolean failOrComplete = task.isFailure(s, params, true) || task.isComplete(s, params, true);
         if (failOrComplete) { return true; }
         if (hImaginedState == null) { return false; }
         HashableState hs = hashingFactory.hashState(s);
@@ -127,9 +146,9 @@ public abstract class RmaxModel extends PALMModel {
         // IMPORTANT:
         // with the Multi-time model, the totalProbability will not sum to 1.0 but to GAMMA, or less even
         // the rationale for this is explained in Jong's RMAXQ paper (essentially the remainder is prob. of termination)
-        if (totalProbability < 0.99999999999 || totalProbability > 1.00000000001) {
-            System.err.println("total probability does not sum to 1.0: " + totalProbability);
-        }
+//        if (totalProbability != 1.0 && totalProbability != getDiscountProvider().getGamma()) {
+//            System.err.println("total probability does not sum to 1.0: " + totalProbability);
+//        }
         return tps;
     }
 
@@ -138,13 +157,18 @@ public abstract class RmaxModel extends PALMModel {
      * information in the outcome
      * @param result the outcome of the latest action specific to the task rewards and abstractions
      */
-    public void updateModel(EnvironmentOutcome result, int stepsTaken){
+    public boolean updateModel(EnvironmentOutcome result, int stepsTaken, String[] params){
+
+        // set any parameterized variables for this model (from the grounding of the task)
+        setParams(params);
 
         HashableState hs = this.hashingFactory.hashState(result.o);
         double reward = result.r;
         Action a = result.a;
         HashableState hsPrime = this.hashingFactory.hashState(result.op);
         Map<HashableState, PossibleOutcome> hsPrimeToOutcomes = getHsPrimeToOutcomes(hs, a);
+
+        if (hImaginedState == null) { makeImaginedTransition(hs, a); }
 
         //add to the transitionCount the information in the outcome
         PossibleOutcome outcome = getPossibleOutcome(hsPrimeToOutcomes, hs, a, hsPrime);
@@ -155,20 +179,16 @@ public abstract class RmaxModel extends PALMModel {
         outcome.setTransitionCount(stepsTaken, newTransitionCountSASP);
         outcome.setRewardTotal(stepsTaken, newRewardTotalSASP);
 
+        // must recompute the hsPrimeToOutcomes now
+        hsPrimeToOutcomes = getHsPrimeToOutcomes(hs, a);
         int stateActionCount = getStateActionCount(hsPrimeToOutcomes, hs, a);
-        if (stateActionCount >= mThreshold) {
+        boolean atOrBeyondThreshold = stateActionCount >= mThreshold;
+        if (atOrBeyondThreshold) {
             updateApproximationModels(hsPrimeToOutcomes, hs, a, hsPrime, outcome, stateActionCount);
             // remove imagined transition
-//            PossibleOutcome imaginedOutcome = getPossibleOutcome(hsPrimeToOutcomes, hs, a, hImaginedState);
             hsPrimeToOutcomes.remove(hImaginedState);
         } else {
             hsPrimeToOutcomes = getHsPrimeToOutcomes(hs, a);
-//            double imaginedR = 0.0;
-//            double equalP = 1.0 / (1.0 * hsPrimeToOutcomes.size());
-//            outcome.setReward(imaginedR);
-//            outcome.setTransitionProbability(equalP);
-//            outcome.setReward(imaginedR);
-//            outcome.setTransitionProbability(equalP);
             double ignoreR = 0.0;
             double ignoreP = 0.0;
             double imaginedR = rmax;
@@ -179,7 +199,7 @@ public abstract class RmaxModel extends PALMModel {
                 if (otherHsPrime.equals(hsPrime)) {
                     // this is the transition we just updated, so skip it
                     continue;
-                } else if (otherHsPrime.equals(hImaginedState)) {
+                } else if (hImaginedState.equals(otherHsPrime)) {
                     PossibleOutcome imaginedOutcome = getPossibleOutcome(hsPrimeToOutcomes, hs, a, otherHsPrime);
                     imaginedOutcome.setReward(imaginedR);
                     imaginedOutcome.setTransitionProbability(imaginedP);
@@ -190,6 +210,8 @@ public abstract class RmaxModel extends PALMModel {
                 otherOutcome.setTransitionProbability(ignoreP);
             }
         }
+        setParams(null);
+        return atOrBeyondThreshold;
     }
 
     @Override
@@ -218,23 +240,34 @@ public abstract class RmaxModel extends PALMModel {
         Map<Integer, Integer> stepsTakenToTransitionCount = outcome.getStepsTakenToTransitionCount();
         Map<Integer, Double> stepsTakenToRewardTotal = outcome.getStepsTakenToRewardTotal();
         double transitionCountSASP = 0.0;
+        double probabilitySASP = 0.0;
         double rewardTotalSASP = 0.0;
         for (int k : stepsTakenToTransitionCount.keySet()) {
+
+            // approximate the transition probability
             int transitionCountSASPK = stepsTakenToTransitionCount.get(k);
             transitionCountSASP += transitionCountSASPK;
+            double probabilitySASPK = transitionCountSASPK / (1.0 * transitionCountSA);
+            double discountProbability = getInternalDiscountProbability(outcome.getOutcome(), k);
+            double discountedProbability = probabilitySASPK * discountProbability;
+            probabilitySASP += discountedProbability;
+
+            // approximate the reward
             double rewardTotalSASPK = stepsTakenToRewardTotal.get(k);
-            double discount = getInternalDiscount(outcome.getOutcome(), k);
-            rewardTotalSASPK *= discount;
+            double discountReward = getInternalDiscountReward(outcome.getOutcome(), k);
+            rewardTotalSASPK *= discountReward;
             rewardTotalSASP += rewardTotalSASPK;
         }
-        double transitionProbabilitySASP = transitionCountSASP / (1.0 * transitionCountSA);
-        outcome.setTransitionProbability(transitionProbabilitySASP);
+//        double transitionProbabilitySASP = transitionCountSASP / (1.0 * transitionCountSA);
+        outcome.setTransitionProbability(probabilitySASP);
+
         double rewardEstimateSASP = rewardTotalSASP / transitionCountSASP;
         outcome.setReward(rewardEstimateSASP);
     }
 
     // allows for Multi-time model discounting
-    public abstract double getInternalDiscount(EnvironmentOutcome eo, int k);
+    public abstract double getInternalDiscountProbability(EnvironmentOutcome eo, int k);
+    public abstract double getInternalDiscountReward(EnvironmentOutcome eo, int k);
 
     public int getStateActionCount(State s, Action a) {
         HashableState hs = hashingFactory.hashState(s);
@@ -264,10 +297,21 @@ public abstract class RmaxModel extends PALMModel {
         if (hsPrimeToOutcomes == null) {
             String actionName = StringFormat.parameterizedActionName(a);
             HashableStateActionPair pair = new HashableStateActionPair(hs, actionName);
-            hsPrimeToOutcomes = new HashMap<HashableState, PossibleOutcome>();
+            hsPrimeToOutcomes = new HashMap<>();
             approximateTransitions.put(pair, hsPrimeToOutcomes);
         }
         PossibleOutcome outcome = hsPrimeToOutcomes.get(hsPrime);
+
+        if (outcome != null) {
+            State storedState = outcome.getOutcome().o;
+            HashableState storedHs = hashingFactory.hashState(storedState);
+            if (!storedHs.equals(hs)) {
+                throw new RuntimeException("hashcode collision");
+//                Map hsPrimeToOutcomesFromStoredHs = getHsPrimeToOutcomes(storedHs, a);
+//                Map hsPrimeToOutcomesFromNewerHs = getHsPrimeToOutcomes(hs, a);
+            }
+        }
+
         if (outcome == null) {
             double initialReward = 0.0;
             double initialProbability = 0.0;
@@ -317,23 +361,6 @@ public abstract class RmaxModel extends PALMModel {
     }
 
     public double getRmax() { return rmax; }
-
-    public GroundedTask getTask(){
-        return task;
-    }
-    public void printDebugInfo() {
-        System.out.println("\n\n\n******************************************************************************************************\n\n\n");
-        for(HashableStateActionPair pair : approximateTransitions.keySet()) {
-            System.out.println(pair.actionName);
-            System.out.println(pair.hs.s().toString());
-            Map<HashableState, PossibleOutcome> hsPrimeToOutcomes = approximateTransitions.get(pair);
-            for (HashableState hsPrime : hsPrimeToOutcomes.keySet()) {
-                PossibleOutcome outcome = hsPrimeToOutcomes.get(hsPrime);
-                System.out.println(outcome.toString());
-            }
-            System.out.println("\n*****************\n");
-        }
-    }
 
     @Override
     public boolean isConvergedFor(State s, Action a, State sPrime) {
