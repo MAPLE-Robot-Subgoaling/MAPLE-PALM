@@ -73,6 +73,9 @@ public class TreeNode {
             value = MurmurHash.hash32(val.toString()) + "";
         }
         TreeNode child = children.get(value);
+        if (child == null) {
+            return;
+        }
         child.getCheckedVariables(s, vars);
     }
 

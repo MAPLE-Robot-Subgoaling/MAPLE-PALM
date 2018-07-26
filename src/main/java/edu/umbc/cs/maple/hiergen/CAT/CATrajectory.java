@@ -25,13 +25,13 @@ public class CATrajectory {
 //    public int lastAction;
 
     protected String[] actions;
-    protected List<CausalEdge> edges;
+    protected Set<CausalEdge> edges;
     protected Set<String>[] checkedVariables;
     protected Set<String>[] changedVariables;
     protected Episode baseTrajectory;
 
     public CATrajectory() {
-        this.edges = new ArrayList<>();
+        this.edges = new TreeSet<>();
     }
 
     //parent structure  action -> variable/ R(reward) -> relevant var
@@ -262,11 +262,11 @@ public class CATrajectory {
         this.actions = actions;
     }
 
-    public List<CausalEdge> getEdges() {
+    public Set<CausalEdge> getEdges() {
         return edges;
     }
 
-    public void setEdges(List<CausalEdge> edges) {
+    public void setEdges(Set<CausalEdge> edges) {
         this.edges = edges;
     }
 

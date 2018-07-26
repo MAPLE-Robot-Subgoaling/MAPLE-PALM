@@ -2,7 +2,7 @@ package edu.umbc.cs.maple.hiergen.CAT;
 
 import java.util.Objects;
 
-public class CausalEdge {
+public class CausalEdge implements Comparable<CausalEdge> {
 
     private int start, end;
     private String relavantVariable;
@@ -64,5 +64,17 @@ public class CausalEdge {
     @Override
     public String toString() {
         return "start=" + start + ", end=" + end + ", " + relavantVariable;
+    }
+
+    @Override
+    public int compareTo(CausalEdge that) {
+        int a = Integer.compare(this.end, that.end);
+        a *= -1; // flip order
+        if (a != 0) { return a; }
+        int b = Integer.compare(this.start, that.start);
+        b *= -1; // flip order
+        if (b != 0) { return b; }
+        int c = this.relavantVariable.compareTo(that.relavantVariable);
+        return c;
     }
 }

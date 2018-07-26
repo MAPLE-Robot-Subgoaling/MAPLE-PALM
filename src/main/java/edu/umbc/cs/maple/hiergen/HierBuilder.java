@@ -11,19 +11,19 @@ public class HierBuilder {
 
     public static void start(List<CATrajectory> cats) {
         Set<AttributeRelation> goals = CATGoal.determineGoal(cats);
-        Map<ObjectAttributePair, List<SubCAT>> setOfSubCATs = new HashMap<>();
+        Map<AttributeRelation, List<SubCAT>> container = new HashMap<>();
         for (AttributeRelation relation : goals) {
             ObjectAttributePair variable = relation.getLeft();
             Set<ObjectAttributePair> wrappedVariable = new LinkedHashSet<>();
             wrappedVariable.add(variable);
             List<SubCAT> subCATs = CATScan.scan(cats, wrappedVariable);
-            setOfSubCATs.put(relation.getLeft(), subCATs);
+            container.put(relation, subCATs);
         }
         int counter = 0;
-        for (ObjectAttributePair p : setOfSubCATs.keySet()) {
-            List<SubCAT> list = setOfSubCATs.get(p);
+        for (AttributeRelation relation : container.keySet()) {
+            List<SubCAT> list = container.get(relation);
             for (SubCAT subCAT : list) {
-                System.out.println(counter + " " + p + " " + subCAT.getActionIndexes());
+                System.out.println(counter + " " + relation + " " + subCAT.getActionIndexes());
                 counter++;
             }
         }

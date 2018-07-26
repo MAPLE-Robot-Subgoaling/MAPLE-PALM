@@ -98,6 +98,73 @@ public class TaxiStateFactory {
         return state;
     }
 
+    private static TaxiState createRandomStateSmall(int numPassengers, int numDepots) {
+
+        if (numDepots < 2 || numPassengers < 1) {
+            throw new RuntimeException("Error: must have 1+ passengers and 2+ depots");
+        }
+
+        Random rng = RandomFactory.getMapped(0);
+
+        int taxiX = rng.nextInt(3);
+        int taxiY = rng.nextInt(3);
+        TaxiAgent taxi = new TaxiAgent(CLASS_TAXI + 0, taxiX, taxiY);
+
+        List<TaxiLocation> depots = new ArrayList<>();
+        for (int i = 0; i < numDepots; i++) {
+            int depotX;
+            int depotY;
+            do {
+                depotX = rng.nextInt(3);
+                depotY = rng.nextInt(3);
+            } while (anyAt(depots, depotX, depotY));
+            String depotColor = TaxiConstants.COLORS[rng.nextInt(TaxiConstants.COLORS.length)];
+            TaxiLocation depot = new TaxiLocation(CLASS_LOCATION+i, depotX, depotY, depotColor);
+            depots.add(depot);
+        }
+
+        List<TaxiPassenger> passengers = new ArrayList<>();
+        for (int i = 0; i < numPassengers; i++) {
+            TaxiLocation start = Utils.choice(depots, rng);
+            TaxiLocation goal;
+            do {
+                goal = Utils.choice(depots, rng);
+            } while(start == goal);
+            int passengerX = (int) start.get(ATT_X);
+            int passengerY = (int) start.get(ATT_Y);
+            String passengerGoal = goal.name();
+            TaxiPassenger passenger = new TaxiPassenger(CLASS_PASSENGER+i, passengerX, passengerY, passengerGoal);
+            passengers.add(passenger);
+        }
+
+        List<TaxiWall> walls = new ArrayList<TaxiWall>();
+        // a box always exists around the domain
+        walls.add(new TaxiWall(CLASS_WALL + 0, 0, 0, 3, false));
+        walls.add(new TaxiWall(CLASS_WALL + 1, 0, 0, 3, true));
+        walls.add(new TaxiWall(CLASS_WALL + 2, 3, 0, 3, false));
+        walls.add(new TaxiWall(CLASS_WALL + 3, 0, 3, 3, true));
+        int nextWallIndex = 4;
+
+        // now flip a coin for either vertical or horizontal mini-walls
+        boolean isHorizontal = rng.nextBoolean();
+        int numMiniWallsOnLeft = rng.nextInt(3);
+        int numMiniWallsOnRight = rng.nextInt(3);
+        for (int i = 0; i < numMiniWallsOnLeft + numMiniWallsOnRight; i++) {
+            int position = i;
+            int length = 1;// rng.nextInt(2) + 1;
+            int anchor = position < numMiniWallsOnLeft ? 0 : 3 - length;
+            position = position < numMiniWallsOnLeft ? position : position - numMiniWallsOnLeft;
+            int startX = isHorizontal ? anchor : position + 1;
+            int startY = isHorizontal ? position + 1 : anchor;
+            TaxiWall wall = new TaxiWall(CLASS_WALL + nextWallIndex, startX, startY, length, isHorizontal);
+            nextWallIndex += 1;
+            walls.add(wall);
+        }
+
+        TaxiState state = new TaxiState(taxi, passengers, depots, walls);
+        return state;
+    }
+
     public static TaxiState createClassicState() {
         return createClassicState(1);
     }
@@ -650,8 +717,10 @@ public class TaxiStateFactory {
             return TaxiStateFactory.createDiscountTestBig(numPassengers);
         } else if (state.matches("discounttestsmall" + passengerNumberRegex)) {
             return TaxiStateFactory.createDiscountTestSmall(numPassengers);
-        }  else if (state.matches("random" + passengerDepotRegex)) {
+        } else if (state.matches("random" + passengerDepotRegex)) {
             return TaxiStateFactory.createRandomState(numPassengers, numDepots);
+        } else if (state.matches("randomSmall" + passengerDepotRegex)) {
+            return TaxiStateFactory.createRandomStateSmall(numPassengers, numDepots);
         } else {
             throw new RuntimeException("ERROR: invalid state passed to generateState in TaxiConfig: " + state);
         }

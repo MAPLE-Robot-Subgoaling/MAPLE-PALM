@@ -15,34 +15,28 @@ public class CATScan {
         int catStart = cat.getStartIndex();
         int catEnd = cat.getEndIndex();
         Set<Integer> actionIndexes = new TreeSet<>();
-        List<CausalEdge> edges = cat.getEdges();
+        Set<CausalEdge> edges = cat.getEdges();
         for (ObjectAttributePair variable : variables) {
 
             String variableName = variable.toString();
 
             for (CausalEdge edge : edges) {
 
-                int edgeStart = edge.getStart();
                 int edgeEnd = edge.getEnd();
+                // skip if it does not connect to END of CAT
+                if (edgeEnd != catEnd) {
+                    continue;
+                }
+
+                int edgeStart = edge.getStart();
+                // skip if trivial, meaning edge is at START of CAT
+                if (edgeStart == catStart) {
+                    continue;
+                }
+
                 String relevantVariable = edge.getRelevantVariable();
-
-                // skip the START pseudoaction (should always be at index 0)
-                if (catStart == edgeStart) {
-                    continue;
-                }
-
-                // skip the edge if its relevant variable is not this one
-                if (!relevantVariable.equals(variableName)) {
-                    continue;
-                }
-
-                // skip if already in the actionIndexes
-                if (actionIndexes.contains(edgeStart)) {
-                    continue;
-                }
-
-                // the edge is relevant and goes to END
-                if (catEnd == edgeEnd) {
+                // if its relevant variable is this one, and not already recorded: add it
+                if (relevantVariable.equals(variableName) && !actionIndexes.contains(edgeStart)) {
                     actionIndexes.add(edge.getStart());
                 }
 
@@ -118,7 +112,6 @@ public class CATScan {
     public static List<SubCAT> scan(List<CATrajectory> cats, Collection<ObjectAttributePair> variables) {
 
         System.out.println("CATScan");
-
 
         List<SubCAT> subCATs = new ArrayList<>();
         for (CATrajectory cat : cats) {

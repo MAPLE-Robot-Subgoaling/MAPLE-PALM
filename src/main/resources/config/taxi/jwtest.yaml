@@ -6,9 +6,9 @@ domain: !!edu.umbc.cs.maple.config.taxi.TaxiConfig
 agents:
 #  - rmaxqExpert
 #  - rmaxqHierGen
-  - palmExpert
+#  - palmExpert
 #  - palmExpertWithNavGiven
-#  - palmHierGen
+  - palmHierGen
 #  - kappaExpert
 #  - kappaHierGen
 #  - qLearning
