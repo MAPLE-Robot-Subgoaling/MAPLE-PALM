@@ -14,4 +14,16 @@ public class SubCAT {
     public SubCAT( ) {
         actionIndexes = new HashSet<>();
     }
+
+    public SubCAT(Set<Integer> actionIndexes) {
+        this.actionIndexes = actionIndexes;
+    }
+
+    public Set<Integer> getActionIndexes() {
+        return actionIndexes;
+    }
+
+    public void setActionIndexes(Set<Integer> actionIndexes) {
+        this.actionIndexes = actionIndexes;
+    }
 }

@@ -1,5 +1,7 @@
 package edu.umbc.cs.maple.hiergen.CAT;
 
+import java.util.Objects;
+
 public class CausalEdge {
 
     private int start, end;
@@ -41,5 +43,26 @@ public class CausalEdge {
 
     public void setRelavantVariable(String relavantVariable) {
         this.relavantVariable = relavantVariable;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        CausalEdge that = (CausalEdge) o;
+        return start == that.start &&
+                end == that.end &&
+                Objects.equals(relavantVariable, that.relavantVariable);
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(start, end, relavantVariable);
+    }
+
+    @Override
+    public String toString() {
+        return "start=" + start + ", end=" + end + ", " + relavantVariable;
     }
 }

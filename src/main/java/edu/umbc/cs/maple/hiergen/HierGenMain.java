@@ -22,6 +22,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static edu.umbc.cs.maple.hiergen.CATScan.DEBUG_CODE_CATSCAN;
+
 public class HierGenMain {
 
     public static final String DIRECTORY_PATH_HIERGEN_OUTPUT = "./output_hiergen/";
@@ -59,6 +61,8 @@ public class HierGenMain {
         String pathToARFF = DIRECTORY_PATH_HIERGEN_OUTPUT + DIRECTORY_PATH_ARFF + FILE_ARFF;
         String pathToCATs = DIRECTORY_PATH_HIERGEN_OUTPUT + DIRECTORY_PATH_CATS;
 
+        DPrint.toggleCode(DEBUG_CODE_CATSCAN, true);
+
         int trajectoryCount = 50;
 
         long seed = 7777777L;//20948304976L;
@@ -72,8 +76,8 @@ public class HierGenMain {
 
 //        generateTrajectories(seed, stateType, pathToTrajectories, trajectoryCount);
 
-        List<Episode> trajectories = Episode.readEpisodes(pathToTrajectories);
-
+//        List<Episode> trajectories = Episode.readEpisodes(pathToTrajectories);
+//
 //        Episode one = trajectories.get(0);
 //        System.out.println(one.stateSequence.get(one.stateSequence.size()-1));
 //        System.out.println(one.rewardSequence.get(one.rewardSequence.size()-1));
@@ -94,29 +98,27 @@ public class HierGenMain {
 //
 //        for (int i = 0; i < trajectories.size(); i++) {
 //            Episode trajectory = trajectories.get(i);
-//            System.out.println("Causally annotating the trajectory " + i + " / " + trajectories.size());
+//            System.out.println("Causally annotating the trajectory " + (i+1) + " / " + trajectories.size());
 //            CATrajectory cat = new CATrajectory();
 //            cat.annotateTrajectory(trajectory, actionModels, model);
 //            String filename = pathToCATs + FILE_PREFIX_CAT + "_" + i;
 //            cat.write(filename);
 //        }
 
+//        int count = trajectoryCount;
+        int count = 3;
         ArrayList<CATrajectory> cats = new ArrayList<>();
-        for (int i = 0; i < trajectoryCount; i++) {
+        for (int i = 0; i < count; i++) {
             String filename = pathToCATs + FILE_PREFIX_CAT + "_" + i;
             CATrajectory cat = CATrajectory.read(filename);
             cats.add(cat);
         }
 
-        System.out.println("CATScan: Determine Goal");
-        Set<AttributeRelation> map = CATScan.determineGoal(cats);
+        HierBuilder.start(cats);
 
-        CATScan.test(cats);
-
-        System.out.println("Running the main HierGenAlgorithm");
-        HierGenTask root = HierGenAlgorithm.generate(actionModels, cats);
-        System.out.println(root);
-
+//        System.out.println("Running the main HierGenAlgorithm");
+//        HierGenTask root = HierGenAlgorithm.generate(actionModels, cats);
+//        System.out.println(root);
 
     }
 }
