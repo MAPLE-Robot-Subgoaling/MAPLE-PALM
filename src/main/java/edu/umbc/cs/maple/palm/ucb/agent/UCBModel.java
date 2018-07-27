@@ -155,6 +155,39 @@ public class UCBModel extends PALMModel {
         return tps;
     }
 
+    protected int knownness(int levrl, int known){
+        if(levrl > L_MAX){
+            throw new RuntimeException("Level is out of bounds of l_max");
+        }
+        double w_i = Math.pow(2, levrl) * W_MIN;
+        double upper_bound = (double) known / (w_i * m);
+        for(int i = K_SET.size() - 1; i >= 0; i--){
+            int zi = K_SET.get(i);
+            if(zi <= upper_bound){
+                return zi;
+            }
+        }
+        throw new RuntimeException("Error occured in knowness calculation");
+    }
+
+    protected boolean checkKnowness(){
+        for(HashableState hs : totalStateAction.keySet()) {
+            Map<Action, Map<HashableState, Integer>> stateInfo = totalStateActionState.get(hs);
+            for (Action a : stateInfo.keySet()) {
+                int totSACount = getTotalStateAction(hs, a);
+                int batchSACount = getBatchStateAction(hs, a);
+                for (int level = 0; level <= L_MAX; level++){
+                    int batchTotKnowness = knownness(level, totSACount + batchSACount);
+                    int totKnowness = knownness(level, totSACount);
+                    if(batchTotKnowness != totKnowness){
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
     @Override
     public void updateModel(EnvironmentOutcome result, int stepsTaken) {
         //act from cite
@@ -222,39 +255,7 @@ public class UCBModel extends PALMModel {
 
 
     }
-    //TODO: Implement formula from defn #1
-    protected int knownness(int levrl, int known){
-        if(levrl > L_MAX){
-            throw new RuntimeException("Level is out of bounds of l_max");
-        }
-        double w_i = Math.pow(2, levrl) * W_MIN;
-        double upper_bound = (double) known / (w_i * m);
-        for(int i = K_SET.size() - 1; i >= 0; i--){
-            int zi = K_SET.get(i);
-            if(zi <= upper_bound){
-                return zi;
-            }
-        }
-        throw new RuntimeException("Error occured in knowness calculation");
-    }
 
-    protected boolean checkKnowness(){
-        for(HashableState hs : totalStateAction.keySet()) {
-            Map<Action, Map<HashableState, Integer>> stateInfo = totalStateActionState.get(hs);
-            for (Action a : stateInfo.keySet()) {
-                int totSACount = getTotalStateAction(hs, a);
-                int batchSACount = getBatchStateAction(hs, a);
-                for (int level = 0; level <= L_MAX; level++){
-                    int batchTotKnowness = knownness(level, totSACount + batchSACount);
-                    int totKnowness = knownness(level, totSACount);
-                    if(batchTotKnowness != totKnowness){
-                        return false;
-                    }
-                }
-            }
-        }
-        return true;
-    }
 
     //TODO: Define confidwence in transition
     protected boolean isConfident(HashableState hs, Action a){
