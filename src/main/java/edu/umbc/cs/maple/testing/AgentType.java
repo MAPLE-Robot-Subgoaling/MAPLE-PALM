@@ -13,6 +13,7 @@ import edu.umbc.cs.maple.palm.agent.PALMModelGenerator;
 import edu.umbc.cs.maple.palm.rmax.agent.ExpectedRmaxModelGenerator;
 import edu.umbc.cs.maple.palm.rmax.agent.ExpertNavModelGenerator;
 import edu.umbc.cs.maple.palm.rmax.agent.PALMRmaxModelGenerator;
+import edu.umbc.cs.maple.palm.ucrl.agent.UCRLAgent;
 import edu.umbc.cs.maple.rmaxq.agent.RmaxQLearningAgent;
 import edu.umbc.cs.maple.state.hashing.cached.CachedHashableStateFactory;
 
@@ -53,7 +54,7 @@ public enum AgentType {
     PALM_UCB("palmUcb", "PALM=UCB"){
         @Override
         public LearningAgent getLearningAgent(Task root, HashableStateFactory hsf, ExperimentConfig config) {
-
+            return  null;
         }
     },
     RMAXQ_EXPERT("rmaxqExpert", "RMAXQ-Expert"){
@@ -89,9 +90,6 @@ public enum AgentType {
         }
 
     },
-
-
-
     Q_LEARNING("qLearning", "QL"){
         @Override
         public LearningAgent getLearningAgent(Task root, HashableStateFactory hsf, ExperimentConfig config) {
@@ -103,6 +101,16 @@ public enum AgentType {
         }
 
     },
+    UCRL("ucrl", "ucb") {
+        @Override
+        public LearningAgent getLearningAgent(Task root, HashableStateFactory hsf, ExperimentConfig config) {
+            OOSADomain baseDomain = root.getDomain();
+            double qInit = DEFAULT_Q_INIT;
+            double learningRate = DEFAULT_LEARNING_RATE;
+            LearningAgent agent = new UCRLAgent();
+            return agent;
+        }
+    }
 
     ;
 

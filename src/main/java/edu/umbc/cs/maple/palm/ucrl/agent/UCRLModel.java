@@ -1,4 +1,4 @@
-package edu.umbc.cs.maple.palm.ucb.agent;
+package edu.umbc.cs.maple.palm.ucrl.agent;
 
 import burlap.mdp.core.TerminalFunction;
 import burlap.mdp.core.action.Action;
@@ -16,7 +16,7 @@ import edu.umbc.cs.maple.utilities.DiscountProvider;
 
 import java.util.*;
 
-public class UCBModel extends PALMModel {
+public class UCRLModel extends PALMModel {
 
     /*
         Implementation of belop paper's Algorithm 1 writen by Matthew Landen
@@ -82,11 +82,11 @@ public class UCBModel extends PALMModel {
     protected double l_1;
     protected double delta_1;
     protected double delta;
-    protected int U_max
+    protected int U_max;
     protected int beta;
 
-    public UCBModel(List<HashableState> baseStates, double gamma, double rmax, double epsilon,
-                    HashableStateFactory hashableStateFactory){
+    public UCRLModel(List<HashableState> baseStates, double gamma, double rmax, double epsilon,
+                     HashableStateFactory hashableStateFactory){
         this.initializeDiscountProvider(gamma);
         this.gamma = gamma;
         this.rmax = rmax;
@@ -96,15 +96,15 @@ public class UCBModel extends PALMModel {
         defineConstants();
     }
 
-    public UCBModel(GroundedTask task, List<HashableState> baseStates, double gamma, double rmax, double epsilon,
-                    HashableStateFactory hashableStateFactory){
+    public UCRLModel(GroundedTask task, List<HashableState> baseStates, double gamma, double rmax, double epsilon,
+                     HashableStateFactory hashableStateFactory){
         this(baseStates, gamma, rmax, epsilon, hashableStateFactory);
         this.task = task;
         defineStatesAndActions(baseStates);
     }
 
-    public UCBModel(TerminalFunction tf, List<HashableState> baseStates, List<Action> actions,
-                    double gamma, double rmax, double epsilon, HashableStateFactory hashableStateFactory){
+    public UCRLModel(TerminalFunction tf, List<HashableState> baseStates, List<Action> actions,
+                     double gamma, double rmax, double epsilon, HashableStateFactory hashableStateFactory){
         this(baseStates, gamma, rmax, epsilon, hashableStateFactory);
         this.tf = tf;
         this.stateSpace = new HashSet<HashableState>(baseStates);
