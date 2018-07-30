@@ -17,6 +17,8 @@ import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.SADomain;
 import burlap.mdp.singleagent.environment.Environment;
 import burlap.mdp.singleagent.environment.EnvironmentOutcome;
+import burlap.mdp.singleagent.environment.SimulatedEnvironment;
+import burlap.mdp.singleagent.environment.extensions.EnvironmentServer;
 import burlap.mdp.singleagent.oo.OOSADomain;
 import burlap.statehashing.HashableStateFactory;
 import edu.umbc.cs.maple.config.ExperimentConfig;
@@ -181,6 +183,8 @@ public class PALMLearningAgent implements LearningAgent {
 //                System.out.println(tabLevel + "    " + actionName);
 //            subtaskCompleted = true;
             result = baseEnv.executeAction(unMaskedAction);
+            SimulatedEnvironment simEnv = (SimulatedEnvironment) ((EnvironmentServer) baseEnv).getEnvironmentDelegate();
+            simEnv.setAllowActionFromTerminalStates(true);
             e.transition(result);
             baseState = result.op;
             currentState = task.mapState(result.op);
@@ -202,7 +206,7 @@ public class PALMLearningAgent implements LearningAgent {
                         // and still have steps it can take
                         && (steps < maxSteps || maxSteps == -1)
                         // and it hasn't solved the root goal, keep planning
-                        && !(groundedRoot.isComplete(groundedRoot.mapState(baseState)))
+//                        && !(groundedRoot.isComplete(groundedRoot.mapState(baseState)))
                 ){
             actionCount++;
             boolean subtaskCompleted = false;

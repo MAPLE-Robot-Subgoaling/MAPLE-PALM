@@ -33,7 +33,7 @@ public class ObjectToRoomActionType extends ObjectParameterizedActionType {
         String roomName = params[1];
         ObjectInstance object = state.object(objectName);
         ObjectInstance room = state.object(roomName);
-        return ((CleanupState) s).isObjectInRoom(object, (CleanupRoom) room);
+        return !((CleanupState) s).isObjectInRoom(object, (CleanupRoom) room);
     }
 
 }
