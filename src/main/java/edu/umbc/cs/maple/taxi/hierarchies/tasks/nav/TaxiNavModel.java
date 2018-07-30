@@ -6,7 +6,6 @@ import burlap.mdp.core.action.Action;
 import burlap.mdp.core.oo.state.ObjectInstance;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.model.statemodel.FullStateModel;
-import edu.umbc.cs.maple.taxi.Taxi;
 import edu.umbc.cs.maple.taxi.hierarchies.tasks.nav.state.NavStateMapper;
 import edu.umbc.cs.maple.taxi.hierarchies.tasks.nav.state.TaxiNavAgent;
 import edu.umbc.cs.maple.taxi.hierarchies.tasks.nav.state.TaxiNavState;

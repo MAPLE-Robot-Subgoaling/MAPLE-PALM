@@ -1,7 +1,6 @@
 package edu.umbc.cs.maple.hierarchy.framework;
 
 import burlap.mdp.core.action.Action;
-import burlap.mdp.core.action.SimpleAction;
 import burlap.mdp.core.action.UniversalActionType;
 import burlap.mdp.core.state.State;
 

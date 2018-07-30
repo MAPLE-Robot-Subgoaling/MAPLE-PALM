@@ -107,8 +107,8 @@ hierarchyConfigMap:
       - pull_p
     stateMapper: !!edu.umbc.cs.maple.hierarchy.framework.IdentityMap {}
     tf: &b2rTF !!edu.umbc.cs.maple.hierarchy.framework.GoalFailTF
-      goalPF: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.move.ObjectInRegionGoalPF {}
-      failPF: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.move.ObjectInRegionFailPF {}
+      goalPF: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.move.ObjectInRoomGoalPF {}
+      failPF: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.move.ObjectInRoomFailPF {}
     rf: &b2rRF !!edu.umbc.cs.maple.hierarchy.framework.GoalFailRF
       tf: *b2rTF
       rewardDefault: 0.0

@@ -22,10 +22,10 @@ import burlap.visualizer.Visualizer;
 import edu.umbc.cs.maple.cleanup.pfs.InRegion;
 import edu.umbc.cs.maple.cleanup.state.*;
 import edu.umbc.cs.maple.config.ExperimentConfig;
-import edu.umbc.cs.maple.config.cleanup.CleanupConfig;
 
 import javax.swing.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -608,7 +608,7 @@ public class Cleanup implements DomainGenerator {
 				//new CleanupGoalDescription(new String[]{"block1", "room1"}, domain.propFunction(PF_BLOCK_IN_ROOM)),
 				//new CleanupGoalDescription(new String[]{"block2", "room0"}, domain.propFunction(PF_BLOCK_IN_ROOM))
 		};
-        goalCondition.setGoals(goals);
+        goalCondition.setGoalDescriptions(Arrays.asList(goals));
 
         rf = new CleanupRF(goalCondition, 1.0, 0.0, 0.0, 0.0 );
         tf = new GoalConditionTF(goalCondition);

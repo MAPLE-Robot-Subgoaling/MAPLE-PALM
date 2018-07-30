@@ -3,14 +3,11 @@ package edu.umbc.cs.maple.liftCopter.hierarchies.expert.tasks.nav;
 import burlap.debugtools.RandomFactory;
 import burlap.mdp.core.StateTransitionProb;
 import burlap.mdp.core.action.Action;
-import burlap.mdp.core.oo.state.ObjectInstance;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.model.statemodel.FullStateModel;
 import edu.umbc.cs.maple.liftCopter.ThrustType.ThrustAction;
 import edu.umbc.cs.maple.liftCopter.hierarchies.expert.tasks.nav.state.LCNavAgent;
 import edu.umbc.cs.maple.liftCopter.hierarchies.expert.tasks.nav.state.LCNavState;
-import edu.umbc.cs.maple.liftCopter.state.*;
-import edu.umbc.cs.maple.liftCopter.state.LiftCopterCargo;
 
 import java.util.ArrayList;
 import java.util.List;

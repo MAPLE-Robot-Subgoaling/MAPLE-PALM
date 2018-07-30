@@ -1,29 +1,21 @@
 package edu.umbc.cs.maple.liftCopter.hierarchies.expert.tasks.get;
 
-import burlap.behavior.policy.Policy;
-import burlap.behavior.policy.PolicyUtils;
-import burlap.behavior.singleagent.Episode;
-import burlap.behavior.singleagent.planning.stochastic.valueiteration.ValueIteration;
 import burlap.mdp.auxiliary.DomainGenerator;
 import burlap.mdp.auxiliary.common.NullTermination;
 import burlap.mdp.core.TerminalFunction;
-import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.common.NullRewardFunction;
-import burlap.mdp.singleagent.environment.SimulatedEnvironment;
 import burlap.mdp.singleagent.model.FactoredModel;
 import burlap.mdp.singleagent.model.RewardFunction;
 import burlap.mdp.singleagent.oo.OOSADomain;
-import burlap.statehashing.HashableStateFactory;
-import burlap.statehashing.simple.SimpleHashableStateFactory;
-import edu.umbc.cs.maple.liftCopter.hierarchies.expert.tasks.NavigateActionType;
 import edu.umbc.cs.maple.hierarchy.framework.GoalFailRF;
 import edu.umbc.cs.maple.hierarchy.framework.GoalFailTF;
-import edu.umbc.cs.maple.liftCopter.hierarchies.expert.tasks.get.state.GetStateMapper;
+import edu.umbc.cs.maple.liftCopter.hierarchies.expert.tasks.NavigateActionType;
 import edu.umbc.cs.maple.liftCopter.hierarchies.expert.tasks.get.state.LCGetAgent;
 import edu.umbc.cs.maple.liftCopter.hierarchies.expert.tasks.get.state.LCGetCargo;
 import edu.umbc.cs.maple.liftCopter.hierarchies.expert.tasks.get.state.LCGetLocation;
 import edu.umbc.cs.maple.liftCopter.hierarchies.functions.GetCompletedPF;
 import edu.umbc.cs.maple.liftCopter.hierarchies.functions.GetFailurePF;
+
 import static edu.umbc.cs.maple.liftCopter.LiftCopterConstants.*;
 
 public class LCGetDomain implements DomainGenerator {

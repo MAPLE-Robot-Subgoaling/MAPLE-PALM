@@ -4,7 +4,6 @@ import burlap.mdp.core.oo.state.MutableOOState;
 import burlap.mdp.core.oo.state.OOStateUtilities;
 import burlap.mdp.core.oo.state.ObjectInstance;
 import burlap.mdp.core.state.MutableState;
-import edu.umbc.cs.maple.taxi.Taxi;
 import edu.umbc.cs.maple.utilities.DeepCopyForShallowCopyState;
 
 import java.util.*;

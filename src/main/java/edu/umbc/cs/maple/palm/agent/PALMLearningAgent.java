@@ -25,7 +25,6 @@ import edu.umbc.cs.maple.hierarchy.framework.GroundedTask;
 import edu.umbc.cs.maple.hierarchy.framework.NonprimitiveTask;
 import edu.umbc.cs.maple.hierarchy.framework.StringFormat;
 import edu.umbc.cs.maple.hierarchy.framework.Task;
-import edu.umbc.cs.maple.taxi.hierarchies.tasks.put.state.TaxiPutState;
 import edu.umbc.cs.maple.utilities.DiscountProvider;
 import edu.umbc.cs.maple.utilities.IntegerParameterizedAction;
 import edu.umbc.cs.maple.utilities.ValueIterationMultiStep;
@@ -316,26 +315,26 @@ public class PALMLearningAgent implements LearningAgent {
         return pseudoReward;
     }
 
-    /**
-     * add the children of the given task to the action name lookup
-     *
-     * @param gt the current grounded task
-     * @param s  the current state
-     */
     protected void addChildrenToMap(GroundedTask gt, State s) {
+        String taskName = gt.toString();
+        if (!taskNames.containsKey(taskName)) {
+            taskNames.put(taskName, gt);
+            System.out.println("Adding taskName: " + taskName);
+        }
         List<GroundedTask> children = gt.getGroundedChildTasks(s);
         for (GroundedTask child : children) {
-            taskNames.put(child.toString(), child);
+            String childName = child.toString();
+            if (!taskNames.containsKey(childName)) {
+                taskNames.put(childName, child);
+                System.out.println("Adding child taskName: " + childName);
+            }
         }
     }
 
     protected GroundedTask nextSubtask(GroundedTask task, Action action, State currentStateAbstract) {
         String actionName = StringFormat.parameterizedActionName(action);
+        addChildrenToMap(task, currentStateAbstract);
         GroundedTask subtask = this.taskNames.get(actionName);
-        if (subtask == null) {
-            addChildrenToMap(task, currentStateAbstract);
-            subtask = this.taskNames.get(actionName);
-        }
         return subtask;
     }
 
@@ -352,26 +351,26 @@ public class PALMLearningAgent implements LearningAgent {
         OOSADomain domain = task.getDomain(model, params);
         // must use discountProvider instead of gamma
         DiscountProvider discountProvider = model.getDiscountProvider();
-        SolverConfig solverConfig = ((NonprimitiveTask)task.getTask()).getSolver();
+        SolverConfig solverConfig = ((NonprimitiveTask)task.getTask()).getSolverConfig();
         Policy policy;
-        ValueFunction knownValueFunction;
-        if(solverConfig.getType() == "ValueIterationMultiStep"){
+        if(solverConfig.getType().equals("ValueIterationMultiStep")){
             solverConfig.setDomain(domain);
             solverConfig.setDiscountProvider(discountProvider);
             solverConfig.setHashingFactory(hashingFactory);
             solverConfig.setMaxDelta(maxDelta);
             solverConfig.setMaxIterations(maxIterationsInModelPlanner);
-        } else if(solverConfig.getType() == "FittedVI"){
+        } else if(solverConfig.getType().equals("FittedVI")){
             solverConfig.setDomain(domain);
             solverConfig.setMaxDelta(maxDelta);
             solverConfig.setMaxIterations(maxIterationsInModelPlanner);
             ((FittedVIConfig)solverConfig).setGamma(discountProvider.getGamma());
-        } else if(solverConfig.getType() == "SarsaLambda"){
+        } else if(solverConfig.getType().equals("SarsaLambda")){
             solverConfig.setDomain(domain);
             ((SarsaLambdaConfig)solverConfig).setGamma(discountProvider.getGamma());
         }
-        knownValueFunction = task.valueFunction;
-        Planner planner = solverConfig.generateSolver(knownValueFunction);
+
+//        ValueFunction knownValueFunction = task.valueFunction;
+        Planner planner = solverConfig.generateSolver(null);//knownValueFunction);
 
         policy = planner.planFromState(s);
 
@@ -397,7 +396,7 @@ public class PALMLearningAgent implements LearningAgent {
         }
 
         // allows the planner to start from where it left off
-        task.valueFunction = (ValueFunction) planner;
+//        task.valueFunction = (ValueFunction) planner;
 
         // clear the model parameters (sanity check)
         model.setParams(null);

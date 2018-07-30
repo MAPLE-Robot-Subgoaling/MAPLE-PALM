@@ -5,9 +5,7 @@ import burlap.mdp.core.oo.state.OOState;
 import burlap.mdp.core.oo.state.ObjectInstance;
 import edu.umbc.cs.maple.taxi.hierarchies.tasks.root.state.TaxiRootState;
 
-import static edu.umbc.cs.maple.taxi.TaxiConstants.ATT_GOAL_LOCATION;
-import static edu.umbc.cs.maple.taxi.TaxiConstants.ATT_LOCATION;
-import static edu.umbc.cs.maple.taxi.TaxiConstants.CLASS_PASSENGER;
+import static edu.umbc.cs.maple.taxi.TaxiConstants.*;
 
 
 public class RootCompletedPF extends PropositionalFunction {

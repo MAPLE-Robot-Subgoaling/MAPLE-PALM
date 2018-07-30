@@ -8,8 +8,9 @@ import burlap.mdp.core.oo.state.ObjectInstance;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.model.statemodel.FullStateModel;
 import edu.umbc.cs.maple.liftCopter.ThrustType.ThrustAction;
-import edu.umbc.cs.maple.liftCopter.state.*;
+import edu.umbc.cs.maple.liftCopter.state.LiftCopterAgent;
 import edu.umbc.cs.maple.liftCopter.state.LiftCopterCargo;
+import edu.umbc.cs.maple.liftCopter.state.LiftCopterState;
 
 import java.util.ArrayList;
 import java.util.List;

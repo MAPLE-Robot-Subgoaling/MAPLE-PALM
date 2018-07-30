@@ -2,8 +2,6 @@ package edu.umbc.cs.maple.liftCopter.hierarchies.functions;
 
 import burlap.mdp.core.oo.propositional.PropositionalFunction;
 import burlap.mdp.core.oo.state.OOState;
-import burlap.mdp.core.oo.state.ObjectInstance;
-import edu.umbc.cs.maple.liftCopter.hierarchies.expert.tasks.get.state.LCGetLocation;
 import edu.umbc.cs.maple.liftCopter.hierarchies.expert.tasks.nav.state.LCNavState;
 
 import static edu.umbc.cs.maple.liftCopter.LiftCopterConstants.*;

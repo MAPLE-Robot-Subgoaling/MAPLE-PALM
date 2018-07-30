@@ -787,7 +787,6 @@ public class CleanupRandomStateGenerator implements StateGenerator {
         int dy0 = bigRoomBottom;
         int dy1 = bigRoomBottom;
         int dy2 = bigRoomBottom/2;
-        System.out.println("doors coord is: "+ dx0+","+ dx0+","+ dy0+","+ dy0+",");
         CleanupDoor door0 = new CleanupDoor("door0", dx0, dx0, dy0, dy0, Cleanup.LOCKABLE_STATES[0], Cleanup.SHAPE_DOOR, Cleanup.COLOR_GRAY);
         CleanupDoor door1 = new CleanupDoor("door1", dx1, dx1, dy1, dy1, Cleanup.LOCKABLE_STATES[0], Cleanup.SHAPE_DOOR, Cleanup.COLOR_GRAY);
         CleanupDoor door2 = new CleanupDoor("door2", dx2, dx2, dy2, dy2, Cleanup.LOCKABLE_STATES[0], Cleanup.SHAPE_DOOR, Cleanup.COLOR_GRAY);
@@ -866,8 +865,8 @@ public class CleanupRandomStateGenerator implements StateGenerator {
 
         int index = 0;
         while (numBlocks > 0) {
-            int bx = minY + rng.nextInt(getWidth());
-            int by = minY + rng.nextInt(getHeight());
+            int bx = minY + rng.nextInt(bigRoomRight/2);
+            int by = minY + rng.nextInt(bigRoomTop);
             if (s.isOpen(bx, by) && !s.agentAt(bx, by)) {
                 String shape = blockShapes.get(rng.nextInt(blockShapes.size()));
                 String color = blockColors.get(rng.nextInt(blockColors.size()));

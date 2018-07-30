@@ -1,9 +1,9 @@
 package edu.umbc.cs.maple.taxi.hierarchies;
 
-import burlap.mdp.singleagent.oo.OOSADomain;
 import edu.umbc.cs.maple.config.ExperimentConfig;
 import edu.umbc.cs.maple.config.taxi.TaxiConfig;
-import edu.umbc.cs.maple.hierarchy.framework.*;
+import edu.umbc.cs.maple.hierarchy.framework.Hierarchy;
+import edu.umbc.cs.maple.hierarchy.framework.Task;
 
 public abstract class TaxiHierarchy extends Hierarchy {
 

@@ -11,32 +11,20 @@ import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.common.VisualActionObserver;
 import burlap.mdp.singleagent.environment.SimulatedEnvironment;
 import burlap.mdp.singleagent.oo.OOSADomain;
-import edu.umbc.cs.maple.cleanup.hierarchies.CleanupHierarchyAMDP;
 import edu.umbc.cs.maple.config.ExperimentConfig;
-import edu.umbc.cs.maple.config.cleanup.CleanupConfig;
 import edu.umbc.cs.maple.config.hierarchy.HierarchyConfig;
 import edu.umbc.cs.maple.config.output.ChartConfig;
-import edu.umbc.cs.maple.config.taxi.TaxiConfig;
-import edu.umbc.cs.maple.hierarchy.framework.NonprimitiveTask;
 import edu.umbc.cs.maple.hierarchy.framework.Task;
-import edu.umbc.cs.maple.taxi.hierarchies.TaxiHierarchy;
-import edu.umbc.cs.maple.taxi.hierarchies.TaxiHierarchyExpert;
-import edu.umbc.cs.maple.taxi.hierarchies.TaxiHierarchyHierGen;
 import edu.umbc.cs.maple.utilities.LearningAlgorithmExperimenter;
 
 import javax.swing.*;
-import java.text.SimpleDateFormat;
 import java.util.*;
-
-import static edu.umbc.cs.maple.testing.AgentType.*;
 
 public class HierarchicalCharts {
 
 
-    public static void createCharts(final ExperimentConfig config, OOSADomain baseDomain, Task[] hierarchies, StateGenerator stateGenerator) {
+    public static void createCharts(final ExperimentConfig config, OOSADomain baseDomain, StateGenerator stateGenerator) {
         SimulatedEnvironment env;
-        final Task expertRoot = hierarchies[0];
-        final Task hierGenRoot = hierarchies[1];
 
         env = new SimulatedEnvironment(baseDomain, stateGenerator);
 
@@ -50,20 +38,14 @@ public class HierarchicalCharts {
 
         List<LearningAgentFactory> agents = new LinkedList<>();
         Map<String, Task> hierarchyMap = new HashMap<>();
-        String agentName = "";
-        for(Iterator<String> i = config.agents.keySet().iterator(); i.hasNext(); ){
-            agentName = i.next();
-//        }
-//        for( String agentName : config.agents.keySet()){
-            //String agentConfigLocation = "config/agent/" + agentName + ".yaml";
-            for ( String hierarchy : (LinkedHashSet<String>)config.agents.get(agentName)){
+        for(String agentType : config.agents.keySet()){
+            for (String hierarchy : (LinkedHashSet<String>)config.agents.get(agentType)){
                 if(! (hierarchyMap.keySet().contains(hierarchy))){
                     HierarchyConfig hierarchyConfig = HierarchyConfig.load(config,"config/hierarchy/"+hierarchy+".yaml");
                     hierarchyMap.put(hierarchy, hierarchyConfig.getRoot(config));
-
                 }
-                Task qLearningWrapper = new NonprimitiveTask(baseDomain);
-                LearningAgentFactory factory = AgentType.generate(hierarchy+"-"+agentName, config, expertRoot, hierGenRoot, qLearningWrapper);
+                String agentName = hierarchy+"-"+agentType;
+                LearningAgentFactory factory = AgentType.generateLearningAgentFactory(hierarchyMap.get(hierarchy), config, agentType, agentName);
                 agents.add(factory);
             }
         }
@@ -94,52 +76,10 @@ public class HierarchicalCharts {
     }
 
     public static void run(ExperimentConfig config) {
-
-        // TODO ? possibly update this to permit more variable state generation procedures
         State source = config.generateState();
         StateGenerator stateGenerator = new ConstantStateGenerator(source);
-
-        OOSADomain base;
-        Task[] hierarchies = new Task[2];
-        if (config.domain instanceof TaxiConfig) {
-            TaxiHierarchy expert = new TaxiHierarchyExpert();
-            TaxiHierarchy hierGen = new TaxiHierarchyHierGen();
-            Task expertRoot = expert.createHierarchy(config, false);
-            Task hierGenRoot = hierGen.createHierarchy(config, false);
-            base = expert.getBaseDomain();
-            expert.setBaseDomain(base);
-            expert.setBaseDomain(base);
-            hierarchies[0] = expertRoot;
-            hierarchies[1] = hierGenRoot;
-        } else if (config.domain instanceof CleanupConfig) {
-            CleanupHierarchyAMDP expert = new CleanupHierarchyAMDP();
-//            CleanupHierarchyHierGen hierGen = new CleanupHierarchyHierGen();
-            Task expertRoot = expert.createHierarchy(config, false);
-//            Task hierGenRoot = hierGen.createHierarchy(config, false);
-            base = expert.getBaseDomain();
-            expert.setBaseDomain(base);
-//            hierGen.setBaseDomain(base);
-            hierarchies[0] = expertRoot;
-//            hierarchies[1] = hierGenRoot;
-        } else {
-            throw new RuntimeException("Error: unknown domain in config file");
-        }
-
-//        //runtime
-//        //get the starting time from execution
-//        long actualTimeElapsed = System.currentTimeMillis();
-//        SimpleDateFormat sdf = new SimpleDateFormat("MMM dd,yyyy HH:mm:ss");
-//        Date resultdate = new Date(actualTimeElapsed);
-//        System.out.println(sdf.format(resultdate));
-//        long startTime = System.nanoTime();
-//        System.out.println("Trial current nano time: " + startTime);
-
-        createCharts(config, base, hierarchies, stateGenerator);
-
-//        long estimatedTime = System.nanoTime() - startTime;
-//        System.out.println("The estimated elapsed trial time is " + estimatedTime);
-//        actualTimeElapsed = System.currentTimeMillis() - actualTimeElapsed;
-//        System.out.println("Estimated trial clock time elapsed: " + actualTimeElapsed);
+        OOSADomain base = (OOSADomain) config.domain.getDomainGenerator().generateDomain();
+        createCharts(config, base, stateGenerator);
     }
 
     public static void main(String[] args) {

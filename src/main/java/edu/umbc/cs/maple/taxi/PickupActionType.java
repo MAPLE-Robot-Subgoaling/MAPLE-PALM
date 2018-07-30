@@ -4,8 +4,6 @@ import burlap.mdp.core.oo.ObjectParameterizedAction;
 import burlap.mdp.core.oo.state.MutableOOState;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.oo.ObjectParameterizedActionType;
-import edu.umbc.cs.maple.taxi.state.TaxiPassenger;
-import edu.umbc.cs.maple.taxi.state.TaxiState;
 import edu.umbc.cs.maple.utilities.MutableObject;
 
 import static edu.umbc.cs.maple.taxi.TaxiConstants.*;

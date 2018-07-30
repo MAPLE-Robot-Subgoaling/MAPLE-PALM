@@ -4,9 +4,8 @@ import burlap.mdp.core.oo.propositional.PropositionalFunction;
 import burlap.mdp.core.oo.state.OOState;
 import burlap.mdp.core.oo.state.ObjectInstance;
 
-import static edu.umbc.cs.maple.cleanup.Cleanup.*;
-import static edu.umbc.cs.maple.cleanup.Cleanup.ATT_BOTTOM;
-import static edu.umbc.cs.maple.cleanup.Cleanup.ATT_TOP;
+import static edu.umbc.cs.maple.cleanup.Cleanup.ATT_X;
+import static edu.umbc.cs.maple.cleanup.Cleanup.ATT_Y;
 
 public class ObjectNextToObjectGoalPF extends PropositionalFunction {
 

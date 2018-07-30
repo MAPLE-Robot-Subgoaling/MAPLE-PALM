@@ -1,12 +1,8 @@
 package edu.umbc.cs.maple.palm.rmax.agent;
 
-import burlap.mdp.core.action.Action;
-import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.environment.EnvironmentOutcome;
 import burlap.statehashing.HashableStateFactory;
-import edu.umbc.cs.maple.hierarchy.framework.GroundedTask;
 import edu.umbc.cs.maple.hierarchy.framework.Task;
-import edu.umbc.cs.maple.utilities.ConstantDiscountProvider;
 import edu.umbc.cs.maple.utilities.OnlyInternalDiscountProvider;
 
 public class HierarchicalRmaxModel extends RmaxModel {

@@ -2,12 +2,8 @@ package edu.umbc.cs.maple.liftCopter.hierarchies.functions;
 
 import burlap.mdp.core.oo.propositional.PropositionalFunction;
 import burlap.mdp.core.oo.state.OOState;
-import burlap.mdp.core.oo.state.ObjectInstance;
 import edu.umbc.cs.maple.liftCopter.hierarchies.expert.tasks.put.state.LCPutState;
-import edu.umbc.cs.maple.liftCopter.state.LiftCopterState;
 import edu.umbc.cs.maple.utilities.MutableObject;
-
-import java.util.List;
 
 import static edu.umbc.cs.maple.liftCopter.LiftCopterConstants.*;
 

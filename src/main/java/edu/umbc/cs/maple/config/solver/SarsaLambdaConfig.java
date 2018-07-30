@@ -1,6 +1,5 @@
 package edu.umbc.cs.maple.config.solver;
 
-import burlap.behavior.functionapproximation.DifferentiableStateActionValue;
 import burlap.behavior.singleagent.learning.tdmethods.vfa.GradientDescentSarsaLam;
 import burlap.behavior.singleagent.planning.Planner;
 import burlap.behavior.valuefunction.ValueFunction;

@@ -11,7 +11,9 @@ import edu.umbc.cs.maple.taxi.state.*;
 import java.awt.*;
 import java.awt.geom.Arc2D;
 import java.awt.geom.Ellipse2D;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import static edu.umbc.cs.maple.taxi.TaxiConstants.*;
 

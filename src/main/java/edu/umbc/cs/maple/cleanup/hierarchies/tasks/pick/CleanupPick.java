@@ -10,7 +10,6 @@ import burlap.mdp.singleagent.model.statemodel.FullStateModel;
 import burlap.mdp.singleagent.oo.OOSADomain;
 import edu.umbc.cs.maple.cleanup.Cleanup;
 import edu.umbc.cs.maple.cleanup.hierarchies.tasks.move.ObjectToRegionActionType;
-import edu.umbc.cs.maple.cleanup.hierarchies.tasks.root.CleanupRootModel;
 import edu.umbc.cs.maple.cleanup.state.CleanupAgent;
 import edu.umbc.cs.maple.cleanup.state.CleanupBlock;
 import edu.umbc.cs.maple.cleanup.state.CleanupDoor;

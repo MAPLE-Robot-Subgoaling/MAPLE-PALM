@@ -3,10 +3,7 @@ package edu.umbc.cs.maple.config.hierarchy;
 import burlap.mdp.auxiliary.DomainGenerator;
 import burlap.mdp.core.Domain;
 import burlap.mdp.core.action.ActionType;
-import burlap.mdp.singleagent.SADomain;
 import burlap.mdp.singleagent.oo.OOSADomain;
-import edu.umbc.cs.maple.cleanup.CleanupGoal;
-import edu.umbc.cs.maple.cleanup.CleanupGoalDescription;
 import edu.umbc.cs.maple.config.ExperimentConfig;
 import edu.umbc.cs.maple.hierarchy.framework.*;
 import org.yaml.snakeyaml.TypeDescription;
@@ -34,7 +31,7 @@ public class HierarchyConfig {
         taskMap = new HashMap<String,Task>();
         baseDomain = baseDomainGenerator.generateDomain();
         NonprimitiveTask root = (NonprimitiveTask) buildTask("root", new SolveActionType());
-        AMDPRootGoalPF goalPF= (AMDPRootGoalPF) root.getGoalFailTF().getGoalPF();
+        AMDPRootGoalPF goalPF= (AMDPRootGoalPF) root.getTf().getGoalPF();
         goalPF.setGoal(e.goal);
         return root;
     }

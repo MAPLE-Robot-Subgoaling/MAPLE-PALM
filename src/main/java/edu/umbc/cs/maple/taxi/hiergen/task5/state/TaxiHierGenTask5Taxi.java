@@ -6,9 +6,7 @@ import edu.umbc.cs.maple.utilities.MutableObject;
 import java.util.Arrays;
 import java.util.List;
 
-import static edu.umbc.cs.maple.taxi.TaxiConstants.ATT_X;
-import static edu.umbc.cs.maple.taxi.TaxiConstants.ATT_Y;
-import static edu.umbc.cs.maple.taxi.TaxiConstants.CLASS_TAXI;
+import static edu.umbc.cs.maple.taxi.TaxiConstants.*;
 
 public class TaxiHierGenTask5Taxi extends MutableObject{
 

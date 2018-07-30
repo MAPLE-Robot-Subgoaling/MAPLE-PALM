@@ -3,7 +3,6 @@ package edu.umbc.cs.maple.config.TileCoding;
 import burlap.behavior.functionapproximation.DifferentiableStateActionValue;
 import burlap.behavior.functionapproximation.dense.ConcatenatedObjectFeatures;
 import burlap.behavior.functionapproximation.dense.NumericVariableFeatures;
-import burlap.behavior.functionapproximation.sparse.tilecoding.TileCodingFeatures;
 import burlap.behavior.functionapproximation.sparse.tilecoding.TilingArrangement;
 import edu.umbc.cs.maple.VariableObjectTileCoding.VariableObjectTileCoding;
 

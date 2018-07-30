@@ -3,7 +3,6 @@ package edu.umbc.cs.maple.taxi.hierarchies.tasks.root.state;
 import burlap.mdp.auxiliary.StateMapping;
 import burlap.mdp.core.oo.state.ObjectInstance;
 import burlap.mdp.core.state.State;
-import edu.umbc.cs.maple.taxi.hierarchies.tasks.put.state.TaxiPutLocation;
 import edu.umbc.cs.maple.taxi.state.TaxiState;
 
 import java.util.ArrayList;

@@ -4,26 +4,12 @@ import burlap.behavior.functionapproximation.dense.DenseStateFeatures;
 import burlap.behavior.functionapproximation.sparse.LinearVFA;
 import burlap.behavior.functionapproximation.sparse.SparseStateFeatures;
 import burlap.behavior.functionapproximation.sparse.StateFeature;
-import burlap.behavior.functionapproximation.sparse.tilecoding.TileCodingFeatures;
 import burlap.behavior.functionapproximation.sparse.tilecoding.Tiling;
 import burlap.behavior.functionapproximation.sparse.tilecoding.TilingArrangement;
 import burlap.debugtools.RandomFactory;
 import burlap.mdp.core.action.Action;
 import burlap.mdp.core.state.State;
-import burlap.behavior.functionapproximation.dense.DenseStateFeatures;
-import burlap.behavior.functionapproximation.sparse.LinearVFA;
-import burlap.behavior.functionapproximation.sparse.SparseStateFeatures;
-import burlap.behavior.functionapproximation.sparse.StateFeature;
-import burlap.behavior.functionapproximation.sparse.tilecoding.Tiling.FVTile;
-import burlap.debugtools.RandomFactory;
-import burlap.mdp.core.action.Action;
-import burlap.mdp.core.state.State;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+
 import java.util.*;
 
 public class VariableObjectTileCoding implements SparseStateFeatures {
