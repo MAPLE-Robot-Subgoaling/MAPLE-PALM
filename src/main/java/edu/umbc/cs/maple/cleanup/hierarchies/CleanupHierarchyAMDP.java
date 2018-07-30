@@ -103,8 +103,7 @@ public class CleanupHierarchyAMDP extends CleanupHierarchy {
                 (OOSADomain) moveAgentDoorDomain,
                 agentDoorMapper,
                 agentDoorTF,
-                new GoalFailRF(agentDoorTF, defaultReward, noopReward),
-                null
+                new GoalFailRF(agentDoorTF, defaultReward, noopReward)
         );
 
         if (plan) { setupKnownTFRF(agentToDoor); }
@@ -120,8 +119,7 @@ public class CleanupHierarchyAMDP extends CleanupHierarchy {
                 (OOSADomain) moveAgentRoomDomain,
                 agentRoomMapper,
                 agentRoomTF,
-                new GoalFailRF(agentRoomTF, defaultReward, noopReward),
-                null
+                new GoalFailRF(agentRoomTF, defaultReward, noopReward)
         );
         if (plan) { setupKnownTFRF(agentToRoom); }
 
@@ -136,8 +134,7 @@ public class CleanupHierarchyAMDP extends CleanupHierarchy {
                 (OOSADomain) moveBlockDoorDomain,
                 blockDoorMapper,
                 blockDoorTF,
-                new GoalFailRF(blockDoorTF, defaultReward, noopReward),
-                null
+                new GoalFailRF(blockDoorTF, defaultReward, noopReward)
         );
         if (plan) { setupKnownTFRF(blockToDoor); }
 
@@ -152,8 +149,7 @@ public class CleanupHierarchyAMDP extends CleanupHierarchy {
                 (OOSADomain) moveBlockRoomDomain,
                 blockRoomMapper,
                 blockRoomTF,
-                new GoalFailRF(blockRoomTF , defaultReward, noopReward),
-                null
+                new GoalFailRF(blockRoomTF , defaultReward, noopReward)
         );
         if (plan) { setupKnownTFRF(blockToRoom); }
 
@@ -168,8 +164,7 @@ public class CleanupHierarchyAMDP extends CleanupHierarchy {
                 pickRoomAgentDomain,
                 new PickRoomAgentMapper(),
                 pickRoomAgentTF,
-                new GoalFailRF(pickRoomAgentTF, defaultReward, noopReward),
-                null
+                new GoalFailRF(pickRoomAgentTF, defaultReward, noopReward)
         );
         if (plan) { setupKnownTFRF(pickRoomAgent); }
 
@@ -183,8 +178,7 @@ public class CleanupHierarchyAMDP extends CleanupHierarchy {
                 pickRoomBlockDomain,
                 new PickRoomBlockMapper(),
                 pickRoomBlockTF,
-                new GoalFailRF(pickRoomBlockTF, defaultReward, noopReward),
-                null
+                new GoalFailRF(pickRoomBlockTF, defaultReward, noopReward)
         );
         if (plan) { setupKnownTFRF(pickRoomBlock); }
 
@@ -199,9 +193,7 @@ public class CleanupHierarchyAMDP extends CleanupHierarchy {
                 rootDomain,
                 new CleanupRootMapper(),
                 rootTF,
-                new GoalFailRF((GoalFailTF) rootTF, defaultReward, noopReward),
-                null
-
+                new GoalFailRF((GoalFailTF) rootTF, defaultReward, noopReward)
         );
         if (plan) { setupKnownTFRF(root); }
 

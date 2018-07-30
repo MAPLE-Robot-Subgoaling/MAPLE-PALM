@@ -4,10 +4,7 @@ import burlap.mdp.auxiliary.StateMapping;
 import burlap.mdp.core.action.ActionType;
 import burlap.mdp.core.oo.propositional.PropositionalFunction;
 import edu.umbc.cs.maple.config.ExperimentConfig;
-import edu.umbc.cs.maple.hierarchy.framework.NonprimitiveTask;
-import edu.umbc.cs.maple.hierarchy.framework.PrimitiveTask;
-import edu.umbc.cs.maple.hierarchy.framework.SolveActionType;
-import edu.umbc.cs.maple.hierarchy.framework.Task;
+import edu.umbc.cs.maple.hierarchy.framework.*;
 import edu.umbc.cs.maple.taxi.PickupActionType;
 import edu.umbc.cs.maple.taxi.PutdownActionType;
 import edu.umbc.cs.maple.taxi.Taxi;
@@ -73,43 +70,39 @@ public class TaxiHierarchyHierGen extends TaxiHierarchy {
         Task[] task5Children = {north, east, south, wast};
         PropositionalFunction task5CompletedPF = new HierGenTask5Completed();
         PropositionalFunction task5FailPF = new FailureFunction();
+        GoalFailTF t5TF = new GoalFailTF(new FailureFunction(), null, new HierGenTask5Completed(), null);
+        GoalFailRF t5RF = new GoalFailRF(t5TF, defaultReward, noopReward);
         NonprimitiveTask task5 = new NonprimitiveTask(
                 task5Children,
                 aTask5,
                 baseDomain,
                 task5Map,
-                task5FailPF,
-                task5CompletedPF,
-                defaultReward,
-                noopReward
+                t5TF,
+                t5RF
         );
 
         Task[] task7Children = {task5, pickup};
-        PropositionalFunction task7CompletedPF = new HierGenTask7Completed();
-        PropositionalFunction task7FailPF = new FailureFunction();
+        GoalFailTF t7TF = new GoalFailTF(new FailureFunction(), null, new HierGenTask7Completed(), null);
+        GoalFailRF t7RF = new GoalFailRF(t7TF, defaultReward, noopReward);
         NonprimitiveTask task7 = new NonprimitiveTask(
                 task7Children,
                 aTask7,
                 baseDomain,
                 task7Map,
-                task7FailPF,
-                task7CompletedPF,
-                defaultReward,
-                noopReward
+                t7TF,
+                t7RF
         );
 
         Task[] rootChildren = {task7, dropoff, task5};
-        PropositionalFunction rootCompletedPF = new HierGenRootCompleted();
-        PropositionalFunction rootFailPF = new FailureFunction();
+        GoalFailTF rootTF = new GoalFailTF(new FailureFunction(), null, new HierGenRootCompleted(), null);
+        GoalFailRF rootRF = new GoalFailRF(rootTF, defaultReward, noopReward);
         NonprimitiveTask root = new NonprimitiveTask(
                 rootChildren,
                 asolve,
                 baseDomain,
                 rootMap,
-                rootFailPF,
-                rootCompletedPF,
-                defaultReward,
-                noopReward
+                rootTF,
+                rootRF
         );
 
         return root;

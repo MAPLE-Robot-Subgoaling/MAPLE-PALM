@@ -38,6 +38,10 @@ public class GroundedTask {
         this.t = t;
     }
 
+    public Task getTask() {
+        return t;
+    }
+
     /**
      * gets the action this task wraps around
      * @return the grounded task's action
@@ -78,9 +82,10 @@ public class GroundedTask {
      * @param model the model to included in the domain
      * @return a complete learned domain for the grounded task
      */
-    public OOSADomain getDomain(FullModel model){
+    public OOSADomain getDomain(ParameterizedFullModel model, String[] params){
         OOSADomain domain = new OOSADomain();
         domain.setModel(model);
+        model.setParams(params);
         Task[] children = t.getChildren();
         // domain does not have any accessor for stateClasses's KEYS
         for(Task child : children){
@@ -112,7 +117,7 @@ public class GroundedTask {
     public boolean isFailure(State s){
         return t.isFailure(s, action);
     }
-    
+
     /**
      * pass the given state through the task's abstraction function
      * @param s the base state
@@ -141,14 +146,19 @@ public class GroundedTask {
      * @param s the source of the transition
      * @param a the action just taken
      * @param sPrime the result of the transition
+     * @param params any parameters of this task
      * @return the grounded task's rewardTotal of a transition to s
      */
-    public double getReward(State s, Action a, State sPrime) {
-        return t.reward(s, a, sPrime);
+    public double getReward(State s, Action a, State sPrime, String[] params) {
+        return t.reward(s, a, sPrime, params);
     }
 
     public boolean isMasked(){
         return t.isMasked();
+    }
+
+    public String[] getMaskedParameters() {
+        return t.getMaskedParameters();
     }
 
     @Override
@@ -178,12 +188,12 @@ public class GroundedTask {
 
         GroundedTask o = (GroundedTask) other;
         if(!this.formattedName.equals(o.formattedName)){
-            return false; 
+            return false;
         }
-        
+
         return true;
     }
-     
+
     @Override
     public int hashCode() {
         HashCodeBuilder hashCodeBuilder = new HashCodeBuilder(31, 7);
@@ -191,7 +201,4 @@ public class GroundedTask {
         return hashCodeBuilder.toHashCode();
     }
 
-    public Task getTask() {
-        return t;
-    }
 }

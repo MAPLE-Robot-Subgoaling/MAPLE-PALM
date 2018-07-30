@@ -3,6 +3,7 @@ package edu.umbc.cs.maple.hierarchy.framework;
 import burlap.mdp.auxiliary.StateMapping;
 import burlap.mdp.core.action.Action;
 import burlap.mdp.core.action.ActionType;
+import burlap.mdp.core.oo.ObjectParameterizedAction;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.oo.OOSADomain;
 import edu.umbc.cs.maple.taxi.hierarchies.interfaces.MaskedParameterizedStateMapping;
@@ -120,14 +121,9 @@ public abstract class Task {
      */
     public boolean isMasked() {return this.masked;}
 
-    /**
-     * determines if the current task is terminated in state s which parameterization a
-     * @param s the current state
-     * @param a the action from the specific grounding
-     * @return boolean indicating if the action a is terminated in state s
-     */
-    public abstract boolean isFailure(State s, Action a);
-
+    public String[] getMaskedParameters() {
+        return this.maskedParameters;
+    }
     /**
      * tells whether this task is in the base MDP
      * @return boolean indicating whether the task is
@@ -136,14 +132,43 @@ public abstract class Task {
     public abstract boolean isPrimitive();
 
     /**
+     * determines if the current task is terminated in state s which parameterization a
+     * @param s the current state
+     * @param params the parameters from the specific grounding of the task
+     * @param unsetParamsWhenFinished if true, ensures that the goal/fail tf/rf will have null params after this call
+     * @return boolean indicating if the action a is terminated in state s
+     */
+    public abstract boolean isFailure(State s, String[] params, boolean unsetParamsWhenFinished);
+
+    public final boolean isFailure(State s, Action a) {
+        String[] params = parseParams(a);
+        return isFailure(s, params, true);
+    }
+
+    public final boolean isComplete(State s, Action a) {
+        String[] params = parseParams(a);
+        return isComplete(s, params, true);
+    }
+
+    /**
      * tests a state to determine if task is complete
      * @param s state to test
-     * @param a the grounded task
+     * @param params the parameters of the specific grounded task
      * @return wether a is complete in s
      */
-    public abstract boolean isComplete(State s, Action a);
+    public abstract boolean isComplete(State s, String[] params, boolean unsetParamsWhenFinished);
 
-    public abstract double reward(State s, Action a, State sPrime);
+    public abstract double reward(State s, Action a, State sPrime, String[] params);
+
+    public static String[] parseParams(Action action) {
+        String[] params = null;
+        if (action instanceof ObjectParameterizedAction) {
+            params = ((ObjectParameterizedAction) action).getObjectParameters();
+        } else {
+            params = new String[]{StringFormat.parameterizedActionName(action)};
+        }
+        return params;
+    }
 
     public void setDomain(OOSADomain domain) {
         this.domain = domain;

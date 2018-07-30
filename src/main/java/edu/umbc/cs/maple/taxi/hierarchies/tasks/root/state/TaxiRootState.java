@@ -14,7 +14,6 @@ import java.util.Map;
 
 import static edu.umbc.cs.maple.taxi.TaxiConstants.*;
 public class TaxiRootState implements MutableOOState, DeepCopyForShallowCopyState {
-
     //this state has passengers
     private Map<String, TaxiRootPassenger> passengers;
 

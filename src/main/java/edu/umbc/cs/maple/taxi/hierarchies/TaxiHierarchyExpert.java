@@ -4,10 +4,7 @@ import burlap.mdp.core.action.ActionType;
 import burlap.mdp.singleagent.oo.OOSADomain;
 import edu.umbc.cs.maple.config.ExperimentConfig;
 import edu.umbc.cs.maple.config.taxi.TaxiConfig;
-import edu.umbc.cs.maple.hierarchy.framework.NonprimitiveTask;
-import edu.umbc.cs.maple.hierarchy.framework.PrimitiveTask;
-import edu.umbc.cs.maple.hierarchy.framework.SolveActionType;
-import edu.umbc.cs.maple.hierarchy.framework.Task;
+import edu.umbc.cs.maple.hierarchy.framework.*;
 import edu.umbc.cs.maple.taxi.Taxi;
 import edu.umbc.cs.maple.taxi.functions.amdp.*;
 import edu.umbc.cs.maple.taxi.hierarchies.tasks.get.TaxiGetDomain;
@@ -65,15 +62,16 @@ public class TaxiHierarchyExpert extends TaxiHierarchy {
 
         // Nav (Task used by Get and Put)
         ActionType aNavigate = putDomain.getAction(ACTION_NAV);
+        GoalFailTF navTF = new GoalFailTF(new NavFailurePF(), null,  new NavCompletedPF(), null);
+        GoalFailRF navRF = new GoalFailRF(navTF, defaultReward, noopReward);
         NonprimitiveTask navigate = new NonprimitiveTask(
                 navTasks,
                 aNavigate,
                 navDomain,
                 new NavStateMapper(),
-                new NavFailurePF(),
-                new NavCompletedPF(),
-                defaultReward,
-                noopReward
+                navTF,
+                navRF
+
         );
         if (plan) { setupKnownTFRF(navigate); } else { navDomain.setModel(null); }
 
@@ -84,15 +82,15 @@ public class TaxiHierarchyExpert extends TaxiHierarchy {
         // Get (Task used by Root)
         ActionType aGet = rootDomain.getAction(ACTION_GET);
         Task[] getTasks = {pickup, navigate};
+        GoalFailTF getTF = new GoalFailTF(new GetFailurePF(), null,  new GetCompletedPF(), null);
+        GoalFailRF getRF = new GoalFailRF(getTF, defaultReward, noopReward);
         NonprimitiveTask get = new NonprimitiveTask(
                 getTasks,
                 aGet,
                 getDomain,
                 new GetStateMapper(),
-                new GetFailurePF(),
-                new GetCompletedPF(),
-                defaultReward,
-                noopReward
+                getTF,
+                getRF
         );
         if (plan) { setupKnownTFRF(get); } else { getDomain.setModel(null); }
 
@@ -103,30 +101,30 @@ public class TaxiHierarchyExpert extends TaxiHierarchy {
         // Put (Task used by Root)
         ActionType aPut = rootDomain.getAction(ACTION_PUT);
         Task[] putTasks = {putdown, navigate};
+        GoalFailTF putTF = new GoalFailTF(new PutFailurePF(), null,  new PutCompletedPF(), null);
+        GoalFailRF putRF = new GoalFailRF(putTF, defaultReward, noopReward);
         NonprimitiveTask put = new NonprimitiveTask(
                 putTasks,
                 aPut,
                 putDomain,
                 new PutStateMapper(),
-                new PutFailurePF(),
-                new PutCompletedPF(),
-                defaultReward,
-                noopReward
+                putTF,
+                putRF
         );
         if (plan) { setupKnownTFRF(put); } else { putDomain.setModel(null); }
 
         // Root
         ActionType aSolve = new SolveActionType();
         Task[] rootTasks = {get, put};
+        GoalFailTF rootTF = new GoalFailTF(new RootFailurePF(), null,  new RootCompletedPF(), null);
+        GoalFailRF rootRF = new GoalFailRF(rootTF, defaultReward, noopReward);
         NonprimitiveTask root = new NonprimitiveTask(
                 rootTasks,
                 aSolve,
                 rootDomain,
                 new RootStateMapper(),
-                new RootFailurePF(),
-                new RootCompletedPF(),
-                defaultReward,
-                noopReward
+                rootTF,
+                rootRF
         );
         if (plan) { setupKnownTFRF(root); } else { rootDomain.setModel(null); }
 

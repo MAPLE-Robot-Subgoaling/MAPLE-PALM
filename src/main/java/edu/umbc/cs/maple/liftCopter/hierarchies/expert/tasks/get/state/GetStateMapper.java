@@ -75,8 +75,28 @@ public class GetStateMapper implements ParameterizedStateMapping {
             cargos.add(new LCGetCargo(cargoName, cargoLocation));
 //            cargos.add(new agentGetcargo(GET_cargo_ALIAS, cargoLocation));
         }
+        LCGetState getState = new LCGetState(agent, cargos, locations);
+        LiftCopterState state = (LiftCopterState) s;
+        List<ObjectInstance> walls = state.objectsOfClass(CLASS_WALL);
+        for (ObjectInstance wall : walls) {
+            double ww = (double) wall.get(ATT_WIDTH);
+            double wh = (double) wall.get(ATT_HEIGHT);
+            double wx = (double) wall.get(ATT_START_X);
+            double wy = (double) wall.get(ATT_START_Y);
+//            System.out.println("Compare: \n" +
+//                    "\t a:"+ax+","+ay+","+ah+","+aw+"\n" +
+//                    "\t w:"+wall.name() + ","+wx+","+wy+","+wh+","+ww
+//            );
+            if (wx < ax + aw &&
+                    wx + ww > ax &&
+                    wy < ay + ah &&
+                    wy + wh > ay) {
+                //System.out.println("Crashed into "+wall.name());
+                getState.hasFailed = true;
+            }
 
-        return new LCGetState(agent, cargos, locations);
+        }
+        return getState;
     }
 
 }

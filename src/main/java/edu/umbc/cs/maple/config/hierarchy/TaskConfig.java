@@ -36,8 +36,7 @@ public class TaskConfig {
                 (OOSADomain) domain,
                 stateMapper,
                 tf,
-                rf,
-                solver
+                rf
         );
     }
 

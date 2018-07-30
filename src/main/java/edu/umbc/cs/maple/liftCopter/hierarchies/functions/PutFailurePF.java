@@ -20,30 +20,30 @@ public class PutFailurePF extends PropositionalFunction{
 
     @Override
     public boolean isTrue(OOState s, String... params) {
-        LiftCopterState state = (LiftCopterState) s;
-        List<ObjectInstance> walls = state.objectsOfClass(CLASS_WALL);
-        double ax = (double) state.getCopter().get(ATT_X);
-        double ay = (double) state.getCopter().get(ATT_Y);
-        double ah = (double) state.getCopter().get(ATT_H);
-        double aw = (double) state.getCopter().get(ATT_W);
-        for (ObjectInstance wall : walls) {
-            double ww = (double) wall.get(ATT_WIDTH);
-            double wh = (double) wall.get(ATT_HEIGHT);
-            double wx = (double) wall.get(ATT_START_X);
-            double wy = (double) wall.get(ATT_START_Y);
-//            System.out.println("Compare: \n" +
-//                    "\t a:"+ax+","+ay+","+ah+","+aw+"\n" +
-//                    "\t w:"+wall.name() + ","+wx+","+wy+","+wh+","+ww
-//            );
-            if (wx < ax + aw &&
-                    wx + ww > ax &&
-                    wy < ay + ah &&
-                    wy + wh > ay) {
-                //System.out.println("Crashed into "+wall.name());
-                return true;
-            }
-
-        }
+//        LiftCopterState state = (LiftCopterState) s;
+//        List<ObjectInstance> walls = state.objectsOfClass(CLASS_WALL);
+//        double ax = (double) state.getCopter().get(ATT_X);
+//        double ay = (double) state.getCopter().get(ATT_Y);
+//        double ah = (double) state.getCopter().get(ATT_H);
+//        double aw = (double) state.getCopter().get(ATT_W);
+//        for (ObjectInstance wall : walls) {
+//            double ww = (double) wall.get(ATT_WIDTH);
+//            double wh = (double) wall.get(ATT_HEIGHT);
+//            double wx = (double) wall.get(ATT_START_X);
+//            double wy = (double) wall.get(ATT_START_Y);
+////            System.out.println("Compare: \n" +
+////                    "\t a:"+ax+","+ay+","+ah+","+aw+"\n" +
+////                    "\t w:"+wall.name() + ","+wx+","+wy+","+wh+","+ww
+////            );
+//            if (wx < ax + aw &&
+//                    wx + ww > ax &&
+//                    wy < ay + ah &&
+//                    wy + wh > ay) {
+//                //System.out.println("Crashed into "+wall.name());
+//                return true;
+//            }
+//
+//        }
         if (!(s instanceof LCPutState)) { return false; }
         String cargoName = params[0];
         MutableObject cargo = (MutableObject) s.object(cargoName);

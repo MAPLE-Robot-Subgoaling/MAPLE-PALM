@@ -22,8 +22,9 @@ public class SarsaLambdaConfig extends SolverConfig{
             return (GradientDescentSarsaLam)knownValueFunction;
         }else{
             GradientDescentSarsaLam planner = new GradientDescentSarsaLam(domain, gamma, TCC.generateVFA(), learningRate, lambda);
+            return planner;
         }
-        return null;
+
     }
 
     public double getGamma() {

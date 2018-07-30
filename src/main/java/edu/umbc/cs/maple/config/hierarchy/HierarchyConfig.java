@@ -54,6 +54,9 @@ public class HierarchyConfig {
                 }else if(childTaskName.endsWith("_p")){
                     // primitive actions need access to the "true" model to report the reward received when executed
                     homeDomain.setModel(((OOSADomain)baseDomain).getModel());
+                    if(childTaskName.startsWith("thrust")){
+                        childActionType = homeDomain.getAction("thrust");
+                    }
                     childTasksList.add(new PrimitiveTask(childActionType, homeDomain));
                 }
             }
