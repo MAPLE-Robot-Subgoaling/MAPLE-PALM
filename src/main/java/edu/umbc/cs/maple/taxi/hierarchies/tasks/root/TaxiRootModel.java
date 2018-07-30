@@ -6,6 +6,7 @@ import burlap.mdp.core.action.Action;
 import burlap.mdp.core.oo.ObjectParameterizedAction;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.model.statemodel.FullStateModel;
+import edu.umbc.cs.maple.taxi.hierarchies.tasks.root.state.TaxiRootAgent;
 import edu.umbc.cs.maple.taxi.hierarchies.tasks.root.state.TaxiRootPassenger;
 import edu.umbc.cs.maple.taxi.hierarchies.tasks.root.state.TaxiRootState;
 
@@ -52,6 +53,9 @@ public class TaxiRootModel implements FullStateModel {
         TaxiRootState ns = s.copy();
         String passengerName = a.getObjectParameters()[0];
         TaxiRootPassenger np = ns.touchPassenger(passengerName);
+        String passengerLocation = (String) np.get(ATT_LOCATION);
+        TaxiRootAgent taxi = ns.touchTaxi();
+        taxi.set(ATT_LOCATION, passengerLocation);
         np.set(ATT_LOCATION, ATT_VAL_IN_TAXI);
         tps.add(new StateTransitionProb(ns, 1));
     }
@@ -64,9 +68,11 @@ public class TaxiRootModel implements FullStateModel {
     public void put(TaxiRootState s, ObjectParameterizedAction a, List<StateTransitionProb> tps){
         TaxiRootState ns = s.copy();
         String passengerName = a.getObjectParameters()[0];
-//		MutableObject passenger = (MutableObject) s.object(passengerName);
         TaxiRootPassenger np = ns.touchPassenger(passengerName);
         String nameOfPassengerGoalLocation = (String) np.get(ATT_GOAL_LOCATION);
+        TaxiRootAgent taxi = ns.touchTaxi();
+        // put taxi in passenger's goal location
+        taxi.set(ATT_LOCATION, nameOfPassengerGoalLocation);
         // put the passenger in their own goal location
         np.set(ATT_LOCATION, nameOfPassengerGoalLocation);
         tps.add(new StateTransitionProb(ns, 1));

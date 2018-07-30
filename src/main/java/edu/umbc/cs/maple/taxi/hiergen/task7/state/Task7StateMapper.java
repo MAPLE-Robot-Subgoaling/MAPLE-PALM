@@ -3,6 +3,7 @@ package edu.umbc.cs.maple.taxi.hiergen.task7.state;
 import burlap.mdp.auxiliary.StateMapping;
 import burlap.mdp.core.oo.state.ObjectInstance;
 import burlap.mdp.core.state.State;
+import edu.umbc.cs.maple.taxi.hierarchies.interfaces.ParameterizedStateMapping;
 import edu.umbc.cs.maple.taxi.state.TaxiState;
 
 import java.util.ArrayList;
@@ -11,9 +12,9 @@ import java.util.List;
 import static edu.umbc.cs.maple.taxi.TaxiConstants.*;
 
 
-public class Task7StateMapper implements StateMapping {
+public class Task7StateMapper implements ParameterizedStateMapping {
     @Override
-    public State mapState(State s) {
+    public State mapState(State s, String... params) {
         TaxiState st = (TaxiState) s;
 
         int tx = (int) st.getTaxi().get(ATT_X);
@@ -21,7 +22,8 @@ public class Task7StateMapper implements StateMapping {
         TaxiHierGenTask7Taxi taxi = new TaxiHierGenTask7Taxi(st.getTaxiName(), tx, ty);
 
         List<TaxiHierGenTask7Passenger> passengers = new ArrayList<TaxiHierGenTask7Passenger>();
-        for(ObjectInstance passenger : st.objectsOfClass(CLASS_PASSENGER)){
+        for(String passengerName : params){
+            ObjectInstance passenger = st.object(passengerName);
             int px = (int) passenger.get(ATT_X);
             int py = (int) passenger.get(ATT_Y);
             boolean inTaxi = (boolean) passenger.get(ATT_IN_TAXI);

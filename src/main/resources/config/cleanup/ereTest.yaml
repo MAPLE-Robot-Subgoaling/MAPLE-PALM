@@ -58,7 +58,7 @@ output:
       - CUMULATIVE_REWARD_PER_EPISODE
 
   visualizer:
-    enabled: true
+    enabled: false
     episodes: true
-    width: 9
-    height: 9
+    width: 7
+    height: 7

@@ -17,9 +17,9 @@ public class PutStateMapper implements MaskedParameterizedStateMapping {
 
     @Override
     public String[] getMaskedParameters() {
-        return new String[]{CLASS_PASSENGER};
+        return new String[]{PUT_PASSENGER_ALIAS};
     }
-    //maps a base taxi state to L2
+
     @Override
     public State mapState(State s, String... params) {
         List<TaxiPutPassenger> passengers = new ArrayList<TaxiPutPassenger>();

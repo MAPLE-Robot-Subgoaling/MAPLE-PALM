@@ -42,7 +42,7 @@ public class HashableStateActionPair {
     @Override
     public int hashCode() {
         int result = hs != null ? hs.hashCode() : 0;
-        result = 31 * result + (actionName != null ? actionName.hashCode() : 0);
+        result = 97 * result + (actionName != null ? actionName.hashCode() : 0);
         return result;
     }
 

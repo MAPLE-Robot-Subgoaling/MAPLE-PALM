@@ -273,7 +273,7 @@ public class CleanupState implements MutableOOState, DeepCopyForShallowCopyState
 
     private boolean wallAt(ObjectInstance r, int x, int y) {
         if (r == null) {
-//			System.err.println("null room at " + x + ", " + y + ", treating as wall");
+			System.err.println("null room at " + x + ", " + y + ", treating as wall");
             return true;
         }
         if (x < 0 || x >= width || y < 0 || y >= height) {

@@ -129,7 +129,7 @@ public class PALMLearningAgent implements LearningAgent {
         tabLevel = "";
         solveTask(null, groundedRoot, env, maxSteps);
         System.out.println(e.actionSequence.size() + " " + e.actionSequence);
-        //System.out.println("Discounted return: " + e.discountedReturn(getModel(groundedRoot).getDiscountProvider().getGamma()));
+        System.out.println("Discounted return: " + e.discountedReturn(getModel(groundedRoot).getDiscountProvider().getGamma()));
 
         System.out.println(models.size() + " models, " + taskNames.size() + " named tasks");
 
@@ -233,11 +233,12 @@ public class PALMLearningAgent implements LearningAgent {
         while (
             // while task still valid
                 !(task.isFailure(currentStateAbstract) || task.isComplete(currentStateAbstract))
-                        // and still have steps it can take
-                        && (steps < maxSteps || maxSteps == -1)
-                        // and it hasn't solved the root goal, keep planning
-//                        && !(groundedRoot.isComplete(groundedRoot.mapState(baseState)))
-                ){
+            // and still have steps it can take
+            && (steps < maxSteps || maxSteps == -1)
+            // and it hasn't solved the root goal, keep planning
+            //  disabled for now: //  && !(groundedRoot.isComplete(groundedRoot.mapState(baseState)))
+                ) {
+
             actionCount++;
 
             State pastStateGrounded = currentStateGrounded;
@@ -373,6 +374,7 @@ public class PALMLearningAgent implements LearningAgent {
         Planner planner = solverConfig.generateSolver(knownValueFunction);
 
         policy = planner.planFromState(s);
+
         Action action = policy.action(s);
         boolean debug = false;
         if (debug) {

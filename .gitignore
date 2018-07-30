@@ -8,3 +8,4 @@ trees/
 out/
 target/
 *.DS_Store
+results/

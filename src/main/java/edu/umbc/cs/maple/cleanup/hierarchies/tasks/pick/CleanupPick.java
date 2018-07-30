@@ -6,6 +6,7 @@ import burlap.mdp.core.TerminalFunction;
 import burlap.mdp.core.action.ActionType;
 import burlap.mdp.singleagent.model.FactoredModel;
 import burlap.mdp.singleagent.model.RewardFunction;
+import burlap.mdp.singleagent.model.statemodel.FullStateModel;
 import burlap.mdp.singleagent.oo.OOSADomain;
 import edu.umbc.cs.maple.cleanup.Cleanup;
 import edu.umbc.cs.maple.cleanup.hierarchies.tasks.move.ObjectToRegionActionType;
@@ -57,7 +58,8 @@ public class CleanupPick implements DomainGenerator {
         domain.addActionType(aMoveBlockToRoom);
 
 
-        CleanupRootModel model = new CleanupRootModel();
+//        CleanupPickModel model = new CleanupPickModel();
+        FullStateModel model = null; // need to implement CleanupPickModel
         FactoredModel fModel = new FactoredModel(model, rf, tf);
         domain.setModel(fModel);
 

@@ -11,14 +11,21 @@ import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.common.VisualActionObserver;
 import burlap.mdp.singleagent.environment.SimulatedEnvironment;
 import burlap.mdp.singleagent.oo.OOSADomain;
+import edu.umbc.cs.maple.cleanup.hierarchies.CleanupHierarchyAMDP;
 import edu.umbc.cs.maple.config.ExperimentConfig;
+import edu.umbc.cs.maple.config.cleanup.CleanupConfig;
 import edu.umbc.cs.maple.config.hierarchy.HierarchyConfig;
 import edu.umbc.cs.maple.config.output.ChartConfig;
+import edu.umbc.cs.maple.config.taxi.TaxiConfig;
 import edu.umbc.cs.maple.hierarchy.framework.NonprimitiveTask;
 import edu.umbc.cs.maple.hierarchy.framework.Task;
+import edu.umbc.cs.maple.taxi.hierarchies.TaxiHierarchy;
+import edu.umbc.cs.maple.taxi.hierarchies.TaxiHierarchyExpert;
+import edu.umbc.cs.maple.taxi.hierarchies.TaxiHierarchyHierGen;
 import edu.umbc.cs.maple.utilities.LearningAlgorithmExperimenter;
 
 import javax.swing.*;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static edu.umbc.cs.maple.testing.AgentType.*;
@@ -26,13 +33,15 @@ import static edu.umbc.cs.maple.testing.AgentType.*;
 public class HierarchicalCharts {
 
 
-    public static void createCharts(final ExperimentConfig config, OOSADomain baseDomain,  StateGenerator stateGenerator) {
+    public static void createCharts(final ExperimentConfig config, OOSADomain baseDomain, Task[] hierarchies, StateGenerator stateGenerator) {
         SimulatedEnvironment env;
+        final Task expertRoot = hierarchies[0];
+        final Task hierGenRoot = hierarchies[1];
 
         env = new SimulatedEnvironment(baseDomain, stateGenerator);
 
         if(config.output.visualizer.enabled) {
-            VisualActionObserver obs = new VisualActionObserver(baseDomain, config.getVisualizer(config));
+            VisualActionObserver obs = new VisualActionObserver(baseDomain, config.getVisualizer(config), 550, 550);
             obs.setFrameDelay(0);
             obs.initGUI();
             obs.setDefaultCloseOperation(obs.EXIT_ON_CLOSE);
@@ -53,16 +62,9 @@ public class HierarchicalCharts {
                     hierarchyMap.put(hierarchy, hierarchyConfig.getRoot(config));
 
                 }
-                if(agentName.equals(PALM.getType())) {
-                    agents.add(PALM.generateLearningAgentFactory(hierarchyMap.get(hierarchy), config, hierarchy+"-"+agentName));
-                } else if(agentName.equals(RMAXQ.getType())) {
-                    agents.add( RMAXQ.generateLearningAgentFactory(hierarchyMap.get(hierarchy), config, hierarchy+"-"+agentName));
-                } else if(agentName.equals(KAPPA.getType())) {
-                    agents.add(KAPPA.generateLearningAgentFactory(hierarchyMap.get(hierarchy), config, hierarchy+"-"+agentName));
-                } else if(agentName.equals(Q_LEARNING.getType())){
-                    Task qLearningWrapper = new NonprimitiveTask(baseDomain);
-                    agents.add( Q_LEARNING.generateLearningAgentFactory(qLearningWrapper, config, hierarchy+"-"+agentName));
-                }
+                Task qLearningWrapper = new NonprimitiveTask(baseDomain);
+                LearningAgentFactory factory = AgentType.generate(hierarchy+"-"+agentName, config, expertRoot, hierGenRoot, qLearningWrapper);
+                agents.add(factory);
             }
         }
 
@@ -85,7 +87,7 @@ public class HierarchicalCharts {
         }
 
         if (config.output.visualizer.episodes){
-            EpisodeSequenceVisualizer ev = new EpisodeSequenceVisualizer(config.getVisualizer(config), baseDomain, episodes);;
+            EpisodeSequenceVisualizer ev = new EpisodeSequenceVisualizer(config.getVisualizer(config), baseDomain, episodes, 550, 550);
             ev.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
             ev.initGUI();
         }
@@ -97,34 +99,34 @@ public class HierarchicalCharts {
         State source = config.generateState();
         StateGenerator stateGenerator = new ConstantStateGenerator(source);
 
-        OOSADomain base = (OOSADomain) config.domain.getDomainGenerator().generateDomain();
-//        Task[] hierarchies = new Task[2];
-//        if (config.domain instanceof TaxiConfig) {
-//
-//            Task expertRoot = expert.createHierarchy(config, false);
-//            Task hierGenRoot = hierGen.createHierarchy(config, false);
-//            base = expert.getBaseDomain();
-//            expert.setBaseDomain(base);
-//            expert.setBaseDomain(base);
-//            hierarchies[0] = expertRoot;
-//            hierarchies[1] = hierGenRoot;
-//        } else if (config.domain instanceof CleanupConfig) {
-//
-//            CleanupHierarchyAMDP expert = new CleanupHierarchyAMDP();
+        OOSADomain base;
+        Task[] hierarchies = new Task[2];
+        if (config.domain instanceof TaxiConfig) {
+            TaxiHierarchy expert = new TaxiHierarchyExpert();
+            TaxiHierarchy hierGen = new TaxiHierarchyHierGen();
+            Task expertRoot = expert.createHierarchy(config, false);
+            Task hierGenRoot = hierGen.createHierarchy(config, false);
+            base = expert.getBaseDomain();
+            expert.setBaseDomain(base);
+            expert.setBaseDomain(base);
+            hierarchies[0] = expertRoot;
+            hierarchies[1] = hierGenRoot;
+        } else if (config.domain instanceof CleanupConfig) {
+            CleanupHierarchyAMDP expert = new CleanupHierarchyAMDP();
 //            CleanupHierarchyHierGen hierGen = new CleanupHierarchyHierGen();
-//            Task expertRoot = expert.createHierarchy(config, false);
+            Task expertRoot = expert.createHierarchy(config, false);
 //            Task hierGenRoot = hierGen.createHierarchy(config, false);
-//            base = expert.getBaseDomain();
-//            expert.setBaseDomain(base);
+            base = expert.getBaseDomain();
+            expert.setBaseDomain(base);
 //            hierGen.setBaseDomain(base);
-//            hierarchies[0] = expertRoot;
+            hierarchies[0] = expertRoot;
 //            hierarchies[1] = hierGenRoot;
-//        } else {
-//            throw new RuntimeException("Error: unknown domain in config file");
-//        }
+        } else {
+            throw new RuntimeException("Error: unknown domain in config file");
+        }
 
-        //runtime
-        //get the starting time from execution
+//        //runtime
+//        //get the starting time from execution
 //        long actualTimeElapsed = System.currentTimeMillis();
 //        SimpleDateFormat sdf = new SimpleDateFormat("MMM dd,yyyy HH:mm:ss");
 //        Date resultdate = new Date(actualTimeElapsed);
@@ -132,7 +134,7 @@ public class HierarchicalCharts {
 //        long startTime = System.nanoTime();
 //        System.out.println("Trial current nano time: " + startTime);
 
-        createCharts(config, base, stateGenerator);
+        createCharts(config, base, hierarchies, stateGenerator);
 
 //        long estimatedTime = System.nanoTime() - startTime;
 //        System.out.println("The estimated elapsed trial time is " + estimatedTime);
@@ -142,7 +144,7 @@ public class HierarchicalCharts {
 
     public static void main(String[] args) {
 
-        String configFile = "config/liftCopter/classic.yaml";
+        String configFile = "config/taxi/classic-2-fickle.yaml";
         if(args.length > 0) {
             configFile = args[0];
         }

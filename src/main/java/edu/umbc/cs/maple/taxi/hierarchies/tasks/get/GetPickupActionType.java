@@ -20,7 +20,8 @@ public class GetPickupActionType extends ObjectParameterizedActionType {
         String passengerName = params[0];
         ObjectInstance passenger = state.object(passengerName);
         // passenger location is not IN_TAXI if it matches Taxi location
-        boolean atPassenger =  passenger.get(ATT_LOCATION).equals(state.getTaxiAtt(ATT_LOCATION));
+        ObjectInstance taxi = state.getTaxi();
+        boolean atPassenger =  passenger.get(ATT_LOCATION).equals(taxi.get(ATT_LOCATION));
         return atPassenger;
     }
 }
