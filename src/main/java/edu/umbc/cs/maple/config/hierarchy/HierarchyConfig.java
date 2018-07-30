@@ -52,11 +52,13 @@ public class HierarchyConfig {
                 if(childTaskName.endsWith("_np")){
                     childTasksList.add(buildTask(childTaskName.split("_")[0], childActionType));
                 }else if(childTaskName.endsWith("_p")){
-                 //   childActionType = ((SADomain)baseDomain).getAction(childTaskName.split("_")[0]);
-                    childTasksList.add(new PrimitiveTask(childActionType, ((OOSADomain)baseDomain)));
+                    // primitive actions need access to the "true" model to report the reward received when executed
+                    homeDomain.setModel(((OOSADomain)baseDomain).getModel());
+                    childTasksList.add(new PrimitiveTask(childActionType, homeDomain));
                 }
             }
             Task finalizedTask = taskConfig.finalizeTask(childTasksList, actionType);
+            finalizedTask.setDomain(homeDomain);
             taskMap.put(taskName, finalizedTask);
             return finalizedTask;
         }

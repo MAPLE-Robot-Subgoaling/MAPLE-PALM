@@ -230,7 +230,7 @@ public class PALMLearningAgent implements LearningAgent {
             int stepsAfter = steps;
             int stepsTaken = stepsAfter - stepsBefore;
             if (stepsTaken == 0) {
-                System.err.println("took a 0 step action");
+                System.err.println("took a 0 step action " + action + " for " + task);
             }
 
             baseState = e.stateSequence.get(e.stateSequence.size() - 1);

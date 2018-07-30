@@ -570,6 +570,23 @@ public class Cleanup implements DomainGenerator {
         return dist;
     }
 
+    public static boolean isAdjacent(OOState state, String[] params) {
+        String objectName = params[0];
+        ObjectInstance object = state.object(objectName);
+        ObjectInstance agent = state.objectsOfClass(CLASS_AGENT).get(0);
+        if (agent == null) { return false; }
+        int aX = (int) agent.get(ATT_X);
+        int aY = (int) agent.get(ATT_Y);
+        int oX = (int) object.get(ATT_X);
+        int oY = (int) object.get(ATT_Y);
+        int dX = Math.abs(aX - oX);
+        int dY = Math.abs(aY - oY);
+        // one of X or Y needs to be 0 and the other 1
+        if ((dX == 0 && dY == 1) || (dX == 1 && dY == 0)) {
+            return true;
+        }
+        return false;
+    }
 
     public static void main(String[] args) {
 
