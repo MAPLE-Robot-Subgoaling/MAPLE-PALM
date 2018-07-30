@@ -4,6 +4,8 @@ import burlap.mdp.core.TerminalFunction;
 import burlap.mdp.core.oo.propositional.PropositionalFunction;
 import burlap.mdp.core.oo.state.OOState;
 import burlap.mdp.core.state.State;
+import edu.umbc.cs.maple.config.DomainGoal;
+import edu.umbc.cs.maple.utilities.ContradictionPF;
 
 public class GoalFailTF implements TerminalFunction {
 
@@ -14,6 +16,13 @@ public class GoalFailTF implements TerminalFunction {
 
     public GoalFailTF(){
         // for de/serialization
+    }
+
+    public GoalFailTF(DomainGoal goal) {
+        this.goalPF = goal;
+        this.goalParams = new String[]{}; // empty, goal has its own params embedded inside it
+        this.failPF = new ContradictionPF();
+        this.failParams = new String[]{};
     }
 
     public GoalFailTF(PropositionalFunction goalPF, String[] goalParams, PropositionalFunction failPF, String[] failParams) {

@@ -18,13 +18,14 @@ import edu.umbc.cs.maple.taxi.state.TaxiLocation;
 import edu.umbc.cs.maple.taxi.state.TaxiPassenger;
 import edu.umbc.cs.maple.taxi.state.TaxiWall;
 import edu.umbc.cs.maple.taxi.stategenerator.TaxiStateFactory;
+import edu.umbc.cs.maple.utilities.OOSADomainGenerator;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static edu.umbc.cs.maple.taxi.TaxiConstants.*;
 
-public class Taxi implements DomainGenerator{
+public class Taxi extends OOSADomainGenerator {
 
     //parameters dictating probabilities of the model
     private RewardFunction rf;
@@ -244,6 +245,16 @@ public class Taxi implements DomainGenerator{
                 domain, eps);
         v.setDefaultCloseOperation(v.EXIT_ON_CLOSE);
         v.initGUI();
+    }
+
+    @Override
+    public void setTf(TerminalFunction tf) {
+        this.tf = tf;
+    }
+
+    @Override
+    public void setRf(RewardFunction rf) {
+        this.rf = rf;
     }
 
 }

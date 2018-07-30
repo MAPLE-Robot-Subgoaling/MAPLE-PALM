@@ -1,6 +1,5 @@
 package edu.umbc.cs.maple.config.taxi;
 
-import burlap.mdp.auxiliary.DomainGenerator;
 import burlap.visualizer.Visualizer;
 import edu.umbc.cs.maple.config.DomainConfig;
 import edu.umbc.cs.maple.config.ExperimentConfig;
@@ -8,6 +7,7 @@ import edu.umbc.cs.maple.taxi.Taxi;
 import edu.umbc.cs.maple.taxi.TaxiVisualizer;
 import edu.umbc.cs.maple.taxi.state.TaxiState;
 import edu.umbc.cs.maple.taxi.stategenerator.TaxiStateFactory;
+import edu.umbc.cs.maple.utilities.OOSADomainGenerator;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -78,7 +78,7 @@ public class TaxiConfig extends DomainConfig {
     }
 
     @Override
-    public DomainGenerator getDomainGenerator() {
+    public OOSADomainGenerator initializeDomainGenerator() {
         if(fickle != 0){
             return new Taxi(true, fickle, correct_move);
         } else{

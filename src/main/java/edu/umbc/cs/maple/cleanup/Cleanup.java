@@ -22,6 +22,9 @@ import burlap.visualizer.Visualizer;
 import edu.umbc.cs.maple.cleanup.pfs.InRegion;
 import edu.umbc.cs.maple.cleanup.state.*;
 import edu.umbc.cs.maple.config.ExperimentConfig;
+import edu.umbc.cs.maple.utilities.ExceptionReward;
+import edu.umbc.cs.maple.utilities.ExceptionTermination;
+import edu.umbc.cs.maple.utilities.OOSADomainGenerator;
 
 import javax.swing.*;
 import java.util.ArrayList;
@@ -29,7 +32,7 @@ import java.util.Arrays;
 import java.util.List;
 
 
-public class Cleanup implements DomainGenerator {
+public class Cleanup extends OOSADomainGenerator {
 
 
     public static final String ATT_X = "x";
@@ -347,11 +350,11 @@ public class Cleanup implements DomainGenerator {
         TerminalFunction tf = this.tf;
         if (rf == null) {
             System.err.println("Warning: calling generateDomain with null reward function");
-            rf = new NullRewardFunction();
+            rf = new ExceptionReward();
         }
         if (tf == null) {
             System.err.println("Warning: calling generateDomain with null terminal function");
-            tf = new NullTermination();
+            tf = new ExceptionTermination();
         }
         FactoredModel model = new FactoredModel(smodel, rf, tf);
         domain.setModel(model);

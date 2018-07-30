@@ -23,7 +23,7 @@ import java.util.*;
 public class HierarchicalCharts {
 
 
-    public static void createCharts(final ExperimentConfig config, OOSADomain baseDomain, StateGenerator stateGenerator) {
+    private static void createCharts(final ExperimentConfig config, OOSADomain baseDomain, StateGenerator stateGenerator) {
         SimulatedEnvironment env;
 
         env = new SimulatedEnvironment(baseDomain, stateGenerator);
@@ -78,8 +78,7 @@ public class HierarchicalCharts {
     public static void run(ExperimentConfig config) {
         State source = config.generateState();
         StateGenerator stateGenerator = new ConstantStateGenerator(source);
-        OOSADomain base = (OOSADomain) config.domain.getDomainGenerator().generateDomain();
-        createCharts(config, base, stateGenerator);
+        createCharts(config, (OOSADomain) config.baseDomain, stateGenerator);
     }
 
     public static void main(String[] args) {

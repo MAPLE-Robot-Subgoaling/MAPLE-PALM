@@ -21,22 +21,19 @@ public class HierarchyConfig {
     public String name;
     private Map<String,TaskConfig> hierarchyConfigMap;
     private Map<String,Task> taskMap;
-    private DomainGenerator baseDomainGenerator;
-    private Domain baseDomain;
     boolean doPlanOnly = false; // set up handling for planning only
 
     public HierarchyConfig(){}
 
     public Task buildRoot(ExperimentConfig e){
         taskMap = new HashMap<String,Task>();
-        baseDomain = baseDomainGenerator.generateDomain();
-        NonprimitiveTask root = (NonprimitiveTask) buildTask("root", new SolveActionType());
+        NonprimitiveTask root = (NonprimitiveTask) buildTask(e,"root", new SolveActionType());
         AMDPRootGoalPF goalPF= (AMDPRootGoalPF) root.getTf().getGoalPF();
         goalPF.setGoal(e.goal);
         return root;
     }
 
-    public Task buildTask(String taskName, ActionType actionType){
+    public Task buildTask(ExperimentConfig experimentConfig, String taskName, ActionType actionType){
         if(taskMap.containsKey(taskName)){
             return taskMap.get(taskName);
         }
@@ -47,10 +44,10 @@ public class HierarchyConfig {
             for (String childTaskName: taskConfig.getChildren()) {
                 ActionType childActionType = homeDomain.getAction(childTaskName.split("_")[0]);
                 if(childTaskName.endsWith("_np")){
-                    childTasksList.add(buildTask(childTaskName.split("_")[0], childActionType));
+                    childTasksList.add(buildTask(experimentConfig, childTaskName.split("_")[0], childActionType));
                 }else if(childTaskName.endsWith("_p")){
                     // primitive actions need access to the "true" model to report the reward received when executed
-                    homeDomain.setModel(((OOSADomain)baseDomain).getModel());
+                    homeDomain.setModel(((OOSADomain)experimentConfig.baseDomain).getModel());
                     if(childTaskName.startsWith("thrust")){
                         childActionType = homeDomain.getAction("thrust");
                     }
@@ -98,7 +95,6 @@ public class HierarchyConfig {
 
         InputStream input = ClassLoader.getSystemResourceAsStream(configPath);
         HierarchyConfig config = (HierarchyConfig) yaml.load(input);
-        config.baseDomainGenerator = experimentConfig.domain.getDomainGenerator();
         config.buildRoot(experimentConfig);
         return config;
     }

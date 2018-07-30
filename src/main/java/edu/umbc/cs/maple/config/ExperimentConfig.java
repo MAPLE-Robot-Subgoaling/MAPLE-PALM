@@ -2,6 +2,7 @@ package edu.umbc.cs.maple.config;
 
 import burlap.debugtools.RandomFactory;
 import burlap.mdp.core.state.State;
+import burlap.mdp.singleagent.oo.OOSADomain;
 import burlap.visualizer.Visualizer;
 import edu.umbc.cs.maple.cleanup.CleanupGoal;
 import edu.umbc.cs.maple.cleanup.CleanupGoalDescription;
@@ -40,6 +41,7 @@ public class ExperimentConfig {
     public OutputConfig output;
     public double gamma;
     public DomainGoal goal;
+    public Object baseDomain;
 
 
     public static ExperimentConfig load(String configFile) throws FileNotFoundException {
@@ -101,7 +103,11 @@ public class ExperimentConfig {
             System.err.println("Could not find configuration file");
             System.exit(404);
         }
+        config.baseDomain = config.generateDomain();
         return config;
     }
 
+    public Object generateDomain() {
+        return domain.generateDomain(goal);
+    }
 }

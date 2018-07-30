@@ -8,6 +8,7 @@ import edu.umbc.cs.maple.liftCopter.LiftCopter;
 import edu.umbc.cs.maple.liftCopter.LiftCopterVisualizer;
 import edu.umbc.cs.maple.liftCopter.state.LiftCopterState;
 import edu.umbc.cs.maple.liftCopter.stateGenerator.LiftCopterStateFactory;
+import edu.umbc.cs.maple.utilities.OOSADomainGenerator;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -38,7 +39,7 @@ public class LCConfig extends DomainConfig {
     }
 
     @Override
-    public DomainGenerator getDomainGenerator() {
+    public OOSADomainGenerator initializeDomainGenerator() {
         if(fickle != 0){
             return new LiftCopter(correct_move);
         } else{

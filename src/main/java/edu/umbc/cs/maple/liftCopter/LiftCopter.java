@@ -14,6 +14,7 @@ import edu.umbc.cs.maple.liftCopter.state.LiftCopterCargo;
 import edu.umbc.cs.maple.liftCopter.state.LiftCopterLocation;
 import edu.umbc.cs.maple.liftCopter.state.LiftCopterWall;
 import edu.umbc.cs.maple.liftCopter.stateGenerator.LiftCopterStateFactory;
+import edu.umbc.cs.maple.utilities.OOSADomainGenerator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +22,7 @@ import java.util.List;
 import static edu.umbc.cs.maple.liftCopter.LiftCopterConstants.*;
 
 
-public class LiftCopter implements DomainGenerator {
+public class LiftCopter extends OOSADomainGenerator {
 
     private RewardFunction rf;
     private TerminalFunction tf;
@@ -149,5 +150,15 @@ public class LiftCopter implements DomainGenerator {
 
         exp.initGUI();
 
+    }
+
+    @Override
+    public void setTf(TerminalFunction tf) {
+        this.tf = tf;
+    }
+
+    @Override
+    public void setRf(RewardFunction rf) {
+        this.rf = rf;
     }
 }

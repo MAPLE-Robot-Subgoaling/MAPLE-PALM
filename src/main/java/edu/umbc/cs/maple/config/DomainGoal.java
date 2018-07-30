@@ -1,15 +1,16 @@
 package edu.umbc.cs.maple.config;
 
 import burlap.mdp.auxiliary.stateconditiontest.StateConditionTest;
+import burlap.mdp.core.oo.propositional.PropositionalFunction;
 
 import java.util.List;
 
-public abstract class DomainGoal<T extends GoalDescription> implements StateConditionTest {
+public abstract class DomainGoal<T extends GoalDescription> extends PropositionalFunction implements StateConditionTest {
 
     protected List<T> goalDescriptions;
 
     public DomainGoal(){
-
+        super("ERRORNOTSET", new String[]{});
     }
 
     public List<T> getGoalDescriptions(){
@@ -19,4 +20,5 @@ public abstract class DomainGoal<T extends GoalDescription> implements StateCond
     public void setGoalDescriptions(List<T> goalDescriptions) {
         this.goalDescriptions = goalDescriptions;
     }
+
 }

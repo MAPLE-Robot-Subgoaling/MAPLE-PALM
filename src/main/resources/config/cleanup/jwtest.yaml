@@ -1,25 +1,25 @@
 domain: !!edu.umbc.cs.maple.config.cleanup.CleanupConfig
-    state: twoRooms
-    num_blocks: 2
-    minX: 0
-    minY: 0
-    maxX: 7
-    maxY: 5
-    rewardGoal: 0.0
-    rewardBase: 0.0
-    rewardNoop: 0.0
-    rewardPull: 0.0
+  state: twoRooms
+  num_blocks: 2
+  minX: 0
+  minY: 0
+  maxX: 7
+  maxY: 5
+  rewardGoal: 1.0
+  rewardBase: 0.0
+  rewardNoop: 0.0
+  rewardPull: 0.0
     
 goal: !!edu.umbc.cs.maple.cleanup.CleanupGoal
-    goalDescriptions:
-      - pf: !!edu.umbc.cs.maple.cleanup.pfs.BlockInRoomPF {}
-        params:
-         - block0
-         - room1
+  goalDescriptions:
+    - pf: !!edu.umbc.cs.maple.cleanup.pfs.BlockInRoomPF {}
+      params:
+       - block0
+       - room1
 
 agents:
   cross: {cleanup-jw}
-  palm: {cleanup-jw}
+  palm:  {cleanup-jw}
 
 seed: 555543
 episodes: 100

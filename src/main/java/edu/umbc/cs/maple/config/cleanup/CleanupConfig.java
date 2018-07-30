@@ -1,14 +1,20 @@
 package edu.umbc.cs.maple.config.cleanup;
 
 import burlap.mdp.auxiliary.DomainGenerator;
+import burlap.mdp.core.Domain;
 import burlap.mdp.core.state.State;
 import burlap.visualizer.Visualizer;
 import edu.umbc.cs.maple.cleanup.Cleanup;
+import edu.umbc.cs.maple.cleanup.CleanupGoal;
 import edu.umbc.cs.maple.cleanup.CleanupVisualizer;
 import edu.umbc.cs.maple.cleanup.state.CleanupRandomStateGenerator;
 import edu.umbc.cs.maple.cleanup.state.CleanupState;
 import edu.umbc.cs.maple.config.DomainConfig;
+import edu.umbc.cs.maple.config.DomainGoal;
 import edu.umbc.cs.maple.config.ExperimentConfig;
+import edu.umbc.cs.maple.hierarchy.framework.GoalFailRF;
+import edu.umbc.cs.maple.hierarchy.framework.GoalFailTF;
+import edu.umbc.cs.maple.utilities.OOSADomainGenerator;
 
 import static edu.umbc.cs.maple.config.ExperimentConfig.UNSET_DOUBLE;
 import static edu.umbc.cs.maple.config.ExperimentConfig.UNSET_INT;
@@ -52,8 +58,9 @@ public class CleanupConfig extends DomainConfig {
     }
 
     @Override
-    public DomainGenerator getDomainGenerator() {
-        return new Cleanup(minX, minY, maxX, maxY);
+    public OOSADomainGenerator initializeDomainGenerator() {
+        Cleanup cleanup = new Cleanup(minX, minY, maxX, maxY);
+        return cleanup;
     }
 
 

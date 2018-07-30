@@ -1,6 +1,7 @@
 package edu.umbc.cs.maple.cleanup;
 
 import burlap.mdp.core.oo.propositional.GroundedProp;
+import burlap.mdp.core.oo.state.OOState;
 import burlap.mdp.core.state.State;
 import edu.umbc.cs.maple.cleanup.state.CleanupState;
 import edu.umbc.cs.maple.config.DomainGoal;
@@ -25,6 +26,11 @@ public class CleanupGoal extends DomainGoal<CleanupGoalDescription> {
             }
         }
         return true;
+    }
+
+    @Override
+    public boolean isTrue(OOState s, String[] params) {
+        return satisfies(s);
     }
 
     public String toString() {
