@@ -30,7 +30,6 @@ public class Taxi extends OOSADomainGenerator {
     //parameters dictating probabilities of the model
     private RewardFunction rf;
     private TerminalFunction tf;
-    private boolean fickle;
     private double fickleProbability;
     private double[][] moveDynamics;
     private double correctMoveProbability;
@@ -41,14 +40,6 @@ public class Taxi extends OOSADomainGenerator {
     public void setCorrectMoveProb(double correctMoveProbability){
         this.correctMoveProbability = correctMoveProbability;
         setMoveDynamics(correctMoveProbability);
-    }
-
-    public boolean getFickle() {
-        return fickle;
-    }
-
-    public void setFickle(boolean fickle) {
-        this.fickle = fickle;
     }
 
     public double getFickleProbability() {
@@ -72,19 +63,16 @@ public class Taxi extends OOSADomainGenerator {
             double fickleprob, double correctMoveprob) {
         rf = r;
         tf = t;
-        this.fickle = fickle;
         this.fickleProbability = fickleprob;
         setMoveDynamics(correctMoveprob);
     }
 
     /**
      * create a taxi domain generator
-     * @param fickle whether the domain is fickle
      * @param fickleprob transitionProbability the passenger that is just picked up will change their goal
      * @param correctMoveprob transitionProbability the taxi will go in the correct direction they select
      */
-    public Taxi(boolean fickle, double fickleprob, double correctMoveprob) {
-        this.fickle = fickle;
+    public Taxi(double fickleprob, double correctMoveprob) {
         this.fickleProbability = fickleprob;
         setMoveDynamics(correctMoveprob);
         this.rf = new TaxiRewardFunction();
@@ -93,13 +81,11 @@ public class Taxi extends OOSADomainGenerator {
 
     /**
      * create a taxi domain generator
-     * @param fickle whether the domain is fickle
      * @param fickleprob transitionProbability the passenger that is just picked up will change their goal
      * @param movement a array saying the transitionProbability of execution each action (2nd index) given
      * the selected action (1rt action)
      */
-    public Taxi(boolean fickle, double fickleprob, double[][] movement) {
-        this.fickle = fickle;
+    public Taxi(double fickleprob, double[][] movement) {
         this.fickleProbability = fickleprob;
         this.moveDynamics = movement;
         this.rf = new TaxiRewardFunction();
@@ -110,7 +96,7 @@ public class Taxi extends OOSADomainGenerator {
      * creates a non fickle deterministic taxi domain generator
      */
     public Taxi() {
-        this(false, 0, 1);
+        this(0, 1);
     }
 
     /**
@@ -147,7 +133,7 @@ public class Taxi extends OOSADomainGenerator {
         domain.addStateClass(CLASS_TAXI, TaxiAgent.class).addStateClass(CLASS_PASSENGER, TaxiPassenger.class)
                 .addStateClass(CLASS_LOCATION, TaxiLocation.class).addStateClass(CLASS_WALL, TaxiWall.class);
 
-        TaxiModel model = new TaxiModel(moveDynamics, fickle, fickleProbability);
+        TaxiModel model = new TaxiModel(moveDynamics, fickleProbability);
         FactoredModel taxiModel = new FactoredModel(model, rf, tf);
         domain.setModel(taxiModel);
 
@@ -266,10 +252,6 @@ public class Taxi extends OOSADomainGenerator {
     @Override
     public TerminalFunction getTf() {
         return tf;
-    }
-
-    public boolean isFickle() {
-        return fickle;
     }
 
     public double getCorrectMoveProbability() {
