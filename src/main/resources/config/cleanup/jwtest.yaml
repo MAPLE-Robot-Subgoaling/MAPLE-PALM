@@ -20,7 +20,7 @@ goal: !!edu.umbc.cs.maple.cleanup.CleanupGoal
 agents:
   palm: {cleanup-jw}
 
-seed: 32558
+seed: 3333222111
 episodes: 100
 max_steps: 1000
 trials: 1
