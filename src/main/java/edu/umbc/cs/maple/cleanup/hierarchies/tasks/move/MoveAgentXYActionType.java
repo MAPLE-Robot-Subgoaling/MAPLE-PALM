@@ -5,7 +5,6 @@ import burlap.mdp.core.action.ActionType;
 import burlap.mdp.core.oo.state.OOState;
 import burlap.mdp.core.oo.state.ObjectInstance;
 import burlap.mdp.core.state.State;
-import edu.umbc.cs.maple.cleanup.state.CleanupAgent;
 import edu.umbc.cs.maple.hierarchy.framework.StringFormat;
 
 import java.util.ArrayList;
