@@ -11,7 +11,7 @@ agents:
 #    - palmHierGen
 #    - kappaExpert
 #    - kappaHierGen
-#    - qLearning
+#    - ql
 episodes: 1000
 max_steps: 100000
 trials: 1

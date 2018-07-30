@@ -77,12 +77,4 @@ public class TaxiConfig extends DomainConfig {
         return TaxiVisualizer.getVisualizer(config.output.visualizer.width, config.output.visualizer.height);
     }
 
-    @Override
-    public OOSADomainGenerator initializeDomainGenerator() {
-        if(fickle != 0){
-            return new Taxi(true, fickle, correct_move);
-        } else{
-            return new Taxi(false, 0.0, correct_move);
-        }
-    }
 }

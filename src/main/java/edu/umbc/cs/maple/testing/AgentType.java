@@ -60,7 +60,7 @@ public enum AgentType {
         }
 
     },
-    Q_LEARNING("qLearning", "QL"){
+    Q_LEARNING("ql", "QL"){
         @Override
         public LearningAgent getLearningAgent(Task root, HashableStateFactory hsf, ExperimentConfig config) {
             OOSADomain baseDomain = root.getDomain();

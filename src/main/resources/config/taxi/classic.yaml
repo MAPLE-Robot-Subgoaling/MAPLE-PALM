@@ -7,7 +7,7 @@ agents:
  # rmaxq: {taxi-expert}
   palm: {taxi-hiergen}
   # kappa: {taxi-expert, taxi-hiergen}
- # qLearning: {taxi-expert}
+ # ql: {taxi-expert}
 
 seed: 4
 episodes: 200

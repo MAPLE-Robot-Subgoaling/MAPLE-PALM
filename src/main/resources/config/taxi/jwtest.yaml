@@ -2,17 +2,13 @@ domain: !!edu.umbc.cs.maple.config.taxi.TaxiConfig
   state: medium-3passengers
   correct_move: 1.0
   fickle: 0.00
+  tf: !!edu.umbc.cs.maple.taxi.TaxiTerminalFunction {}
+  rf: !!edu.umbc.cs.maple.taxi.TaxiRewardFunction {}
+    
+goal: !!edu.umbc.cs.maple.taxi.TaxiGoal {}
 
 agents:
-#  - rmaxqExpert
-#  - rmaxqHierGen
-  - palmExpert
-  - palmExpertCross
-#  - palmExpertWithNavGiven
-#  - palmHierGen
-#  - kappaExpert
-#  - kappaHierGen
-#  - qLearning
+  palm: {taxi-expert}
 
 seed: 77665544
 episodes: 300

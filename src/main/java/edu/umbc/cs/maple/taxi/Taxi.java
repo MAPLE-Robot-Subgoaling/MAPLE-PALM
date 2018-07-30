@@ -41,9 +41,7 @@ public class Taxi extends OOSADomainGenerator {
     public void setCorrectMoveProb(double correctMoveProbability){
         this.correctMoveProbability = correctMoveProbability;
         setMoveDynamics(correctMoveProbability);
-
     }
-
 
     public boolean getFickle() {
         return fickle;
@@ -141,6 +139,9 @@ public class Taxi extends OOSADomainGenerator {
 
     @Override
     public OOSADomain generateDomain() {
+
+        setMoveDynamics(correctMoveProbability);
+
         OOSADomain domain = new OOSADomain();
 
         domain.addStateClass(CLASS_TAXI, TaxiAgent.class).addStateClass(CLASS_PASSENGER, TaxiPassenger.class)
@@ -257,4 +258,25 @@ public class Taxi extends OOSADomainGenerator {
         this.rf = rf;
     }
 
+    @Override
+    public RewardFunction getRf() {
+        return rf;
+    }
+
+    @Override
+    public TerminalFunction getTf() {
+        return tf;
+    }
+
+    public boolean isFickle() {
+        return fickle;
+    }
+
+    public double getCorrectMoveProbability() {
+        return correctMoveProbability;
+    }
+
+    public void setCorrectMoveProbability(double correctMoveProbability) {
+        this.correctMoveProbability = correctMoveProbability;
+    }
 }

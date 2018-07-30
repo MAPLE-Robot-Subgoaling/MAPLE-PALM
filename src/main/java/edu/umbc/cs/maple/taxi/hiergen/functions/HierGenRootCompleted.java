@@ -4,11 +4,12 @@ package edu.umbc.cs.maple.taxi.hiergen.functions;
 import burlap.mdp.core.oo.propositional.PropositionalFunction;
 import burlap.mdp.core.oo.state.OOState;
 import burlap.mdp.core.oo.state.ObjectInstance;
+import edu.umbc.cs.maple.hierarchy.framework.AMDPRootGoalPF;
 import edu.umbc.cs.maple.taxi.hiergen.root.state.TaxiHierGenRootState;
 
 import static edu.umbc.cs.maple.taxi.TaxiConstants.*;
 
-public class HierGenRootCompleted extends PropositionalFunction {
+public class HierGenRootCompleted extends AMDPRootGoalPF {
 
     public HierGenRootCompleted(){
         super("root", new String[]{});

@@ -108,6 +108,6 @@ public class ExperimentConfig {
     }
 
     public Object generateDomain() {
-        return domain.generateDomain(goal);
+        return domain.generateDomain();
     }
 }

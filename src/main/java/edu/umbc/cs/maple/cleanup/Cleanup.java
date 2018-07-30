@@ -105,8 +105,6 @@ public class Cleanup extends OOSADomainGenerator {
 
     private RewardFunction rf;
     private TerminalFunction tf;
-    private String[] goalParams;
-    private CleanupGoal cleanupGoal;
 
     private int minX = 0;
     private int minY = 0;
@@ -770,4 +768,5 @@ public class Cleanup extends OOSADomainGenerator {
     public TerminalFunction getTf() {
         return tf;
     }
+
 }

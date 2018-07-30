@@ -11,7 +11,7 @@ agents:
   - palmHierGen
 #  - kappaExpert
 #  - kappaHierGen
-#  - qLearning
+#  - ql
 
 seed: 68598
 episodes: 200

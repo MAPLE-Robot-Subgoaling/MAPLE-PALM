@@ -14,7 +14,7 @@ public class CleanupGoal extends DomainGoal<CleanupGoalDescription> {
     public CleanupGoal(List<CleanupGoalDescription> goals) {this.goalDescriptions = goals;}
 
     public CleanupGoal() {
-
+        super("CleanupGoal", new String[]{});
     }
 
     @Override

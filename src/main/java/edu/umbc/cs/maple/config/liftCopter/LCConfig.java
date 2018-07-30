@@ -37,13 +37,4 @@ public class LCConfig extends DomainConfig {
     public Visualizer getVisualizer(ExperimentConfig config) {
         return LiftCopterVisualizer.getVisualizer(config.output.visualizer.width, config.output.visualizer.height);
     }
-
-    @Override
-    public OOSADomainGenerator initializeDomainGenerator() {
-        if(fickle != 0){
-            return new LiftCopter(correct_move);
-        } else{
-            return new LiftCopter(correct_move);
-        }
-    }
 }

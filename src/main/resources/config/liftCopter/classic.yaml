@@ -5,7 +5,7 @@ domain: !!edu.umbc.cs.maple.config.liftCopter.LCConfig
 agents:
  # rmaxq: {taxi-expert}
   palm: {LC-expert}
- # qLearning: {taxi-expert}
+ # ql: {taxi-expert}
 
 seed: 4
 episodes: 200

@@ -1,21 +1,25 @@
 domain: !!edu.umbc.cs.maple.config.cleanup.CleanupConfig
-  state: twoRooms
-  num_blocks: 2
-  minX: 0
-  minY: 0
-  maxX: 7
-  maxY: 5
-  rewardGoal: 1.0
-  rewardBase: 0.0
-  rewardNoop: 0.0
-  rewardPull: 0.0
-    
-goal: !!edu.umbc.cs.maple.cleanup.CleanupGoal
-  goalDescriptions:
-    - pf: !!edu.umbc.cs.maple.cleanup.pfs.BlockInRoomPF {}
-      params:
-       - block0
-       - room1
+  domainGenerator: !!edu.umbc.cs.maple.cleanup.Cleanup
+    minX: 0
+    minY: 0
+    maxX: 7
+    maxY: 5
+    tf: !!edu.umbc.cs.maple.cleanup.CleanupTF
+      goal: &goal !!edu.umbc.cs.maple.cleanup.CleanupGoal
+        goalDescriptions:
+          - pf: !!edu.umbc.cs.maple.cleanup.pfs.BlockInRoomPF {}
+            params:
+             - block0
+             - room1
+    rf: !!edu.umbc.cs.maple.cleanup.CleanupRF
+      goal: *goal
+      goalReward: 1.0
+      defaultReward: 0.0
+      noopReward: 0.0
+      pullReward: 0.0
+  state: twoRooms-3blocks
+
+goal: *goal
 
 agents:
   cross: {cleanup-jw}

@@ -236,7 +236,7 @@ public class PALMLearningAgent implements LearningAgent {
             // and still have steps it can take
             && (steps < maxSteps || maxSteps == -1)
             // and it hasn't solved the root goal, keep planning
-            //  disabled for now: //  && !(groundedRoot.isComplete(groundedRoot.mapState(baseState)))
+            && !(groundedRoot.isComplete(groundedRoot.mapState(currentStateGrounded)))
                 ) {
 
             actionCount++;

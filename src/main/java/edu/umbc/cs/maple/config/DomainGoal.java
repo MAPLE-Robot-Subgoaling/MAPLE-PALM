@@ -10,7 +10,11 @@ public abstract class DomainGoal<T extends GoalDescription> extends Propositiona
     protected List<T> goalDescriptions;
 
     public DomainGoal(){
-        super("ERRORNOTSET", new String[]{});
+        this("ERRORNOTSET", new String[]{});
+    }
+
+    public DomainGoal(String name, String[] params) {
+        super(name, params);
     }
 
     public List<T> getGoalDescriptions(){
