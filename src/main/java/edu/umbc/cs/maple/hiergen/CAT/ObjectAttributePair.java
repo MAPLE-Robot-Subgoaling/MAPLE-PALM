@@ -48,4 +48,15 @@ public class ObjectAttributePair extends RelationVariable {
         return Objects.hash(objectName, attributeName);
     }
 
+    @Override
+    public int compareTo(RelationVariable o) {
+        if (!(o instanceof ObjectAttributePair)) { return 0; }
+        ObjectAttributePair that = (ObjectAttributePair) o;
+        int a = this.attributeName.compareTo(that.attributeName);
+        if (a != 0) { return a; }
+        int b = this.objectName.compareTo(that.objectName);
+        if (b != 0) { return b; }
+        return 0;
+    }
+
 }

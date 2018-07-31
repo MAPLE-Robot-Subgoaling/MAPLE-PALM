@@ -42,4 +42,11 @@ public class RelationConstant extends RelationVariable {
         return value.toString();
     }
 
+
+    @Override
+    public int compareTo(RelationVariable o) {
+        if (!(o instanceof RelationConstant)) { return 0; }
+        RelationConstant that = (RelationConstant) o;
+        return this.value.toString().compareTo(that.value.toString());
+    }
 }

@@ -2,7 +2,7 @@ package edu.umbc.cs.maple.hiergen.CAT;
 
 import java.util.Objects;
 
-public class Relation<T extends RelationVariable, S extends RelationVariable> {
+public class Relation<T extends RelationVariable, S extends RelationVariable> implements Comparable<Relation> {
 
     protected T left;
     protected S right;
@@ -68,4 +68,14 @@ public class Relation<T extends RelationVariable, S extends RelationVariable> {
     public String toString() {
         return left + " " + relationType + " " + right;
     }
+
+    @Override
+    public int compareTo(Relation that) {
+        int a = this.left.compareTo(that.left);
+        if (a != 0) { return a; }
+        int b = this.right.compareTo(that.right);
+        if (b != 0) { return b; }
+        return this.relationType.compareTo(that.relationType);
+    }
+
 }

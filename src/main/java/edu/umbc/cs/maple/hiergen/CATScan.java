@@ -111,14 +111,14 @@ public class CATScan {
     public static void enforceUniquePreconditions(SubCAT subcat) {
         // all incoming arcs labeled with a particular variable v come from the same causal action in the CAT
 
-        System.out.println(subcat);
+//        System.out.println(subcat);
 
         Map<String, List<CausalEdge>> variableToEdges = new LinkedHashMap<>();
 
-        System.out.println("incoming...");
+//        System.out.println("incoming...");
         List<CausalEdge> incoming = subcat.getIncoming();
         for (CausalEdge edge : incoming) {
-            System.out.println(edge + " " + subcat.getCat().getActions()[edge.getStart()] + " " + subcat.getCat().getActions()[edge.getEnd()]);
+//            System.out.println(edge + " " + subcat.getCat().getActions()[edge.getStart()] + " " + subcat.getCat().getActions()[edge.getEnd()]);
             String variable = edge.getRelevantVariable();
             List<CausalEdge> existing = variableToEdges.computeIfAbsent(variable, i -> new ArrayList<>());
             for (CausalEdge existingEdge : existing) {
@@ -154,7 +154,6 @@ public class CATScan {
 
             enforceUniquePreconditions(subcat);
 
-            System.out.println(subcat);
             subCATs.add(subcat);
 
         }

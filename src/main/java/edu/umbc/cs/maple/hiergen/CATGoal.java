@@ -8,6 +8,7 @@ import edu.umbc.cs.maple.hiergen.CAT.*;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 import static edu.umbc.cs.maple.utilities.BurlapConstants.POINTER_REFERENCE;
 
@@ -114,7 +115,7 @@ public class CATGoal {
             System.out.println(relation);
         }
 
-        Set<AttributeRelation> globalRelations = new HashSet<>();
+        Set<AttributeRelation> globalRelations = new TreeSet<>();
         globalRelations.addAll(globalConstantRelations);
         globalRelations.addAll(globalEqualToRelations);
         return globalRelations;

@@ -25,15 +25,15 @@ public class HierBuilder {
             for (int i = 0; i < list.size(); i++) {
                 CATrajectory cat = cats.get(i);
                 SubCAT subCAT = list.get(i);
-                System.out.print(counter + " " + relation + " ");// + subCAT.getActionIndexes());
-//                Set<Integer> actionIndexes = subCAT.getActionIndexes();
-//                for (Integer actionIndex : actionIndexes) {
-//                    System.out.print(" " + cat.getActions()[actionIndex]);
-//                    if (actionIndex == cat.getEndIndex()) {
-//                        System.out.println("***");
-//                    }
-//                }
-//                System.out.println("");
+                System.out.print(counter + " " + relation + " " + subCAT.getActionIndexes());
+                Set<Integer> actionIndexes = subCAT.getActionIndexes();
+                for (Integer actionIndex : actionIndexes) {
+                    System.out.print(" " + cat.getActions()[actionIndex]);
+                    if (actionIndex == cat.getEndIndex()) {
+                        System.out.println("***");
+                    }
+                }
+                System.out.println("");
                 counter++;
             }
         }
