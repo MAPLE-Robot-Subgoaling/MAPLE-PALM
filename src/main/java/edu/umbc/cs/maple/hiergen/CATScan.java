@@ -10,11 +10,12 @@ public class CATScan {
     public static int DEBUG_CODE_CATSCAN = 12013123;
 
     // input: a CAT, the relevant variables
-    // output: a seeded set of action indexes
-    protected static Set<Integer> seedActionIndexes(CATrajectory cat, Collection<ObjectAttributePair> variables) {
+    // output: initial subCATs
+    protected static SubCAT seedSubCAT(CATrajectory cat, Collection<ObjectAttributePair> variables) {
         int catStart = cat.getStartIndex();
         int catEnd = cat.getEndIndex();
-        Set<Integer> actionIndexes = new TreeSet<>();
+//        Set<Integer> actionIndexes = new TreeSet<>();
+        SubCAT subcat = new SubCAT(cat);
         Set<CausalEdge> edges = cat.getEdges();
         for (ObjectAttributePair variable : variables) {
 
@@ -36,39 +37,45 @@ public class CATScan {
 
                 String relevantVariable = edge.getRelevantVariable();
                 // if its relevant variable is this one, and not already recorded: add it
-                if (relevantVariable.equals(variableName) && !actionIndexes.contains(edgeStart)) {
-                    actionIndexes.add(edge.getStart());
+                if (relevantVariable.equals(variableName) && !subcat.contains(edgeStart)) {
+                    subcat.add(edgeStart);
                 }
 
             }
         }
-        return actionIndexes;
+        return subcat;
     }
 
-    protected static Set<Integer> computeActionIndexes(CATrajectory cat, Set<Integer> actionIndexes) {
-        String[] actions = cat.getActions();
+    protected static void assembleSubCAT(SubCAT subcat) {
+        String[] actions = subcat.getCat().getActions();
         int prevSize;
         do {
-            prevSize = actionIndexes.size();
+            prevSize = subcat.size();
             for (int i = 0; i < actions.length; i++) {
-                boolean connectedInto = isConnectedToKnownAction(cat, actionIndexes, i);
-                boolean connectedOutOf = isConnectedToUnknownAction(cat, actionIndexes, i);
+                boolean connectedInto = isConnectedToKnownAction(subcat, i);
+                boolean connectedOutOf = isConnectedToUnknownAction(subcat, i);
                 if (connectedInto && !connectedOutOf) {
-                    actionIndexes.add(i);
+                    subcat.add(i);
+                    if (subcat.getCat().getActions()[i].contains("pick")) {
+                        connectedInto = isConnectedToKnownAction(subcat, i);
+                        connectedOutOf = isConnectedToUnknownAction(subcat, i);
+                        System.out.println(connectedInto + " " + connectedOutOf);
+                    }
                 }
             }
-        } while (actionIndexes.size() != prevSize);
-        return actionIndexes;
+        } while (subcat.size() != prevSize);
     }
 
-    protected static boolean isConnectedToKnownAction(CATrajectory cat, Set<Integer> actionIndexes, int iIndex) {
+    protected static boolean isConnectedToKnownAction(SubCAT subcat, int iIndex) {
+        CATrajectory cat = subcat.getCat();
         boolean connected = false;
-        List<Integer> nextEdges = cat.findEdges(iIndex);
+        List<CausalEdge> nextEdges = cat.findOutgoingEdges(iIndex);
         if (nextEdges == null) {
             return connected;
         }
-        for (Integer jIndex : nextEdges) {
-            if (actionIndexes.contains(jIndex)) {
+        for (CausalEdge edge : nextEdges) {
+            int jIndex = edge.getEnd();
+            if (subcat.contains(jIndex)) {
                 // if there exists some action index, jIndex, in the known set to which
                 // iIndex is connected, then it is true
                 connected = true;
@@ -79,18 +86,20 @@ public class CATScan {
 
     }
 
-    protected static Set<Integer> getUnknownActionIndexes(CATrajectory cat, Set<Integer> knownActionIndexes) {
+    protected static Set<Integer> getUnknownActionIndexes(SubCAT subcat) {
         Set<Integer> unknownActionIndexes = new HashSet<>();
+        CATrajectory cat = subcat.getCat();
         for (int i = 0; i < cat.getActions().length; i++) {
-            if (!knownActionIndexes.contains(i)) { unknownActionIndexes.add(i); }
+            if (!subcat.contains(i)) { unknownActionIndexes.add(i); }
         }
         return unknownActionIndexes;
     }
 
-    protected static boolean isConnectedToUnknownAction(CATrajectory cat, Set<Integer> actionIndexes, int iIndex) {
-        Set<Integer> unknownActionIndexes = getUnknownActionIndexes(cat, actionIndexes);
+    protected static boolean isConnectedToUnknownAction(SubCAT subcat, int iIndex) {
+        Set<Integer> unknownActionIndexes = getUnknownActionIndexes(subcat);
         boolean connected = false;
-        List<Integer> nextEdges = cat.findEdges(iIndex);
+        CATrajectory cat = subcat.getCat();
+        List<CausalEdge> nextEdges = cat.findEdges(iIndex);
         if (nextEdges == null) {
             return connected;
         }
@@ -105,11 +114,20 @@ public class CATScan {
         return connected;
     }
 
-    public static Set<Integer> enforceUniquePreconditions(CATrajectory cat, Set<Integer> actionIndexes) {
-
-
-
-        return actionIndexes;
+    public static void enforceUniquePreconditions(SubCAT subcat) {
+        // all incoming arcs labeled with a particular variable v come from the same causal action in the CAT
+        CATrajectory cat = subcat.getCat();
+        for (Integer index : subcat.getActionIndexes()) {
+            System.out.println(index + " " + cat.getActions()[index]);
+            List<CausalEdge> edges = cat.findIncomingEdges(index);
+            if (edges != null) {
+                for (CausalEdge edge : edges) {
+                    System.out.println("\t"+edge.getRelevantVariable());
+                }
+            } else {
+                System.out.println("no edge");
+            }
+        }
     }
 
     public static List<SubCAT> scan(List<CATrajectory> cats, Collection<ObjectAttributePair> variables) {
@@ -119,15 +137,13 @@ public class CATScan {
         List<SubCAT> subCATs = new ArrayList<>();
         for (CATrajectory cat : cats) {
 
-            Set<Integer> actionIndexes = seedActionIndexes(cat, variables);
+            SubCAT subcat = seedSubCAT(cat, variables);
 
-            actionIndexes = computeActionIndexes(cat, actionIndexes);
+            assembleSubCAT(subcat);
 
-//             enforce unique preconditions (line 8 in CAT-Scan)
-            actionIndexes = enforceUniquePreconditions(cat, actionIndexes);
+            enforceUniquePreconditions(subcat);
 
-            SubCAT subCAT = new SubCAT(actionIndexes);
-            subCATs.add(subCAT);
+            subCATs.add(subcat);
 
         }
 

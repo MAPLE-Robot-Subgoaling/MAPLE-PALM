@@ -133,16 +133,36 @@ public class CATrajectory {
 //        return -1;
 //    }
 
-    public List<Integer> findEdges(int s) {
+    public List<CausalEdge> findIncomingEdges(int endIndex) {
+        List<CausalEdge> ai = null;
+        for (CausalEdge edge : edges) {
+            if (edge.getEnd() == endIndex) {
+                if (ai == null) { ai = new ArrayList<>(); }
+                ai.add(edge);
+            }
+        }
+        return ai;
+    }
+
+    public List<CausalEdge> findOutgoingEdges(int startIndex) {
+        List<CausalEdge> ai = null;
+        for (CausalEdge edge : edges) {
+            if (edge.getStart() == startIndex) {
+                if (ai == null) { ai = new ArrayList<>(); }
+                ai.add(edge);
+            }
+        }
+        return ai;
+    }
+
+    public List<Integer> findEdges(int startIndex) {
         List<Integer> ai = null;
         for (CausalEdge edge : edges) {
-            if (edge.getStart() == s) {
-                if (ai == null)
-                    ai = new ArrayList<>();
+            if (edge.getStart() == startIndex) {
+                if (ai == null) { ai = new ArrayList<>(); }
                 ai.add(edge.getEnd());
             }
         }
-
         return ai;
     }
 

@@ -6,22 +6,41 @@ import java.util.*;
 
 public class SubCAT {
 
+    protected CATrajectory cat;
     protected Set<Integer> actionIndexes;
-    protected Set<CausalEdge> // put causal edges (incoming outgoing arcs) in here
 
-    public SubCAT( ) {
-        actionIndexes = new TreeSet<>();
+    public SubCAT(CATrajectory cat) {
+        this.cat = cat;
+        this.actionIndexes = new TreeSet<Integer>();
     }
 
-    public SubCAT(Set<Integer> actionIndexes) {
-        this.actionIndexes = actionIndexes;
+    public boolean contains(int actionIndex) {
+        return actionIndexes.contains(actionIndex);
+    }
+
+    public void add(int actionIndex) {
+        actionIndexes.add(actionIndex);
+    }
+
+    public CATrajectory getCat() {
+        return cat;
+    }
+
+    public int size() {
+        return actionIndexes.size();
     }
 
     public Set<Integer> getActionIndexes() {
         return actionIndexes;
     }
 
-    public void setActionIndexes(Set<Integer> actionIndexes) {
-        this.actionIndexes = actionIndexes;
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        for (Integer i : actionIndexes) {
+            sb.append(cat.getActions()[i]);
+            sb.append(", ");
+        }
+        return sb.toString();
     }
+
 }

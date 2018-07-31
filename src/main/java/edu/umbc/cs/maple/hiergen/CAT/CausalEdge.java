@@ -55,18 +55,18 @@ public class CausalEdge implements Comparable<CausalEdge> {
         CausalEdge that = (CausalEdge) o;
         return start == that.start &&
                 end == that.end &&
-                Objects.equals(relavantVariable, that.relavantVariable);
+                Objects.equals(relevantVariable, that.relevantVariable);
     }
 
     @Override
     public int hashCode() {
 
-        return Objects.hash(start, end, relavantVariable);
+        return Objects.hash(start, end, relevantVariable);
     }
 
     @Override
     public String toString() {
-        return "start=" + start + ", end=" + end + ", " + relavantVariable;
+        return "start=" + start + ", end=" + end + ", " + relevantVariable;
     }
 
     @Override
@@ -77,7 +77,7 @@ public class CausalEdge implements Comparable<CausalEdge> {
         int b = Integer.compare(this.start, that.start);
         b *= -1; // flip order
         if (b != 0) { return b; }
-        int c = this.relavantVariable.compareTo(that.relavantVariable);
+        int c = this.relevantVariable.compareTo(that.relevantVariable);
         return c;
     }
 }
