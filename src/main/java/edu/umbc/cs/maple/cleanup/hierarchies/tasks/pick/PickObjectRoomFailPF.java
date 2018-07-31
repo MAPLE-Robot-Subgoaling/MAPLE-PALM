@@ -5,6 +5,9 @@ import burlap.mdp.core.oo.state.OOState;
 
 public class PickObjectRoomFailPF extends PropositionalFunction {
 
+    public PickObjectRoomFailPF(){
+        super("pick", new String[]{});
+    }
     public PickObjectRoomFailPF(String name, String[] parameterClasses) {
         super(name, parameterClasses);
     }

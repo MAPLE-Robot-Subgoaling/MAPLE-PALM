@@ -2,8 +2,8 @@ package edu.umbc.cs.maple.taxi.hiergen.functions;
 
 import burlap.mdp.core.oo.propositional.PropositionalFunction;
 import burlap.mdp.core.oo.state.OOState;
-import edu.umbc.cs.maple.taxi.hiergen.task7.state.TaxiHierGenTask7Passenger;
 import edu.umbc.cs.maple.taxi.hiergen.TaxiHierGenState;
+import edu.umbc.cs.maple.taxi.hiergen.task7.state.TaxiHierGenTask7Passenger;
 
 import static edu.umbc.cs.maple.taxi.TaxiConstants.ATT_IN_TAXI;
 import static edu.umbc.cs.maple.taxi.TaxiConstants.PF_TASK_7;

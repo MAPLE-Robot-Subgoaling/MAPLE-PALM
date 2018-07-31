@@ -5,6 +5,7 @@ import burlap.behavior.policy.Policy;
 import burlap.behavior.policy.PolicyUtils;
 import burlap.behavior.singleagent.Episode;
 import burlap.behavior.singleagent.learning.LearningAgent;
+import burlap.behavior.singleagent.planning.Planner;
 import burlap.behavior.valuefunction.ValueFunction;
 import burlap.mdp.core.action.Action;
 import burlap.mdp.core.oo.ObjectParameterizedAction;
@@ -17,10 +18,13 @@ import burlap.mdp.singleagent.environment.extensions.EnvironmentServer;
 import burlap.mdp.singleagent.oo.OOSADomain;
 import burlap.statehashing.HashableStateFactory;
 import edu.umbc.cs.maple.config.ExperimentConfig;
+import edu.umbc.cs.maple.config.solver.FittedVIConfig;
+import edu.umbc.cs.maple.config.solver.SarsaLambdaConfig;
+import edu.umbc.cs.maple.config.solver.SolverConfig;
 import edu.umbc.cs.maple.hierarchy.framework.GroundedTask;
+import edu.umbc.cs.maple.hierarchy.framework.NonprimitiveTask;
 import edu.umbc.cs.maple.hierarchy.framework.StringFormat;
 import edu.umbc.cs.maple.hierarchy.framework.Task;
-import edu.umbc.cs.maple.taxi.hierarchies.tasks.put.state.TaxiPutState;
 import edu.umbc.cs.maple.utilities.DiscountProvider;
 import edu.umbc.cs.maple.utilities.IntegerParameterizedAction;
 import edu.umbc.cs.maple.utilities.ValueIterationMultiStep;
@@ -131,6 +135,7 @@ public class PALMLearningAgent implements LearningAgent {
         // run a rollout on the models resulting from the episode just computed,
         // to check if the root AMDP has reached a solution yet
         Action action = runDebugRollout(groundedRoot, initialState, maxSteps);
+        System.out.println(e.rewardSequence.get(e.rewardSequence.size()-1));
         runDebugRollout(taskNames.get(action.toString()), initialState, maxSteps);
 
         long estimatedTime = System.nanoTime() - start;
@@ -201,7 +206,6 @@ public class PALMLearningAgent implements LearningAgent {
                 // action was not masked
                 action = maskedAction;
             }
-
             result = baseEnv.executeAction(action);
 
             SimulatedEnvironment simEnv = (SimulatedEnvironment) ((EnvironmentServer) baseEnv).getEnvironmentDelegate();
@@ -232,7 +236,7 @@ public class PALMLearningAgent implements LearningAgent {
             // and still have steps it can take
             && (steps < maxSteps || maxSteps == -1)
             // and it hasn't solved the root goal, keep planning
-            //  disabled for now: //  && !(groundedRoot.isComplete(groundedRoot.mapState(baseState)))
+            && !(groundedRoot.isComplete(groundedRoot.mapState(currentStateGrounded)))
                 ) {
 
             actionCount++;
@@ -254,7 +258,7 @@ public class PALMLearningAgent implements LearningAgent {
             int stepsAfter = steps;
             int stepsTaken = stepsAfter - stepsBefore;
             if (stepsTaken == 0) {
-                System.err.println("took a 0 step action");
+                System.err.println("took a 0 step action " + action + " for " + task);
             }
 
             tabLevel = tabLevel.substring(0, tabLevel.length() - 1);
@@ -312,26 +316,26 @@ public class PALMLearningAgent implements LearningAgent {
         return pseudoReward;
     }
 
-    /**
-     * add the children of the given task to the action name lookup
-     *
-     * @param gt the current grounded task
-     * @param s  the current state
-     */
     protected void addChildrenToMap(GroundedTask gt, State s) {
+        String taskName = gt.toString();
+        if (!taskNames.containsKey(taskName)) {
+            taskNames.put(taskName, gt);
+            System.out.println("Adding taskName: " + taskName);
+        }
         List<GroundedTask> children = gt.getGroundedChildTasks(s);
         for (GroundedTask child : children) {
-            taskNames.put(child.toString(), child);
+            String childName = child.toString();
+            if (!taskNames.containsKey(childName)) {
+                taskNames.put(childName, child);
+                System.out.println("Adding child taskName: " + childName);
+            }
         }
     }
 
     protected GroundedTask nextSubtask(GroundedTask task, Action action, State currentStateAbstract) {
         String actionName = StringFormat.parameterizedActionName(action);
+        addChildrenToMap(task, currentStateAbstract);
         GroundedTask subtask = this.taskNames.get(actionName);
-        if (subtask == null) {
-            addChildrenToMap(task, currentStateAbstract);
-            subtask = this.taskNames.get(actionName);
-        }
         return subtask;
     }
 
@@ -348,13 +352,29 @@ public class PALMLearningAgent implements LearningAgent {
         OOSADomain domain = task.getDomain(model, params);
         // must use discountProvider instead of gamma
         DiscountProvider discountProvider = model.getDiscountProvider();
-        ValueIterationMultiStep planner = new ValueIterationMultiStep(domain, hashingFactory, maxDelta, maxIterationsInModelPlanner, discountProvider);
-        planner.toggleReachabiltiyTerminalStatePruning(true);
-        ValueFunction knownValueFunction = task.valueFunction;
-        if (knownValueFunction != null) {
-            planner.setValueFunctionInitialization(knownValueFunction);
+        SolverConfig solverConfig = ((NonprimitiveTask)task.getTask()).getSolverConfig();
+        Policy policy;
+        if(solverConfig.getType().equals("ValueIterationMultiStep")){
+            solverConfig.setDomain(domain);
+            solverConfig.setDiscountProvider(discountProvider);
+            solverConfig.setHashingFactory(hashingFactory);
+            solverConfig.setMaxDelta(maxDelta);
+            solverConfig.setMaxIterations(maxIterationsInModelPlanner);
+        } else if(solverConfig.getType().equals("FittedVI")){
+            solverConfig.setDomain(domain);
+            solverConfig.setMaxDelta(maxDelta);
+            solverConfig.setMaxIterations(maxIterationsInModelPlanner);
+            ((FittedVIConfig)solverConfig).setGamma(discountProvider.getGamma());
+        } else if(solverConfig.getType().equals("SarsaLambda")){
+            solverConfig.setDomain(domain);
+            ((SarsaLambdaConfig)solverConfig).setGamma(discountProvider.getGamma());
         }
-        Policy policy = planner.planFromState(s);
+
+//        ValueFunction knownValueFunction = task.valueFunction;
+        Planner planner = solverConfig.generateSolver(null);//knownValueFunction);
+
+        policy = planner.planFromState(s);
+
         Action action = policy.action(s);
         boolean debug = false;
         if (debug) {
@@ -377,7 +397,7 @@ public class PALMLearningAgent implements LearningAgent {
         }
 
         // allows the planner to start from where it left off
-        task.valueFunction = planner;
+//        task.valueFunction = (ValueFunction) planner;
 
         // clear the model parameters (sanity check)
         model.setParams(null);

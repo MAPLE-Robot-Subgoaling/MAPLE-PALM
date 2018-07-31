@@ -4,8 +4,8 @@ import burlap.mdp.core.oo.state.OOState;
 import burlap.mdp.core.oo.state.ObjectInstance;
 import burlap.mdp.core.state.State;
 import burlap.statehashing.WrappedHashableState;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 import edu.umbc.cs.maple.utilities.DeepCopyForShallowCopyState;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.util.Arrays;
 import java.util.List;

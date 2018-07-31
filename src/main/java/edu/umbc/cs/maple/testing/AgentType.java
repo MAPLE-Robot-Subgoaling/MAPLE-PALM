@@ -28,7 +28,15 @@ import static edu.umbc.cs.maple.utilities.BurlapConstants.DEFAULT_Q_INIT;
 
 public enum AgentType {
 
-    PALM_EXPERT_CROSS("palmExpertCross", "PALM-Ex-Cross"){
+    PALM("palm", "PALM"){
+        @Override
+        public LearningAgent getLearningAgent(Task root, HashableStateFactory hsf, ExperimentConfig config) {
+            PALMModelGenerator modelGen = new PALMRmaxModelGenerator(hsf, config);
+            LearningAgent agent = new PALMLearningAgent(root, modelGen, hsf, config);
+            return agent;
+        }
+    },
+    CROSS("cross", "Cross-PALM") {
         @Override
         public LearningAgent getLearningAgent(Task root, HashableStateFactory hsf, ExperimentConfig config) {
             PALMModelGenerator modelGen = new PALMRmaxModelGenerator(hsf, config);
@@ -36,19 +44,29 @@ public enum AgentType {
             return agent;
         }
     },
-    PALM_EXPERT("palmExpert", "PALM-Expert"){
+    RMAXQ("rmaxq", "RMAXQ"){
         @Override
         public LearningAgent getLearningAgent(Task root, HashableStateFactory hsf, ExperimentConfig config) {
-            PALMModelGenerator modelGen = new PALMRmaxModelGenerator(hsf, config);
-            LearningAgent agent = new PALMLearningAgent(root, modelGen, hsf, config);
+            return new RmaxQLearningAgent(root, hsf, config);
+        }
+
+    },
+    KAPPA("kappa", "κ"){
+        @Override
+        public LearningAgent getLearningAgent(Task root, HashableStateFactory hsf, ExperimentConfig config) {
+            ExpectedRmaxModelGenerator modelGen = new ExpectedRmaxModelGenerator(hsf, config);
+            PALMLearningAgent agent = new PALMLearningAgent(root, modelGen, hsf, config);
             return agent;
         }
+
     },
-    PALM_HIERGEN("palmHierGen", "PALM-HierGen"){
+    Q_LEARNING("ql", "QL"){
         @Override
         public LearningAgent getLearningAgent(Task root, HashableStateFactory hsf, ExperimentConfig config) {
-            PALMModelGenerator modelGen = new PALMRmaxModelGenerator(hsf, config);
-            LearningAgent agent = new PALMLearningAgent(root, modelGen, hsf, config);
+            OOSADomain baseDomain = (OOSADomain) config.baseDomain;
+            double qInit = DEFAULT_Q_INIT;
+            double learningRate = DEFAULT_LEARNING_RATE;
+            LearningAgent agent = new QLearning(baseDomain, config.gamma, hsf, qInit, learningRate);
             return agent;
         }
     },
@@ -60,51 +78,8 @@ public enum AgentType {
             return agent;
         }
 
-    },
-    RMAXQ_EXPERT("rmaxqExpert", "RMAXQ-Expert"){
-        @Override
-        public LearningAgent getLearningAgent(Task root, HashableStateFactory hsf, ExperimentConfig config) {
-            return new RmaxQLearningAgent(root, hsf, config);
-        }
+    }
 
-    },
-    RMAXQ_HIERGEN("rmaxqHierGen", "RMAXQ-HierGen"){
-        @Override
-        public LearningAgent getLearningAgent(Task root, HashableStateFactory hsf, ExperimentConfig config) {
-            return new RmaxQLearningAgent(root, hsf, config);
-        }
-
-    },
-
-    KAPPA_EXPERT("kappaExpert", "κ-Expert"){
-        @Override
-        public LearningAgent getLearningAgent(Task root, HashableStateFactory hsf, ExperimentConfig config) {
-            ExpectedRmaxModelGenerator modelGen = new ExpectedRmaxModelGenerator(hsf, config);
-            PALMLearningAgent agent = new PALMLearningAgent(root, modelGen, hsf, config);
-            return agent;
-        }
-
-    },
-    KAPPA_HIERGEN("kappaHierGen", "κ-HierGen"){
-        @Override
-        public LearningAgent getLearningAgent(Task root, HashableStateFactory hsf, ExperimentConfig config) {
-            ExpectedRmaxModelGenerator modelGen = new ExpectedRmaxModelGenerator(hsf, config);
-            PALMLearningAgent agent = new PALMLearningAgent(root, modelGen, hsf, config);
-            return agent;
-        }
-
-    },
-    Q_LEARNING("qLearning", "QL"){
-        @Override
-        public LearningAgent getLearningAgent(Task root, HashableStateFactory hsf, ExperimentConfig config) {
-            OOSADomain baseDomain = root.getDomain();
-            double qInit = DEFAULT_Q_INIT;
-            double learningRate = DEFAULT_LEARNING_RATE;
-            LearningAgent agent = new QLearning(baseDomain, config.gamma, hsf, qInit, learningRate);
-            return agent;
-        }
-
-    },
 
     ;
 
@@ -134,26 +109,12 @@ public enum AgentType {
         return getLearningAgent(root, hsf, config);
     }
 
-
+    public static HashableStateFactory hsf = null;
     public static HashableStateFactory initializeHashableStateFactory(boolean identifierIndependent) {
-//        return new CachedHashableStateFactory(identifierIndependent);
-//        return new SimpleHashableStateFactory(identifierIndependent);
-        return new BugfixHashableStateFactory(identifierIndependent);
-    }
-
-    public static LearningAgentFactory generate(String agentTypeString, ExperimentConfig config, Task expertRoot, Task hierGenRoot, Task qLearningWrapper) {
-        AgentType agentType = AgentType.getByType(agentTypeString);
-        Task root = null;
-        if (agentTypeString.contains("Expert")) {
-            root = expertRoot;
-        } else if (agentTypeString.contains("HierGen")) {
-            root = hierGenRoot;
-        } else if (agentTypeString.contains("qLearning")) {
-            root = qLearningWrapper;
-        } else {
-            throw new RuntimeException("Unknown root task for " + agentType + " in AgentType");
+        if (hsf == null) {
+            hsf = new BugfixHashableStateFactory(identifierIndependent);
         }
-        return agentType.generateLearningAgentFactory(root, config);
+        return hsf;
     }
 
     public static AgentType getByType(String name) {
@@ -166,17 +127,17 @@ public enum AgentType {
     }
 
     public static final boolean DEFAULT_IDENTIFIER_INDEPENDENT = false;
-    public LearningAgentFactory generateLearningAgentFactory(Task root, ExperimentConfig config) {
+    public static LearningAgentFactory generateLearningAgentFactory(Task root, ExperimentConfig config, String agentTypeName, String agentName) {
+        AgentType agentType = AgentType.getByType(agentTypeName);
+        String extra = agentName.contains("hier") ? "-H" : "";
         LearningAgentFactory agent = new LearningAgentFactory() {
-
             @Override
             public String getAgentName() {
-                return getPlotterDisplayName();
+                return agentType.getPlotterDisplayName() + extra;
             }
-
             @Override
             public LearningAgent generateAgent() {
-                return getLearningAgent(root, config);
+                return agentType.getLearningAgent(root, config);
             }
         };
         return agent;

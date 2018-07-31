@@ -170,4 +170,7 @@ public abstract class Task {
         return params;
     }
 
+    public void setDomain(OOSADomain domain) {
+        this.domain = domain;
+    }
 }

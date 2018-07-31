@@ -1,47 +1,52 @@
 domain: !!edu.umbc.cs.maple.config.cleanup.CleanupConfig
-    state: spiral
-    num_blocks: 1
+    state: twoRooms
+    num_blocks: 2
     minX: 0
     minY: 0
-    maxX: 11
-    maxY: 11
+    maxX: 9
+    maxY: 9
     rewardGoal: 1.0
     rewardBase: 0.0
     rewardNoop: 0.0
     rewardPull: 0.0
-
-seed: 473031
+    
+goal: !!edu.umbc.cs.maple.cleanup.CleanupGoal
+    goalDescriptions:
+      - pf: !!edu.umbc.cs.maple.cleanup.pfs.BlockInRoomPF {}
+        params:
+         - block0
+         - room1
 
 agents:
-#  - qLearning
-    - palmExpert
+  palm: {cleanup-moveXY}
+
+seed: 32558
 episodes: 100
-max_steps: 10000
+max_steps: 1000
 trials: 1
-gamma: 0.99
+gamma: 0.95
 
 identifier_independent: false
 planning:
-  rollouts: 1000
+  rollouts: 10000
 
 rmax:
-  vmax: 10.0
-  threshold: 2
+  vmax: 1.0
+  threshold: 5
   max_delta: 0.0001
-  max_delta_rmaxq: 0.0001
   max_iterations_in_model: 1000
   use_multitime_model: true
-  use_model_sharing: false
+  wait_for_children: true
 
 output:
   csv:
     enabled: true
-    output: results/ramdp-cleanup-3rooms-2block.csv
+    output: results/palm-cleanup-3rooms2blocks.csv
 
   chart:
     enabled: true
 
-    width: 500
+    width: 300
     height: 300
     columns: 2
     max_height: 900

@@ -9,7 +9,8 @@ import edu.umbc.cs.maple.utilities.DeepCopyForShallowCopyState;
 
 import java.util.*;
 
-import static edu.umbc.cs.maple.taxi.TaxiConstants.*;
+import static edu.umbc.cs.maple.taxi.TaxiConstants.CLASS_PASSENGER;
+import static edu.umbc.cs.maple.taxi.TaxiConstants.CLASS_TAXI;
 
 public class TaxiHierGenTask7State extends TaxiHierGenState implements MutableOOState, DeepCopyForShallowCopyState {
 

@@ -7,7 +7,7 @@ import edu.umbc.cs.maple.taxi.state.TaxiState;
 
 import static edu.umbc.cs.maple.taxi.TaxiConstants.*;
 
-public class TaxiTerminalFunction implements TerminalFunction{
+public class TaxiTerminalFunction implements TerminalFunction {
     //the taxi domain is terminal when all passengers are at their goal
     //and have been picked up and not in the taxi anymore
 

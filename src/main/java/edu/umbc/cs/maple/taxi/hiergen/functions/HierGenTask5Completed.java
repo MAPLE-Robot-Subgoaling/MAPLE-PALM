@@ -7,9 +7,7 @@ import edu.umbc.cs.maple.taxi.hiergen.TaxiHierGenState;
 import edu.umbc.cs.maple.taxi.hiergen.actions.HierGenTask5Action;
 import edu.umbc.cs.maple.taxi.hiergen.actions.HierGenTask5ActionType;
 
-import static edu.umbc.cs.maple.taxi.TaxiConstants.ATT_X;
-import static edu.umbc.cs.maple.taxi.TaxiConstants.ATT_Y;
-import static edu.umbc.cs.maple.taxi.TaxiConstants.PF_TASK_5;
+import static edu.umbc.cs.maple.taxi.TaxiConstants.*;
 
 public class HierGenTask5Completed extends PropositionalFunction {
 

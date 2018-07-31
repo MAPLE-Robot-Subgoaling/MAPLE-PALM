@@ -4,7 +4,6 @@ import burlap.behavior.valuefunction.ValueFunction;
 import burlap.mdp.core.action.Action;
 import burlap.mdp.core.oo.ObjectParameterizedAction;
 import burlap.mdp.core.state.State;
-import burlap.mdp.singleagent.model.FullModel;
 import burlap.mdp.singleagent.oo.OOSADomain;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
@@ -117,7 +116,7 @@ public class GroundedTask {
     public boolean isFailure(State s){
         return t.isFailure(s, action);
     }
-    
+
     /**
      * pass the given state through the task's abstraction function
      * @param s the base state
@@ -188,12 +187,12 @@ public class GroundedTask {
 
         GroundedTask o = (GroundedTask) other;
         if(!this.formattedName.equals(o.formattedName)){
-            return false; 
+            return false;
         }
-        
+
         return true;
     }
-     
+
     @Override
     public int hashCode() {
         HashCodeBuilder hashCodeBuilder = new HashCodeBuilder(31, 7);

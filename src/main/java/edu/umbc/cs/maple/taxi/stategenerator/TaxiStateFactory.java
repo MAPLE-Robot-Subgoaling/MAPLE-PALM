@@ -1,14 +1,10 @@
 package edu.umbc.cs.maple.taxi.stategenerator;
 
+import burlap.debugtools.RandomFactory;
+import edu.umbc.cs.maple.taxi.state.*;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import burlap.debugtools.RandomFactory;
-import edu.umbc.cs.maple.taxi.state.TaxiAgent;
-import edu.umbc.cs.maple.taxi.state.TaxiLocation;
-import edu.umbc.cs.maple.taxi.state.TaxiPassenger;
-import edu.umbc.cs.maple.taxi.state.TaxiState;
-import edu.umbc.cs.maple.taxi.state.TaxiWall;
 
 import static edu.umbc.cs.maple.taxi.TaxiConstants.*;
 

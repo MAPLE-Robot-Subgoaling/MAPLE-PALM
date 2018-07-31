@@ -1,6 +1,5 @@
 package edu.umbc.cs.maple.taxi.hiergen.task7.state;
 
-import burlap.mdp.auxiliary.StateMapping;
 import burlap.mdp.core.oo.state.ObjectInstance;
 import burlap.mdp.core.state.State;
 import edu.umbc.cs.maple.taxi.hierarchies.interfaces.ParameterizedStateMapping;

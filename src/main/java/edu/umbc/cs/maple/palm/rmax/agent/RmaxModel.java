@@ -9,24 +9,16 @@ import burlap.mdp.singleagent.environment.EnvironmentOutcome;
 import burlap.mdp.singleagent.model.TransitionProb;
 import burlap.statehashing.HashableState;
 import burlap.statehashing.HashableStateFactory;
-import edu.umbc.cs.maple.hierarchy.framework.GroundedTask;
 import edu.umbc.cs.maple.hierarchy.framework.StringFormat;
 import edu.umbc.cs.maple.hierarchy.framework.Task;
 import edu.umbc.cs.maple.palm.agent.PALMModel;
 import edu.umbc.cs.maple.palm.agent.PossibleOutcome;
-import edu.umbc.cs.maple.taxi.hierarchies.tasks.put.state.TaxiPutState;
-import edu.umbc.cs.maple.utilities.BurlapConstants;
 import edu.umbc.cs.maple.utilities.DiscountProvider;
-import edu.umbc.cs.maple.utilities.ExpectedStepsDiscountProvider;
-import edu.umbc.cs.maple.utilities.OnlyInternalDiscountProvider;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static edu.umbc.cs.maple.taxi.TaxiConstants.ATT_GOAL_LOCATION;
-import static edu.umbc.cs.maple.taxi.hierarchies.tasks.put.state.PutStateMapper.PUT_PASSENGER_ALIAS;
 
 public abstract class RmaxModel extends PALMModel {
 

@@ -13,6 +13,7 @@ import static edu.umbc.cs.maple.taxi.TaxiConstants.*;
 public class TaxiRootState implements MutableOOState, DeepCopyForShallowCopyState {
 
     private TaxiRootAgent taxi;
+
     private Map<String, TaxiRootPassenger> passengers;
 
     public TaxiRootState(TaxiRootAgent taxi, List<TaxiRootPassenger> pass) {

@@ -7,8 +7,8 @@ import edu.umbc.cs.maple.config.ExperimentConfig;
 public abstract class Hierarchy {
 
     public static void setupKnownTFRF(NonprimitiveTask task) {
-        GoalFailTF tf = task.getGoalFailTF();
-        GoalFailRF rf = task.getGoalFailRF();
+        GoalFailTF tf = task.getTf();
+        GoalFailRF rf = task.getRf();
         FactoredModel model = (FactoredModel) task.getDomain().getModel();
         model.setTf(tf);
         model.setRf(rf);

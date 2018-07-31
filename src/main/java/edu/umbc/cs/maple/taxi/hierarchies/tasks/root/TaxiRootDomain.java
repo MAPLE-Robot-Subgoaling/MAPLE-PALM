@@ -15,7 +15,6 @@ import burlap.mdp.singleagent.model.FactoredModel;
 import burlap.mdp.singleagent.model.RewardFunction;
 import burlap.mdp.singleagent.oo.OOSADomain;
 import burlap.statehashing.HashableStateFactory;
-import burlap.statehashing.simple.SimpleHashableStateFactory;
 import edu.umbc.cs.maple.config.taxi.TaxiConfig;
 import edu.umbc.cs.maple.hierarchy.framework.GoalFailRF;
 import edu.umbc.cs.maple.hierarchy.framework.GoalFailTF;
@@ -24,7 +23,6 @@ import edu.umbc.cs.maple.taxi.functions.amdp.RootCompletedPF;
 import edu.umbc.cs.maple.taxi.functions.amdp.RootFailurePF;
 import edu.umbc.cs.maple.taxi.hierarchies.tasks.root.state.RootStateMapper;
 import edu.umbc.cs.maple.taxi.hierarchies.tasks.root.state.TaxiRootPassenger;
-import edu.umbc.cs.maple.taxi.stategenerator.TaxiStateFactory;
 import edu.umbc.cs.maple.utilities.BurlapConstants;
 
 import java.util.Random;

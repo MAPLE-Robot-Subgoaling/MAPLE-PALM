@@ -6,7 +6,8 @@ import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.oo.ObjectParameterizedActionType;
 import edu.umbc.cs.maple.taxi.hierarchies.TaxiGetPutState;
 
-import static edu.umbc.cs.maple.taxi.TaxiConstants.*;
+import static edu.umbc.cs.maple.taxi.TaxiConstants.ATT_LOCATION;
+import static edu.umbc.cs.maple.taxi.TaxiConstants.CLASS_TAXI;
 
 public class NavigateActionType extends ObjectParameterizedActionType {
 

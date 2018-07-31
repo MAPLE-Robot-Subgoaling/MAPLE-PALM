@@ -12,6 +12,8 @@ import edu.umbc.cs.maple.cleanup.CleanupGoalDescription;
 import edu.umbc.cs.maple.utilities.BurlapConstants;
 
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static edu.umbc.cs.maple.cleanup.Cleanup.*;
 
@@ -787,7 +789,6 @@ public class CleanupRandomStateGenerator implements StateGenerator {
         int dy0 = bigRoomBottom;
         int dy1 = bigRoomBottom;
         int dy2 = bigRoomBottom/2;
-        System.out.println("doors coord is: "+ dx0+","+ dx0+","+ dy0+","+ dy0+",");
         CleanupDoor door0 = new CleanupDoor("door0", dx0, dx0, dy0, dy0, Cleanup.LOCKABLE_STATES[0], Cleanup.SHAPE_DOOR, Cleanup.COLOR_GRAY);
         CleanupDoor door1 = new CleanupDoor("door1", dx1, dx1, dy1, dy1, Cleanup.LOCKABLE_STATES[0], Cleanup.SHAPE_DOOR, Cleanup.COLOR_GRAY);
         CleanupDoor door2 = new CleanupDoor("door2", dx2, dx2, dy2, dy2, Cleanup.LOCKABLE_STATES[0], Cleanup.SHAPE_DOOR, Cleanup.COLOR_GRAY);
@@ -866,8 +867,8 @@ public class CleanupRandomStateGenerator implements StateGenerator {
 
         int index = 0;
         while (numBlocks > 0) {
-            int bx = minY + rng.nextInt(getWidth());
-            int by = minY + rng.nextInt(getHeight());
+            int bx = minY + rng.nextInt(bigRoomRight/2);
+            int by = minY + rng.nextInt(bigRoomTop);
             if (s.isOpen(bx, by) && !s.agentAt(bx, by)) {
                 String shape = blockShapes.get(rng.nextInt(blockShapes.size()));
                 String color = blockColors.get(rng.nextInt(blockColors.size()));
@@ -1426,42 +1427,50 @@ public class CleanupRandomStateGenerator implements StateGenerator {
     }
 
 
-    public State getStateFor(String stateType, int numBlocks) {
-        State state = null;
-        if (stateType.equals("oneRoomOneDoor")) {
+    public State getStateFor(String stateType) {
+        String blockNumberRegex = "\\-(\\d+)blocks";
+        Pattern r = Pattern.compile(blockNumberRegex);
+        Matcher m = r.matcher(stateType);
+        String numString = "";
+        if (m.find()) {
+            numString = m.group(1);
+        }
+        int numBlocks = "".equals(numString) ? 1 : Integer.parseInt(numString);
+        State state;
+        if (stateType.matches("oneRoomOneDoor" + blockNumberRegex)) {
             state = generateOneRoomOneDoor();
-        } else if (stateType.equals("noRoomsOneDoor")) {
+        } else if (stateType.matches("noRoomsOneDoor" + blockNumberRegex)) {
             state = generateNoRoomsOneDoor(numBlocks);
-        } else if (stateType.equals("slidingBlock")) {
+        } else if (stateType.matches("slidingBlock" + blockNumberRegex)) {
             state = generateSlidingBlockPuzzle();
-        } else if (stateType.equals("twoRoomsOneDoor")) {
+        } else if (stateType.matches("twoRoomsOneDoor" + blockNumberRegex)) {
             state = generateTwoRoomsOneDoor();
-        } else if (stateType.equals("oneRoomFourDoors")) {
+        } else if (stateType.matches("oneRoomFourDoors" + blockNumberRegex)) {
             state = generateCentralRoomWithFourDoors(numBlocks);
-        } else if (stateType.equals("twoRoomsFourDoors")) {
+        } else if (stateType.matches("twoRoomsFourDoors" + blockNumberRegex)) {
             state = generateTwoRoomsWithFourDoors(numBlocks);
-        } else if (stateType.equals("threeRooms")){
+        } else if (stateType.matches("threeRooms" + blockNumberRegex)){
             state = generateThreeRooms(numBlocks);
-        } else if (stateType.equals("twoRooms")){
+        } else if (stateType.matches("twoRooms" + blockNumberRegex)){
             state = generateTwoRooms(numBlocks);
-        } else if (stateType.equals("donutCheckers")){
+        } else if (stateType.matches("donutCheckers" + blockNumberRegex)){
             state = generateDonutCheckersRooms(numBlocks);
-        } else if (stateType.equals("donutRooms")){
+        } else if (stateType.matches("donutRooms" + blockNumberRegex)){
             state = generateDonutRooms();
-        } else if (stateType.equals("classic")){
+        } else if (stateType.matches("classic" + blockNumberRegex)){
             state = generateClassic();
-        } else if (stateType.equals("1blockDebris")){
+        } else if (stateType.matches("1blockDebris" + blockNumberRegex)){
             state = generate1blockDebris();
-        } else if (stateType.equals("2blockDebris")){
+        } else if (stateType.matches("2blockDebris" + blockNumberRegex)){
             state = generate2blockDebris();
-        } else if (stateType.equals("2blockSolve")){
+        } else if (stateType.matches("2blockSolve" + blockNumberRegex)){
             state = generate2blockSolve();
-        } else if (stateType.equals("1blockCorner")){
+        } else if (stateType.matches("1blockCorner" + blockNumberRegex)){
             state = generate1blockCorner();
-        } else if (stateType.equals("spiral")){
+        } else if (stateType.matches("spiral" + blockNumberRegex)){
             state = generateSpiral();
         } else {
-            throw new RuntimeException("Error: unknown name for generating a random Cleanup state");
+            throw new RuntimeException("Error: unknown name for generating a random Cleanup state: " + stateType);
         }
         return state;
     }
