@@ -14,6 +14,7 @@ import edu.umbc.cs.maple.liftCopter.state.LiftCopterCargo;
 import edu.umbc.cs.maple.liftCopter.state.LiftCopterLocation;
 import edu.umbc.cs.maple.liftCopter.state.LiftCopterWall;
 import edu.umbc.cs.maple.liftCopter.stateGenerator.LiftCopterStateFactory;
+import edu.umbc.cs.maple.utilities.OOSADomainGenerator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,8 +22,9 @@ import java.util.List;
 import static edu.umbc.cs.maple.liftCopter.LiftCopterConstants.*;
 
 
-public class LiftCopter implements DomainGenerator {
+public class LiftCopter extends OOSADomainGenerator {
 
+    private double correctMoveprob;
     private RewardFunction rf;
     private TerminalFunction tf;
     private double[][] moveDynamics;
@@ -38,6 +40,7 @@ public class LiftCopter implements DomainGenerator {
     public LiftCopter(RewardFunction r, TerminalFunction t, double correctMoveprob) {
         rf = r;
         tf = t;
+        this.correctMoveprob = correctMoveprob;
         setMoveDynamics(correctMoveprob);
     }
 
@@ -47,6 +50,7 @@ public class LiftCopter implements DomainGenerator {
      * @param correctMoveprob transitionProbability the liftCopter will go in the correct direction they select
      */
     public LiftCopter(double correctMoveprob) {
+        this.correctMoveprob = correctMoveprob;
         setMoveDynamics(correctMoveprob);
         this.rf = new LiftCopterRewardFunction();
         this.tf = new LiftCopterTerminalFunction();
@@ -100,6 +104,9 @@ public class LiftCopter implements DomainGenerator {
 
     @Override
     public OOSADomain generateDomain(){
+
+        setMoveDynamics(correctMoveprob);
+
         OOSADomain domain = new OOSADomain();
 
         domain.addStateClass(CLASS_AGENT, LiftCopterAgent.class)
@@ -149,5 +156,57 @@ public class LiftCopter implements DomainGenerator {
 
         exp.initGUI();
 
+    }
+
+    @Override
+    public void setTf(TerminalFunction tf) {
+        this.tf = tf;
+    }
+
+    @Override
+    public void setRf(RewardFunction rf) {
+        this.rf = rf;
+    }
+
+    @Override
+    public RewardFunction getRf() {
+        return rf;
+    }
+
+    @Override
+    public TerminalFunction getTf() {
+        return tf;
+    }
+
+    public List<Double> getThrustValues() {
+        return thrustValues;
+    }
+
+    public void setThrustValues(List<Double> thrustValues) {
+        this.thrustValues = thrustValues;
+    }
+
+    public List<Double> getDirectionValues() {
+        return directionValues;
+    }
+
+    public void setDirectionValues(List<Double> directionValues) {
+        this.directionValues = directionValues;
+    }
+
+    public double getCorrectMoveprob() {
+        return correctMoveprob;
+    }
+
+    public void setCorrectMoveprob(double correctMoveprob) {
+        this.correctMoveprob = correctMoveprob;
+    }
+
+    public double[][] getMoveDynamics() {
+        return moveDynamics;
+    }
+
+    public void setMoveDynamics(double[][] moveDynamics) {
+        this.moveDynamics = moveDynamics;
     }
 }

@@ -3,10 +3,7 @@ package edu.umbc.cs.maple.config.hierarchy;
 import burlap.mdp.auxiliary.DomainGenerator;
 import burlap.mdp.core.Domain;
 import burlap.mdp.core.action.ActionType;
-import burlap.mdp.singleagent.SADomain;
 import burlap.mdp.singleagent.oo.OOSADomain;
-import edu.umbc.cs.maple.cleanup.CleanupGoal;
-import edu.umbc.cs.maple.cleanup.CleanupGoalDescription;
 import edu.umbc.cs.maple.config.ExperimentConfig;
 import edu.umbc.cs.maple.hierarchy.framework.*;
 import org.yaml.snakeyaml.TypeDescription;
@@ -24,22 +21,19 @@ public class HierarchyConfig {
     public String name;
     private Map<String,TaskConfig> hierarchyConfigMap;
     private Map<String,Task> taskMap;
-    private DomainGenerator baseDomainGenerator;
-    private Domain baseDomain;
     boolean doPlanOnly = false; // set up handling for planning only
 
     public HierarchyConfig(){}
 
     public Task buildRoot(ExperimentConfig e){
         taskMap = new HashMap<String,Task>();
-        baseDomain = baseDomainGenerator.generateDomain();
-        NonprimitiveTask root = (NonprimitiveTask) buildTask("root", new SolveActionType());
-        AMDPRootGoalPF goalPF= (AMDPRootGoalPF) root.getGoalFailTF().getGoalPF();
+        NonprimitiveTask root = (NonprimitiveTask) buildTask(e,"root", new SolveActionType());
+        AMDPRootGoalPF goalPF= (AMDPRootGoalPF) root.getTf().getGoalPF();
         goalPF.setGoal(e.goal);
         return root;
     }
 
-    public Task buildTask(String taskName, ActionType actionType){
+    public Task buildTask(ExperimentConfig experimentConfig, String taskName, ActionType actionType){
         if(taskMap.containsKey(taskName)){
             return taskMap.get(taskName);
         }
@@ -50,13 +44,18 @@ public class HierarchyConfig {
             for (String childTaskName: taskConfig.getChildren()) {
                 ActionType childActionType = homeDomain.getAction(childTaskName.split("_")[0]);
                 if(childTaskName.endsWith("_np")){
-                    childTasksList.add(buildTask(childTaskName.split("_")[0], childActionType));
+                    childTasksList.add(buildTask(experimentConfig, childTaskName.split("_")[0], childActionType));
                 }else if(childTaskName.endsWith("_p")){
-                 //   childActionType = ((SADomain)baseDomain).getAction(childTaskName.split("_")[0]);
-                    childTasksList.add(new PrimitiveTask(childActionType, ((OOSADomain)baseDomain)));
+                    // primitive actions need access to the "true" model to report the reward received when executed
+                    homeDomain.setModel(((OOSADomain)experimentConfig.baseDomain).getModel());
+                    if(childTaskName.startsWith("thrust")){
+                        childActionType = homeDomain.getAction("thrust");
+                    }
+                    childTasksList.add(new PrimitiveTask(childActionType, homeDomain));
                 }
             }
             Task finalizedTask = taskConfig.finalizeTask(childTasksList, actionType);
+            finalizedTask.setDomain(homeDomain);
             taskMap.put(taskName, finalizedTask);
             return finalizedTask;
         }
@@ -96,7 +95,6 @@ public class HierarchyConfig {
 
         InputStream input = ClassLoader.getSystemResourceAsStream(configPath);
         HierarchyConfig config = (HierarchyConfig) yaml.load(input);
-        config.baseDomainGenerator = experimentConfig.domain.getDomainGenerator();
         config.buildRoot(experimentConfig);
         return config;
     }

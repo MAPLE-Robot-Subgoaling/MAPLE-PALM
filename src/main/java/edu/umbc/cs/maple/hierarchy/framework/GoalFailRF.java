@@ -6,14 +6,20 @@ import burlap.mdp.singleagent.model.RewardFunction;
 
 public class GoalFailRF implements RewardFunction {
 
-    protected double rewardGoal = 1.0;
-    protected double rewardFail = -1.0;
+
+    public static final double PSEUDOREWARD_ON_GOAL = 10.0;
+    public static final double PSEUDOREWARD_ON_FAIL = -10.0;
+
+    protected double rewardGoal = PSEUDOREWARD_ON_GOAL;
+    protected double rewardFail = PSEUDOREWARD_ON_FAIL;
     protected double rewardDefault = 0.0;
     protected double rewardNoop = 0.0;
 
     protected GoalFailTF tf;
 
-    public GoalFailRF(){}
+    public GoalFailRF() {
+        // for de/serialization
+    }
 
     public GoalFailRF(GoalFailTF tf) {
         this.tf = tf;
@@ -33,6 +39,15 @@ public class GoalFailRF implements RewardFunction {
         this.rewardNoop = rewardNoop;
     }
 
+    public double reward(State state, Action action, State sPrime, String[] params) {
+        tf.setGoalParams(params);
+        tf.setFailParams(params);
+        double r = reward(state, action, sPrime);
+        tf.setGoalParams(null);
+        tf.setFailParams(null);
+        return r;
+    }
+
     @Override
     public double reward(State state, Action action, State sPrime) {
         double r = rewardDefault;
@@ -45,7 +60,6 @@ public class GoalFailRF implements RewardFunction {
         } else {
             // neither goal nor failure
         }
-
         return r;
     }
 

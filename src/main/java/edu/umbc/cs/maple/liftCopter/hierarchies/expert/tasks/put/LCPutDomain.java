@@ -15,16 +15,16 @@ import burlap.mdp.singleagent.model.RewardFunction;
 import burlap.mdp.singleagent.oo.OOSADomain;
 import burlap.statehashing.HashableStateFactory;
 import burlap.statehashing.simple.SimpleHashableStateFactory;
-import edu.umbc.cs.maple.liftCopter.hierarchies.expert.tasks.NavigateActionType;
-import edu.umbc.cs.maple.liftCopter.hierarchies.functions.PutCompletedPF;
-import edu.umbc.cs.maple.liftCopter.hierarchies.functions.PutFailurePF;
-import edu.umbc.cs.maple.liftCopter.stateGenerator.LiftCopterStateFactory;
 import edu.umbc.cs.maple.hierarchy.framework.GoalFailRF;
 import edu.umbc.cs.maple.hierarchy.framework.GoalFailTF;
+import edu.umbc.cs.maple.liftCopter.hierarchies.expert.tasks.NavigateActionType;
 import edu.umbc.cs.maple.liftCopter.hierarchies.expert.tasks.put.state.LCPutAgent;
 import edu.umbc.cs.maple.liftCopter.hierarchies.expert.tasks.put.state.LCPutCargo;
 import edu.umbc.cs.maple.liftCopter.hierarchies.expert.tasks.put.state.LCPutLocation;
 import edu.umbc.cs.maple.liftCopter.hierarchies.expert.tasks.put.state.PutStateMapper;
+import edu.umbc.cs.maple.liftCopter.hierarchies.functions.PutCompletedPF;
+import edu.umbc.cs.maple.liftCopter.hierarchies.functions.PutFailurePF;
+import edu.umbc.cs.maple.liftCopter.stateGenerator.LiftCopterStateFactory;
 
 import static edu.umbc.cs.maple.liftCopter.LiftCopterConstants.*;
 

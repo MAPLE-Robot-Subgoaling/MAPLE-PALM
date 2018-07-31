@@ -6,9 +6,6 @@ import burlap.mdp.core.oo.state.ObjectInstance;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.oo.ObjectParameterizedActionType;
 
-import java.util.HashSet;
-
-import static edu.umbc.cs.maple.cleanup.Cleanup.ATT_CONNECTED;
 import static edu.umbc.cs.maple.cleanup.Cleanup.ATT_REGION;
 
 public class ObjectToObjectActionType extends ObjectParameterizedActionType{

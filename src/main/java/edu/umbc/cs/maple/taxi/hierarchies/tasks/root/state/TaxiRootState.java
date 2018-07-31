@@ -7,57 +7,70 @@ import burlap.mdp.core.oo.state.ObjectInstance;
 import burlap.mdp.core.state.MutableState;
 import edu.umbc.cs.maple.utilities.DeepCopyForShallowCopyState;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static edu.umbc.cs.maple.taxi.TaxiConstants.*;
 public class TaxiRootState implements MutableOOState, DeepCopyForShallowCopyState {
 
-    //this state has passengers
+    private TaxiRootAgent taxi;
+
     private Map<String, TaxiRootPassenger> passengers;
 
-    public TaxiRootState(List<TaxiRootPassenger> pass) {
+    public TaxiRootState(TaxiRootAgent taxi, List<TaxiRootPassenger> pass) {
+        this.taxi = taxi;
         this.passengers = new HashMap<>();
         for(TaxiRootPassenger p : pass){
             this.passengers.put(p.name(), p);
         }
     }
 
-    private TaxiRootState(Map<String, TaxiRootPassenger> pass) {
+    private TaxiRootState(TaxiRootAgent taxi, Map<String, TaxiRootPassenger> pass) {
+        this.taxi = taxi;
         this.passengers = pass;
     }
 
     @Override
     public int numObjects() {
-        return passengers.size();
+        int total = 0;
+        if (taxi != null) { total += 1; }
+        total += passengers.size();
+        return total;
     }
 
     @Override
     public ObjectInstance object(String oname) {
+        if(taxi != null && oname.equals(taxi.name())) {
+            return taxi;
+        }
+
         ObjectInstance o = passengers.get(oname);
-        if(o != null)
+        if(o != null) {
             return o;
+        }
 
         return null;
     }
 
-    private List<ObjectInstance> cachedObjectList = null;
+//    private List<ObjectInstance> cachedObjectList = null;
     @Override
     public List<ObjectInstance> objects() {
-        if (cachedObjectList == null) { cachedObjectList = new ArrayList<ObjectInstance>(); }
-        else { return cachedObjectList; }
+//        if (cachedObjectList == null) { cachedObjectList = new ArrayList<ObjectInstance>(); }
+//        else { return cachedObjectList; }
         List<ObjectInstance> obj = new ArrayList<>();
+        if (taxi != null) { obj.add(taxi); }
         obj.addAll(passengers.values());
-        cachedObjectList = obj;
+//        cachedObjectList = obj;
         return obj;
     }
 
     @Override
     public List<ObjectInstance> objectsOfClass(String oclass) {
-        if(oclass.equals(CLASS_PASSENGER))
-            return new ArrayList<ObjectInstance>(passengers.values());
+        if(oclass.equals(CLASS_TAXI)) {
+            return taxi == null ? new ArrayList<>() : Arrays.<ObjectInstance>asList(taxi);
+        }
+        if(oclass.equals(CLASS_PASSENGER)) {
+            return new ArrayList<>(passengers.values());
+        }
         throw new RuntimeException("No object class " + oclass);
     }
 
@@ -73,14 +86,16 @@ public class TaxiRootState implements MutableOOState, DeepCopyForShallowCopyStat
 
     @Override
     public TaxiRootState copy() {
-        return new TaxiRootState(touchPassengers());
+        return new TaxiRootState(touchTaxi(), touchPassengers());
     }
 
     @Override
     public MutableState set(Object variableKey, Object value) {
         OOVariableKey key = OOStateUtilities.generateKey(variableKey);
 
-        if(passengers.get(key.obName) != null){
+        if(taxi != null && key.obName.equals(taxi.name())) {
+            touchTaxi().set(variableKey, value);
+        } else if(passengers.get(key.obName) != null){
             touchPassenger(key.obName).set(variableKey, value);
         } else {
             throw new RuntimeException("ERROR: unable to set value for " + variableKey);
@@ -90,21 +105,30 @@ public class TaxiRootState implements MutableOOState, DeepCopyForShallowCopyStat
 
     @Override
     public MutableOOState addObject(ObjectInstance o) {
-        if(o instanceof TaxiRootPassenger || o.className().equals(CLASS_PASSENGER)){
+        if(o instanceof TaxiRootAgent || o.className().equals(CLASS_TAXI)) {
+            taxi = (TaxiRootAgent)o;
+        } if(o instanceof TaxiRootPassenger || o.className().equals(CLASS_PASSENGER)){
             touchPassengers().put(o.name(), (TaxiRootPassenger) o);
         }else{
             throw new RuntimeException("Can only add certain objects to state.");
         }
-        cachedObjectList = null;
+//        cachedObjectList = null;
         return this;
     }
 
     @Override
     public MutableOOState removeObject(String oname) {
-        touchPassenger(oname);
-        passengers.remove(oname);
-        cachedObjectList = null;
-
+        ObjectInstance objectInstance = this.object(oname);
+        if (objectInstance instanceof TaxiRootAgent) {
+            touchTaxi();
+            taxi = null;
+        } else if (objectInstance instanceof TaxiRootPassenger) {
+            touchPassenger(oname);
+            passengers.remove(oname);
+        } else {
+            throw new RuntimeException("Error: unknown object of name: " + oname);
+        }
+//        cachedObjectList = null;
         return this;
     }
 
@@ -114,6 +138,11 @@ public class TaxiRootState implements MutableOOState, DeepCopyForShallowCopyStat
     }
 
     //touch methods allow a shallow copy of states and a copy of objects only when modified
+    public TaxiRootAgent touchTaxi() {
+        if (taxi != null) { this.taxi = taxi.copy(); }
+        return taxi;
+    }
+
     public TaxiRootPassenger touchPassenger(String passName){
         TaxiRootPassenger p = passengers.get(passName).copy();
         touchPassengers().remove(passName);
@@ -126,27 +155,25 @@ public class TaxiRootState implements MutableOOState, DeepCopyForShallowCopyStat
         return passengers;
     }
 
-    //get values from objects
-    public String[] getPassengers(){
-        String[] ret = new String[passengers.size()];
-        int i = 0;
-        for(String name : passengers.keySet())
-            ret[i++] = name;
-        return ret;
-    }
-
-    public Object getPassengerAtt(String passname, String attName){
-        return passengers.get(passname).get(attName);
-    }
-
     @Override
     public String toString() {
         StringBuilder buf = new StringBuilder();
         buf.append("");
+        if (taxi != null) {
+            buf.append("Tx:{");
+            String at = (String) taxi.get(ATT_LOCATION);
+            if (at.contains("Location")) {
+                buf.append("L");
+                buf.append(at.charAt(at.length()-1));
+            } else {
+                buf.append(at);
+            }
+            buf.append("} ");
+        }
         for (TaxiRootPassenger passenger : passengers.values()) {
             buf.append("P");
             buf.append(passenger.name().charAt(passenger.name().length()-1));
-            buf.append(", at:");
+            buf.append(":{");
             String at = (String) passenger.get(ATT_LOCATION);
             if (at.contains("Location")) {
                 buf.append("L");
@@ -154,7 +181,7 @@ public class TaxiRootState implements MutableOOState, DeepCopyForShallowCopyStat
             } else {
                 buf.append(at);
             }
-            buf.append(", goal:");
+            buf.append("->");
             String goal = (String) passenger.get(ATT_GOAL_LOCATION);
             if (goal.contains("Location")) {
                 buf.append("L");
@@ -162,8 +189,9 @@ public class TaxiRootState implements MutableOOState, DeepCopyForShallowCopyStat
             } else {
                 buf.append(goal);
             }
-            buf.append("; ");
+            buf.append("} ");
         }
+        buf.append(";\n");
         return buf.toString();
     }
 
@@ -174,18 +202,21 @@ public class TaxiRootState implements MutableOOState, DeepCopyForShallowCopyStat
 
         TaxiRootState that = (TaxiRootState) o;
 
+        if (taxi != null ? !taxi.equals(that.taxi) : that.taxi != null) return false;
         return passengers != null ? passengers.equals(that.passengers) : that.passengers == null;
     }
 
     @Override
     public int hashCode() {
-        return passengers != null ? passengers.hashCode() : 0;
+        int result = taxi != null ? taxi.hashCode() : 0;
+        result = 31 * result + (passengers != null ? passengers.hashCode() : 0);
+        return result;
     }
-
 
     @Override
     public MutableOOState deepCopy() {
         TaxiRootState copy = this.copy();
+        copy.touchTaxi();
         copy.touchPassengers();
         return copy;
     }

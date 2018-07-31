@@ -1,6 +1,5 @@
 package edu.umbc.cs.maple.hierarchy.framework;
 
-import burlap.mdp.core.Domain;
 import burlap.mdp.core.oo.propositional.PropositionalFunction;
 import edu.umbc.cs.maple.config.DomainGoal;
 

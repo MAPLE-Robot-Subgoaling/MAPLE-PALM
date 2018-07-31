@@ -6,7 +6,6 @@ import burlap.mdp.core.TerminalFunction;
 import burlap.mdp.core.action.ActionType;
 import burlap.mdp.singleagent.model.RewardFunction;
 import burlap.mdp.singleagent.oo.OOSADomain;
-import edu.umbc.cs.maple.utilities.MutableObject;
 
 public class TaskDomainGenerator implements DomainGenerator {
     private TerminalFunction tf;

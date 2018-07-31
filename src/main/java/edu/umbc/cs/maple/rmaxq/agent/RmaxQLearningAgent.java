@@ -141,8 +141,8 @@ public class RmaxQLearningAgent implements LearningAgent {
                 addToEnvelope(currentTaskStatePair);
             } while (
                     !isTerminal(currentTaskStatePair)
-                 && (numberPrimitivesExecuted < maxSteps || maxSteps == -1))
-            ;
+                            && (numberPrimitivesExecuted < maxSteps || maxSteps == -1))
+                    ;
 //			System.out.println(tabLevel + "<<< " + currentTaskStatePair.getTask().getAction());
             return e;
         }
@@ -151,11 +151,11 @@ public class RmaxQLearningAgent implements LearningAgent {
     public RMAXQTaskData getTaskData(GroundedTask task) {
         RMAXQTaskData taskData = taskDataMap.computeIfAbsent(task, t ->
         {
-                if (task.isPrimitive()) {
-                    return new RMAXQTaskData(task, vMax);
-                } else {
-                    return new RMAXQTaskData(task, 0.0);
-                }
+            if (task.isPrimitive()) {
+                return new RMAXQTaskData(task, vMax);
+            } else {
+                return new RMAXQTaskData(task, 0.0);
+            }
         });
         return taskData;
     }
@@ -224,14 +224,14 @@ public class RmaxQLearningAgent implements LearningAgent {
         GroundedTask parentTask = parent.getTask();
         Action a = taskStatePair.getTask().getAction();
         Action unMaskedAction = a;
-      if (parentTask.isMasked()) {
-                unMaskedAction = a.copy();
-                //for now, reliant on parent of masked task to be unmasked. This may not be a safe assumption
-                //there may be a need to traverse arbitrarily far up the task hierarchy to find an unmasked ancestor
-                //in order to recover the true parameters.
-                String trueParameters = ((ObjectParameterizedAction)parentTask.getAction()).getObjectParameters()[0];
-                ((ObjectParameterizedAction) unMaskedAction).getObjectParameters()[0] = trueParameters;
-            }
+        if (parentTask.isMasked()) {
+            unMaskedAction = a.copy();
+            //for now, reliant on parent of masked task to be unmasked. This may not be a safe assumption
+            //there may be a need to traverse arbitrarily far up the task hierarchy to find an unmasked ancestor
+            //in order to recover the true parameters.
+            String trueParameters = ((ObjectParameterizedAction)parentTask.getAction()).getObjectParameters()[0];
+            ((ObjectParameterizedAction) unMaskedAction).getObjectParameters()[0] = trueParameters;
+        }
         EnvironmentOutcome outcome = env.executeAction(unMaskedAction);
         e.transition(outcome);
         State sPrime = outcome.op;
@@ -617,10 +617,16 @@ public class RmaxQLearningAgent implements LearningAgent {
 //			newV = stateData.getStoredReward();
             // or this line
 //			newV = task.getReward(null, task.getAction(), getMappedState(task, hs));
+            Action taskAction = taskStatePair.getTask().getAction();
+            String[] params = null;
+            if (taskAction instanceof ObjectParameterizedAction) {
+                params = Task.parseParams(taskAction);
+            }
             State abstractState = getMappedState(taskStatePair);
             HashableState hashedAbstractState = cachingHSF.hashState(abstractState);
             GroundedTask task = taskStatePair.getTask();
-            newV = cachedGoalRewards.computeIfAbsent(task, i -> new HashMap<>()).computeIfAbsent(hashedAbstractState, i -> task.getReward(null, task.getAction(), abstractState));
+            String[] finalParams = params;
+            newV = cachedGoalRewards.computeIfAbsent(task, i -> new HashMap<>()).computeIfAbsent(hashedAbstractState, i -> task.getReward(null, task.getAction(), abstractState, finalParams));
 
         } else {
             GroundedTask task = taskStatePair.getTask();

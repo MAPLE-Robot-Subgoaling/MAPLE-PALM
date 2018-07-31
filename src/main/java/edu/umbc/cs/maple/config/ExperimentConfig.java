@@ -2,12 +2,10 @@ package edu.umbc.cs.maple.config;
 
 import burlap.debugtools.RandomFactory;
 import burlap.mdp.core.state.State;
+import burlap.mdp.singleagent.oo.OOSADomain;
 import burlap.visualizer.Visualizer;
 import edu.umbc.cs.maple.cleanup.CleanupGoal;
 import edu.umbc.cs.maple.cleanup.CleanupGoalDescription;
-import edu.umbc.cs.maple.cleanup.pfs.BlockInRoomPF;
-import edu.umbc.cs.maple.config.hierarchy.HierarchyConfig;
-import edu.umbc.cs.maple.config.hierarchy.TaskConfig;
 import edu.umbc.cs.maple.config.output.OutputConfig;
 import edu.umbc.cs.maple.config.planning.PlanningConfig;
 import edu.umbc.cs.maple.config.rmax.RmaxConfig;
@@ -43,6 +41,7 @@ public class ExperimentConfig {
     public OutputConfig output;
     public double gamma;
     public DomainGoal goal;
+    public Object baseDomain;
 
 
     public static ExperimentConfig load(String configFile) throws FileNotFoundException {
@@ -70,8 +69,23 @@ public class ExperimentConfig {
         }
         RandomFactory.seedMapped(DEFAULT_RNG_INDEX, seed);
         System.out.println("Using seed: " + config.seed);
+        config.validate();
         return config;
     }
+
+    public boolean validate() {
+        boolean valid;
+        valid = domain.validate();
+        if (!valid) { throw new RuntimeException("invalid domain config"); }
+        valid = planning.validate();
+        if (!valid) { throw new RuntimeException("invalid planning config"); }
+        valid = rmax.validate();
+        if (!valid) { throw new RuntimeException("invalid rmax config"); }
+        valid = output.validate();
+        if (!valid) { throw new RuntimeException("invalid output config"); }
+        return valid;
+    }
+
     public State generateState() {
         return domain.generateState();
     }
@@ -89,7 +103,11 @@ public class ExperimentConfig {
             System.err.println("Could not find configuration file");
             System.exit(404);
         }
+        config.baseDomain = config.generateDomain();
         return config;
     }
 
+    public Object generateDomain() {
+        return domain.generateDomain();
+    }
 }

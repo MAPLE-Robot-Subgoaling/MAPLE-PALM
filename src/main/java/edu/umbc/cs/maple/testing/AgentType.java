@@ -5,14 +5,18 @@ import burlap.behavior.singleagent.learning.LearningAgentFactory;
 import burlap.behavior.singleagent.learning.tdmethods.QLearning;
 import burlap.mdp.singleagent.oo.OOSADomain;
 import burlap.statehashing.HashableStateFactory;
+import burlap.statehashing.simple.SimpleHashableStateFactory;
 import edu.umbc.cs.maple.config.ExperimentConfig;
 import edu.umbc.cs.maple.hierarchy.framework.Task;
+import edu.umbc.cs.maple.palm.agent.CrossPALMLearningAgent;
 import edu.umbc.cs.maple.palm.agent.PALMLearningAgent;
 import edu.umbc.cs.maple.palm.agent.PALMModelGenerator;
 import edu.umbc.cs.maple.palm.rmax.agent.ExpectedRmaxModelGenerator;
+//import edu.umbc.cs.maple.palm.rmax.agent.ExpertNavModelGenerator;
 import edu.umbc.cs.maple.palm.rmax.agent.ExpertNavModelGenerator;
 import edu.umbc.cs.maple.palm.rmax.agent.PALMRmaxModelGenerator;
 import edu.umbc.cs.maple.rmaxq.agent.RmaxQLearningAgent;
+import edu.umbc.cs.maple.state.hashing.bugfix.BugfixHashableStateFactory;
 import edu.umbc.cs.maple.state.hashing.cached.CachedHashableStateFactory;
 
 import java.util.Arrays;
@@ -32,6 +36,14 @@ public enum AgentType {
             return agent;
         }
     },
+    CROSS("cross", "Cross-PALM") {
+        @Override
+        public LearningAgent getLearningAgent(Task root, HashableStateFactory hsf, ExperimentConfig config) {
+            PALMModelGenerator modelGen = new PALMRmaxModelGenerator(hsf, config);
+            LearningAgent agent = new CrossPALMLearningAgent(root, modelGen, hsf, config);
+            return agent;
+        }
+    },
     RMAXQ("rmaxq", "RMAXQ"){
         @Override
         public LearningAgent getLearningAgent(Task root, HashableStateFactory hsf, ExperimentConfig config) {
@@ -48,10 +60,10 @@ public enum AgentType {
         }
 
     },
-    Q_LEARNING("qLearning", "QL"){
+    Q_LEARNING("ql", "QL"){
         @Override
         public LearningAgent getLearningAgent(Task root, HashableStateFactory hsf, ExperimentConfig config) {
-            OOSADomain baseDomain = root.getDomain();
+            OOSADomain baseDomain = (OOSADomain) config.baseDomain;
             double qInit = DEFAULT_Q_INIT;
             double learningRate = DEFAULT_LEARNING_RATE;
             LearningAgent agent = new QLearning(baseDomain, config.gamma, hsf, qInit, learningRate);
@@ -67,6 +79,7 @@ public enum AgentType {
         }
 
     }
+
 
     ;
 
@@ -96,23 +109,35 @@ public enum AgentType {
         return getLearningAgent(root, hsf, config);
     }
 
-
+    public static HashableStateFactory hsf = null;
     public static HashableStateFactory initializeHashableStateFactory(boolean identifierIndependent) {
-        return new CachedHashableStateFactory(identifierIndependent);
+        if (hsf == null) {
+            hsf = new BugfixHashableStateFactory(identifierIndependent);
+        }
+        return hsf;
+    }
+
+    public static AgentType getByType(String name) {
+        for (AgentType type : values()) {
+            if (type.type.equals(name)) {
+                return type;
+            }
+        }
+        throw new IllegalArgumentException(name);
     }
 
     public static final boolean DEFAULT_IDENTIFIER_INDEPENDENT = false;
-    public LearningAgentFactory generateLearningAgentFactory(Task root, ExperimentConfig config, String inName) {
+    public static LearningAgentFactory generateLearningAgentFactory(Task root, ExperimentConfig config, String agentTypeName, String agentName) {
+        AgentType agentType = AgentType.getByType(agentTypeName);
+        String extra = agentName.contains("hier") ? "-H" : "";
         LearningAgentFactory agent = new LearningAgentFactory() {
-            String name = inName;
             @Override
             public String getAgentName() {
-                return name;
+                return agentType.getPlotterDisplayName() + extra;
             }
-
             @Override
             public LearningAgent generateAgent() {
-                return getLearningAgent(root, config);
+                return agentType.getLearningAgent(root, config);
             }
         };
         return agent;

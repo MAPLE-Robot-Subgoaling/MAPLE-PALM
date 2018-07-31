@@ -47,7 +47,7 @@ public class ExpertNavModelGenerator implements PALMModelGenerator {
             PALMModel nav = new ExpertPALMModel(nav_model, gamma);
             return  nav;
         }else{
-            return new HierarchicalRmaxModel(t, this.threshold, this.rmax,
+            return new HierarchicalRmaxModel(t.getTask(), this.threshold, this.rmax,
                     this.hashingFactory, this.gamma, this.useMultitimeModel);
         }
     }

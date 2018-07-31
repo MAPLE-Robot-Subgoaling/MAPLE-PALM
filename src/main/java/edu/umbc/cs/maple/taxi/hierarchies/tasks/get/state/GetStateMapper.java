@@ -16,8 +16,9 @@ public class GetStateMapper implements MaskedParameterizedStateMapping {
     public static final String GET_PASSENGER_ALIAS = "**GET_PASSENGER_ALIAS**";
 
     @Override
-    public String[] getMaskedParameters() {
-        return new String[]{CLASS_PASSENGER};
+    public String[] getMaskedParameters()
+    {
+        return new String[]{GET_PASSENGER_ALIAS};
     }
     //maps a base taxi state to L2
     @Override

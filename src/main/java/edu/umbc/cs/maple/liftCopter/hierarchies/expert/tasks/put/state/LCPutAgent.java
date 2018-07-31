@@ -6,7 +6,8 @@ import edu.umbc.cs.maple.utilities.MutableObject;
 import java.util.Arrays;
 import java.util.List;
 
-import static edu.umbc.cs.maple.liftCopter.LiftCopterConstants.*;
+import static edu.umbc.cs.maple.liftCopter.LiftCopterConstants.ATT_LOCATION;
+import static edu.umbc.cs.maple.liftCopter.LiftCopterConstants.CLASS_AGENT;
 
 
 public class LCPutAgent extends MutableObject {

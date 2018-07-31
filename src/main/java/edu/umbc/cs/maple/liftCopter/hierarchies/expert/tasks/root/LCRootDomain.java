@@ -1,24 +1,15 @@
 package edu.umbc.cs.maple.liftCopter.hierarchies.expert.tasks.root;
 
-import burlap.behavior.policy.Policy;
-import burlap.behavior.policy.PolicyUtils;
-import burlap.behavior.singleagent.Episode;
-import burlap.behavior.singleagent.planning.stochastic.valueiteration.ValueIteration;
 import burlap.mdp.auxiliary.DomainGenerator;
 import burlap.mdp.auxiliary.common.NullTermination;
 import burlap.mdp.core.TerminalFunction;
-import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.common.NullRewardFunction;
-import burlap.mdp.singleagent.environment.SimulatedEnvironment;
 import burlap.mdp.singleagent.model.FactoredModel;
 import burlap.mdp.singleagent.model.RewardFunction;
 import burlap.mdp.singleagent.oo.OOSADomain;
-import burlap.statehashing.HashableStateFactory;
-import burlap.statehashing.simple.SimpleHashableStateFactory;
 import edu.umbc.cs.maple.hierarchy.framework.GoalFailRF;
 import edu.umbc.cs.maple.hierarchy.framework.GoalFailTF;
 import edu.umbc.cs.maple.liftCopter.hierarchies.expert.tasks.root.state.LCRootCargo;
-import edu.umbc.cs.maple.liftCopter.hierarchies.expert.tasks.root.state.RootStateMapper;
 import edu.umbc.cs.maple.liftCopter.hierarchies.functions.RootCompletedPF;
 import edu.umbc.cs.maple.liftCopter.hierarchies.functions.RootFailurePF;
 

@@ -3,12 +3,11 @@ package edu.umbc.cs.maple.liftCopter.hierarchies.expert.tasks.nav;
 import burlap.debugtools.RandomFactory;
 import burlap.mdp.core.StateTransitionProb;
 import burlap.mdp.core.action.Action;
-import burlap.mdp.core.oo.state.ObjectInstance;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.model.statemodel.FullStateModel;
 import edu.umbc.cs.maple.liftCopter.ThrustType.ThrustAction;
-import edu.umbc.cs.maple.liftCopter.state.*;
-import edu.umbc.cs.maple.liftCopter.state.LiftCopterCargo;
+import edu.umbc.cs.maple.liftCopter.hierarchies.expert.tasks.nav.state.LCNavAgent;
+import edu.umbc.cs.maple.liftCopter.hierarchies.expert.tasks.nav.state.LCNavState;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,7 +43,7 @@ public class LCNavModel implements FullStateModel{
     public List<StateTransitionProb> stateTransitions(State s, Action a) {
         List<StateTransitionProb> tps = new ArrayList<StateTransitionProb>();
         int action = actionInd(a);
-        LiftCopterState liftCopterS = (LiftCopterState) s;
+        LCNavState liftCopterS = (LCNavState) s;
 
         if(action <= IND_IDLE){
             movement(liftCopterS, action, tps, a);
@@ -58,15 +57,15 @@ public class LCNavModel implements FullStateModel{
      * @param action the index of the selected movement action
      * @param tps a list of state transition probabilities to add to
      */
-    public void movement(LiftCopterState s, int action, List<StateTransitionProb> tps, Action a){
-        LiftCopterState ns = s.copy();
+    public void movement(LCNavState s, int action, List<StateTransitionProb> tps, Action a){
+        LCNavState ns = s.copy();
         double force = 0.0D;
         double direction = 0.0D;
 
-        double tx = (double) s.getCopter().get(ATT_X);
-        double ty = (double) s.getCopter().get(ATT_Y);
-        double tvx = (double) s.getCopter().get(ATT_VX);
-        double tvy = (double) s.getCopter().get(ATT_VY);
+        double tx = (double) s.touchCopter().get(ATT_X);
+        double ty = (double) s.touchCopter().get(ATT_Y);
+        double tvx = (double) s.touchCopter().get(ATT_VX);
+        double tvy = (double) s.touchCopter().get(ATT_VY);
 
 
 //        for(int outcome = 0; outcome < moveProbabilities.length; outcome++){
@@ -90,11 +89,11 @@ public class LCNavModel implements FullStateModel{
      * @param thrust
      * @param direction
      */
-    protected void updateMotion(LiftCopterState s, double thrust, double direction) {
+    protected void updateMotion(LCNavState s, double thrust, double direction) {
 
         double ti = 1.0D;
         double tt = ti * ti;
-        LiftCopterAgent agent = s.touchCopter();
+        LCNavAgent agent = s.touchCopter();
         double x = (double)agent.get(ATT_X);
         double y = (double)agent.get(ATT_Y);
         double h = (double)agent.get(ATT_H);
@@ -129,15 +128,7 @@ public class LCNavModel implements FullStateModel{
         agent.set(ATT_VX, nvx);
         agent.set(ATT_VY, nvy);
 
-        for(ObjectInstance passenger : s.objectsOfClass(CLASS_CARGO)){
-            boolean inTaxi = (boolean) passenger.get(ATT_PICKED_UP);
-            if(inTaxi){
-                String passengerName = passenger.name();
-                LiftCopterCargo np = s.touchCargo(passengerName);
-                np.set(ATT_X, nx);
-                np.set(ATT_Y, ny);
-            }
-        }
+
 
     }
 

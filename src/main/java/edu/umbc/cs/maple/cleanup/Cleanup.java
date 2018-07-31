@@ -3,6 +3,7 @@ package edu.umbc.cs.maple.cleanup;
 import burlap.behavior.singleagent.Episode;
 import burlap.behavior.valuefunction.ValueFunction;
 import burlap.mdp.auxiliary.DomainGenerator;
+import burlap.mdp.auxiliary.common.GoalConditionTF;
 import burlap.mdp.auxiliary.common.NullTermination;
 import burlap.mdp.core.Domain;
 import burlap.mdp.core.TerminalFunction;
@@ -20,13 +21,18 @@ import burlap.shell.visual.VisualExplorer;
 import burlap.visualizer.Visualizer;
 import edu.umbc.cs.maple.cleanup.pfs.InRegion;
 import edu.umbc.cs.maple.cleanup.state.*;
+import edu.umbc.cs.maple.config.ExperimentConfig;
+import edu.umbc.cs.maple.utilities.ExceptionReward;
+import edu.umbc.cs.maple.utilities.ExceptionTermination;
+import edu.umbc.cs.maple.utilities.OOSADomainGenerator;
 
 import javax.swing.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 
-public class Cleanup implements DomainGenerator {
+public class Cleanup extends OOSADomainGenerator {
 
 
     public static final String ATT_X = "x";
@@ -99,8 +105,6 @@ public class Cleanup implements DomainGenerator {
 
     private RewardFunction rf;
     private TerminalFunction tf;
-    private String[] goalParams;
-    private CleanupGoal cleanupGoal;
 
     private int minX = 0;
     private int minY = 0;
@@ -344,11 +348,11 @@ public class Cleanup implements DomainGenerator {
         TerminalFunction tf = this.tf;
         if (rf == null) {
             System.err.println("Warning: calling generateDomain with null reward function");
-            rf = new NullRewardFunction();
+            rf = new ExceptionReward();
         }
         if (tf == null) {
             System.err.println("Warning: calling generateDomain with null terminal function");
-            tf = new NullTermination();
+            tf = new ExceptionTermination();
         }
         FactoredModel model = new FactoredModel(smodel, rf, tf);
         domain.setModel(model);
@@ -359,50 +363,49 @@ public class Cleanup implements DomainGenerator {
         return rf;
     }
 
-    /*
-    public class PullActionType extends ObjectParameterizedActionType {
+//    public class PullActionType extends ObjectParameterizedActionType {
+//
+//        public PullActionType(String name){
+//            super(name,new String[]{Cleanup.CLASS_AGENT, Cleanup.CLASS_BLOCK});
+//        }
+//
+//        public boolean applicableInState(State st, ObjectParameterizedAction groundedAction){
+//            CleanupState cws = (CleanupState)st;
+//            String [] params = groundedAction.getObjectParameters();
+//            CleanupAgent agent = (CleanupAgent)cws.object(params[0]);
+//            CleanupBlock block = (CleanupBlock)cws.object(params[1]);
+//            if (agent == null || block == null) {
+//                return false;
+//            }
+//
+//            if (agent.get(ATT_DIR) == null) {
+//                return false;
+//            }
+//
+//            int direction = CleanupModel.actionDir(agent.get(ATT_DIR).toString());
+//            int curX = (Integer) agent.get(ATT_X);
+//            int curY = (Integer) agent.get(ATT_Y);
+//            //first get change in x and y from direction using 0: north; 1: south; 2:east; 3: west
+//            int xdelta = 0;
+//            int ydelta = 0;
+//            if(direction == 0){
+//                ydelta = 1;
+//            } else if(direction == 1){
+//                ydelta = -1;
+//            } else if(direction == 2){
+//                xdelta = 1;
+//            } else{
+//                xdelta = -1;
+//            }
+//            int nx = curX + xdelta;
+//            int ny = curY + ydelta;
+//            if ((Integer)block.get(ATT_X) == nx && (Integer)block.get(ATT_Y) == ny) {
+//                return true;
+//            }
+//            return false;
+//        }
+//    }
 
-        public PullActionType(String name){
-            super(name,new String[]{Cleanup.CLASS_AGENT, Cleanup.CLASS_BLOCK});
-        }
-
-        public boolean applicableInState(State st, ObjectParameterizedAction groundedAction){
-            CleanupState cws = (CleanupState)st;
-            String [] params = groundedAction.getObjectParameters();
-            CleanupAgent agent = (CleanupAgent)cws.object(params[0]);
-            CleanupBlock block = (CleanupBlock)cws.object(params[1]);
-            if (agent == null || block == null) {
-                return false;
-            }
-
-            if (agent.get(ATT_DIR) == null) {
-                return false;
-            }
-
-            int direction = CleanupModel.actionDir(agent.get(ATT_DIR).toString());
-            int curX = (Integer) agent.get(ATT_X);
-            int curY = (Integer) agent.get(ATT_Y);
-            //first get change in x and y from direction using 0: north; 1: south; 2:east; 3: west
-            int xdelta = 0;
-            int ydelta = 0;
-            if(direction == 0){
-                ydelta = 1;
-            } else if(direction == 1){
-                ydelta = -1;
-            } else if(direction == 2){
-                xdelta = 1;
-            } else{
-                xdelta = -1;
-            }
-            int nx = curX + xdelta;
-            int ny = curY + ydelta;
-            if ((Integer)block.get(ATT_X) == nx && (Integer)block.get(ATT_Y) == ny) {
-                return true;
-            }
-            return false;
-        }
-    }
-    */
 
 
 //    public static ValueFunction getGroundHeuristic(State s, RewardFunction rf, double lockProb) {
@@ -570,32 +573,68 @@ public class Cleanup implements DomainGenerator {
         return dist;
     }
 
+    public static boolean isAdjacent(OOState state, String[] params) {
+        String objectName = params[0];
+        ObjectInstance object = state.object(objectName);
+        ObjectInstance agent = state.objectsOfClass(CLASS_AGENT).get(0);
+        if (agent == null) { return false; }
+        int aX = (int) agent.get(ATT_X);
+        int aY = (int) agent.get(ATT_Y);
+        int oX = (int) object.get(ATT_X);
+        int oY = (int) object.get(ATT_Y);
+        int dX = Math.abs(aX - oX);
+        int dY = Math.abs(aY - oY);
+        // one of X or Y needs to be 0 and the other 1
+        if ((dX == 0 && dY == 1) || (dX == 1 && dY == 0)) {
+            return true;
+        }
+        return false;
+    }
 
     public static void main(String[] args) {
 
 //        RandomFactory.seedMapped(0, 575L);
 //        Random rng = RandomFactory.getMapped(0);
-
         List<String> objectAttributes = new ArrayList<String>();
-        Cleanup cleanup = new Cleanup();
-        cleanup.setMinX(0);
-        cleanup.setMaxX(13);
-        cleanup.setMinY(0);
-        cleanup.setMaxY(13);
-        OOSADomain domain = (OOSADomain) cleanup.generateDomain();
-        CleanupRandomStateGenerator gen = new CleanupRandomStateGenerator(cleanup);
+        Cleanup cleanup = new Cleanup(0,0,10,10);
 
-        int numBlocks1 = 1;
-        int numBlocks2 = 3;
-        State state1 = gen.generateTwoRoomsWithFourDoors(numBlocks1); //gen.generateCentralRoomWithFourDoors(numBlocks1);
-        State state2 = gen.getStateFor("twoRooms", numBlocks2);//gen.generateTwoRoomsWithFourDoors(numBlocks2); //gen.generateCentralRoomWithFourDoors(numBlocks2);
+		RewardFunction rf;
+		TerminalFunction tf;
+		CleanupGoal goalCondition;
+		goalCondition = new CleanupGoal();
+        OOSADomain domain = (OOSADomain) cleanup.generateDomain();
+
+        CleanupGoalDescription[] goals = new CleanupGoalDescription[]{
+				new CleanupGoalDescription(new String[]{"block0", "room10"}, domain.propFunction(PF_BLOCK_IN_ROOM)),
+				//new CleanupGoalDescription(new String[]{"block1", "room1"}, domain.propFunction(PF_BLOCK_IN_ROOM)),
+				//new CleanupGoalDescription(new String[]{"block2", "room0"}, domain.propFunction(PF_BLOCK_IN_ROOM))
+		};
+        goalCondition.setGoalDescriptions(Arrays.asList(goals));
+
+        rf = new CleanupRF(goalCondition, 1.0, 0.0, 0.0, 0.0 );
+        tf = new GoalConditionTF(goalCondition);
+        cleanup.setRf(rf);
+        cleanup.setTf(tf);
+        CleanupRandomStateGenerator gen = new CleanupRandomStateGenerator(cleanup);
+        domain = (OOSADomain) cleanup.generateDomain();
+
+        String configFile = "config/cleanup/2rooms2blocks.yaml";
+        if(args.length > 0) {
+            configFile = args[0];
+        }
+
+        ExperimentConfig config = ExperimentConfig.loadConfig(configFile);
+
+        State state= config.generateState();
 
 //        List<State> states = StateReachability.getReachableStates(state2, domain, new SimpleHashableStateFactory(true));
         List<Episode> episodes = new ArrayList<Episode>();
 //        Episode e = new Episode();
 //        for (State state : states) {
+//            System.out.println("width is: "+cleanup.getWidth());
+//            System.out.println("width is: "+cleanup.getHeight());
             Visualizer v = CleanupVisualizer.getVisualizer(cleanup.getWidth(), cleanup.getHeight());
-            VisualExplorer exp = new VisualExplorer(domain, v, state2);
+            VisualExplorer exp = new VisualExplorer(domain, v, state);
             exp.addKeyAction("w", ACTION_NORTH, "");
             exp.addKeyAction("s", ACTION_SOUTH, "");
             exp.addKeyAction("d", ACTION_EAST, "");
@@ -729,4 +768,5 @@ public class Cleanup implements DomainGenerator {
     public TerminalFunction getTf() {
         return tf;
     }
+
 }

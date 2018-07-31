@@ -5,11 +5,9 @@ import burlap.behavior.policy.PolicyUtils;
 import burlap.behavior.singleagent.Episode;
 import burlap.behavior.singleagent.planning.stochastic.valueiteration.ValueIteration;
 import burlap.mdp.auxiliary.DomainGenerator;
-import burlap.mdp.auxiliary.common.NullTermination;
 import burlap.mdp.core.TerminalFunction;
 import burlap.mdp.core.action.UniversalActionType;
 import burlap.mdp.core.state.State;
-import burlap.mdp.singleagent.common.NullRewardFunction;
 import burlap.mdp.singleagent.environment.SimulatedEnvironment;
 import burlap.mdp.singleagent.model.FactoredModel;
 import burlap.mdp.singleagent.model.RewardFunction;
@@ -24,6 +22,8 @@ import edu.umbc.cs.maple.taxi.hierarchies.tasks.nav.state.NavStateMapper;
 import edu.umbc.cs.maple.taxi.hierarchies.tasks.nav.state.TaxiNavAgent;
 import edu.umbc.cs.maple.taxi.hierarchies.tasks.nav.state.TaxiNavLocation;
 import edu.umbc.cs.maple.taxi.stategenerator.TaxiStateFactory;
+import edu.umbc.cs.maple.utilities.ExceptionReward;
+import edu.umbc.cs.maple.utilities.ExceptionTermination;
 
 import static edu.umbc.cs.maple.taxi.TaxiConstants.*;
 
@@ -62,12 +62,12 @@ public class TaxiNavDomain implements DomainGenerator {
 
         TaxiNavModel taxiModel = new TaxiNavModel();
         if (tf == null) {
-            System.err.println("Warning: initializing " + this.getClass().getSimpleName() + " with Null TF");
-            tf = new NullTermination();
+//            System.err.println("Warning: initializing " + this.getClass().getSimpleName() + " with Null TF");
+            tf = new ExceptionTermination();
         }
         if (rf == null) {
-            System.err.println("Warning: initializing " + this.getClass().getSimpleName() + " with Null RF");
-            rf = new NullRewardFunction();
+//            System.err.println("Warning: initializing " + this.getClass().getSimpleName() + " with Null RF");
+            rf = new ExceptionReward();
         }
         FactoredModel model = new FactoredModel(taxiModel, rf, tf);
         domain.setModel(model);

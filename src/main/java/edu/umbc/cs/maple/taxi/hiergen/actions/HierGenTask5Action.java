@@ -2,10 +2,11 @@ package edu.umbc.cs.maple.taxi.hiergen.actions;
 
 import burlap.mdp.core.action.Action;
 import edu.umbc.cs.maple.hierarchy.framework.StringFormat;
+import edu.umbc.cs.maple.utilities.IntegerParameterizedAction;
 
 import static edu.umbc.cs.maple.taxi.TaxiConstants.ACTION_TASK_5;
 
-public class HierGenTask5Action implements Action {
+public class HierGenTask5Action implements IntegerParameterizedAction {
 
     private int goalX, goalY;
 

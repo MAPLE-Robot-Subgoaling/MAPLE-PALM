@@ -4,7 +4,8 @@ import burlap.mdp.core.oo.propositional.PropositionalFunction;
 import burlap.mdp.core.oo.state.OOState;
 import edu.umbc.cs.maple.liftCopter.hierarchies.expert.tasks.root.state.LCRootState;
 
-import static edu.umbc.cs.maple.liftCopter.LiftCopterConstants.*;
+import static edu.umbc.cs.maple.liftCopter.LiftCopterConstants.ATT_GOAL_LOCATION;
+import static edu.umbc.cs.maple.liftCopter.LiftCopterConstants.ATT_LOCATION;
 
 
 public class RootCompletedPF extends PropositionalFunction {

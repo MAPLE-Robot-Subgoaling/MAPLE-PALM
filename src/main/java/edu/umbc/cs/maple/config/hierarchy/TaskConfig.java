@@ -9,19 +9,21 @@ import burlap.mdp.singleagent.SADomain;
 import burlap.mdp.singleagent.model.RewardFunction;
 import burlap.mdp.singleagent.oo.OOSADomain;
 import edu.umbc.cs.maple.config.solver.SolverConfig;
+import edu.umbc.cs.maple.hierarchy.framework.GoalFailRF;
+import edu.umbc.cs.maple.hierarchy.framework.GoalFailTF;
 import edu.umbc.cs.maple.hierarchy.framework.NonprimitiveTask;
 import edu.umbc.cs.maple.hierarchy.framework.Task;
 
 import java.util.List;
 
 public class TaskConfig {
-    List< String> children;
-    DomainGenerator domainGenerator;
-    StateMapping stateMapper;
-    TerminalFunction tf;
-    RewardFunction rf;
-    SolverConfig solver;
-    Domain domain;
+    protected List<String> children;
+    protected DomainGenerator domainGenerator;
+    protected StateMapping stateMapper;
+    protected GoalFailTF tf;
+    protected GoalFailRF rf;
+    protected SolverConfig solver;
+    protected Domain domain;
     public TaskConfig(){}
 
     public Domain buildDomain(){
@@ -61,16 +63,16 @@ public class TaskConfig {
     public void setStateMapper(StateMapping stateMapping) {
         this.stateMapper = stateMapping;
     }
-    public TerminalFunction getTf() {
+    public GoalFailTF getTf() {
         return tf;
     }
-    public void setTf(TerminalFunction tf) {
+    public void setTf(GoalFailTF tf) {
         this.tf = tf;
     }
-    public RewardFunction getRf() {
+    public GoalFailRF getRf() {
         return rf;
     }
-    public void setRf(RewardFunction rf) {
+    public void setRf(GoalFailRF rf) {
         this.rf = rf;
     }
     public SolverConfig getSolver() {

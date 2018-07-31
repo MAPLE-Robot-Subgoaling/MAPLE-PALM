@@ -1,6 +1,5 @@
 package edu.umbc.cs.maple.config.solver;
 
-import burlap.behavior.functionapproximation.DifferentiableStateActionValue;
 import burlap.behavior.singleagent.learning.tdmethods.vfa.GradientDescentSarsaLam;
 import burlap.behavior.singleagent.planning.Planner;
 import burlap.behavior.valuefunction.ValueFunction;
@@ -22,8 +21,9 @@ public class SarsaLambdaConfig extends SolverConfig{
             return (GradientDescentSarsaLam)knownValueFunction;
         }else{
             GradientDescentSarsaLam planner = new GradientDescentSarsaLam(domain, gamma, TCC.generateVFA(), learningRate, lambda);
+            return planner;
         }
-        return null;
+
     }
 
     public double getGamma() {

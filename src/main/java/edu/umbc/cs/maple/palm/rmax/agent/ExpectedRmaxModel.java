@@ -1,24 +1,14 @@
 package edu.umbc.cs.maple.palm.rmax.agent;
 
-import burlap.debugtools.RandomFactory;
 import burlap.mdp.core.action.Action;
-import burlap.mdp.core.oo.state.MutableOOState;
-import burlap.mdp.core.oo.state.ObjectInstance;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.environment.EnvironmentOutcome;
-import burlap.mdp.singleagent.model.TransitionProb;
 import burlap.statehashing.HashableState;
 import burlap.statehashing.HashableStateFactory;
-import edu.umbc.cs.maple.hierarchy.framework.GroundedTask;
-import edu.umbc.cs.maple.hierarchy.framework.StringFormat;
-import edu.umbc.cs.maple.palm.agent.PALMModel;
+import edu.umbc.cs.maple.hierarchy.framework.Task;
 import edu.umbc.cs.maple.palm.agent.PossibleOutcome;
-import edu.umbc.cs.maple.utilities.DiscountProvider;
 import edu.umbc.cs.maple.utilities.ExpectedStepsDiscountProvider;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class ExpectedRmaxModel extends RmaxModel {
@@ -27,12 +17,12 @@ public class ExpectedRmaxModel extends RmaxModel {
 
     /**
      * creates a rmax model
-     * @param task the grounded task to model
+     * @param task the task to model
      * @param threshold rmax sample threshold
      * @param rmax max rewardTotal in domain
      * @param hs provided hashing factory
      */
-    public ExpectedRmaxModel(GroundedTask task, int threshold, double rmax, HashableStateFactory hs, double gamma) {
+    public ExpectedRmaxModel(Task task, int threshold, double rmax, HashableStateFactory hs, double gamma) {
         super(task, threshold, rmax, hs, gamma);
     }
 
@@ -42,7 +32,12 @@ public class ExpectedRmaxModel extends RmaxModel {
     }
 
     @Override
-    public double getInternalDiscount(EnvironmentOutcome eo, int k) {
+    public double getInternalDiscountReward(EnvironmentOutcome eo, int k) {
+        return DEFAULT_INTERNAL_DISCOUNT;
+    }
+
+    @Override
+    public double getInternalDiscountProbability(EnvironmentOutcome eo, int k) {
         return DEFAULT_INTERNAL_DISCOUNT;
     }
 

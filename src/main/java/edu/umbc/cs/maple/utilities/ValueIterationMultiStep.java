@@ -2,7 +2,6 @@ package edu.umbc.cs.maple.utilities;
 
 import burlap.behavior.policy.GreedyQPolicy;
 import burlap.behavior.singleagent.planning.Planner;
-import burlap.behavior.singleagent.planning.stochastic.DynamicProgramming;
 import burlap.behavior.valuefunction.ValueFunction;
 import burlap.mdp.core.action.Action;
 import burlap.mdp.core.state.State;
@@ -128,7 +127,6 @@ public class ValueIterationMultiStep extends DynamicProgrammingMultiStep impleme
 
         Set <HashableState> states = valueFunction.keySet();
         if (states.size() < 1) {
-            System.err.println("no reachable states");
 //            throw new RuntimeException("Error: no reachable states found");
         }
 

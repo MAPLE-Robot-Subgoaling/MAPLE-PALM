@@ -1,8 +1,8 @@
 package edu.umbc.cs.maple.burlap_weka;
 
+import burlap.behavior.functionapproximation.dense.DenseStateFeatures;
 import burlap.behavior.functionapproximation.supervised.SupervisedVFA;
 import burlap.behavior.valuefunction.ValueFunction;
-import burlap.behavior.functionapproximation.dense.DenseStateFeatures;
 import burlap.mdp.core.state.State;
 import weka.classifiers.Classifier;
 import weka.classifiers.lazy.IBk;
