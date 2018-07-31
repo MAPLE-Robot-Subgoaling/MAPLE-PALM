@@ -1,5 +1,5 @@
 domain: !!edu.umbc.cs.maple.config.taxi.TaxiConfig
-  state: medium-4passengers
+  state: tiny
   domainGenerator: !!edu.umbc.cs.maple.taxi.Taxi
     correctMoveProbability: 1.0
     fickleProbability: 0.0

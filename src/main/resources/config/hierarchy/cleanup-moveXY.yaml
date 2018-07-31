@@ -27,6 +27,8 @@ hierarchyConfigMap:
       actions:
         - !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.move.MoveAgentXYActionType
           name: moveAgentXY
+        - !!edu.umbc.cs.maple.hierarchy.framework.UniversalActionTypeBean
+          name: pull
     solver: !!edu.umbc.cs.maple.config.solver.ValueIterationMultistepConfig
       maxDelta: 0.0001
       maxIterations: 1000
@@ -58,13 +60,13 @@ hierarchyConfigMap:
          - className: door
            clasz: !!edu.umbc.cs.maple.cleanup.state.CleanupDoor {}
        actions:
-         - !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.move.LocalUniversalActionType
+         - !!edu.umbc.cs.maple.hierarchy.framework.UniversalActionTypeBean
            name: north
-         - !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.move.LocalUniversalActionType
+         - !!edu.umbc.cs.maple.hierarchy.framework.UniversalActionTypeBean
            name: south
-         - !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.move.LocalUniversalActionType
+         - !!edu.umbc.cs.maple.hierarchy.framework.UniversalActionTypeBean
            name: east
-         - !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.move.LocalUniversalActionType
+         - !!edu.umbc.cs.maple.hierarchy.framework.UniversalActionTypeBean
            name: west
     solver: !!edu.umbc.cs.maple.config.solver.ValueIterationMultistepConfig
       maxDelta: 0.0001

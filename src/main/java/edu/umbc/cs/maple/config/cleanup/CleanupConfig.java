@@ -1,6 +1,7 @@
 package edu.umbc.cs.maple.config.cleanup;
 
 import burlap.mdp.auxiliary.DomainGenerator;
+import burlap.mdp.auxiliary.StateGenerator;
 import burlap.mdp.core.Domain;
 import burlap.mdp.core.state.State;
 import burlap.visualizer.Visualizer;
@@ -27,7 +28,14 @@ public class CleanupConfig extends DomainConfig {
         int minY = cleanup.getMinY();
         int maxX = cleanup.getMaxX();
         int maxY = cleanup.getMaxY();
-        return new CleanupRandomStateGenerator(minX, minY, maxX, maxY).getStateFor(state);
+        //prevents generating states already solved/terminal
+        CleanupRandomStateGenerator gen = new CleanupRandomStateGenerator(minX, minY, maxX, maxY);
+        State st;
+        do{
+            st = gen.getStateFor(state);
+        }while(cleanup.getTf().isTerminal(st));
+
+        return st;
     }
 
     @Override

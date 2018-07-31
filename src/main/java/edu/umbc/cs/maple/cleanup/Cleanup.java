@@ -2,9 +2,7 @@ package edu.umbc.cs.maple.cleanup;
 
 import burlap.behavior.singleagent.Episode;
 import burlap.behavior.valuefunction.ValueFunction;
-import burlap.mdp.auxiliary.DomainGenerator;
 import burlap.mdp.auxiliary.common.GoalConditionTF;
-import burlap.mdp.auxiliary.common.NullTermination;
 import burlap.mdp.core.Domain;
 import burlap.mdp.core.TerminalFunction;
 import burlap.mdp.core.action.UniversalActionType;
@@ -13,7 +11,6 @@ import burlap.mdp.core.oo.propositional.PropositionalFunction;
 import burlap.mdp.core.oo.state.OOState;
 import burlap.mdp.core.oo.state.ObjectInstance;
 import burlap.mdp.core.state.State;
-import burlap.mdp.singleagent.common.NullRewardFunction;
 import burlap.mdp.singleagent.model.FactoredModel;
 import burlap.mdp.singleagent.model.RewardFunction;
 import burlap.mdp.singleagent.oo.OOSADomain;
@@ -618,7 +615,7 @@ public class Cleanup extends OOSADomainGenerator {
         CleanupRandomStateGenerator gen = new CleanupRandomStateGenerator(cleanup);
         domain = (OOSADomain) cleanup.generateDomain();
 
-        String configFile = "config/cleanup/2rooms2blocks.yaml";
+        String configFile = "config/cleanup/old/2rooms2blocks.yaml";
         if(args.length > 0) {
             configFile = args[0];
         }

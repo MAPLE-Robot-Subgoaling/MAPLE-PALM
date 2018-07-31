@@ -83,7 +83,7 @@ public class HierarchicalCharts {
 
     public static void main(String[] args) {
 
-        String configFile = "config/taxi/classic-2-fickle.yaml";
+        String configFile = "config/taxi/old/classic-2-fickle.yaml";
         if(args.length > 0) {
             configFile = args[0];
         }

@@ -1,24 +1,21 @@
 domain: !!edu.umbc.cs.maple.config.taxi.TaxiConfig
   state: medium
-  correct_move: 1.0
-  fickle: 0.00
+  domainGenerator: !!edu.umbc.cs.maple.taxi.Taxi
+    correctMoveProbability: 1.0
+    fickleProbability: 0.0
+    tf: !!edu.umbc.cs.maple.taxi.TaxiTerminalFunction {}
+    rf: !!edu.umbc.cs.maple.taxi.TaxiRewardFunction {}
+
+goal: !!edu.umbc.cs.maple.taxi.TaxiGoal {}
 
 agents:
-#  - rmaxqExpert
-#  - rmaxqHierGen
-  - palmExpert
-#  - palmExpertCross
-#  - palmExpertWithNavGiven
-#  - palmHierGen
-#  - kappaExpert
-#  - kappaHierGen
-#  - ql
+  palm: {taxi-expert}
 
-seed: 2233445
-episodes: 50
+seed: 77665544
+episodes: 100
 max_steps: 100000
-trials: 10
-gamma: 0.99
+trials: 1
+gamma: 0.95
 
 identifier_independent: false
 planning:
@@ -26,9 +23,9 @@ planning:
 
 rmax:
   vmax: 10.0
-  threshold: 3
+  threshold: 10
   max_delta: 0.0000001
-  max_delta_rmaxq: 0.0001
+  max_delta_rmaxq: 0.0000001
   max_iterations_in_model: 1000
   use_multitime_model: true
   use_model_sharing: true
@@ -37,7 +34,7 @@ rmax:
 output:
   csv:
     enabled: true
-    output: results/classic.csv
+    output: results/pex-classic-fickle.csv
 
   chart:
     enabled: true
@@ -49,15 +46,15 @@ output:
     trial_mode: MOST_RECENT_AND_AVERAGE
 
     metrics:
-                                     
       - STEPS_PER_EPISODE
       - CUMULATIVE_REWARD_PER_STEP
       - CUMULATIVE_REWARD_PER_EPISODE
 
   visualizer:
-    enabled: false
+    enabled: true
     episodes: true
     width: 5
     height: 5
-    
+
+
 

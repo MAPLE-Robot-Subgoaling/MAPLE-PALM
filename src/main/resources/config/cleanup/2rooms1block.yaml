@@ -2,8 +2,8 @@ domain: !!edu.umbc.cs.maple.config.cleanup.CleanupConfig
   domainGenerator: !!edu.umbc.cs.maple.cleanup.Cleanup
     minX: 0
     minY: 0
-    maxX: 9
-    maxY: 3
+    maxX: 7
+    maxY: 5
     tf: !!edu.umbc.cs.maple.cleanup.CleanupTF
       goal: &goal !!edu.umbc.cs.maple.cleanup.CleanupGoal
         goalDescriptions:
@@ -17,14 +17,15 @@ domain: !!edu.umbc.cs.maple.config.cleanup.CleanupConfig
       defaultReward: 0.0
       noopReward: 0.0
       pullReward: 0.0
-  state: cigar
+  state: twoRooms
 
 goal: *goal
 
 agents:
+  cross: {cleanup-jw}
   palm:  {cleanup-jw}
 
-seed: 555543
+seed: 435678245
 episodes: 100
 max_steps: 10000
 trials: 1
@@ -46,7 +47,7 @@ rmax:
 output:
   csv:
     enabled: true
-    output: results/palm-cleanup-3rooms2blocks.csv
+    output: results/palm-cleanup-jwtest.csv
 
   chart:
     enabled: true
@@ -65,5 +66,5 @@ output:
   visualizer:
     enabled: true
     episodes: true
-    width: 9
-    height: 9
+    width: 7
+    height: 5
