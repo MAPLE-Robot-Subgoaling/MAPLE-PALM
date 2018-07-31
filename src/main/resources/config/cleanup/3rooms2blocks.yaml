@@ -1,24 +1,35 @@
 domain: !!edu.umbc.cs.maple.config.cleanup.CleanupConfig
-    state: threeRooms
-    num_blocks: 2
+  domainGenerator: !!edu.umbc.cs.maple.cleanup.Cleanup
     minX: 0
     minY: 0
-    maxX: 5
+    maxX: 7
     maxY: 5
-    rewardGoal: 500.0
-    rewardBase: -1.0
-    rewardNoop: -1.0
-    rewardPull: 0.0
+    tf: !!edu.umbc.cs.maple.cleanup.CleanupTF
+      goal: &goal !!edu.umbc.cs.maple.cleanup.CleanupGoal
+        goalDescriptions:
+          - pf: !!edu.umbc.cs.maple.cleanup.pfs.BlockInRoomPF {}
+            params:
+             - block0
+             - room1
+    rf: !!edu.umbc.cs.maple.cleanup.CleanupRF
+      goal: *goal
+      goalReward: 1.0
+      defaultReward: 0.0
+      noopReward: 0.0
+      pullReward: 0.0
+  state: threeRooms-2blocks
 
-seed: 32552
+goal: *goal
 
 agents:
-  - palmExpert
+  cross: {cleanup-jw}
+  palm:  {cleanup-jw}
 
+seed: 555543
 episodes: 100
-max_steps: 1000
+max_steps: 10000
 trials: 1
-gamma: 0.95
+gamma: 0.99
 
 identifier_independent: false
 planning:
@@ -26,9 +37,9 @@ planning:
 
 rmax:
   vmax: 10.0
-  threshold: 2
-  max_delta: 0.0001
-  max_delta_rmaxq: 0.0001
+  threshold: 5
+  max_delta: 0.000001
+  max_delta_rmaxq: 0.000001
   max_iterations_in_model: 1000
   use_multitime_model: true
   use_model_sharing: false
@@ -36,15 +47,15 @@ rmax:
 output:
   csv:
     enabled: true
-    output: results/palm-cleanup-3rooms2blocks.csv
+    output: results/palm-cleanup-jwtest.csv
 
   chart:
     enabled: true
 
-    width: 500
-    height: 300
+    width: 400
+    height: 200
     columns: 2
-    max_height: 900
+    max_height: 650
     trial_mode: MOST_RECENT_AND_AVERAGE
 
     metrics:
@@ -53,7 +64,7 @@ output:
       - CUMULATIVE_REWARD_PER_EPISODE
 
   visualizer:
-    enabled: false
+    enabled: true
     episodes: true
-    width: 5
+    width: 7
     height: 5

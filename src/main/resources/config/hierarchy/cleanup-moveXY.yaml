@@ -2,8 +2,8 @@ name: expert-moveXY
 hierarchyConfigMap:
   root:
     children:
-      - moveAgentXY_np
       - pull_p
+      - moveAgentXY_np
     stateMapper: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.pick.PickRoomAgentMapper {}
     tf: &tf !!edu.umbc.cs.maple.hierarchy.framework.GoalFailTF
       goalPF: &goalPF !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.root.CleanupRootGoalPF {}
@@ -27,14 +27,8 @@ hierarchyConfigMap:
       actions:
         - !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.move.MoveAgentXYActionType
           name: moveAgentXY
-          parameterClasses:
-            - agent
-            - x
-            - y
-          parameterOrderGroup:
-            - moveAgentXY.P0
-            - moveAgentXY.P1
-            - moveAgentXY.P2
+        - !!edu.umbc.cs.maple.hierarchy.framework.UniversalActionTypeBean
+          name: pull
     solver: !!edu.umbc.cs.maple.config.solver.ValueIterationMultistepConfig
       maxDelta: 0.0001
       maxIterations: 1000
@@ -53,7 +47,27 @@ hierarchyConfigMap:
       tf: *tf
       rewardDefault: 0.0
       rewardNoop: 0.0
-    domainGenerator: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.move.CleanupMove {}
+    domainGenerator: !!edu.umbc.cs.maple.hierarchy.framework.TaskDomainGenerator
+       tf: *tf
+       rf: *rf
+       stateClasses:
+         - className: agent
+           clasz: !!edu.umbc.cs.maple.cleanup.state.CleanupAgent {}
+         - className: block
+           clasz: !!edu.umbc.cs.maple.cleanup.state.CleanupBlock {}
+         - className: room
+           clasz: !!edu.umbc.cs.maple.cleanup.state.CleanupRoom {}
+         - className: door
+           clasz: !!edu.umbc.cs.maple.cleanup.state.CleanupDoor {}
+       actions:
+         - !!edu.umbc.cs.maple.hierarchy.framework.UniversalActionTypeBean
+           name: north
+         - !!edu.umbc.cs.maple.hierarchy.framework.UniversalActionTypeBean
+           name: south
+         - !!edu.umbc.cs.maple.hierarchy.framework.UniversalActionTypeBean
+           name: east
+         - !!edu.umbc.cs.maple.hierarchy.framework.UniversalActionTypeBean
+           name: west
     solver: !!edu.umbc.cs.maple.config.solver.ValueIterationMultistepConfig
       maxDelta: 0.0001
       maxIterations: 1000

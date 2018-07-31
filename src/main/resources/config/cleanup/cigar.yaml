@@ -17,16 +17,16 @@ domain: !!edu.umbc.cs.maple.config.cleanup.CleanupConfig
       defaultReward: 0.0
       noopReward: 0.0
       pullReward: 0.0
-  state: cigar
+  state: cigar-3blocks
 
 goal: *goal
 
 agents:
-  palm:  {cleanup-jw}
+  cross: {cleanup-jw}
 
 seed: 555543
-episodes: 100
-max_steps: 10000
+episodes: 150
+max_steps: 100000
 trials: 1
 gamma: 0.99
 
@@ -63,7 +63,7 @@ output:
       - CUMULATIVE_REWARD_PER_EPISODE
 
   visualizer:
-    enabled: true
+    enabled: false
     episodes: true
     width: 9
     height: 9
