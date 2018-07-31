@@ -4,17 +4,17 @@ hierarchyConfigMap:
     children:
       - pull_p
       - moveAgentXY_np
-    stateMapper: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.pick.PickRoomAgentMapper {}
-    tf: &tf !!edu.umbc.cs.maple.hierarchy.framework.GoalFailTF
+    stateMapper: !!edu.umbc.cs.maple.hierarchy.framework.IdentityMap {}
+    tf: &rootTF !!edu.umbc.cs.maple.hierarchy.framework.GoalFailTF
       goalPF: &goalPF !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.root.CleanupRootGoalPF {}
       failPF: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.root.CleanupRootFailPF {}
-    rf: &rf !!edu.umbc.cs.maple.hierarchy.framework.GoalFailRF
-      tf: *tf
+    rf: &rootRF !!edu.umbc.cs.maple.hierarchy.framework.GoalFailRF
+      tf: *rootTF
       rewardDefault: 0.0
       rewardNoop: 0.0
     domainGenerator: !!edu.umbc.cs.maple.hierarchy.framework.TaskDomainGenerator
-      tf: *tf
-      rf: *rf
+      tf: *rootTF
+      rf: *rootRF
       stateClasses:
         - className: agent
           clasz: !!edu.umbc.cs.maple.cleanup.state.CleanupAgent {}
@@ -27,8 +27,17 @@ hierarchyConfigMap:
       actions:
         - !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.move.MoveAgentXYActionType
           name: moveAgentXY
+          parameterClasses:
+            - x
+            - y
+          parameterOrderGroup:
+            - moveAgentXY.P0
+            - moveAgentXY.P1
+            - moveAgentXY.P3
         - !!edu.umbc.cs.maple.hierarchy.framework.UniversalActionTypeBean
-          name: pull
+          typeName: pull
+          action: !!burlap.mdp.core.action.SimpleAction
+            name: pull
     solver: !!edu.umbc.cs.maple.config.solver.ValueIterationMultistepConfig
       maxDelta: 0.0001
       maxIterations: 1000
@@ -40,16 +49,16 @@ hierarchyConfigMap:
        - east_p
        - west_p
     stateMapper: !!edu.umbc.cs.maple.hierarchy.framework.IdentityMap {}
-    tf: &tf !!edu.umbc.cs.maple.hierarchy.framework.GoalFailTF
+    tf: &xyTF !!edu.umbc.cs.maple.hierarchy.framework.GoalFailTF
       goalPF: &goalPF !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.move.MoveAgentXYGoalPF {}
-      failPF: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.move.MoveAgentXYGoalPF {}
-    rf: &rf !!edu.umbc.cs.maple.hierarchy.framework.GoalFailRF
-      tf: *tf
+      failPF: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.move.MoveAgentXYFailPF {}
+    rf: &xyRF !!edu.umbc.cs.maple.hierarchy.framework.GoalFailRF
+      tf: *xyTF
       rewardDefault: 0.0
       rewardNoop: 0.0
     domainGenerator: !!edu.umbc.cs.maple.hierarchy.framework.TaskDomainGenerator
-       tf: *tf
-       rf: *rf
+       tf: *xyTF
+       rf: *xyRF
        stateClasses:
          - className: agent
            clasz: !!edu.umbc.cs.maple.cleanup.state.CleanupAgent {}
@@ -61,13 +70,21 @@ hierarchyConfigMap:
            clasz: !!edu.umbc.cs.maple.cleanup.state.CleanupDoor {}
        actions:
          - !!edu.umbc.cs.maple.hierarchy.framework.UniversalActionTypeBean
-           name: north
+             typeName: north
+             action: !!burlap.mdp.core.action.SimpleAction
+                 name: north
          - !!edu.umbc.cs.maple.hierarchy.framework.UniversalActionTypeBean
-           name: south
+             typeName: south
+             action: !!burlap.mdp.core.action.SimpleAction
+                 name: south
          - !!edu.umbc.cs.maple.hierarchy.framework.UniversalActionTypeBean
-           name: east
+             typeName: east
+             action: !!burlap.mdp.core.action.SimpleAction
+                 name: east
          - !!edu.umbc.cs.maple.hierarchy.framework.UniversalActionTypeBean
-           name: west
+             typeName: west
+             action: !!burlap.mdp.core.action.SimpleAction
+                 name: west
     solver: !!edu.umbc.cs.maple.config.solver.ValueIterationMultistepConfig
       maxDelta: 0.0001
       maxIterations: 1000
