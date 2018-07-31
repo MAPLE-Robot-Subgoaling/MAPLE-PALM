@@ -1426,41 +1426,44 @@ public class CleanupRandomStateGenerator implements StateGenerator {
         return s;
     }
 
-    public OOState generateCigar(){
+    public OOState generateCigar(int numBlocks){
 
         Random rng = RandomFactory.getMapped(BurlapConstants.DEFAULT_RNG_INDEX);
 
-        int numBlocks = 3;
         int numRooms = 2;
         int numDoors = 1;
-
+        //one room is filled with blocks, the other room has space for all blocks, and there is 1 door and 2 walls
+        int width = numBlocks*2+3;
+        //2 walls and 1 corridor
+        int height = 3;
         String agentDirection = Cleanup.directions[3];
-        CleanupState s = new CleanupState(9, 3, 4, 1, agentDirection, 1, numRooms, numDoors);
+        CleanupState s = new CleanupState(width, height, numBlocks+1, 1, agentDirection, numBlocks, numRooms, numDoors);
 
         List<String> blockColors = new ArrayList<>(Arrays.asList(Cleanup.COLORS_BLOCKS));
         List<String> blockShapes = new ArrayList<>(Arrays.asList(Cleanup.SHAPES_BLOCKS));
         List<String> roomColors = new ArrayList<>(Arrays.asList(Cleanup.COLORS_ROOMS));
-
+        CleanupRoom[] rooms = new CleanupRoom[2];
         //initializes rooms
-        String room0Color = roomColors.get(rng.nextInt(roomColors.size()));
-        CleanupRoom room0 = new CleanupRoom("room0", 0, 4, 0, 2, room0Color, Cleanup.SHAPE_ROOM);
-        String room1Color = roomColors.get(rng.nextInt(roomColors.size()));
-        CleanupRoom room1 = new CleanupRoom("room1", 4, 8, 0, 2, room1Color, Cleanup.SHAPE_ROOM);
+        //white
+        String room0Color = roomColors.get(7);
+        rooms[0] = new CleanupRoom("room0", 0, numBlocks+1, 0, height-1, room0Color, Cleanup.SHAPE_ROOM);
+        //orange
+        String room1Color = roomColors.get(5);
+        //the right bound of room1 is
+        rooms[1] = new CleanupRoom("room1", numBlocks+1, numBlocks*2+2, 0, height-1, room1Color, Cleanup.SHAPE_ROOM);
 
         //initializes doors
-        CleanupDoor door0 = new CleanupDoor("door0", 4, 4, 1, 1, Cleanup.LOCKABLE_STATES[0], Cleanup.SHAPE_DOOR, Cleanup.COLOR_GRAY);
+        CleanupDoor door0 = new CleanupDoor("door0", numBlocks+1, numBlocks+1, 1, 1, Cleanup.LOCKABLE_STATES[0], Cleanup.SHAPE_DOOR, Cleanup.COLOR_GRAY);
 
         //initialize blocks
-        CleanupBlock block0 = new CleanupBlock("block0", 1, 1, blockShapes.get(rng.nextInt(blockShapes.size())), blockColors.get(rng.nextInt(blockColors.size())));
-        CleanupBlock block1 = new CleanupBlock("block1", 2, 1, blockShapes.get(rng.nextInt(blockShapes.size())), blockColors.get(rng.nextInt(blockColors.size())));
-        CleanupBlock block2 = new CleanupBlock("block2", 3, 1, blockShapes.get(rng.nextInt(blockShapes.size())), blockColors.get(rng.nextInt(blockColors.size())));
+        CleanupBlock[] blocks = new CleanupBlock[numBlocks];
+        for(int i = 0; i < numBlocks; i++){
+            blocks[i] = new CleanupBlock("block"+i,i+1,1, blockShapes.get(rng.nextInt(blockShapes.size())), blockColors.get(0));
+        }
 
-        s.addObject(room0);
-        s.addObject(room1);
+        for(CleanupRoom cr : rooms) { s.addObject(cr); }
         s.addObject(door0);
-        s.addObject(block0);
-        s.addObject(block1);
-        s.addObject(block2);
+        for(CleanupBlock cb : blocks) { s.addObject(cb); }
 
         return s;
     }
@@ -1512,7 +1515,7 @@ public class CleanupRandomStateGenerator implements StateGenerator {
         } else if (stateType.matches("spiral" + blockNumberRegex)){
             state = generateSpiral();
         } else if (stateType.matches("cigar" + blockNumberRegex)){
-            state = generateCigar();
+            state = generateCigar(numBlocks);
         } else {
             throw new RuntimeException("Error: unknown name for generating a random Cleanup state: " + stateType);
         }
