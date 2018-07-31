@@ -40,7 +40,7 @@ public class HierarchicalCharts {
         Map<String, Task> hierarchyMap = new HashMap<>();
         for(String agentType : config.agents.keySet()){
             for (String hierarchy : (LinkedHashSet<String>)config.agents.get(agentType)){
-                if(! (hierarchyMap.keySet().contains(hierarchy))){
+                if(!(hierarchyMap.keySet().contains(hierarchy))){
                     HierarchyConfig hierarchyConfig = HierarchyConfig.load(config,"config/hierarchy/"+hierarchy+".yaml");
                     hierarchyMap.put(hierarchy, hierarchyConfig.getRoot(config));
                 }

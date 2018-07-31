@@ -16,7 +16,9 @@ public class TaxiConfig extends DomainConfig {
     public double correct_move;
     public double fickle;
 
+    @Override
     public TaxiState generateState() {
+        System.out.println("Generating TaxiState of type: " + state);
         String passengerNumberRegex = "\\-(\\d+)passengers";
         Pattern r = Pattern.compile(passengerNumberRegex);
         Matcher m = r.matcher(state);

@@ -63,7 +63,7 @@ public enum AgentType {
     Q_LEARNING("ql", "QL"){
         @Override
         public LearningAgent getLearningAgent(Task root, HashableStateFactory hsf, ExperimentConfig config) {
-            OOSADomain baseDomain = root.getDomain();
+            OOSADomain baseDomain = (OOSADomain) config.baseDomain;
             double qInit = DEFAULT_Q_INIT;
             double learningRate = DEFAULT_LEARNING_RATE;
             LearningAgent agent = new QLearning(baseDomain, config.gamma, hsf, qInit, learningRate);
@@ -129,10 +129,11 @@ public enum AgentType {
     public static final boolean DEFAULT_IDENTIFIER_INDEPENDENT = false;
     public static LearningAgentFactory generateLearningAgentFactory(Task root, ExperimentConfig config, String agentTypeName, String agentName) {
         AgentType agentType = AgentType.getByType(agentTypeName);
+        String extra = agentName.contains("hier") ? "-H" : "";
         LearningAgentFactory agent = new LearningAgentFactory() {
             @Override
             public String getAgentName() {
-                return agentType.getPlotterDisplayName();
+                return agentType.getPlotterDisplayName() + extra;
             }
             @Override
             public LearningAgent generateAgent() {
