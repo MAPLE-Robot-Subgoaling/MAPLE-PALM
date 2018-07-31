@@ -15,7 +15,7 @@ public class CATGoal {
 
     // the input CATs *must* be successful trajectories, meaning their final state is a goal state
     public static Set<AttributeRelation> determineGoal(List<CATrajectory> goalCats) {
-        DPrint.cl(CATScan.DEBUG_CODE_CATSCAN, "CATScan: Determine Goal");
+        System.out.println("CATScan: Determine Goal");
 
         Set<String> allChangedVariables = new HashSet<>();
         for (CATrajectory cat : goalCats) {

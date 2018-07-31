@@ -134,10 +134,9 @@ public class CATrajectory {
 //    }
 
     public List<CausalEdge> findIncomingEdges(int endIndex) {
-        List<CausalEdge> ai = null;
+        List<CausalEdge> ai = new ArrayList<>();
         for (CausalEdge edge : edges) {
             if (edge.getEnd() == endIndex) {
-                if (ai == null) { ai = new ArrayList<>(); }
                 ai.add(edge);
             }
         }
@@ -145,10 +144,9 @@ public class CATrajectory {
     }
 
     public List<CausalEdge> findOutgoingEdges(int startIndex) {
-        List<CausalEdge> ai = null;
+        List<CausalEdge> ai = new ArrayList<>();
         for (CausalEdge edge : edges) {
             if (edge.getStart() == startIndex) {
-                if (ai == null) { ai = new ArrayList<>(); }
                 ai.add(edge);
             }
         }

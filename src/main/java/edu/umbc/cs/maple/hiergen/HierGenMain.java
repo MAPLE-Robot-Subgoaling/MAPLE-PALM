@@ -22,8 +22,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static edu.umbc.cs.maple.hiergen.CATScan.DEBUG_CODE_CATSCAN;
-
 public class HierGenMain {
 
     public static final String DIRECTORY_PATH_HIERGEN_OUTPUT = "./output_hiergen/";
@@ -71,8 +69,6 @@ public class HierGenMain {
         String pathToTrees = DIRECTORY_PATH_HIERGEN_OUTPUT + DIRECTORY_PATH_ACTION_MODEL_TREES;
         String pathToARFF = DIRECTORY_PATH_HIERGEN_OUTPUT + DIRECTORY_PATH_ARFF + FILE_ARFF;
         String pathToCATs = DIRECTORY_PATH_HIERGEN_OUTPUT + DIRECTORY_PATH_CATS;
-
-        DPrint.toggleCode(DEBUG_CODE_CATSCAN, true);
 
         int trajectoryCount = 100;
 
