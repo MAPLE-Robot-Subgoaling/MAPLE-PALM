@@ -17,7 +17,7 @@ domain: !!edu.umbc.cs.maple.config.cleanup.CleanupConfig
       defaultReward: 0.0
       noopReward: 0.0
       pullReward: 0.0
-  state: twoRooms-3blocks
+  state: twoRooms-1blocks
 
 goal: *goal
 
