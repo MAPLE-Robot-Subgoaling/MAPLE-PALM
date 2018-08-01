@@ -93,6 +93,7 @@ public class GetStateMapper implements ParameterizedStateMapping {
                     wy + wh > ay) {
                 //System.out.println("Crashed into "+wall.name());
                 getState.hasFailed = true;
+                getState.touchAgent().set(ATT_LOCATION, ATT_VAL_CRASHED);
             }
 
         }

@@ -54,14 +54,14 @@ public class HierarchicalCharts {
 
                 }
                 if(agentName.equals(PALM.getType())) {
-                    agents.add(PALM.generateLearningAgentFactory(hierarchyMap.get(hierarchy), config, hierarchy+"-"+agentName));
+                    agents.add(PALM.generateLearningAgentFactory(hierarchyMap.get(hierarchy), config));
                 } else if(agentName.equals(RMAXQ.getType())) {
-                    agents.add( RMAXQ.generateLearningAgentFactory(hierarchyMap.get(hierarchy), config, hierarchy+"-"+agentName));
+                    agents.add( RMAXQ.generateLearningAgentFactory(hierarchyMap.get(hierarchy), config));
                 } else if(agentName.equals(KAPPA.getType())) {
-                    agents.add(KAPPA.generateLearningAgentFactory(hierarchyMap.get(hierarchy), config, hierarchy+"-"+agentName));
+                    agents.add(KAPPA.generateLearningAgentFactory(hierarchyMap.get(hierarchy), config));
                 } else if(agentName.equals(Q_LEARNING.getType())){
                     Task qLearningWrapper = new NonprimitiveTask(baseDomain);
-                    agents.add( Q_LEARNING.generateLearningAgentFactory(qLearningWrapper, config, hierarchy+"-"+agentName));
+                    agents.add( Q_LEARNING.generateLearningAgentFactory(qLearningWrapper, config));
                 }
             }
         }

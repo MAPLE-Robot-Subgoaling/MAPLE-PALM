@@ -26,7 +26,6 @@ hierarchyConfigMap:
       tf: &tf !!edu.umbc.cs.maple.hierarchy.framework.GoalFailTF
         goalPF: !!edu.umbc.cs.maple.liftCopter.hierarchies.functions.GetCompletedPF {}
         failPF: !!edu.umbc.cs.maple.liftCopter.hierarchies.functions.GetFailurePF {}
-
       rf: !!edu.umbc.cs.maple.hierarchy.framework.GoalFailRF
         tf: *tf
         rewardDefault: 0.0

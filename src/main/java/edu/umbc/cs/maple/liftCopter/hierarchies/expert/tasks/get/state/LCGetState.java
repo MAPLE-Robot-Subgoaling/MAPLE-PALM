@@ -14,7 +14,7 @@ import static edu.umbc.cs.maple.liftCopter.LiftCopterConstants.*;
 
 public class LCGetState extends LCGetPutState implements DeepCopyForShallowCopyState {
 
-    public boolean hasFailed = true;
+    public boolean hasFailed = false;
     //this state has passengers and depots
     private LCGetAgent agent;
     private Map<String, LCGetCargo> cargos;

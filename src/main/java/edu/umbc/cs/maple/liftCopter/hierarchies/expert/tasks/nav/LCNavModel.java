@@ -131,7 +131,27 @@ public class LCNavModel implements FullStateModel{
         agent.set(ATT_VX, nvx);
         agent.set(ATT_VY, nvy);
 
+        List<ObjectInstance> walls = s.objectsOfClass(CLASS_WALL);
+        double aw = (double)agent.get(ATT_W);
+        double ah = (double)agent.get(ATT_H);
+        for (ObjectInstance wall : walls) {
+            double ww = (double) wall.get(ATT_WIDTH);
+            double wh = (double) wall.get(ATT_HEIGHT);
+            double wx = (double) wall.get(ATT_START_X);
+            double wy = (double) wall.get(ATT_START_Y);
+//            System.out.println("Compare: \n" +
+////                    "\t a:"+ax+","+ay+","+ah+","+aw+"\n" +
+////                    "\t w:"+wall.name() + ","+wx+","+wy+","+wh+","+ww
+////            );
+            if (wx < nx + aw &&
+                    wx + ww > nx &&
+                    wy < ny + ah &&
+                    wy + wh > ny) {
+                System.out.println("Crashed into "+wall.name());
+                agent.set(ATT_LOCATION, ATT_VAL_CRASHED);
+            }
 
+        }
 
     }
 

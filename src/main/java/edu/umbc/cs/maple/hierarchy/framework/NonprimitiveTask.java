@@ -21,7 +21,18 @@ public class NonprimitiveTask extends Task {
     protected GoalFailTF goalFailTF;
     protected GoalFailRF goalFailRF;
     public SolverConfig solver;
-
+    /**
+     * create a nunprimitive task
+     * @param children the subtasks
+     * @param aType the set of actions this task represents in its parent task's domain
+     * @param abstractDomain the domain this task executes actions in
+     * @param map the state abstraction function into the domain
+     */
+    public NonprimitiveTask(Task[] children, ActionType aType, OOSADomain abstractDomain, StateMapping map,
+                            TerminalFunction tf, RewardFunction rf, SolverConfig solverConfig) {
+        this(children,aType,abstractDomain,map,tf,rf);
+        this.solver = solverConfig;
+    }
     //used for hierarchies with abstractions
     /**
      * create a nunprimitive task

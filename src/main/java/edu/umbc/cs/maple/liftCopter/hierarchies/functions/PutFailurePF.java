@@ -45,6 +45,9 @@ public class PutFailurePF extends PropositionalFunction{
 //
 //        }
         if (!(s instanceof LCPutState)) { return false; }
+        if( ((LCPutState) s).touchAgent().get(ATT_LOCATION) == ATT_VAL_CRASHED){
+            return true;
+        }
         String cargoName = params[0];
         MutableObject cargo = (MutableObject) s.object(cargoName);
         if (cargo == null) { return false; }

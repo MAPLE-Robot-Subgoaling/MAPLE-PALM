@@ -17,6 +17,11 @@ public class GoalFailRF implements RewardFunction {
 
     protected GoalFailTF tf;
 
+    //todo: make Bean
+
+    public GoalFailRF(){
+    }
+
     public GoalFailRF(GoalFailTF tf) {
         this.tf = tf;
     }

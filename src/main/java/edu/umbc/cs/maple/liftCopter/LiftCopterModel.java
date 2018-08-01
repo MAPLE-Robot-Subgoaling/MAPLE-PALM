@@ -163,7 +163,7 @@ public class LiftCopterModel implements FullStateModel{
      * @param direction
      */
     protected void updateMotion(LiftCopterState s, double thrust, double direction) {
-
+        if(hasLiftCopterCrashed(s)) return;
         double ti = 1.0D;
         double tt = ti * ti;
         LiftCopterAgent agent = s.touchCopter();
@@ -200,7 +200,7 @@ public class LiftCopterModel implements FullStateModel{
         agent.set(ATT_Y, ny);
         agent.set(ATT_VX, nvx);
         agent.set(ATT_VY, nvy);
-
+        hasLiftCopterCrashed(s);
         for(ObjectInstance passenger : s.objectsOfClass(CLASS_CARGO)){
             boolean inTaxi = (boolean) passenger.get(ATT_PICKED_UP);
             if(inTaxi){
@@ -229,5 +229,32 @@ public class LiftCopterModel implements FullStateModel{
         else if(aname.startsWith(ACTION_PUTDOWN))
             return IND_PUTDOWN;
         throw new RuntimeException("Invalid action " + aname);
+    }
+    public boolean hasLiftCopterCrashed(LiftCopterState s){
+        List<ObjectInstance> walls = s.objectsOfClass(CLASS_WALL);
+        double ax = (double) s.touchCopter().get(ATT_X);
+        double ay = (double) s.touchCopter().get(ATT_Y);
+        double ah = (double) s.touchCopter().get(ATT_H);
+        double aw = (double) s.touchCopter().get(ATT_W);
+        for (ObjectInstance wall : walls) {
+            double ww = (double) wall.get(ATT_WIDTH);
+            double wh = (double) wall.get(ATT_HEIGHT);
+            double wx = (double) wall.get(ATT_START_X);
+            double wy = (double) wall.get(ATT_START_Y);
+//            System.out.println("Compare: \n" +
+////                    "\t a:"+ax+","+ay+","+ah+","+aw+"\n" +
+////                    "\t w:"+wall.name() + ","+wx+","+wy+","+wh+","+ww
+////            );
+            if (wx < ax + aw &&
+                    wx + ww > ax &&
+                    wy < ay + ah &&
+                    wy + wh > ay) {
+                System.out.println("Crashed into "+wall.name());
+                s.getCopter().set(ATT_LOCATION, ATT_VAL_CRASHED);
+                return true;
+            }
+
+        }
+        return false;
     }
 }

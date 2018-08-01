@@ -27,16 +27,7 @@ import static edu.umbc.cs.maple.utilities.BurlapConstants.DEFAULT_LEARNING_RATE;
 import static edu.umbc.cs.maple.utilities.BurlapConstants.DEFAULT_Q_INIT;
 
 public enum AgentType {
-
-    PALM_EXPERT_CROSS("palmExpertCross", "PALM-Ex-Cross"){
-        @Override
-        public LearningAgent getLearningAgent(Task root, HashableStateFactory hsf, ExperimentConfig config) {
-            PALMModelGenerator modelGen = new PALMRmaxModelGenerator(hsf, config);
-            LearningAgent agent = new CrossPALMLearningAgent(root, modelGen, hsf, config);
-            return agent;
-        }
-    },
-    PALM_EXPERT("palmExpert", "PALM-Expert"){
+    PALM("palm", "PALM"){
         @Override
         public LearningAgent getLearningAgent(Task root, HashableStateFactory hsf, ExperimentConfig config) {
             PALMModelGenerator modelGen = new PALMRmaxModelGenerator(hsf, config);
@@ -44,31 +35,7 @@ public enum AgentType {
             return agent;
         }
     },
-    PALM_HIERGEN("palmHierGen", "PALM-HierGen"){
-        @Override
-        public LearningAgent getLearningAgent(Task root, HashableStateFactory hsf, ExperimentConfig config) {
-            PALMModelGenerator modelGen = new PALMRmaxModelGenerator(hsf, config);
-            LearningAgent agent = new PALMLearningAgent(root, modelGen, hsf, config);
-            return agent;
-        }
-    },
-    PALM_EXPERT_NAV_GIVEN("palmExpertWithNavGiven", "PALM-Expert w/ Nav"){
-        @Override
-        public LearningAgent getLearningAgent(Task root, HashableStateFactory hsf, ExperimentConfig config) {
-            PALMModelGenerator modelGen = new ExpertNavModelGenerator(hsf, config);
-            LearningAgent agent = new PALMLearningAgent(root, modelGen, hsf, config);
-            return agent;
-        }
-
-    },
-    RMAXQ_EXPERT("rmaxqExpert", "RMAXQ-Expert"){
-        @Override
-        public LearningAgent getLearningAgent(Task root, HashableStateFactory hsf, ExperimentConfig config) {
-            return new RmaxQLearningAgent(root, hsf, config);
-        }
-
-    },
-    RMAXQ_HIERGEN("rmaxqHierGen", "RMAXQ-HierGen"){
+    RMAXQ("rmaxq", "RMAXQ-Expert"){
         @Override
         public LearningAgent getLearningAgent(Task root, HashableStateFactory hsf, ExperimentConfig config) {
             return new RmaxQLearningAgent(root, hsf, config);
@@ -76,16 +43,7 @@ public enum AgentType {
 
     },
 
-    KAPPA_EXPERT("kappaExpert", "κ-Expert"){
-        @Override
-        public LearningAgent getLearningAgent(Task root, HashableStateFactory hsf, ExperimentConfig config) {
-            ExpectedRmaxModelGenerator modelGen = new ExpectedRmaxModelGenerator(hsf, config);
-            PALMLearningAgent agent = new PALMLearningAgent(root, modelGen, hsf, config);
-            return agent;
-        }
-
-    },
-    KAPPA_HIERGEN("kappaHierGen", "κ-HierGen"){
+    KAPPA("kappa", "κ"){
         @Override
         public LearningAgent getLearningAgent(Task root, HashableStateFactory hsf, ExperimentConfig config) {
             ExpectedRmaxModelGenerator modelGen = new ExpectedRmaxModelGenerator(hsf, config);

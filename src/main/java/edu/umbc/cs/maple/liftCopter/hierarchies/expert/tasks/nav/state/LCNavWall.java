@@ -48,8 +48,8 @@ public class LCNavWall extends MutableObject {
                 objectName,
                 get(ATT_START_X),
                 get(ATT_START_Y),
-                get(ATT_HEIGHT),
-                get(ATT_WIDTH)
+                get(ATT_WIDTH),
+                get(ATT_HEIGHT)
         );
     }
 

@@ -17,10 +17,10 @@ public class LiftCopterStateFactory {
         LiftCopterAgent agent = new LiftCopterAgent(CLASS_AGENT + 0, 0.25,3.25, .5, .5);
 
         List<LiftCopterLocation> locations = new ArrayList<LiftCopterLocation>();
-        locations.add(new LiftCopterLocation(CLASS_LOCATION + 0, .5D, 3.5,1,1, COLOR_RED));
-        locations.add(new LiftCopterLocation(CLASS_LOCATION + 1, 1.5, .5,1,1, COLOR_YELLOW));
-        locations.add(new LiftCopterLocation(CLASS_LOCATION + 2, 3.5, .5,1,1, COLOR_BLUE));
-        locations.add(new LiftCopterLocation(CLASS_LOCATION + 3, 3.5, 3.5,1,1, COLOR_GREEN));
+        locations.add(new LiftCopterLocation(CLASS_LOCATION + 0, 0.0, 4.0,1,1, COLOR_RED));
+        locations.add(new LiftCopterLocation(CLASS_LOCATION + 1, 2.0, 0.0,1,1, COLOR_YELLOW));
+        locations.add(new LiftCopterLocation(CLASS_LOCATION + 2, 4.0, 0.0,1,1, COLOR_BLUE));
+        locations.add(new LiftCopterLocation(CLASS_LOCATION + 3, 4.0, 4.0,1,1, COLOR_GREEN));
 
         List<LiftCopterCargo> cargos = new ArrayList<LiftCopterCargo>();
         for (int i = 0; i < numCargos; i++){
