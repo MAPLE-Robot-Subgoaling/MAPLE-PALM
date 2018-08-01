@@ -7,15 +7,21 @@ import java.util.stream.Collectors;
 
 public class SubCAT {
 
+    public static int SUBCAT_ID = 0;
+
+    protected String name;
     protected CATrajectory cat;
     protected Collection<ObjectAttributePair> variables;
     protected Set<Integer> actionIndexes;
+    protected Set<Integer> prunedIndexes;
     protected Map<Integer, String> messages;
 
-    public SubCAT(CATrajectory cat, Collection<ObjectAttributePair> variables) {
+    public SubCAT(String name, CATrajectory cat, Collection<ObjectAttributePair> variables) {
+        this.name = name;
         this.cat = cat;
         this.variables = variables;
         this.actionIndexes = new TreeSet<>();
+        this.prunedIndexes = new TreeSet<>();
         this.messages = new LinkedHashMap<>();
     }
 
@@ -28,9 +34,10 @@ public class SubCAT {
         messages.put(actionIndex, message);
     }
 
-    public void prune(int actionIndex) {
+    public void prune(int actionIndex, String message) {
         actionIndexes.remove(actionIndex);
-        messages.remove(actionIndex);
+        prunedIndexes.add(actionIndex);
+        messages.put(actionIndex, "!" +messages.get(actionIndex) + " " + message);
     }
 
     public CATrajectory getCat() {
@@ -47,7 +54,8 @@ public class SubCAT {
 
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("Variables: (");
+        sb.append(name);
+        sb.append(": Variables: (");
         boolean first = true;
         for (ObjectAttributePair variable : variables) {
             if (!first) { sb.append(", "); } else { first = false; }
@@ -56,6 +64,16 @@ public class SubCAT {
         sb.append("), Actions: ");
         first = true;
         for (Integer i : actionIndexes) {
+            if (!first) { sb.append(", "); } else { first = false; }
+            sb.append(i);
+            sb.append("(");
+            sb.append(cat.getActions()[i]);
+            sb.append(") ");
+            sb.append(messages.get(i));
+        }
+        sb.append("; Pruned: ");
+        first = true;
+        for (Integer i : prunedIndexes) {
             if (!first) { sb.append(", "); } else { first = false; }
             sb.append(i);
             sb.append("(");
@@ -78,6 +96,20 @@ public class SubCAT {
                 .map(startIndex -> cat.findOutgoingEdges(startIndex))
                 .flatMap(Collection::stream)
                 .collect(Collectors.toList());
+    }
+
+    public void unify(SubCAT subcat) {
+        if (!this.cat.name.equals(subcat.cat.name)) {
+            throw new RuntimeException("Trying to unify subcats from different cats");
+        }
+        for(Integer actionIndex : subcat.actionIndexes) {
+            this.variables.addAll(subcat.variables);
+            String message = subcat.messages.get(actionIndex);
+            this.add(actionIndex, message);
+//            String message = this.messages.computeIfAbsent(actionIndex, s -> "");
+//            message += " (unified)";
+//            this.messages.put(actionIndex, message);
+        }
     }
 
 }

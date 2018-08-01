@@ -111,9 +111,10 @@ public class HierGenMain {
             for (int i = 0; i < trajectories.size(); i++) {
                 Episode trajectory = trajectories.get(i);
                 System.out.println("Causally annotating the trajectory " + (i + 1) + " / " + trajectories.size());
-                CATrajectory cat = new CATrajectory();
+                String name = FILE_PREFIX_CAT + "_" + i;
+                CATrajectory cat = new CATrajectory(name);
                 cat.annotateTrajectory(trajectory, actionModels, model);
-                String filename = pathToCATs + FILE_PREFIX_CAT + "_" + i;
+                String filename = pathToCATs + name;
                 cat.write(filename);
             }
         }
@@ -127,7 +128,7 @@ public class HierGenMain {
             cats.add(cat);
         }
 
-        HierBuilder.start(cats);
+        HierBuilder.run(actionModels, cats);
 
     }
 }

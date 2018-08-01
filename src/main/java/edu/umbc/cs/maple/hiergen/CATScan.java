@@ -4,15 +4,19 @@ import edu.umbc.cs.maple.hiergen.CAT.*;
 
 import java.util.*;
 
+import static edu.umbc.cs.maple.hiergen.CAT.SubCAT.SUBCAT_ID;
+
 
 public class CATScan {
+
 
     // input: a CAT, the relevant variables
     // output: initial subCATs
     protected static SubCAT seedSubCAT(CATrajectory cat, Collection<ObjectAttributePair> variables) {
         int catStart = cat.getStartIndex();
         int catEnd = cat.getEndIndex();
-        SubCAT subcat = new SubCAT(cat, variables);
+        String subcatName = cat.getName() + "_subcat_" + SUBCAT_ID++;
+        SubCAT subcat = new SubCAT(subcatName, cat, variables);
         Set<CausalEdge> edges = cat.getEdges();
         for (ObjectAttributePair variable : variables) {
             String variableName = variable.toString();
@@ -47,11 +51,6 @@ public class CATScan {
                 boolean connectedOutOf = isConnectedToUnknownActionIndex(subcat, i);
                 if (connectedInto && !connectedOutOf) {
                     subcat.add(i, "-> " + getSomeConnectedKnownActionIndex(subcat, i));
-//                    if (subcat.getCat().getActions()[i].contains("pick")) {
-//                        connectedInto = isConnectedToKnownAction(subcat, i);
-//                        connectedOutOf = isConnectedToUnknownAction(subcat, i);
-//                        System.out.println(connectedInto + " " + connectedOutOf);
-//                    }
                 }
             }
         } while (subcat.size() != prevSize);
@@ -80,7 +79,7 @@ public class CATScan {
     }
 
     protected static Set<Integer> getUnknownActionIndexes(SubCAT subcat) {
-        Set<Integer> unknownActionIndexes = new HashSet<>();
+        Set<Integer> unknownActionIndexes = new LinkedHashSet<>();
         CATrajectory cat = subcat.getCat();
         for (int i = 0; i < cat.getActions().length; i++) {
             if (!subcat.contains(i)) { unknownActionIndexes.add(i); }
@@ -126,24 +125,19 @@ public class CATScan {
                 int edgeStart = edge.getStart();
                 if (existingEdgeStart != edgeStart) {
                     int edgeEnd = edge.getEnd();
-                    subcat.prune(edgeEnd);
+                    subcat.prune(edgeEnd, "enforcing preconditions");
                     break;
                 }
             }
             existing.add(edge);
 
         }
-//        System.out.println("outgoing...");
-//        List<CausalEdge> outgoing = subcat.getOutgoing();
-//        for (CausalEdge edge : outgoing) {
-//            System.out.println(edge + " " + subcat.getCat().getActions()[edge.getStart()] + " " + subcat.getCat().getActions()[edge.getEnd()]);
-//        }
 
     }
 
     public static List<SubCAT> scan(List<CATrajectory> cats, Collection<ObjectAttributePair> variables) {
 
-        System.out.println("CATScan");
+        System.out.println("CATScan  ");
 
         List<SubCAT> subCATs = new ArrayList<>();
         for (CATrajectory cat : cats) {

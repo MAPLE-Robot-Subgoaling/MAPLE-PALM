@@ -24,6 +24,7 @@ public class CATrajectory {
 //    protected List<Integer> actionInds = null;
 //    public int lastAction;
 
+    protected String name;
     protected String[] actions;
     protected Set<CausalEdge> edges;
     protected Set<String>[] checkedVariables;
@@ -31,6 +32,11 @@ public class CATrajectory {
     protected Episode baseTrajectory;
 
     public CATrajectory() {
+        this(null);
+    }
+
+    public CATrajectory(String name) {
+        this.name = name;
         this.edges = new TreeSet<>();
     }
 
@@ -364,4 +370,11 @@ public class CATrajectory {
 
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 }
