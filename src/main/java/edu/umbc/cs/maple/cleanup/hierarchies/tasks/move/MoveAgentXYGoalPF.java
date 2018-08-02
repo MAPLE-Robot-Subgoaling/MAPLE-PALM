@@ -31,6 +31,9 @@ public class MoveAgentXYGoalPF extends PropositionalFunction {
         int y = Integer.parseInt(params[2]);
         CleanupState cstate = (CleanupState) ooState;
         CleanupAgent agent = cstate.getAgent();
+        if(agent==null){
+            return false;
+        }
         int ax = (int) agent.get(ATT_X);
         int ay = (int) agent.get(ATT_Y);
 

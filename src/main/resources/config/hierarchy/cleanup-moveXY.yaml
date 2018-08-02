@@ -2,11 +2,11 @@ name: expert-moveXY
 hierarchyConfigMap:
   root:
     children:
-      - pull_p
       - moveAgentXY_np
+      - pull_p
     stateMapper: !!edu.umbc.cs.maple.hierarchy.framework.IdentityMap {}
     tf: &rootTF !!edu.umbc.cs.maple.hierarchy.framework.GoalFailTF
-      goalPF: &goalPF !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.root.CleanupRootGoalPF {}
+      goalPF: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.root.CleanupRootGoalPF {}
       failPF: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.root.CleanupRootFailPF {}
     rf: &rootRF !!edu.umbc.cs.maple.hierarchy.framework.GoalFailRF
       tf: *rootTF
@@ -33,7 +33,6 @@ hierarchyConfigMap:
           parameterOrderGroup:
             - moveAgentXY.P0
             - moveAgentXY.P1
-            - moveAgentXY.P3
         - !!edu.umbc.cs.maple.hierarchy.framework.UniversalActionTypeBean
           typeName: pull
           action: !!burlap.mdp.core.action.SimpleAction
@@ -50,7 +49,7 @@ hierarchyConfigMap:
        - west_p
     stateMapper: !!edu.umbc.cs.maple.hierarchy.framework.IdentityMap {}
     tf: &xyTF !!edu.umbc.cs.maple.hierarchy.framework.GoalFailTF
-      goalPF: &goalPF !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.move.MoveAgentXYGoalPF {}
+      goalPF: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.move.MoveAgentXYGoalPF {}
       failPF: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.move.MoveAgentXYFailPF {}
     rf: &xyRF !!edu.umbc.cs.maple.hierarchy.framework.GoalFailRF
       tf: *xyTF

@@ -1,10 +1,10 @@
 package edu.umbc.cs.maple.cleanup.hierarchies.tasks.move;
 
-import burlap.mdp.core.action.Action;
 import edu.umbc.cs.maple.hierarchy.framework.StringFormat;
 import edu.umbc.cs.maple.taxi.hiergen.actions.HierGenTask5Action;
+import edu.umbc.cs.maple.utilities.IntegerParameterizedAction;
 
-public class MoveAgentXYAction implements Action {
+public class MoveAgentXYAction implements IntegerParameterizedAction {
     private int goalX, goalY;
 
     public MoveAgentXYAction(int x, int y){
