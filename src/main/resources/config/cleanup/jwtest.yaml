@@ -17,16 +17,15 @@ domain: !!edu.umbc.cs.maple.config.cleanup.CleanupConfig
       defaultReward: 0.0
       noopReward: 0.0
       pullReward: 0.0
-  state: twoRooms-3blocks
+  state: twoRooms-1blocks
 
 goal: *goal
 
 agents:
-  cross: {cleanup-jw}
-  palm:  {cleanup-jw}
+  cross: {cleanup-jw, cleanup-baseline}
 
 seed: 555543
-episodes: 100
+episodes: 35
 max_steps: 10000
 trials: 1
 gamma: 0.99
