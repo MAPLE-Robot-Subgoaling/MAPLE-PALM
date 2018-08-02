@@ -22,7 +22,7 @@ domain: !!edu.umbc.cs.maple.config.cleanup.CleanupConfig
 goal: *goal
 
 agents:
-  palm:  {cleanup-jw}
+  palm:  {cleanup-advancedBaseline}
 
 seed: 555543
 episodes: 100

@@ -1,0 +1,47 @@
+name: expert-baseline
+hierarchyConfigMap:
+  root:
+    children:
+      - North_np
+      - South_np
+      - East_np
+      - West_np
+      - Pull_np
+    stateMapper: !!edu.umbc.cs.maple.hierarchy.framework.IdentityMap {}
+    tf: &tf !!edu.umbc.cs.maple.hierarchy.framework.GoalFailTF
+      goalPF: &goalPF !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.root.CleanupRootGoalPF {}
+      failPF: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.root.CleanupRootFailPF {}
+    rf: &rf !!edu.umbc.cs.maple.hierarchy.framework.GoalFailRF
+      tf: *tf
+      rewardDefault: 0.0
+      rewardNoop: 0.0
+    domainGenerator: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.move.CleanupMove {}
+    solver: !!edu.umbc.cs.maple.config.solver.ValueIterationMultistepConfig
+      maxDelta: 0.0001
+      maxIterations: 1000
+
+  North:
+    children:
+     - north_p
+    stateMapper: !!edu.umbc.cs.maple.hierarchy.framework.IdentityMap {}
+    tf: &tf !!edu.umbc.cs.maple.hierarchy.framework.GoalFailTF
+      goalPF: &goalPF !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.move.MoveAgentXYGoalPF {}
+      failPF: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.move.MoveAgentXYGoalPF {}
+    rf: &rf !!edu.umbc.cs.maple.hierarchy.framework.GoalFailRF
+      tf: *tf
+      rewardDefault: 0.0
+      rewardNoop: 0.0
+    domainGenerator: !!edu.umbc.cs.maple.hierarchy.framework.TaskDomainGenerator
+       tf: *tf
+       rf: *rf
+       stateClasses:
+          - className: agent
+            clasz: !!edu.umbc.cs.maple.cleanup.state.CleanupAgent {}
+          - className: block
+            clasz: !!edu.umbc.cs.maple.cleanup.state.CleanupBlock {}
+       actions:
+         - !!edu.umbc.cs.maple.hierarchy.framework.UniversalActionTypeBean
+           name: north
+    solver: !!edu.umbc.cs.maple.config.solver.ValueIterationMultistepConfig
+      maxDelta: 0.0001
+      maxIterations: 1000
