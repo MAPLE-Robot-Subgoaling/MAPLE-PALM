@@ -134,9 +134,9 @@ public class PALMLearningAgent implements LearningAgent {
 
         // run a rollout on the models resulting from the episode just computed,
         // to check if the root AMDP has reached a solution yet
-        Action action = runDebugRollout(groundedRoot, initialState, maxSteps);
-        System.out.println(e.rewardSequence.get(e.rewardSequence.size()-1));
-        runDebugRollout(taskNames.get(action.toString()), initialState, maxSteps);
+//        Action action = runDebugRollout(groundedRoot, initialState, maxSteps);
+//        System.out.println(e.rewardSequence.get(e.rewardSequence.size()-1));
+//        runDebugRollout(taskNames.get(action.toString()), initialState, maxSteps);
 
         long estimatedTime = System.nanoTime() - start;
         System.out.println("Nano time elapsed:  " + estimatedTime);
