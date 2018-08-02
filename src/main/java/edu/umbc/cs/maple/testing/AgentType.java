@@ -130,10 +130,11 @@ public enum AgentType {
     public static LearningAgentFactory generateLearningAgentFactory(Task root, ExperimentConfig config, String agentTypeName, String agentName) {
         AgentType agentType = AgentType.getByType(agentTypeName);
         String extra = agentName.contains("hier") ? "-H" : "";
+        String extra2 = agentName.contains("baseline") ? "-B" : "";
         LearningAgentFactory agent = new LearningAgentFactory() {
             @Override
             public String getAgentName() {
-                return agentType.getPlotterDisplayName() + extra;
+                return agentType.getPlotterDisplayName() + extra + extra2;
             }
             @Override
             public LearningAgent generateAgent() {
