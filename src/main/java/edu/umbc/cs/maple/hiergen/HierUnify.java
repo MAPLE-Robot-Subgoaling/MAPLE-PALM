@@ -27,7 +27,7 @@ public class HierUnify {
             System.out.println("\n" + catName);
             List<SubCAT> subcats = catNameToSubcats.get(catName);
             CATrajectory cat = subcats.get(0).getCat();
-            String subcatName = cat.getName() + "subcat_" + SUBCAT_ID++ + "_unified";
+            String subcatName = cat.getName() + "_subcat_" + SUBCAT_ID++ + "_unified";
             SubCAT unified = new SubCAT(subcatName, cat, new LinkedHashSet<>());
             for (SubCAT subcat : subcats) {
                 System.out.println("\t"+subcat);
