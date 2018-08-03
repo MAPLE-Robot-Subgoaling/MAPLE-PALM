@@ -3,6 +3,7 @@ package edu.umbc.cs.maple.hiergen;
 import edu.umbc.cs.maple.hiergen.CAT.*;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class HierBuilder {
 
@@ -34,8 +35,34 @@ public class HierBuilder {
         List<HierGenTask> tasks = new ArrayList<>();
 
         // Line 9
-        Map<AttributeRelation, List<SubCAT>> goalToUnifiedSubcats = HierBuilderUnify.run(goalToSubcats);
+        List<SubCAT> unifiedSubcats = HierBuilderUnify.run(goalToSubcats);
 
+        // Line 10
+        if (unifiedSubcats.size() > 0) {
+
+            //Line 11
+//            goalToSubcats = goalToUnifiedSubcats;
+
+            // Line 12 (inner step, invert all subcats)
+//            List<SubCAT> subcats = goalToUnifiedSubcats
+//                    .entrySet()
+//                    .stream()
+//                    .map(Map.Entry::getValue)
+//                    .collect(Collectors.toList())
+//                    .stream()
+//                    .flatMap(List::stream)
+//                    .collect(Collectors.toList());
+            List<InvertedSubCAT> invertedSubcats = InvertedSubCAT.create(unifiedSubcats);
+
+            // Line 12 (inner step, extract preceding CATs)
+            List<CATrajectory> extractedCats = HierGenExtract.run(cats, invertedSubcats);
+
+            // Line 12
+            Set<HierGenTask> taskSetQ = run(actionModels, extractedCats);
+
+        } else {
+            System.err.println("Debug: no unified subcats!");
+        }
 
 
         return null;

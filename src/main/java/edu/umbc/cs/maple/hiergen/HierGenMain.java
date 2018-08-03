@@ -120,9 +120,10 @@ public class HierGenMain {
         }
 
 //        int count = trajectoryCount;
+        int debugStart = 0;
         int count = 20;
         ArrayList<CATrajectory> cats = new ArrayList<>();
-        for (int i = 0; i < count; i++) {
+        for (int i = debugStart; i < count; i++) {
             String filename = pathToCATs + FILE_PREFIX_CAT + "_" + i;
             CATrajectory cat = CATrajectory.read(filename);
             cats.add(cat);

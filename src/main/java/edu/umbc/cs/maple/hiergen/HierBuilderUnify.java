@@ -9,7 +9,8 @@ import java.util.*;
 import static edu.umbc.cs.maple.hiergen.CAT.SubCAT.SUBCAT_ID;
 
 public class HierBuilderUnify {
-    public static Map<AttributeRelation,List<SubCAT>> run(Map<AttributeRelation, List<SubCAT>> goalToSubcats) {
+
+    public static List<SubCAT> run(Map<AttributeRelation, List<SubCAT>> goalToSubcats) {
 
         // regroup by CAT
         Map<String, List<SubCAT>> catNameToSubcats = new LinkedHashMap<>();
@@ -23,6 +24,7 @@ public class HierBuilderUnify {
             }
         }
 
+        List<SubCAT> unifiedSubcats = new ArrayList<>();
         for (String catName : catNameToSubcats.keySet()) {
             System.out.println("\n" + catName);
             List<SubCAT> subcats = catNameToSubcats.get(catName);
@@ -34,9 +36,10 @@ public class HierBuilderUnify {
                 unified.unify(subcat);
             }
             System.out.println(unified);
+            unifiedSubcats.add(unified);
         }
 
-            return goalToSubcats;
+        return unifiedSubcats;
 
     }
 }

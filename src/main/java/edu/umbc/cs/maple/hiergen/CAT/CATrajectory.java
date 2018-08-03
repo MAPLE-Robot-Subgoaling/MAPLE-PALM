@@ -40,6 +40,27 @@ public class CATrajectory {
         this.edges = new TreeSet<>();
     }
 
+    public CATrajectory(CATrajectory original, InvertedSubCAT range) {
+        this.name = original.name + "_x";
+        Set<Integer> indexes = range.getPrecedingIndexes();
+        this.actions = new String[indexes.size()];
+        for (int index : indexes) {
+            this.actions[index] = original.actions[index];
+        }
+        this.edges = new TreeSet<>();
+        for (CausalEdge edge : original.edges) {
+            int edgeStart = edge.getStart();
+            int edgeEnd = edge.getEnd();
+            if (indexes.contains(edgeStart) && indexes.contains(edgeEnd)) {
+                this.edges.add(edge);
+            }
+        }
+        this.baseTrajectory = original.baseTrajectory;
+        // TODO: these may need to be recomputed...
+        this.changedVariables = original.changedVariables;
+        this.checkedVariables = original.checkedVariables;
+    }
+
     //parent structure  action -> variable/ R(reward) -> relevant var
     public void annotateTrajectory(Episode e, Map<String, Map<String, VariableTree>> decisions, FullModel model) {
         baseTrajectory = e;
@@ -318,9 +339,9 @@ public class CATrajectory {
         this.baseTrajectory = baseTrajectory;
     }
 
-    public int getLastRealActionIndex() {
-        return actions.length - 2;
-    }
+//    public int getLastRealActionIndex() {
+//        return actions.length - 2;
+//    }
 
     public int getStartIndex() {
         return 0;
