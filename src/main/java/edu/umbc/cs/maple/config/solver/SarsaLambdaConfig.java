@@ -3,7 +3,7 @@ package edu.umbc.cs.maple.config.solver;
 import burlap.behavior.singleagent.learning.tdmethods.vfa.GradientDescentSarsaLam;
 import burlap.behavior.singleagent.planning.Planner;
 import burlap.behavior.valuefunction.ValueFunction;
-import edu.umbc.cs.maple.config.TileCoding.TileCodingConfig;
+import edu.umbc.cs.maple.config.tilecoding.TileCodingConfig;
 
 
 public class SarsaLambdaConfig extends SolverConfig{

@@ -12,7 +12,7 @@ agents:
   palm: {taxi-hiergen}
 
 seed: 77665544
-episodes: 300
+episodes: 500
 max_steps: 100000
 trials: 1
 gamma: 0.95
