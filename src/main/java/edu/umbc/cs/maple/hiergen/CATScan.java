@@ -112,27 +112,47 @@ public class CATScan {
 
 //        System.out.println(subcat);
 
-        Map<String, List<CausalEdge>> variableToEdges = new LinkedHashMap<>();
-
 //        System.out.println("incoming...");
-        List<CausalEdge> incoming = subcat.getIncoming();
-        for (CausalEdge edge : incoming) {
-//            System.out.println(edge + " " + subcat.getCat().getActions()[edge.getStart()] + " " + subcat.getCat().getActions()[edge.getEnd()]);
-            String variable = edge.getRelevantVariable();
-            List<CausalEdge> existing = variableToEdges.computeIfAbsent(variable, i -> new ArrayList<>());
-            for (CausalEdge existingEdge : existing) {
-                int existingEdgeStart = existingEdge.getStart();
-                int edgeStart = edge.getStart();
-                if (existingEdgeStart != edgeStart) {
-                    int edgeEnd = edge.getEnd();
-                    subcat.prune(edgeEnd, "enforcing preconditions");
-                    break;
+        Map<String, List<Integer>> possiblePruning = new HashMap<>();
+        List<CausalEdge> incomingEdges = subcat.getIncoming();
+        for (int i = 0; i < incomingEdges.size(); i++) {
+            CausalEdge incomingEdge = incomingEdges.get(i);
+            String incomingVariable = incomingEdge.getRelevantVariable();
+            int incomingEdgeStart = incomingEdge.getStart();
+            for (int j = i + 1; j < incomingEdges.size(); j++) {
+                CausalEdge otherEdge = incomingEdges.get(j);
+                String otherVariable = otherEdge.getRelevantVariable();
+                if (incomingVariable.equals(otherVariable)) {
+                    int otherEdgeStart = otherEdge.getStart();
+                    if (incomingEdgeStart != otherEdgeStart) {
+                        // this means two incoming arcs for the same variable
+                        // come from different causal actions (at different indexes)
+                        // this possibly violates the "unique precondition" requirement
+//                        int incomingEdgeEnd = incomingEdge.getEnd();
+//                        int otherEdgeEnd = otherEdge.getEnd();
+                        List<Integer> actionIndexes = possiblePruning.computeIfAbsent(incomingVariable, v -> new ArrayList<>());
+                        actionIndexes.add(incomingEdgeStart);
+                        actionIndexes.add(otherEdgeStart);
+//                        int lowerIndex = Math.min(incomingEdgeStart, otherEdgeStart);
+//                        actionIndexes.add(lowerIndex);
+//                        actionIndexes.add(otherEdgeEnd);
+//                        if (incomingVariable.contains("Passenger1:y") && subcat.getCat().getName().contains("19")) {
+//                            System.out.println("For subcat ... " + subcat);
+//                            System.out.println("considering to prune " + incomingEdge + " because other edge " + otherEdge + " had same variable " + incomingVariable);
+//                        }
+                    }
                 }
             }
-            existing.add(edge);
-
         }
-
+        for (String variable : possiblePruning.keySet()) {
+            List<Integer> actionIndexes = possiblePruning.get(variable);
+            Collections.sort(actionIndexes);
+            // prune to highest index
+            while (actionIndexes.size() > 1) {
+                int index = actionIndexes.remove(0);
+                subcat.prune(index, "enforcing preconditions");
+            }
+        }
     }
 
     public static List<SubCAT> scan(List<CATrajectory> cats, Collection<ObjectAttributePair> variables) {

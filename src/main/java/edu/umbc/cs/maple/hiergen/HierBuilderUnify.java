@@ -8,7 +8,7 @@ import java.util.*;
 
 import static edu.umbc.cs.maple.hiergen.CAT.SubCAT.SUBCAT_ID;
 
-public class HierUnify {
+public class HierBuilderUnify {
     public static Map<AttributeRelation,List<SubCAT>> run(Map<AttributeRelation, List<SubCAT>> goalToSubcats) {
 
         // regroup by CAT

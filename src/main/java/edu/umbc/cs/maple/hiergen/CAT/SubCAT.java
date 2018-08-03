@@ -30,14 +30,18 @@ public class SubCAT {
     }
 
     public void add(int actionIndex, String message) {
-        actionIndexes.add(actionIndex);
-        messages.put(actionIndex, message);
+        boolean added = actionIndexes.add(actionIndex);
+        if (added) {
+            messages.put(actionIndex, message);
+        }
     }
 
     public void prune(int actionIndex, String message) {
-        actionIndexes.remove(actionIndex);
-        prunedIndexes.add(actionIndex);
-        messages.put(actionIndex, "!" +messages.get(actionIndex) + " " + message);
+        boolean removed = actionIndexes.remove(actionIndex);
+        if (removed) {
+            prunedIndexes.add(actionIndex);
+            messages.put(actionIndex, "!" +messages.get(actionIndex) + " " + message);
+        }
     }
 
     public CATrajectory getCat() {

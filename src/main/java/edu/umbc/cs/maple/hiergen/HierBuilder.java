@@ -34,7 +34,7 @@ public class HierBuilder {
         List<HierGenTask> tasks = new ArrayList<>();
 
         // Line 9
-        Map<AttributeRelation, List<SubCAT>> goalToUnifiedSubcats = HierUnify.run(goalToSubcats);
+        Map<AttributeRelation, List<SubCAT>> goalToUnifiedSubcats = HierBuilderUnify.run(goalToSubcats);
 
 
 
