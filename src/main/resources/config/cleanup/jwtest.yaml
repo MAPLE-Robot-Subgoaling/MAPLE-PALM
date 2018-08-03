@@ -2,7 +2,7 @@ domain: !!edu.umbc.cs.maple.config.cleanup.CleanupConfig
   domainGenerator: !!edu.umbc.cs.maple.cleanup.Cleanup
     minX: 0
     minY: 0
-    maxX: 7
+    maxX: 5
     maxY: 5
     tf: !!edu.umbc.cs.maple.cleanup.CleanupTF
       goal: &goal !!edu.umbc.cs.maple.cleanup.CleanupGoal
@@ -17,15 +17,16 @@ domain: !!edu.umbc.cs.maple.config.cleanup.CleanupConfig
       defaultReward: 0.0
       noopReward: 0.0
       pullReward: 0.0
-  state: twoRooms-1blocks
+  state: twoRooms-2blocks
 
 goal: *goal
 
 agents:
   cross: {cleanup-jw, cleanup-baseline}
+  palm: {cleanup-jw, cleanup-baseline}
 
 seed: 555543
-episodes: 35
+episodes: 300
 max_steps: 10000
 trials: 1
 gamma: 0.99
@@ -41,7 +42,7 @@ rmax:
   max_delta_rmaxq: 0.000001
   max_iterations_in_model: 1000
   use_multitime_model: true
-  use_model_sharing: false
+  use_model_sharing: true
 
 output:
   csv:
@@ -63,7 +64,7 @@ output:
       - CUMULATIVE_REWARD_PER_EPISODE
 
   visualizer:
-    enabled: true
+    enabled: false
     episodes: true
-    width: 7
+    width: 5
     height: 5

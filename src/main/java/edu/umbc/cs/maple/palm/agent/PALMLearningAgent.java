@@ -16,6 +16,7 @@ import burlap.mdp.singleagent.environment.EnvironmentOutcome;
 import burlap.mdp.singleagent.environment.SimulatedEnvironment;
 import burlap.mdp.singleagent.environment.extensions.EnvironmentServer;
 import burlap.mdp.singleagent.oo.OOSADomain;
+import burlap.mdp.singleagent.oo.ObjectParameterizedActionType;
 import burlap.statehashing.HashableStateFactory;
 import edu.umbc.cs.maple.config.ExperimentConfig;
 import edu.umbc.cs.maple.config.solver.FittedVIConfig;
@@ -195,7 +196,7 @@ public class PALMLearningAgent implements LearningAgent {
             //copy the action, and unmask the copy, execute the unmasked action
             //this allows the task to always store the masked version for model/planning purposes
             Action action;
-            if (parent.isMasked()) {
+            if (parent.isMasked() && maskedAction instanceof ObjectParameterizedAction) {
                 action = maskedAction.copy();
                 //for now, reliant on parent of masked task to be unmasked. This may not be a safe assumption
                 //there may be a need to traverse arbitrarily far up the task hierarchy to find an unmasked ancestor
@@ -219,7 +220,6 @@ public class PALMLearningAgent implements LearningAgent {
             String[] params = getParams(task);
             result.r = task.getReward(pastStateAbstract, action, currentStateAbstract, params);
             steps++;
-
             boolean taskComplete = task.isComplete(currentStateAbstract);
             boolean taskFailed = task.isFailure(currentStateAbstract);
             boolean parentShouldUpdate = true;
@@ -405,10 +405,24 @@ public class PALMLearningAgent implements LearningAgent {
     }
 
     protected PALMModel getModel(GroundedTask t) {
-        // idea: try to do lookup such that models are shared across certain AMDP classes
-        // for example, instead of 4 put passenger AMDPs, one for each passenger
-        // we mask the name of the passenger and share models, treating every passenger the same
-        String modelName = t.isMasked() && useModelSharing ? t.getAction().actionName() : t.toString();
+        String modelName;
+        //if we are using model sharing, we want to collapse all masked parameters
+        //but retain the unmasked parameters
+        if(t.isMasked() && useModelSharing){
+            StringBuilder mName = new StringBuilder(t.getAction().actionName());
+            String[] params = getParams(t);
+            String[] maskedParamTypes = t.getMaskedParameters();
+            String[] actionParamTypes = getParamClasses(t);
+            for(int i = 0; i < actionParamTypes.length; i++){
+                //if a parameter is of a type which is masked, don't include it
+                if (!Arrays.asList(maskedParamTypes).contains(actionParamTypes[i])){
+                    mName.append(" ");
+                    mName.append(params[i]);
+                }
+            }
+            modelName = mName.toString();
+        //if we aren't using model sharing, we want to retain all parameters, even potentially masked ones
+        } else modelName = t.toString();
         PALMModel model = models.get(modelName);
         if (model == null) {
             model = modelGenerator.getModelForTask(t);
@@ -431,6 +445,19 @@ public class PALMLearningAgent implements LearningAgent {
         }
         return params;
     }
+
+    protected String[] getParamClasses(GroundedTask task){
+        Action taskAction = task.getAction();
+        String[] params = null;
+        if (taskAction instanceof ObjectParameterizedAction) {
+            params = ((ObjectParameterizedActionType)task.getTask().getActionType()).getParameterClasses();
+        } else if (taskAction instanceof IntegerParameterizedAction) {
+            //TODO (will be some number of Integers based on task)
+        }
+        return params;
+    }
+
+
 
 }
 

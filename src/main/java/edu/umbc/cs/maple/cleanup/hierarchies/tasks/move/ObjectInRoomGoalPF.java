@@ -31,6 +31,7 @@ public class ObjectInRoomGoalPF extends PropositionalFunction {
         String roomName = params[1];
         ObjectInstance object = state.object(objectName);
         ObjectInstance room = state.object(roomName);
+        if(object == null) object = state.object(MoveMapper.moveBlockTargetAlias);
         if (object == null || room == null) {
             return false;
         }

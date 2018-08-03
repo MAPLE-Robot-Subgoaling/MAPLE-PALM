@@ -26,7 +26,7 @@ agents:
   palm:  {cleanup-jw}
 
 seed: 555543
-episodes: 100
+episodes: 200
 max_steps: 10000
 trials: 1
 gamma: 0.99
@@ -42,7 +42,7 @@ rmax:
   max_delta_rmaxq: 0.000001
   max_iterations_in_model: 1000
   use_multitime_model: true
-  use_model_sharing: false
+  use_model_sharing: true
 
 output:
   csv:
@@ -64,7 +64,7 @@ output:
       - CUMULATIVE_REWARD_PER_EPISODE
 
   visualizer:
-    enabled: true
+    enabled: false
     episodes: true
     width: 7
     height: 5
