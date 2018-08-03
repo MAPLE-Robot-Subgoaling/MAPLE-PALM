@@ -100,7 +100,7 @@ public abstract class Task {
      * @param lowerState state at level just below current level
      * @return the same state but projected up one level
      */
-    public State mapState(State lowerState, String...params){
+    public State mapState(State lowerState, String... params){
         if(mapper instanceof ParameterizedStateMapping)
             return ((ParameterizedStateMapping)mapper).mapState(lowerState, params);
         else

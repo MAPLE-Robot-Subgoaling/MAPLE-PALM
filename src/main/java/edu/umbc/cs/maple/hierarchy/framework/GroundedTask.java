@@ -5,6 +5,7 @@ import burlap.mdp.core.action.Action;
 import burlap.mdp.core.oo.ObjectParameterizedAction;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.oo.OOSADomain;
+import edu.umbc.cs.maple.utilities.IntegerParameterizedAction;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.util.ArrayList;
@@ -123,12 +124,19 @@ public class GroundedTask {
      * @return the abstracted state
      */
     public State mapState(State s){
+        String[] params;
         if(action instanceof ObjectParameterizedAction) {
-            String[] params = ((ObjectParameterizedAction) action).getObjectParameters();
+            params = ((ObjectParameterizedAction) action).getObjectParameters();
             return t.mapState(s, params);
         }
-        else
-            return t.mapState(s);
+        else if (action instanceof IntegerParameterizedAction) {
+            params = ((IntegerParameterizedAction) action).getParameters();
+        }
+        else {
+            // no params
+            params = null;
+        }
+        return t.mapState(s, params);
     }
 
     /**
