@@ -120,7 +120,7 @@ public class HierGenMain {
         }
 
 //        int count = trajectoryCount;
-        int debugStart = 0;
+        int debugStart = 18;
         int count = 20;
         ArrayList<CATrajectory> cats = new ArrayList<>();
         for (int i = debugStart; i < count; i++) {

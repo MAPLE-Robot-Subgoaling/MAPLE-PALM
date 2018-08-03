@@ -43,7 +43,8 @@ public class CATrajectory {
     public CATrajectory(CATrajectory original, InvertedSubCAT range) {
         this.name = original.name + "_x";
         Set<Integer> indexes = range.getPrecedingIndexes();
-        this.actions = new String[indexes.size()];
+        int extraForStart = 1;
+        this.actions = new String[indexes.size() + extraForStart];
         for (int index : indexes) {
             this.actions[index] = original.actions[index];
         }
