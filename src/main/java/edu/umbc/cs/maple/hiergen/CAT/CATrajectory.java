@@ -6,12 +6,14 @@ import burlap.mdp.core.oo.state.OOState;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.model.FullModel;
 import burlap.mdp.singleagent.model.TransitionProb;
+import edu.umbc.cs.maple.utilities.Utils;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.util.*;
+import java.util.stream.IntStream;
 
 public class CATrajectory {
 
@@ -25,7 +27,7 @@ public class CATrajectory {
 //    public int lastAction;
 
     protected String name;
-    protected String[] actions;
+    protected Map<Integer,String> actions;
     protected Set<CausalEdge> edges;
     protected Set<String>[] checkedVariables;
     protected Set<String>[] changedVariables;
@@ -41,13 +43,16 @@ public class CATrajectory {
     }
 
     public CATrajectory(CATrajectory original, InvertedSubCAT range) {
+
         this.name = original.name + "_x";
-        Set<Integer> indexes = range.getPrecedingIndexes();
-        int extraForStart = 1;
-        this.actions = new String[indexes.size() + extraForStart];
+
+        List<Integer> indexes = new ArrayList<>(range.getPrecedingIndexes());
+        Collections.sort(indexes);
+        this.actions = new LinkedHashMap<>();
         for (int index : indexes) {
-            this.actions[index] = original.actions[index];
+            this.actions.put(index, original.actions.get(index));
         }
+
         this.edges = new TreeSet<>();
         for (CausalEdge edge : original.edges) {
             int edgeStart = edge.getStart();
@@ -56,6 +61,7 @@ public class CATrajectory {
                 this.edges.add(edge);
             }
         }
+
         this.baseTrajectory = original.baseTrajectory;
         // TODO: these may need to be recomputed...
         this.changedVariables = original.changedVariables;
@@ -67,24 +73,29 @@ public class CATrajectory {
         baseTrajectory = e;
         int numRealActions = e.actionSequence.size();
         int numAllActions = numRealActions + 2; // two pseudoactions
-        actions = new String[numAllActions];
+//        actions = new String[numAllActions];
+        actions = new LinkedHashMap<>();
+
+//        actions[0] = CAT_PSEUDOACTION_START;
+//        actions[numAllActions - 1] = CAT_PSEUDOACTION_END;
 
         // there are always two pseudoactions, START and END bookending the action trajectory
-        actions[0] = CAT_PSEUDOACTION_START;
-        actions[numAllActions - 1] = CAT_PSEUDOACTION_END;
-
+        actions.put(0, CAT_PSEUDOACTION_START);
         // the rest of the actions are sandwiched in between START and END in order
-        int offset = 1;
+        int offsetDueToStart = 1;
         for (int i = 0; i < e.actionSequence.size(); i++) {
             Action action = e.actionSequence.get(i);
-            actions[i + offset] = action.actionName();
+            int actionIndex = i + offsetDueToStart;
+            String actionName = action.actionName();
+            actions.put(actionIndex, actionName);
         }
+        actions.put(numAllActions - 1, CAT_PSEUDOACTION_END);
 
         checkedVariables = new Set[numAllActions];
         changedVariables = new Set[numAllActions];
 
-        for (int trajectoryIndex = 0; trajectoryIndex < actions.length; trajectoryIndex++) {
-            String actionName = actions[trajectoryIndex];
+        for (int trajectoryIndex = 0; trajectoryIndex < actions.size(); trajectoryIndex++) {
+            String actionName = actions.get(trajectoryIndex);
             checkedVariables[trajectoryIndex] = new HashSet<String>();
             changedVariables[trajectoryIndex] = new HashSet<String>();
 
@@ -133,7 +144,7 @@ public class CATrajectory {
             }
         }
 
-        int numActionsSansFinal = actions.length - 1;
+        int numActionsSansFinal = actions.size() - 1;
         //created edges - a changes x, b checks x, and x is not changed by action in between
         for (int i = 0; i < numActionsSansFinal; i++) {
             for (String variable : changedVariables[i]) {
@@ -151,15 +162,6 @@ public class CATrajectory {
             }
         }
     }
-
-//    public int findEdge(int s, String variable) {
-//        for (CausalEdge edge : edges) {
-//            if (edge.getStart() == s && edge.getRelevantVariable().equals(variable)) {
-//                return edge.getEnd();
-//            }
-//        }
-//        return -1;
-//    }
 
     public List<CausalEdge> findIncomingEdges(int endIndex) {
         List<CausalEdge> ai = new ArrayList<>();
@@ -192,84 +194,25 @@ public class CATrajectory {
         return ai;
     }
 
-//    public List<CausalEdge> findCausalEdges(int s) {
-//        List<CausalEdge> ai = null;
-//        for (CausalEdge edge : edges) {
-//            if (edge.getStart() == s) {
-//                if (ai == null)
-//                    ai = new ArrayList<>();
-//                ai.add(edge);
-//            }
-//
-//        }
-//
-//        return ai;
-//    }
-//
-//    public List<Integer> reverseFindEdges(int end) {
-//        List<Integer> ai = null;
-//        for (CausalEdge edge : edges) {
-//            if (edge.getEnd() == end) {
-//                if (ai == null)
-//                    ai = new ArrayList<Integer>();
-//                ai.add(edge.getStart());
-//            }
-//        }
-//
-//        return ai;
-//    }
-//
-//    public List<Integer> reverseFindEdges(int end, String variable) {
-//        List<Integer> ai = null;
-//        for (CausalEdge edge : edges) {
-//            if (edge.getEnd() == end && edge.getRelevantVariable().equals(variable)) {
-//                if (ai == null)
-//                    ai = new ArrayList<Integer>();
-//                ai.add(edge.getStart());
-//            }
-//        }
-//        return ai;
-//    }
-//
-//    public int actionCount() {
-//        if (baseTrajectory == null) {
-//            return 0;
-//        } else if (actionInds != null) {
-//            return actionInds.size();
-//        } else {
-//            //return actions.size();
-//            return baseTrajectory.actionSequence.size();
-//        }
-//    }
-
-    public List<String> uniqueActions() {
-        List<String> uniqActs = new ArrayList<>();
-        for (String a : actions) {
-            if (!uniqActs.contains(a))
-                uniqActs.add(a);
-        }
-        return uniqActs;
-    }
-
     @Override
     public String toString() {
-        String out = "";
-        if (actions.length == 0) {
-            out = "No actions";
+        StringBuilder out;
+        if (actions.size() == 0) {
+            out = new StringBuilder("No actions");
         } else {
-            out = "Actions: ";
-            for (String a : actions) {
-                out += a + " ";
+            out = new StringBuilder("Actions: ");
+            List<Integer> indexes = new ArrayList<>(actions.keySet());
+            Collections.sort(indexes);
+            for (Integer i : indexes) {
+                out.append(actions.get(i)).append(" ");
             }
-            out += "\n";
+            out.append("\n");
 
             for (CausalEdge edge : edges) {
-                out += actions[(edge.getStart())] + " " +
-                        actions[(edge.getEnd())] + " " +
-                        edge.getRelevantVariable() + "\n";
+                out.append(actions.get((edge.getStart()))).append(" ").append(actions.get((edge.getEnd()))).append(" ").append(edge.getRelevantVariable()).append("\n");
             }
         }
-        return out;
+        return out.toString();
     }
 
     public Set<String> getNontrivialCheckedVariables() {
@@ -292,20 +235,18 @@ public class CATrajectory {
     }
 
     public State getUltimateState() {
-        int lastIndex = baseTrajectory.stateSequence.size() - 1;
-        return baseTrajectory.stateSequence.get(lastIndex);
+        int lastRealIndex = getLastRealIndex();
+        // just to be overly specific and crystal clear what is going on here
+        // we would translate the indexes by -1 to account for START
+        // and then we want the state *after* the action, so add +1
+        // ... I realize it is a bit much :|
+        int translateToBaseTrajectoryIndexes = lastRealIndex - 1;
+        int indexOfStateAfterAction = translateToBaseTrajectoryIndexes + 1;
+        return baseTrajectory.stateSequence.get(indexOfStateAfterAction);
     }
 
     public State getState(int index) {
         return baseTrajectory.stateSequence.get(index);
-    }
-
-    public String[] getActions() {
-        return actions;
-    }
-
-    public void setActions(String[] actions) {
-        this.actions = actions;
     }
 
     public Set<CausalEdge> getEdges() {
@@ -340,16 +281,16 @@ public class CATrajectory {
         this.baseTrajectory = baseTrajectory;
     }
 
-//    public int getLastRealActionIndex() {
-//        return actions.length - 2;
-//    }
-
     public int getStartIndex() {
-        return 0;
+        Set<Integer> actionIndexes = Utils.getKeysByValue(actions, CAT_PSEUDOACTION_START);
+        if (actionIndexes.size() != 1) { throw new RuntimeException("Error: wrong # keys for START pseudoaction"); }
+        return (int) actionIndexes.toArray()[0];
     }
 
     public int getEndIndex() {
-        return actions.length - 1;
+        Set<Integer> actionIndexes = Utils.getKeysByValue(actions, CAT_PSEUDOACTION_END);
+        if (actionIndexes.size() != 1) { throw new RuntimeException("Error: wrong # keys for END pseudoaction"); }
+        return (int) actionIndexes.toArray()[0];
     }
 
     public String serialize(){
@@ -398,5 +339,37 @@ public class CATrajectory {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Map<Integer, String> getActions() {
+        return actions;
+    }
+
+    public void setActions(Map<Integer, String> actions) {
+        this.actions = actions;
+    }
+
+    public int getLastIndex() {
+        return Collections.max(actions.keySet());
+    }
+
+    public int getFirstIndex() {
+        return Collections.min(actions.keySet());
+    }
+
+    public int getLastRealIndex() {
+        return actions.keySet()
+                .stream()
+                .filter(k -> !actions.get(k).equals(CAT_PSEUDOACTION_START) && !actions.get(k).equals(CAT_PSEUDOACTION_END))
+                .max(Integer::compareTo)
+                .orElse(Integer.MIN_VALUE);
+    }
+
+    public int getFirstRealIndex() {
+        return actions.keySet()
+                .stream()
+                .filter(k -> !actions.get(k).equals(CAT_PSEUDOACTION_START) && !actions.get(k).equals(CAT_PSEUDOACTION_END))
+                .min(Integer::compareTo)
+                .orElse(Integer.MAX_VALUE);
     }
 }

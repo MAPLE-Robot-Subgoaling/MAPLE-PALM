@@ -14,13 +14,13 @@ public class InvertedSubCAT {
     public InvertedSubCAT(SubCAT subcat) {
         this.precedingIndexes = new TreeSet<>();
         CATrajectory cat = subcat.getCat();
-        int lowestIndex = cat.getEndIndex();
+        int lowestIndex = cat.getLastIndex();
         Set<Integer> processedIndexes = subcat.getActionIndexes();
         if (processedIndexes.size() > 0) {
             lowestIndex = Collections.min(subcat.getActionIndexes());
         }
-        int startIndex = cat.getStartIndex();
-        for (int i = startIndex + 1; i < lowestIndex; i++) {
+        int firstIndex = cat.getFirstIndex();
+        for (int i = firstIndex + 1; i < lowestIndex; i++) {
             this.precedingIndexes.add(i);
         }
     }

@@ -67,11 +67,12 @@ public class SubCAT {
         }
         sb.append("), Actions: ");
         first = true;
-        for (Integer i : actionIndexes) {
+        List<Integer> sortedIndexes = getSortedIndexes();
+        for (Integer i : sortedIndexes) {
             if (!first) { sb.append(", "); } else { first = false; }
             sb.append(i);
             sb.append("(");
-            sb.append(cat.getActions()[i]);
+            sb.append(cat.getActions().get(i));
             sb.append(") ");
             sb.append(messages.get(i));
         }
@@ -81,7 +82,7 @@ public class SubCAT {
             if (!first) { sb.append(", "); } else { first = false; }
             sb.append(i);
             sb.append("(");
-            sb.append(cat.getActions()[i]);
+            sb.append(cat.getActions().get(i));
             sb.append(") ");
             sb.append(messages.get(i));
         }
@@ -116,4 +117,9 @@ public class SubCAT {
         }
     }
 
+    public List<Integer> getSortedIndexes() {
+        List<Integer> indexes = new ArrayList<>(cat.getActions().keySet());
+        Collections.sort(indexes);
+        return indexes;
+    }
 }

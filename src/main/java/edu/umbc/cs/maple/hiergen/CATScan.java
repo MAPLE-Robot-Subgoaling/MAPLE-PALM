@@ -42,15 +42,15 @@ public class CATScan {
     }
 
     protected static void assembleSubCAT(SubCAT subcat) {
-        String[] actions = subcat.getCat().getActions();
+        List<Integer> indexes = subcat.getSortedIndexes();
         int prevSize;
         do {
             prevSize = subcat.size();
-            for (int i = 0; i < actions.length; i++) {
-                boolean connectedInto = isConnectedToKnownActionIndex(subcat, i);
-                boolean connectedOutOf = isConnectedToUnknownActionIndex(subcat, i);
+            for (int index : indexes) {
+                boolean connectedInto = isConnectedToKnownActionIndex(subcat, index);
+                boolean connectedOutOf = isConnectedToUnknownActionIndex(subcat, index);
                 if (connectedInto && !connectedOutOf) {
-                    subcat.add(i, "-> " + getSomeConnectedKnownActionIndex(subcat, i));
+                    subcat.add(index, "-> " + getSomeConnectedKnownActionIndex(subcat, index));
                 }
             }
         } while (subcat.size() != prevSize);
@@ -80,9 +80,9 @@ public class CATScan {
 
     protected static Set<Integer> getUnknownActionIndexes(SubCAT subcat) {
         Set<Integer> unknownActionIndexes = new LinkedHashSet<>();
-        CATrajectory cat = subcat.getCat();
-        for (int i = 0; i < cat.getActions().length; i++) {
-            if (!subcat.contains(i)) { unknownActionIndexes.add(i); }
+        List<Integer> indexes = subcat.getSortedIndexes();
+        for (int index : indexes) {
+            if (!subcat.contains(index)) { unknownActionIndexes.add(index); }
         }
         return unknownActionIndexes;
     }
