@@ -1,31 +1,24 @@
 package edu.umbc.cs.maple.cleanup.hierarchies.tasks.move;
 
 import burlap.mdp.core.action.Action;
-import burlap.mdp.core.action.ActionType;
 import burlap.mdp.core.oo.state.OOState;
-import burlap.mdp.core.oo.state.ObjectInstance;
 import burlap.mdp.core.state.State;
 import edu.umbc.cs.maple.cleanup.Cleanup;
 import edu.umbc.cs.maple.cleanup.state.*;
-import edu.umbc.cs.maple.hierarchy.framework.StringFormat;
+import edu.umbc.cs.maple.utilities.IntegerParameterizedActionType;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static edu.umbc.cs.maple.cleanup.Cleanup.*;
 
-public class MoveAgentXYActionType implements ActionType {
-    @Override
-    public String typeName() {
-        return "moveAgentXY";
-    }
+public class MoveAgentXYActionType extends IntegerParameterizedActionType {
 
-    @Override
-    public Action associatedAction(String s) {
-        String[] params = StringFormat.split(s);
-        int goalX = Integer.parseInt(params[1]);
-        int goalY = Integer.parseInt(params[2]);
-        return new MoveAgentXYAction(goalX, goalY);
+    public static final String ACTION_MOVE_AGENT_XY = "moveAgentXY";
+    public static final int NUM_PARAMS_MOVE_XY = 2;
+
+    public MoveAgentXYActionType() {
+        super(ACTION_MOVE_AGENT_XY, NUM_PARAMS_MOVE_XY);
     }
 
     @Override
@@ -52,7 +45,7 @@ public class MoveAgentXYActionType implements ActionType {
                 for(int y=bottom+1;y<top;y++){
                     //do not include agent's current position
                     if(!(x==ax && y==ay)) {
-                        actions.add(new MoveAgentXYAction(x, y));
+                        actions.add(createAction(x, y));
                     }
                 }
             }
@@ -68,11 +61,12 @@ public class MoveAgentXYActionType implements ActionType {
                 for(int y=bottom+1;y<top;y++){
                     //do not include agent's current position
                     if(!(x==ax && y==ay)) {
-                        actions.add(new MoveAgentXYAction(x, y));
+                        actions.add(createAction(x, y));
                     }
                 }
             }
         }
         return actions;
     }
+
 }

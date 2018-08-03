@@ -1477,10 +1477,11 @@ public class CleanupRandomStateGenerator implements StateGenerator {
         if (m.find()) {
             numString = m.group(1);
         }
-        int numBlocks = "".equals(numString) ? 1 : Integer.parseInt(numString);
-        //if block number is not specified, default 1 block
-        if(numBlocks==1)
+        if (numString.equals("")) {
+            //if block number is not specified, default 1 block
+            numBlocks = 1;
             stateType+="-1blocks";
+        }
         State state;
         if (stateType.matches("oneRoomOneDoor" + blockNumberRegex)) {
             state = generateOneRoomOneDoor();

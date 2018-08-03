@@ -7,25 +7,18 @@ import burlap.mdp.core.state.State;
 import edu.umbc.cs.maple.hierarchy.framework.StringFormat;
 import edu.umbc.cs.maple.taxi.hiergen.TaxiHierGenState;
 import edu.umbc.cs.maple.taxi.hiergen.task7.state.TaxiHierGenTask7State;
+import edu.umbc.cs.maple.utilities.IntegerParameterizedAction;
+import edu.umbc.cs.maple.utilities.IntegerParameterizedActionType;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static edu.umbc.cs.maple.taxi.TaxiConstants.*;
 
-public class HierGenTask5ActionType implements ActionType {
+public class HierGenTask5ActionType extends IntegerParameterizedActionType {
 
-    @Override
-    public String typeName() {
-        return ACTION_TASK_5;
-    }
-
-    @Override
-    public Action associatedAction(String strRep) {
-        String[] params = StringFormat.split(strRep);
-        int goalX = Integer.parseInt(params[1]);
-        int goalY = Integer.parseInt(params[2]);
-        return new HierGenTask5Action(goalX, goalY);
+    public HierGenTask5ActionType() {
+        super(ACTION_TASK_5, NUM_PARAMS_TASK_5);
     }
 
     @Override
@@ -54,7 +47,7 @@ public class HierGenTask5ActionType implements ActionType {
                     // cannot nav here, already at the location
                     continue;
                 }
-                actions.add(new HierGenTask5Action(pX, pY));
+                actions.add(createAction(pX, pY));
             } else {
                 if (!inTaxi) {
                     continue;
@@ -66,9 +59,10 @@ public class HierGenTask5ActionType implements ActionType {
                     // cannot nav here, already at the location
                     continue;
                 }
-                actions.add(new HierGenTask5Action(goalX, goalY));
+                actions.add(createAction(goalX, goalY));
             }
         }
         return actions;
     }
+
 }
