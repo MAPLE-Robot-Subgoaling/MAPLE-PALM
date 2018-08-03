@@ -16,6 +16,10 @@ public class AgentAdjacentToBlockGoalPF extends PropositionalFunction {
 
     @Override
     public boolean isTrue(OOState ooState, String[] params) {
+        //need better fix here
+        if(ooState.object(params[0])==null){
+            return Cleanup.isAdjacent(ooState,new String[]{MoveMapper.moveBlockTargetAlias});
+        }
         return Cleanup.isAdjacent(ooState, params);
     }
 
