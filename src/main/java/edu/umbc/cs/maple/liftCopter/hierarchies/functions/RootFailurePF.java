@@ -3,6 +3,7 @@ package edu.umbc.cs.maple.liftCopter.hierarchies.functions;
 import burlap.mdp.core.oo.propositional.PropositionalFunction;
 import burlap.mdp.core.oo.state.OOState;
 import burlap.mdp.core.oo.state.ObjectInstance;
+import edu.umbc.cs.maple.liftCopter.hierarchies.expert.tasks.get.state.LCGetState;
 import edu.umbc.cs.maple.liftCopter.hierarchies.expert.tasks.root.state.LCRootState;
 import edu.umbc.cs.maple.liftCopter.state.LiftCopterState;
 import edu.umbc.cs.maple.taxi.hierarchies.tasks.root.state.TaxiRootState;
@@ -19,9 +20,10 @@ public class RootFailurePF extends PropositionalFunction {
 
     @Override
     public boolean isTrue(OOState s, String... params) {
-        //cannot fail Root task, can only fail nav task,
-        //todo: pass nav fail up through root
-        return ((LCRootState)s).hasFailed;
+        if(((LCRootState)s).getCopterAtt(ATT_LOCATION) == ATT_VAL_CRASHED){
+            System.out.println("Get Failed");
+        }
+        return (((LCRootState)s).getCopterAtt(ATT_LOCATION) == ATT_VAL_CRASHED);
     }
 
 }
