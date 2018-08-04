@@ -249,7 +249,6 @@ public class LiftCopterModel implements FullStateModel{
                     wx + ww > ax &&
                     wy < ay + ah &&
                     wy + wh > ay) {
-                System.out.println("Crashed into "+wall.name());
                 s.getCopter().set(ATT_LOCATION, ATT_VAL_CRASHED);
                 return true;
             }

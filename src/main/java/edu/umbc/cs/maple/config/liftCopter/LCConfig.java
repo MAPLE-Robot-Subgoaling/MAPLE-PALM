@@ -27,6 +27,8 @@ public class LCConfig extends DomainConfig {
         int numPassengers = "".equals(numPassengersString) ? 1 : Integer.parseInt(numPassengersString);
         if        (state.equals("classic")) {
             return LiftCopterStateFactory.createClassicState();
+        } else if (state.equals("mini")) {
+            return LiftCopterStateFactory.createMiniState();
         } else {
             throw new RuntimeException("ERROR: invalid state passed to generateState in TaxiConfig: " + state);
         }

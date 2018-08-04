@@ -14,7 +14,7 @@ public class LiftCopterStateFactory {
     }
 
     public static LiftCopterState createClassicState(int numCargos){
-        LiftCopterAgent agent = new LiftCopterAgent(CLASS_AGENT + 0, 0.25,3.25, .5, .5);
+        LiftCopterAgent agent = new LiftCopterAgent(CLASS_AGENT + 0, 0.25,4.25, .5, .5);
 
         List<LiftCopterLocation> locations = new ArrayList<LiftCopterLocation>();
         locations.add(new LiftCopterLocation(CLASS_LOCATION + 0, 0.0, 4.0,1,1, COLOR_RED));
@@ -58,6 +58,7 @@ public class LiftCopterStateFactory {
 
         return new LiftCopterState(agent, cargos, locations, walls);
     }
+
     
     public static LiftCopterState createClassicStateHalfpoint(boolean pickedUp) {
         LiftCopterState classic = createClassicState();

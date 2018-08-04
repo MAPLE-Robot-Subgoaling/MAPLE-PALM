@@ -19,9 +19,6 @@ public class GetFailurePF extends PropositionalFunction {
 
     @Override
     public boolean isTrue(OOState s, String... params) {
-        if(((LCGetState)s).getAgentAtt(ATT_LOCATION) == ATT_VAL_CRASHED){
-            System.out.println("Get Failed");
-        }
         return (((LCGetState)s).getAgentAtt(ATT_LOCATION) == ATT_VAL_CRASHED);
     }
 

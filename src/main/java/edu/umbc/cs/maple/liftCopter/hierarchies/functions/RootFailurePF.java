@@ -20,9 +20,6 @@ public class RootFailurePF extends PropositionalFunction {
 
     @Override
     public boolean isTrue(OOState s, String... params) {
-        if(((LCRootState)s).getCopterAtt(ATT_LOCATION) == ATT_VAL_CRASHED){
-            System.out.println("Get Failed");
-        }
         return (((LCRootState)s).getCopterAtt(ATT_LOCATION) == ATT_VAL_CRASHED);
     }
 
