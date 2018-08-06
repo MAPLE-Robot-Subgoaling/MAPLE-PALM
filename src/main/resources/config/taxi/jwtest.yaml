@@ -9,10 +9,10 @@ domain: !!edu.umbc.cs.maple.config.taxi.TaxiConfig
 goal: !!edu.umbc.cs.maple.taxi.TaxiGoal {}
 
 agents:
-  palm: {taxi-expert}
+  palm: {taxi-hiergen}
 
 seed: 77665544
-episodes: 300
+episodes: 500
 max_steps: 100000
 trials: 1
 gamma: 0.95

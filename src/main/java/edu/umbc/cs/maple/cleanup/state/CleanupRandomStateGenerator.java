@@ -832,7 +832,8 @@ public class CleanupRandomStateGenerator implements StateGenerator {
         Random rng = RandomFactory.getMapped(BurlapConstants.DEFAULT_RNG_INDEX);
 
         int numRooms = 2;
-        int numDoors = 1;
+        //configurable
+        int numDoors = 2;
 
         List<String> blockColors = new ArrayList<>(Arrays.asList(Cleanup.COLORS_BLOCKS));
         List<String> blockShapes = new ArrayList<>(Arrays.asList(Cleanup.SHAPES_BLOCKS));
@@ -846,10 +847,14 @@ public class CleanupRandomStateGenerator implements StateGenerator {
         String room2Color = roomColors.get(rng.nextInt(roomColors.size()));
         CleanupRoom room1 = new CleanupRoom("room0", bigRoomLeft, bigRoomRight/2, bigRoomBottom, bigRoomTop, room1Color, Cleanup.SHAPE_ROOM);
         CleanupRoom room2 = new CleanupRoom("room1", bigRoomRight/2, bigRoomRight, bigRoomBottom, bigRoomTop, room2Color, Cleanup.SHAPE_ROOM);
-        int dx2 = bigRoomRight/2;
+        int dx1, dx2, dx3;
+        dx1 = dx2 = dx3 = bigRoomRight/2;
         int dy2 = bigRoomTop/2;
-        CleanupDoor door2 = new CleanupDoor("door0", dx2, dx2, dy2, dy2, Cleanup.LOCKABLE_STATES[0], Cleanup.SHAPE_DOOR, Cleanup.COLOR_GRAY);
-
+        int dy1 = bigRoomTop-1;
+        int dy3 = bigRoomBottom+1;
+        CleanupDoor door1 = new CleanupDoor("door1", dx1, dx1, dy1, dy1,  Cleanup.LOCKABLE_STATES[0], Cleanup.SHAPE_DOOR, Cleanup.COLOR_GRAY);
+//        CleanupDoor door2 = new CleanupDoor("door0", dx2, dx2, dy2, dy2, Cleanup.LOCKABLE_STATES[0], Cleanup.SHAPE_DOOR, Cleanup.COLOR_GRAY);
+        CleanupDoor door3 = new CleanupDoor("door2", dx3, dx3, dy3, dy3, Cleanup.LOCKABLE_STATES[0], Cleanup.SHAPE_DOOR, Cleanup.COLOR_GRAY);
         // randomize agent's position
         int ax = minX;
         int ay = minY;
@@ -857,7 +862,9 @@ public class CleanupRandomStateGenerator implements StateGenerator {
         CleanupState s = new CleanupState(getWidth(), getHeight(), ax, ay, agentDirection, numBlocks, numRooms, numDoors);
         s.addObject(room1);
         s.addObject(room2);
-        s.addObject(door2);
+//        s.addObject(door2);
+        s.addObject(door1);
+        s.addObject(door3);
         do {
             ax = minX + rng.nextInt(getWidth());
             ay = minY + rng.nextInt(getHeight());
@@ -1477,10 +1484,13 @@ public class CleanupRandomStateGenerator implements StateGenerator {
         if (m.find()) {
             numString = m.group(1);
         }
-        int numBlocks = "".equals(numString) ? 1 : Integer.parseInt(numString);
-        //if block number is not specified, default 1 block
-        if(numBlocks==1)
+        if (numString.equals("")) {
+            //if block number is not specified, default 1 block
+            numBlocks = 1;
             stateType+="-1blocks";
+        }else {
+            numBlocks = Integer.parseInt(numString);
+        }
         State state;
         if (stateType.matches("oneRoomOneDoor" + blockNumberRegex)) {
             state = generateOneRoomOneDoor();

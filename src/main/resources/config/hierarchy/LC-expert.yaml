@@ -4,11 +4,11 @@ hierarchyConfigMap:
       children:
         - get_np
         - put_np
-      domainGenerator: !!edu.umbc.cs.maple.liftCopter.hierarchies.expert.tasks.root.LCRootDomain {}
-      stateMapper: !!edu.umbc.cs.maple.liftCopter.hierarchies.expert.tasks.root.state.RootStateMapper {}
+      domainGenerator: !!edu.umbc.cs.maple.liftcopter.hierarchies.expert.tasks.root.LCRootDomain {}
+      stateMapper: !!edu.umbc.cs.maple.liftcopter.hierarchies.expert.tasks.root.state.RootStateMapper {}
       tf: &tf !!edu.umbc.cs.maple.hierarchy.framework.GoalFailTF
-        goalPF: !!edu.umbc.cs.maple.liftCopter.hierarchies.functions.RootCompletedPF {}
-        failPF: !!edu.umbc.cs.maple.liftCopter.hierarchies.functions.RootFailurePF {}
+        goalPF: !!edu.umbc.cs.maple.liftcopter.hierarchies.functions.RootCompletedPF {}
+        failPF: !!edu.umbc.cs.maple.liftcopter.hierarchies.functions.RootFailurePF {}
       rf: !!edu.umbc.cs.maple.hierarchy.framework.GoalFailRF
         tf: *tf
         rewardDefault: 0.0
@@ -21,11 +21,11 @@ hierarchyConfigMap:
       children:
         - nav_np
         - pickup_p
-      domainGenerator: !!edu.umbc.cs.maple.liftCopter.hierarchies.expert.tasks.get.LCGetDomain {}
-      stateMapper: !!edu.umbc.cs.maple.liftCopter.hierarchies.expert.tasks.get.state.GetStateMapper {}
+      domainGenerator: !!edu.umbc.cs.maple.liftcopter.hierarchies.expert.tasks.get.LCGetDomain {}
+      stateMapper: !!edu.umbc.cs.maple.liftcopter.hierarchies.expert.tasks.get.state.GetStateMapper {}
       tf: &tf !!edu.umbc.cs.maple.hierarchy.framework.GoalFailTF
-        goalPF: !!edu.umbc.cs.maple.liftCopter.hierarchies.functions.GetCompletedPF {}
-        failPF: !!edu.umbc.cs.maple.liftCopter.hierarchies.functions.GetFailurePF {}
+        goalPF: !!edu.umbc.cs.maple.liftcopter.hierarchies.functions.GetCompletedPF {}
+        failPF: !!edu.umbc.cs.maple.liftcopter.hierarchies.functions.GetFailurePF {}
 
       rf: !!edu.umbc.cs.maple.hierarchy.framework.GoalFailRF
         tf: *tf
@@ -39,11 +39,11 @@ hierarchyConfigMap:
       children:
         - nav_np
         - putdown_p
-      domainGenerator: !!edu.umbc.cs.maple.liftCopter.hierarchies.expert.tasks.put.LCPutDomain {}
-      stateMapper: !!edu.umbc.cs.maple.liftCopter.hierarchies.expert.tasks.put.state.PutStateMapper {}
+      domainGenerator: !!edu.umbc.cs.maple.liftcopter.hierarchies.expert.tasks.put.LCPutDomain {}
+      stateMapper: !!edu.umbc.cs.maple.liftcopter.hierarchies.expert.tasks.put.state.PutStateMapper {}
       tf: &tf !!edu.umbc.cs.maple.hierarchy.framework.GoalFailTF
-        goalPF: !!edu.umbc.cs.maple.liftCopter.hierarchies.functions.PutCompletedPF {}
-        failPF: !!edu.umbc.cs.maple.liftCopter.hierarchies.functions.PutFailurePF {}
+        goalPF: !!edu.umbc.cs.maple.liftcopter.hierarchies.functions.PutCompletedPF {}
+        failPF: !!edu.umbc.cs.maple.liftcopter.hierarchies.functions.PutFailurePF {}
 
       rf: !!edu.umbc.cs.maple.hierarchy.framework.GoalFailRF
         tf: *tf
@@ -60,11 +60,11 @@ hierarchyConfigMap:
         - thrust|0.02|0.0_p
         - thrust|0.02|1_p
         - noop_p
-      domainGenerator: !!edu.umbc.cs.maple.liftCopter.hierarchies.expert.tasks.nav.LCNavDomain {}
-      stateMapper: !!edu.umbc.cs.maple.liftCopter.hierarchies.expert.tasks.nav.state.NavStateMapper {}
+      domainGenerator: !!edu.umbc.cs.maple.liftcopter.hierarchies.expert.tasks.nav.LCNavDomain {}
+      stateMapper: !!edu.umbc.cs.maple.liftcopter.hierarchies.expert.tasks.nav.state.NavStateMapper {}
       tf: &tf !!edu.umbc.cs.maple.hierarchy.framework.GoalFailTF
-        goalPF: !!edu.umbc.cs.maple.liftCopter.hierarchies.functions.NavCompletedPF {}
-        failPF: !!edu.umbc.cs.maple.liftCopter.hierarchies.functions.NavFailurePF {}
+        goalPF: !!edu.umbc.cs.maple.liftcopter.hierarchies.functions.NavCompletedPF {}
+        failPF: !!edu.umbc.cs.maple.liftcopter.hierarchies.functions.NavFailurePF {}
       rf: !!edu.umbc.cs.maple.hierarchy.framework.GoalFailRF
         tf: *tf
         rewardDefault: 0.0
@@ -72,5 +72,5 @@ hierarchyConfigMap:
       solver: !!edu.umbc.cs.maple.config.solver.SarsaLambdaConfig
         lambda: 0.5
         learningRate: 0.02
-        TCC: !!edu.umbc.cs.maple.config.TileCoding.LCTileCodingConfig
+        TCC: !!edu.umbc.cs.maple.config.tilecoding.LCTileCodingConfig
           res: 10

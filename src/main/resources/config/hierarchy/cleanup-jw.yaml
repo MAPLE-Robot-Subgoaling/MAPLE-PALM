@@ -4,7 +4,7 @@ hierarchyConfigMap:
     children:
       - a2b_np
       - b2r_np
-    stateMapper: !!edu.umbc.cs.maple.hierarchy.framework.IdentityMap {}
+    stateMapper: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.root.CleanupRootAbstractMapper {}
     tf: &rootTF !!edu.umbc.cs.maple.hierarchy.framework.GoalFailTF
       goalPF: &goalPF !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.root.CleanupRootGoalPF {}
       failPF: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.root.CleanupRootFailPF {}
@@ -51,7 +51,7 @@ hierarchyConfigMap:
       - east_p
       - west_p
       - pull_p
-    stateMapper: !!edu.umbc.cs.maple.hierarchy.framework.IdentityMap {}
+    stateMapper: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.move.MoveMapper {}
     tf: &a2bTF !!edu.umbc.cs.maple.hierarchy.framework.GoalFailTF
       goalPF: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.move.AgentAdjacentToBlockGoalPF {}
       failPF: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.move.AgentAdjacentToBlockFailPF {}
@@ -105,7 +105,7 @@ hierarchyConfigMap:
       - east_p
       - west_p
       - pull_p
-    stateMapper: !!edu.umbc.cs.maple.hierarchy.framework.IdentityMap {}
+    stateMapper: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.move.MoveMapper {}
     tf: &b2rTF !!edu.umbc.cs.maple.hierarchy.framework.GoalFailTF
       goalPF: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.move.ObjectInRoomGoalPF {}
       failPF: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.move.ObjectInRoomFailPF {}
