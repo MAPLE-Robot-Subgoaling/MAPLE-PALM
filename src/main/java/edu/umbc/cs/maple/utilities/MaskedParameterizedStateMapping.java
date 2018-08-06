@@ -1,4 +1,4 @@
-package edu.umbc.cs.maple.taxi.hierarchies.interfaces;
+package edu.umbc.cs.maple.utilities;
 
 public interface MaskedParameterizedStateMapping extends ParameterizedStateMapping {
     String[] getMaskedParameters();

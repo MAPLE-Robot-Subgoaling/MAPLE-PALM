@@ -6,8 +6,8 @@ import burlap.mdp.core.action.ActionType;
 import burlap.mdp.core.oo.ObjectParameterizedAction;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.oo.OOSADomain;
-import edu.umbc.cs.maple.taxi.hierarchies.interfaces.MaskedParameterizedStateMapping;
-import edu.umbc.cs.maple.taxi.hierarchies.interfaces.ParameterizedStateMapping;
+import edu.umbc.cs.maple.utilities.MaskedParameterizedStateMapping;
+import edu.umbc.cs.maple.utilities.ParameterizedStateMapping;
 
 import java.util.ArrayList;
 import java.util.List;

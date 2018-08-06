@@ -2,7 +2,7 @@ package edu.umbc.cs.maple.taxi.hierarchies.tasks.put.state;
 
 import burlap.mdp.core.oo.state.ObjectInstance;
 import burlap.mdp.core.state.State;
-import edu.umbc.cs.maple.taxi.hierarchies.interfaces.MaskedParameterizedStateMapping;
+import edu.umbc.cs.maple.utilities.MaskedParameterizedStateMapping;
 import edu.umbc.cs.maple.taxi.state.TaxiPassenger;
 import edu.umbc.cs.maple.taxi.state.TaxiState;
 

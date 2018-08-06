@@ -2,9 +2,9 @@ package edu.umbc.cs.maple.liftCopter.hierarchies.expert.tasks.get.state;
 
 import burlap.mdp.core.oo.state.ObjectInstance;
 import burlap.mdp.core.state.State;
-import edu.umbc.cs.maple.liftCopter.hierarchies.interfaces.ParameterizedStateMapping;
 import edu.umbc.cs.maple.liftCopter.state.LiftCopterCargo;
 import edu.umbc.cs.maple.liftCopter.state.LiftCopterState;
+import edu.umbc.cs.maple.utilities.ParameterizedStateMapping;
 
 import java.util.ArrayList;
 import java.util.List;

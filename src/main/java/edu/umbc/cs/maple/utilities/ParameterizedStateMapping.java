@@ -1,4 +1,4 @@
-package edu.umbc.cs.maple.liftCopter.hierarchies.interfaces;
+package edu.umbc.cs.maple.utilities;
 
 import burlap.mdp.auxiliary.StateMapping;
 import burlap.mdp.core.state.State;

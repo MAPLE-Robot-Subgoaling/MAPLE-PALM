@@ -133,6 +133,8 @@ public class LiftCopterModel implements FullStateModel{
         LiftCopterState ns = s.copy();
         double tx = (double) s.getCopter().get(ATT_X);
         double ty = (double) s.getCopter().get(ATT_Y);
+        double tw = (double) s.getCopter().get(ATT_W);
+        double th = (double) s.getCopter().get(ATT_H);
 
         if((boolean) s.object(p).get(ATT_PICKED_UP)) {
             for (ObjectInstance location : s.objectsOfClass(CLASS_LOCATION)) {
@@ -140,10 +142,10 @@ public class LiftCopterModel implements FullStateModel{
                 double ly = (double) location.get(ATT_Y);
                 double lh = (double) location.get(ATT_H);
                 double lw = (double) location.get(ATT_W);
-                if (lx + lw/2 >= tx &&
-                        lx - lw/2 <= tx &&
-                        ly + lh/2 >= ty &&
-                        ly - lh/2 <= ty) {
+                if (lx + lw >= tx &&
+                        lx <= tx + tw &&
+                        ly + lh >= ty &&
+                        ly <= ty + th) {
                     LiftCopterCargo np = ns.touchCargo(p);
                     np.set(ATT_PICKED_UP, false);
                     np.set(ATT_X, lx);

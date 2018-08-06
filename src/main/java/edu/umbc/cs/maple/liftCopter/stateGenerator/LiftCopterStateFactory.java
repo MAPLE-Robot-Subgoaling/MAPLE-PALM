@@ -72,29 +72,28 @@ public class LiftCopterStateFactory {
         return classic;
     }
     public static LiftCopterState createMiniState(){
-        LiftCopterAgent agent = new LiftCopterAgent(CLASS_AGENT + 0, 0.25,1.25, .5, .5);
+        LiftCopterAgent agent = new LiftCopterAgent(CLASS_AGENT + 0, 0.25,2.25, .5, .5);
 
         List<LiftCopterLocation> locations = new ArrayList<LiftCopterLocation>();
-        locations.add(new LiftCopterLocation(CLASS_LOCATION + 0, 0, 1,1,1, COLOR_GREEN));
+        locations.add(new LiftCopterLocation(CLASS_LOCATION + 0, 0, 2,1,1, COLOR_GREEN));
         locations.add(new LiftCopterLocation(CLASS_LOCATION + 1, 0, 0,1,1, COLOR_YELLOW));
 
         List<LiftCopterCargo> cargos = new ArrayList<LiftCopterCargo>();
         for (int i = 0; i < 1; i++){
             // classic agent has original cargo at BLUE depot going to RED depot
             double startX = 0;
-            double startY = 1.1;
+            double startY = 2;
             String goalLocationName = CLASS_LOCATION+1;
             LiftCopterCargo beej = new LiftCopterCargo(CLASS_CARGO + i, startX, startY,1,1, goalLocationName);
-                    beej.set(ATT_PICKED_UP, true);
             cargos.add(beej);
 
         }
 
         List<LiftCopterWall> walls = new ArrayList<LiftCopterWall>();
-        walls.add(new LiftCopterWall(CLASS_WALL + 0, 0, 0, 0.1, 2));
+        walls.add(new LiftCopterWall(CLASS_WALL + 0, 0, 0, 0.1, 3));
         walls.add(new LiftCopterWall(CLASS_WALL + 1, 0, 0, 1, 0.1));
-        walls.add(new LiftCopterWall(CLASS_WALL + 2, .9, 0, 0.1, 2));
-        walls.add(new LiftCopterWall(CLASS_WALL + 3, 0, 1.9, 1, 0.1));
+        walls.add(new LiftCopterWall(CLASS_WALL + 2, .9, 0, 0.1, 3));
+        walls.add(new LiftCopterWall(CLASS_WALL + 3, 0, 2.9, 1, 0.1));
 
         return new LiftCopterState(agent, cargos, locations, walls);
     }

@@ -30,6 +30,7 @@ public class TaskConfig {
         return domain;
     }
     public Task finalizeTask(List<Task> kids, ActionType actionType){
+
         return new NonprimitiveTask(
                 kids.toArray(new Task[kids.size()]),
                 actionType,
