@@ -27,9 +27,6 @@ hierarchyConfigMap:
       actions:
         - !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.move.MoveAgentXYActionType
           name: moveAgentXY
-          parameterClasses:
-            - x
-            - y
           parameterOrderGroup:
             - moveAgentXY.P0
             - moveAgentXY.P1
