@@ -41,7 +41,7 @@ public class NavFailurePF extends PropositionalFunction {
                     wx + ww > ax &&
                     wy < ay + ah &&
                     wy + wh > ay) {
-              //  System.out.println("Crashed into "+wall.name());
+               System.out.println("Crashed into "+wall.name());
                 return true;
             }
 

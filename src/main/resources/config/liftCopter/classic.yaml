@@ -1,5 +1,5 @@
 domain: !!edu.umbc.cs.maple.config.liftCopter.LCConfig
-  state: mini
+  state: classic
   correct_move: 1.0
 
 agents:
@@ -7,8 +7,8 @@ agents:
   palm: {LC-expert}
  # qLearning: {taxi-expert}
 
-seed: 4
-episodes: 2000
+seed: 3
+episodes: 500
 max_steps: 1000
 trials: 1
 gamma: 0.99
@@ -49,7 +49,7 @@ output:
   visualizer:
     enabled: true
     episodes: true
-    width: 1
-    height: 3
+    width: 5
+    height: 5
     
 

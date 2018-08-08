@@ -90,8 +90,14 @@ public class LiftCopterModel implements FullStateModel{
 
 
         this.updateMotion(ns, force, direction);
-
-        tps.add(new StateTransitionProb(ns, 1));
+        if(hasLiftCopterCrashed(ns)){
+            LiftCopterState sc = s.copy();
+            sc.touchCopter().set(ATT_VX, 0.0);
+            sc.touchCopter().set(ATT_VY, 0.0);
+            tps.add(new StateTransitionProb(sc, 1));
+        }else{
+            tps.add(new StateTransitionProb(ns, 1));
+        }
     }
 
     /**
@@ -168,7 +174,7 @@ public class LiftCopterModel implements FullStateModel{
         if(hasLiftCopterCrashed(s)) return;
         double ti = 1.0D;
         double tt = ti * ti;
-        LiftCopterAgent agent = s.touchCopter();
+        LiftCopterAgent agent = s.getCopter();
         double x = (double)agent.get(ATT_X);
         double y = (double)agent.get(ATT_Y);
         double h = (double)agent.get(ATT_H);
@@ -202,14 +208,13 @@ public class LiftCopterModel implements FullStateModel{
         agent.set(ATT_Y, ny);
         agent.set(ATT_VX, nvx);
         agent.set(ATT_VY, nvy);
-        hasLiftCopterCrashed(s);
         for(ObjectInstance passenger : s.objectsOfClass(CLASS_CARGO)){
             boolean inTaxi = (boolean) passenger.get(ATT_PICKED_UP);
             if(inTaxi){
                 String passengerName = passenger.name();
                 LiftCopterCargo np = s.touchCargo(passengerName);
-                np.set(ATT_X, nx-((double)agent.get(ATT_W)/2));
-                np.set(ATT_Y, ny-((double)agent.get(ATT_H)/2));
+                np.set(ATT_X, (double)agent.get(ATT_X)-((double)agent.get(ATT_W)/2));
+                np.set(ATT_Y, (double)agent.get(ATT_Y)-((double)agent.get(ATT_H)/2));
             }
         }
 
@@ -251,7 +256,7 @@ public class LiftCopterModel implements FullStateModel{
                     wx + ww > ax &&
                     wy < ay + ah &&
                     wy + wh > ay) {
-                s.getCopter().set(ATT_LOCATION, ATT_VAL_CRASHED);
+               // s.getCopter().set(ATT_LOCATION, ATT_VAL_CRASHED);
                 return true;
             }
 

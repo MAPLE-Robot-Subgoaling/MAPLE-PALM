@@ -90,7 +90,7 @@ public class LiftCopterRewardFunction implements RewardFunction {
                // System.out.println("goal");
                 return goalReward + stepReward;
             }else{
-                return stepReward-1;
+                return stepReward-goalReward;
             }
 
         }

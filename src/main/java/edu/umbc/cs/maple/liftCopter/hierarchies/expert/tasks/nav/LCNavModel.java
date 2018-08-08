@@ -148,7 +148,11 @@ public class LCNavModel implements FullStateModel{
                     wy < ny + ah &&
                     wy + wh > ny) {
                 System.out.println("Crashed into "+wall.name());
-                agent.set(ATT_LOCATION, ATT_VAL_CRASHED);
+                agent.set(ATT_X, x);
+                agent.set(ATT_Y, y);
+                agent.set(ATT_VX, 0);
+                agent.set(ATT_VY, 0);
+                //agent.set(ATT_LOCATION, ATT_VAL_CRASHED);
             }
 
         }
