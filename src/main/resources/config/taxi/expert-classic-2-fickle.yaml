@@ -10,13 +10,12 @@ goal: !!edu.umbc.cs.maple.taxi.TaxiGoal {}
 
 agents:
   ql: {taxi-expert}
-  rmaxq: {taxi-expert}
   palm: {taxi-expert}
 
-seed: 757910112
-episodes: 50
+seed: 89529596
+episodes: 300
 max_steps: 100000
-trials: 1
+trials: 20
 gamma: 0.99
 
 identifier_independent: false
@@ -35,7 +34,7 @@ rmax:
 output:
   csv:
     enabled: true
-    output: results/classic.csv
+    output: results/taxi-expert-ql-palm-classic-fickle-2.csv
 
   chart:
     enabled: true

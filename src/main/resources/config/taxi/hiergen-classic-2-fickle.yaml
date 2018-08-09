@@ -1,18 +1,18 @@
 domain: !!edu.umbc.cs.maple.config.taxi.TaxiConfig
-  state: classic-1passengers
+  state: classic-2passengers
   domainGenerator: !!edu.umbc.cs.maple.taxi.Taxi
     correctMoveProbability: 1.0
     fickleProbability: 0.05
     tf: !!edu.umbc.cs.maple.taxi.TaxiTerminalFunction {}
     rf: !!edu.umbc.cs.maple.taxi.TaxiRewardFunction {}
-    
+
 goal: !!edu.umbc.cs.maple.taxi.TaxiGoal {}
 
 agents:
-  ql: {taxi-expert}
-  palm: {taxi-expert}
+  ql: {taxi-hiergen}
+  palm: {taxi-hiergen}
 
-seed: 2229924
+seed: 50538096
 episodes: 300
 max_steps: 100000
 trials: 20
@@ -34,7 +34,7 @@ rmax:
 output:
   csv:
     enabled: true
-    output: results/taxi-expert-ql-palm-classic-fickle-1.csv
+    output: results/taxi-hiergen-ql-palm-classic-fickle-2.csv
 
   chart:
     enabled: true
@@ -46,7 +46,7 @@ output:
     trial_mode: MOST_RECENT_AND_AVERAGE
 
     metrics:
-                                     
+
       - STEPS_PER_EPISODE
       - CUMULATIVE_REWARD_PER_STEP
       - CUMULATIVE_REWARD_PER_EPISODE
@@ -56,5 +56,5 @@ output:
     episodes: true
     width: 5
     height: 5
-    
+
 
