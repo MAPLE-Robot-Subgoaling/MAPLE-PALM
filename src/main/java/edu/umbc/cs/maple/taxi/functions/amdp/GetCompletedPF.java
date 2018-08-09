@@ -18,8 +18,6 @@ public class GetCompletedPF extends PropositionalFunction{
     @Override
     public boolean isTrue(OOState s, String... params) {
         if (!(s instanceof TaxiGetState)) { return false; }
-//      String passengerName = params[0];
-//      MutableObject passenger = (MutableObject) s.object(passengerName);
         MutableObject passenger = (MutableObject) s.object(GetStateMapper.GET_PASSENGER_ALIAS);
         if (passenger == null) { return false; }
         String pass_loc = (String) passenger.get(ATT_LOCATION);

@@ -1,7 +1,5 @@
 package edu.umbc.cs.maple.config.rmax;
 
-import burlap.behavior.singleagent.auxiliary.performance.PerformanceMetric;
-
 import static edu.umbc.cs.maple.config.ExperimentConfig.UNSET_DOUBLE;
 import static edu.umbc.cs.maple.config.ExperimentConfig.UNSET_INT;
 import static edu.umbc.cs.maple.hierarchy.framework.GoalFailRF.PSEUDOREWARD_ON_GOAL;
@@ -16,15 +14,24 @@ public class RmaxConfig {
     public Boolean use_model_sharing = null;
 
     public boolean validate() {
-        if (vmax == UNSET_DOUBLE) { return false; }
-        if (vmax < PSEUDOREWARD_ON_GOAL) { System.err.println("Warning: vmax is set < GoalFailRF.PSEUDOREWARD_ON_GOAL"); return false; }
-        if (threshold == UNSET_INT) { return false; }
-        if (max_delta == UNSET_DOUBLE) { return false; }
-        if (max_delta_rmaxq == UNSET_DOUBLE) { return false; }
-        if (max_iterations_in_model== UNSET_INT) { return false; }
-        if (use_multitime_model == null) { return false; }
-        if (use_model_sharing == null) { return false; }
-        return true;
+        boolean invalid;
+        invalid = vmax == UNSET_DOUBLE;//) { return false; }
+        if (invalid) { throw new RuntimeException("invalid"); }
+        invalid = vmax < PSEUDOREWARD_ON_GOAL;
+        if (invalid) { throw new RuntimeException("invalid"); }
+        invalid = threshold == UNSET_INT;
+        if (invalid) { throw new RuntimeException("invalid"); }
+        invalid = max_delta == UNSET_DOUBLE;
+        if (invalid) { throw new RuntimeException("invalid"); }
+        invalid = max_delta_rmaxq == UNSET_DOUBLE;
+        if (invalid) { throw new RuntimeException("invalid"); }
+        invalid = max_iterations_in_model == UNSET_INT;
+        if (invalid) { throw new RuntimeException("invalid"); }
+        invalid = use_multitime_model == null;
+        if (invalid) { throw new RuntimeException("invalid"); }
+        invalid = use_model_sharing == null;
+        if (invalid) { throw new RuntimeException("invalid"); }
+        return !invalid;
     }
 
 }

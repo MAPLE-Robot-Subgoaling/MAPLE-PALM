@@ -1,6 +1,5 @@
 package edu.umbc.cs.maple.config.solver;
 
-import burlap.behavior.singleagent.MDPSolver;
 import burlap.behavior.singleagent.planning.Planner;
 import burlap.behavior.valuefunction.ValueFunction;
 import burlap.mdp.singleagent.SADomain;

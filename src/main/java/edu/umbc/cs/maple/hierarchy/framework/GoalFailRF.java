@@ -17,17 +17,14 @@ public class GoalFailRF implements RewardFunction {
 
     protected GoalFailTF tf;
 
-    //todo: make Bean
-
-    public GoalFailRF(){
+    public GoalFailRF() {
+        // for de/serialization
     }
 
     public GoalFailRF(GoalFailTF tf) {
         this.tf = tf;
     }
 
-    public GoalFailRF(GoalFailTF tf, double rewardDefault, double rewardNoop) {
-        this.tf = tf;
         this.rewardDefault = rewardDefault;
         this.rewardNoop = rewardNoop;
     }

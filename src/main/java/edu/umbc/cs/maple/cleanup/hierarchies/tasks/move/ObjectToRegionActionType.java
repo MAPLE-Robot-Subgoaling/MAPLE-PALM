@@ -17,6 +17,18 @@ public class ObjectToRegionActionType extends ObjectParameterizedActionType {
         super(name, parameterClasses);
     }
 
+    public ObjectToRegionActionType(){
+        super(null, null,null);
+    }
+
+    public void setParameterClasses(String[] parameterClasses){
+        this.parameterClasses= parameterClasses;
+    }
+
+    public void  setParameterOrderGroup(String[] parameterOrderGroup) {
+        this.parameterOrderGroup=parameterOrderGroup;
+    }
+
     @Override
     protected boolean applicableInState(State s, ObjectParameterizedAction objectParameterizedAction) {
         OOState state = (OOState) s;
@@ -25,6 +37,7 @@ public class ObjectToRegionActionType extends ObjectParameterizedActionType {
         String regionName = params[1];
         ObjectInstance object = state.object(objectName);
         String currentRegionName = (String) object.get(ATT_REGION);
+        //for some reason currentRegionName is null
         boolean alreadyInRegion = currentRegionName.equals(regionName);
         // not applicable if object already in the region
         if (alreadyInRegion) { return false; }

@@ -16,6 +16,17 @@ public class RootStateMapper implements StateMapping {
         List<TaxiRootPassenger> passengers = new ArrayList<>();
         TaxiState st = (TaxiState) s;
 
+        String taxiLocation = ATT_VAL_ON_ROAD;
+        int tx = (int) st.getTaxi().get(ATT_X);
+        int ty = (int) st.getTaxi().get(ATT_Y);
+        for (ObjectInstance location : st.objectsOfClass(CLASS_LOCATION)) {
+            int lx = (int) location.get(ATT_X);
+            int ly = (int) location.get(ATT_Y);
+            if (tx == lx && ty == ly) {
+                taxiLocation = location.name();
+            }
+        }
+        TaxiRootAgent taxi = new TaxiRootAgent(CLASS_TAXI, taxiLocation);
         for(ObjectInstance passenger : st.objectsOfClass(CLASS_PASSENGER)){
             int px = (int) passenger.get(ATT_X);
             int py = (int) passenger.get(ATT_Y);
@@ -36,7 +47,7 @@ public class RootStateMapper implements StateMapping {
             }
         }
 
-        return new TaxiRootState(passengers);
+        return new TaxiRootState(taxi, passengers);
     }
 
 }

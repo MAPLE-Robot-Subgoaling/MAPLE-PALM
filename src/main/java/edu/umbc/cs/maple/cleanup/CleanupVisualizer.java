@@ -13,7 +13,6 @@ import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
@@ -248,7 +247,8 @@ public class CleanupVisualizer {
             Color rcol = colorForName(ob.get(Cleanup.ATT_COLOR).toString());
             float[] hsb = new float[3];
             Color.RGBtoHSB(rcol.getRed(), rcol.getGreen(), rcol.getBlue(), hsb);
-            hsb[1] = 0.4f;
+            //this line gets rid of horrible saturated colors but keeps the nice pastels (and white, at 0)
+            hsb[1] = (hsb[1] > .3f) ? 0.3f : hsb[1];
             rcol = Color.getHSBColor(hsb[0], hsb[1], hsb[2]);
 
             for (int i = left; i <= right; i++) {

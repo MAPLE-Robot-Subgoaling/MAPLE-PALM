@@ -116,7 +116,7 @@ public class CleanupState implements MutableOOState, DeepCopyForShallowCopyState
         if (out != null) {
             return out;
         }
-//		throw new RuntimeException("ERROR: unable to find object with name " + oname);
+		//throw new RuntimeException("ERROR: unable to find object with name " + oname);
         return null;
     }
 
@@ -273,7 +273,7 @@ public class CleanupState implements MutableOOState, DeepCopyForShallowCopyState
 
     private boolean wallAt(ObjectInstance r, int x, int y) {
         if (r == null) {
-//			System.err.println("null room at " + x + ", " + y + ", treating as wall");
+			System.err.println("null room at " + x + ", " + y + ", treating as wall");
             return true;
         }
         if (x < 0 || x >= width || y < 0 || y >= height) {
@@ -296,6 +296,11 @@ public class CleanupState implements MutableOOState, DeepCopyForShallowCopyState
 
     public boolean isOpen(int x, int y) {
         return !(wallAt(x, y) || blockAt(x, y));
+    }
+
+    public boolean isObjectInRoom(ObjectInstance object, CleanupRoom room) {
+        CleanupRoom roomContainingPoint = roomContainingPoint((int) object.get(ATT_X), (int) object.get(ATT_Y));
+        return room.equals(roomContainingPoint);
     }
 
     public CleanupRoom roomContainingPoint(int x, int y) {

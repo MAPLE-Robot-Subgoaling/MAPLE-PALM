@@ -1,7 +1,5 @@
 package edu.umbc.cs.maple.config.output;
 
-import burlap.behavior.singleagent.auxiliary.performance.PerformanceMetric;
-
 public class OutputConfig {
     public CSVConfig csv;
     public ChartConfig chart;

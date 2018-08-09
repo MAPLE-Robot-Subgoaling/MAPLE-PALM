@@ -1,29 +1,26 @@
 package edu.umbc.cs.maple.palm.rmax.agent;
 
-import burlap.mdp.core.action.Action;
-import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.environment.EnvironmentOutcome;
 import burlap.statehashing.HashableStateFactory;
-import edu.umbc.cs.maple.hierarchy.framework.GroundedTask;
 import edu.umbc.cs.maple.hierarchy.framework.Task;
-import edu.umbc.cs.maple.utilities.ConstantDiscountProvider;
 import edu.umbc.cs.maple.utilities.OnlyInternalDiscountProvider;
 
 public class HierarchicalRmaxModel extends RmaxModel {
 
-    private boolean useMultitimeModel;
 
-    /**
-     * creates a rmax model
-     * @param task the grounded task to model
-     * @param threshold rmax sample threshold
-     * @param rmax max rewardTotal in domain
-     * @param hs provided hashing factory
-     */
-    public HierarchicalRmaxModel(Task task, int threshold, double rmax, HashableStateFactory hs, double gamma, boolean useMultitimeModel) {
-        super(task, threshold, rmax, hs, gamma);
-        this.useMultitimeModel = useMultitimeModel;
-    }
+	private boolean useMultitimeModel;
+
+	/**
+	 * creates a rmax model
+	 * @param task the grounded task to model
+	 * @param threshold rmax sample threshold
+	 * @param rmax max rewardTotal in domain
+	 * @param hs provided hashing factory
+	 */
+	public HierarchicalRmaxModel(Task task, int threshold, double rmax, HashableStateFactory hs, double gamma, boolean useMultitimeModel) {
+		super(task, threshold, rmax, hs, gamma);
+		this.useMultitimeModel = useMultitimeModel;
+	}
 
     @Override
     public void initializeDiscountProvider(double gamma) {

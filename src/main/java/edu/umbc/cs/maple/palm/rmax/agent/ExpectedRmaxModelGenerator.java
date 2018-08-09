@@ -3,7 +3,6 @@ package edu.umbc.cs.maple.palm.rmax.agent;
 import burlap.statehashing.HashableStateFactory;
 import edu.umbc.cs.maple.config.ExperimentConfig;
 import edu.umbc.cs.maple.hierarchy.framework.GroundedTask;
-import edu.umbc.cs.maple.hierarchy.framework.Task;
 import edu.umbc.cs.maple.palm.agent.PALMModel;
 import edu.umbc.cs.maple.palm.agent.PALMModelGenerator;
 

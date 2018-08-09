@@ -1,11 +1,11 @@
-domain: !!edu.umbc.cs.maple.config.liftCopter.LCConfig
+domain: !!edu.umbc.cs.maple.config.liftcopter.LCConfig
   state: classic
   correct_move: 1.0
 
 agents:
  # rmaxq: {taxi-expert}
   palm: {LC-expert}
- # qLearning: {taxi-expert}
+ # ql: {taxi-expert}
 
 seed: 3
 episodes: 700

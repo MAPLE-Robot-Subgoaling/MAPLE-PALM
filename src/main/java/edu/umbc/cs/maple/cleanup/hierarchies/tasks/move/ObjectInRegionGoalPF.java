@@ -8,6 +8,9 @@ import static edu.umbc.cs.maple.cleanup.Cleanup.*;
 
 public class ObjectInRegionGoalPF extends PropositionalFunction {
 
+    public ObjectInRegionGoalPF(){
+        super("move", new String[]{});
+    }
     public ObjectInRegionGoalPF(String name, String[] parameterClasses) {
         super(name, parameterClasses);
     }

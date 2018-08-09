@@ -11,22 +11,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static edu.umbc.cs.maple.cleanup.hierarchies.tasks.move.MoveMapper.toNameMap;
+import static edu.umbc.cs.maple.cleanup.hierarchies.tasks.move.MoveMapper.toSuperMap;
+
 public class MoveState extends CleanupState {
 
     public MoveState(MoveAgent agent, List<? extends CleanupBlock> blocks, List<? extends CleanupDoor> doors, List<? extends CleanupRoom> rooms) {
-        this.agent = agent;
-        this.blocks = (Map<String, CleanupBlock>) toNameMap(blocks);
-        this.doors = (Map<String, CleanupDoor>) toNameMap(doors);
-        this.rooms = (Map<String, CleanupRoom>) toNameMap(rooms);
+        this.agent  = agent;
+        this.blocks = toSuperMap(blocks);
+        this.doors  = toSuperMap(doors);
+        this.rooms  = toSuperMap(rooms);
     }
 
-    public Map<String, ? extends MutableObject> toNameMap(List<? extends MutableObject> objects) {
-        Map<String, MutableObject> map = new HashMap<>();
-        for (MutableObject object : objects) {
-            map.put(object.name(), object);
-        }
-        return map;
-    }
+
 
 
 //    @Override

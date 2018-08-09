@@ -2,8 +2,7 @@ package edu.umbc.cs.maple.cleanup;
 
 import burlap.behavior.singleagent.Episode;
 import burlap.behavior.valuefunction.ValueFunction;
-import burlap.mdp.auxiliary.DomainGenerator;
-import burlap.mdp.auxiliary.common.NullTermination;
+import burlap.mdp.auxiliary.common.GoalConditionTF;
 import burlap.mdp.core.Domain;
 import burlap.mdp.core.TerminalFunction;
 import burlap.mdp.core.action.UniversalActionType;
@@ -12,20 +11,25 @@ import burlap.mdp.core.oo.propositional.PropositionalFunction;
 import burlap.mdp.core.oo.state.OOState;
 import burlap.mdp.core.oo.state.ObjectInstance;
 import burlap.mdp.core.state.State;
-import burlap.mdp.singleagent.common.NullRewardFunction;
 import burlap.mdp.singleagent.model.FactoredModel;
 import burlap.mdp.singleagent.model.RewardFunction;
 import burlap.mdp.singleagent.oo.OOSADomain;
 import burlap.shell.visual.VisualExplorer;
 import burlap.visualizer.Visualizer;
+import edu.umbc.cs.maple.cleanup.pfs.InRegion;
 import edu.umbc.cs.maple.cleanup.state.*;
+import edu.umbc.cs.maple.config.ExperimentConfig;
+import edu.umbc.cs.maple.utilities.ExceptionReward;
+import edu.umbc.cs.maple.utilities.ExceptionTermination;
+import edu.umbc.cs.maple.utilities.OOSADomainGenerator;
 
 import javax.swing.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 
-public class Cleanup implements DomainGenerator {
+public class Cleanup extends OOSADomainGenerator {
 
 
     public static final String ATT_X = "x";
@@ -122,6 +126,7 @@ public class Cleanup implements DomainGenerator {
         this.maxY = maxY;
     }
 
+
     public int getMinX() {
         return minX;
     }
@@ -169,6 +174,7 @@ public class Cleanup implements DomainGenerator {
     public void setTf(TerminalFunction tf) {
         this.tf = tf;
     }
+
 
     public List<PropositionalFunction> generatePfs() {
         List<PropositionalFunction> pfs = new ArrayList<PropositionalFunction>();
@@ -260,39 +266,6 @@ public class Cleanup implements DomainGenerator {
         return firstLetter.toUpperCase() + remainder;
     }
 
-
-    public class InRegion extends PropositionalFunction {
-
-        protected boolean countBoundary;
-
-        public InRegion(String name, String[] parameterClasses, boolean countBoundary) {
-            super(name, parameterClasses);
-            this.countBoundary = countBoundary;
-        }
-
-        @Override
-        public boolean isTrue(OOState s, String... params) {
-            CleanupState cws = (CleanupState) s;
-            ObjectInstance o = cws.object(params[0]);
-            ObjectInstance region = cws.object(params[1]);
-
-            if (o == null) { return false; }
-
-            String abstractInRegion = (String) o.get(ATT_REGION);
-            if (abstractInRegion != null) {
-                // this object is abstract, as in the Cleanup AMDP
-                return abstractInRegion.equals(region.name());
-            }
-
-            if (o == null || region == null) {
-                return false;
-            }
-            int x = (Integer) o.get(ATT_X);
-            int y = (Integer) o.get(ATT_Y);
-            return CleanupState.regionContainsPoint(region, x, y, countBoundary);
-        }
-    }
-
     public class IsColor extends PropositionalFunction {
 
         protected String colorName;
@@ -372,11 +345,11 @@ public class Cleanup implements DomainGenerator {
         TerminalFunction tf = this.tf;
         if (rf == null) {
             System.err.println("Warning: calling generateDomain with null reward function");
-            rf = new NullRewardFunction();
+            rf = new ExceptionReward();
         }
         if (tf == null) {
             System.err.println("Warning: calling generateDomain with null terminal function");
-            tf = new NullTermination();
+            tf = new ExceptionTermination();
         }
         FactoredModel model = new FactoredModel(smodel, rf, tf);
         domain.setModel(model);
@@ -387,70 +360,69 @@ public class Cleanup implements DomainGenerator {
         return rf;
     }
 
-    /*
-    public class PullActionType extends ObjectParameterizedActionType {
-
-        public PullActionType(String name){
-            super(name,new String[]{Cleanup.CLASS_AGENT, Cleanup.CLASS_BLOCK});
-        }
-
-        public boolean applicableInState(State st, ObjectParameterizedAction groundedAction){
-            CleanupState cws = (CleanupState)st;
-            String [] params = groundedAction.getObjectParameters();
-            CleanupAgent agent = (CleanupAgent)cws.object(params[0]);
-            CleanupBlock block = (CleanupBlock)cws.object(params[1]);
-            if (agent == null || block == null) {
-                return false;
-            }
-
-            if (agent.get(ATT_DIR) == null) {
-                return false;
-            }
-
-            int direction = CleanupModel.actionDir(agent.get(ATT_DIR).toString());
-            int curX = (Integer) agent.get(ATT_X);
-            int curY = (Integer) agent.get(ATT_Y);
-            //first get change in x and y from direction using 0: north; 1: south; 2:east; 3: west
-            int xdelta = 0;
-            int ydelta = 0;
-            if(direction == 0){
-                ydelta = 1;
-            } else if(direction == 1){
-                ydelta = -1;
-            } else if(direction == 2){
-                xdelta = 1;
-            } else{
-                xdelta = -1;
-            }
-            int nx = curX + xdelta;
-            int ny = curY + ydelta;
-            if ((Integer)block.get(ATT_X) == nx && (Integer)block.get(ATT_Y) == ny) {
-                return true;
-            }
-            return false;
-        }
-    }
-    */
+//    public class PullActionType extends ObjectParameterizedActionType {
+//
+//        public PullActionType(String name){
+//            super(name,new String[]{Cleanup.CLASS_AGENT, Cleanup.CLASS_BLOCK});
+//        }
+//
+//        public boolean applicableInState(State st, ObjectParameterizedAction groundedAction){
+//            CleanupState cws = (CleanupState)st;
+//            String [] params = groundedAction.getObjectParameters();
+//            CleanupAgent agent = (CleanupAgent)cws.object(params[0]);
+//            CleanupBlock block = (CleanupBlock)cws.object(params[1]);
+//            if (agent == null || block == null) {
+//                return false;
+//            }
+//
+//            if (agent.get(ATT_DIR) == null) {
+//                return false;
+//            }
+//
+//            int direction = CleanupModel.actionDir(agent.get(ATT_DIR).toString());
+//            int curX = (Integer) agent.get(ATT_X);
+//            int curY = (Integer) agent.get(ATT_Y);
+//            //first get change in x and y from direction using 0: north; 1: south; 2:east; 3: west
+//            int xdelta = 0;
+//            int ydelta = 0;
+//            if(direction == 0){
+//                ydelta = 1;
+//            } else if(direction == 1){
+//                ydelta = -1;
+//            } else if(direction == 2){
+//                xdelta = 1;
+//            } else{
+//                xdelta = -1;
+//            }
+//            int nx = curX + xdelta;
+//            int ny = curY + ydelta;
+//            if ((Integer)block.get(ATT_X) == nx && (Integer)block.get(ATT_Y) == ny) {
+//                return true;
+//            }
+//            return false;
+//        }
+//    }
 
 
-    public static ValueFunction getGroundHeuristic(State s, RewardFunction rf, double lockProb) {
 
-        double discount = 0.99;
-        // prop name if block -> block and room if
-        CleanupGoal rfCondition = (CleanupGoal) ((CleanupRF) rf).getGoalCondition();
-        String PFName = rfCondition.goals[0].getPf().getName();
-        String[] params = rfCondition.goals[0].getParams();
-        if (PFName.equals(Cleanup.PF_AGENT_IN_ROOM)) {
-            return new AgentToRegionHeuristic(params[1], discount, lockProb);
-        } else if (PFName.equals(Cleanup.PF_AGENT_IN_DOOR)) {
-            return new AgentToRegionHeuristic(params[1], discount, lockProb);
-        } else if (PFName.equals(Cleanup.PF_BLOCK_IN_ROOM)) {
-            return new BlockToRegionHeuristic(params[0], params[1], discount, lockProb);
-        } else if (PFName.equals(Cleanup.PF_BLOCK_IN_DOOR)) {
-            return new BlockToRegionHeuristic(params[0], params[1], discount, lockProb);
-        }
-        throw new RuntimeException("Unknown Reward Function with propositional function " + PFName + ". Cannot construct l0 heuristic.");
-    }
+//    public static ValueFunction getGroundHeuristic(State s, RewardFunction rf, double lockProb) {
+//
+//        double discount = 0.99;
+//        // prop name if block -> block and room if
+//        CleanupGoal rfCondition = (CleanupGoal) ((CleanupRF) rf).getGoalCondition();
+//        String PFName = rfCondition.getGoalDescriptions.get(0).getPf().getName();
+//        String[] params = rfCondition.goals.get(0).getParams();
+//        if (PFName.equals(Cleanup.PF_AGENT_IN_ROOM)) {
+//            return new AgentToRegionHeuristic(params[1], discount, lockProb);
+//        } else if (PFName.equals(Cleanup.PF_AGENT_IN_DOOR)) {
+//            return new AgentToRegionHeuristic(params[1], discount, lockProb);
+//        } else if (PFName.equals(Cleanup.PF_BLOCK_IN_ROOM)) {
+//            return new BlockToRegionHeuristic(params[0], params[1], discount, lockProb);
+//        } else if (PFName.equals(Cleanup.PF_BLOCK_IN_DOOR)) {
+//            return new BlockToRegionHeuristic(params[0], params[1], discount, lockProb);
+//        }
+//        throw new RuntimeException("Unknown Reward Function with propositional function " + PFName + ". Cannot construct l0 heuristic.");
+//    }
 
     public static class AgentToRegionHeuristic implements ValueFunction {
 
@@ -598,32 +570,68 @@ public class Cleanup implements DomainGenerator {
         return dist;
     }
 
+    public static boolean isAdjacent(OOState state, String[] params) {
+        String objectName = params[0];
+        ObjectInstance object = state.object(objectName);
+        ObjectInstance agent = state.objectsOfClass(CLASS_AGENT).get(0);
+        if (agent == null) { return false; }
+        int aX = (int) agent.get(ATT_X);
+        int aY = (int) agent.get(ATT_Y);
+        int oX = (int) object.get(ATT_X);
+        int oY = (int) object.get(ATT_Y);
+        int dX = Math.abs(aX - oX);
+        int dY = Math.abs(aY - oY);
+        // one of X or Y needs to be 0 and the other 1
+        if ((dX == 0 && dY == 1) || (dX == 1 && dY == 0)) {
+            return true;
+        }
+        return false;
+    }
 
     public static void main(String[] args) {
 
 //        RandomFactory.seedMapped(0, 575L);
 //        Random rng = RandomFactory.getMapped(0);
-
         List<String> objectAttributes = new ArrayList<String>();
-        Cleanup cleanup = new Cleanup();
-        cleanup.setMinX(0);
-        cleanup.setMaxX(13);
-        cleanup.setMinY(0);
-        cleanup.setMaxY(13);
-        OOSADomain domain = (OOSADomain) cleanup.generateDomain();
-        CleanupRandomStateGenerator gen = new CleanupRandomStateGenerator(cleanup);
+        Cleanup cleanup = new Cleanup(0,0,10,10);
 
-        int numBlocks1 = 1;
-        int numBlocks2 = 3;
-        State state1 = gen.generateTwoRoomsWithFourDoors(numBlocks1); //gen.generateCentralRoomWithFourDoors(numBlocks1);
-        State state2 = gen.getStateFor("twoRooms", numBlocks2);//gen.generateTwoRoomsWithFourDoors(numBlocks2); //gen.generateCentralRoomWithFourDoors(numBlocks2);
+		RewardFunction rf;
+		TerminalFunction tf;
+		CleanupGoal goalCondition;
+		goalCondition = new CleanupGoal();
+        OOSADomain domain = (OOSADomain) cleanup.generateDomain();
+
+        CleanupGoalDescription[] goals = new CleanupGoalDescription[]{
+				new CleanupGoalDescription(new String[]{"block0", "room10"}, domain.propFunction(PF_BLOCK_IN_ROOM)),
+				//new CleanupGoalDescription(new String[]{"block1", "room1"}, domain.propFunction(PF_BLOCK_IN_ROOM)),
+				//new CleanupGoalDescription(new String[]{"block2", "room0"}, domain.propFunction(PF_BLOCK_IN_ROOM))
+		};
+        goalCondition.setGoalDescriptions(Arrays.asList(goals));
+
+        rf = new CleanupRF(goalCondition, 1.0, 0.0, 0.0, 0.0 );
+        tf = new GoalConditionTF(goalCondition);
+        cleanup.setRf(rf);
+        cleanup.setTf(tf);
+        CleanupRandomStateGenerator gen = new CleanupRandomStateGenerator(cleanup);
+        domain = (OOSADomain) cleanup.generateDomain();
+
+        String configFile = "config/cleanup/old/2rooms2blocks.yaml";
+        if(args.length > 0) {
+            configFile = args[0];
+        }
+
+        ExperimentConfig config = ExperimentConfig.loadConfig(configFile);
+
+        State state= config.generateState();
 
 //        List<State> states = StateReachability.getReachableStates(state2, domain, new SimpleHashableStateFactory(true));
         List<Episode> episodes = new ArrayList<Episode>();
 //        Episode e = new Episode();
 //        for (State state : states) {
+//            System.out.println("width is: "+cleanup.getWidth());
+//            System.out.println("width is: "+cleanup.getHeight());
             Visualizer v = CleanupVisualizer.getVisualizer(cleanup.getWidth(), cleanup.getHeight());
-            VisualExplorer exp = new VisualExplorer(domain, v, state2);
+            VisualExplorer exp = new VisualExplorer(domain, v, state);
             exp.addKeyAction("w", ACTION_NORTH, "");
             exp.addKeyAction("s", ACTION_SOUTH, "");
             exp.addKeyAction("d", ACTION_EAST, "");
@@ -641,8 +649,8 @@ public class Cleanup implements DomainGenerator {
 //        Visualizer v = CleanupVisualizer.getVisualizer(cleanup.getWidth(), cleanup.getHeight());
 //        EpisodeSequenceVisualizer esv = new EpisodeSequenceVisualizer(v, domain, episodes);
 //        esv.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-
+//
+//
 //        System.out.println(state1);
 //        System.out.println(state2);
 //
@@ -673,88 +681,89 @@ public class Cleanup implements DomainGenerator {
 //        System.out.println(hs2.equals(hs2));
 //        System.out.println(hs1.equals(hs2));
 //
-////
-////        Visualizer v = CleanupVisualizer.getVisualizer(cleanup.getWidth(), cleanup.getHeight());
-////		VisualExplorer exp = new VisualExplorer(domain, v, state2);
-////		exp.addKeyAction("w", ACTION_NORTH, "");
-////		exp.addKeyAction("s", ACTION_SOUTH, "");
-////		exp.addKeyAction("d", ACTION_EAST, "");
-////		exp.addKeyAction("a", ACTION_WEST, "");
-////		exp.addKeyAction("r", ACTION_PULL, "");
-////		exp.initGUI();
-////		exp.requestFocus();
-////		exp.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 //
-////		OOSADomain domain;
+//        Visualizer v = CleanupVisualizer.getVisualizer(cleanup.getWidth(), cleanup.getHeight());
+//		VisualExplorer exp = new VisualExplorer(domain, v, state2);
+//		exp.addKeyAction("w", ACTION_NORTH, "");
+//		exp.addKeyAction("s", ACTION_SOUTH, "");
+//		exp.addKeyAction("d", ACTION_EAST, "");
+//		exp.addKeyAction("a", ACTION_WEST, "");
+//		exp.addKeyAction("r", ACTION_PULL, "");
+//		exp.initGUI();
+//		exp.requestFocus();
+//		exp.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//
+//		OOSADomain domain;
 //		RewardFunction rf;
 //		TerminalFunction tf;
 //		CleanupGoal goalCondition;
 //		OOState initialState;
 //		HashableStateFactory hashingFactory;
 //		SimulatedEnvironment env;
-////		int minX = 0;
-////		int minY = 0;
-////		int width = 9;
-////		int height = 9;
-////		goalCondition = new CleanupGoal();
-////		rf = new CleanupRF(goalCondition);
-////		tf = new GoalConditionTF(goalCondition);
-////		Cleanup gen = new Cleanup(minX, minY, minX + width, minY + height);
-////		gen.setRf(rf);
-////		gen.setTf(tf);
-////		domain = (OOSADomain) gen.generateDomain();
-////		CleanupGoalDescription[] goals = new CleanupGoalDescription[]{
-////				new CleanupGoalDescription(new String[]{"block0", "room1"}, domain.propFunction(PF_BLOCK_IN_ROOM)),
-////				new CleanupGoalDescription(new String[]{"block1", "room1"}, domain.propFunction(PF_BLOCK_IN_ROOM)),
-////				new CleanupGoalDescription(new String[]{"block2", "room0"}, domain.propFunction(PF_BLOCK_IN_ROOM))
-////		};
-////		goalCondition.setGoals(goals);
-////		initialState = gen.getClassicState(2, 1);
+//		int minX = 0;
+//		int minY = 0;
+//		int width = 9;
+//		int height = 9;
+//		goalCondition = new CleanupGoal();
+//		rf = new CleanupRF(goalCondition);
+//		tf = new GoalConditionTF(goalCondition);
+//		Cleanup gen = new Cleanup(minX, minY, minX + width, minY + height);
+//		gen.setRf(rf);
+//		gen.setTf(tf);
+//		domain = (OOSADomain) gen.generateDomain();
+//		CleanupGoalDescription[] goals = new CleanupGoalDescription[]{
+//				new CleanupGoalDescription(new String[]{"block0", "room1"}, domain.propFunction(PF_BLOCK_IN_ROOM)),
+//				new CleanupGoalDescription(new String[]{"block1", "room1"}, domain.propFunction(PF_BLOCK_IN_ROOM)),
+//				new CleanupGoalDescription(new String[]{"block2", "room0"}, domain.propFunction(PF_BLOCK_IN_ROOM))
+//		};
+//		goalCondition.setGoals(goals);
+//		initialState = gen.getClassicState(2, 1);
 //		hashingFactory = new SimpleHashableStateFactory();
 //        initialState = (OOState) state2;
 //		env = new SimulatedEnvironment(domain, initialState);
-////
-////		Visualizer v = CleanupVisualizer.getVisualizer(width, height);
-////		VisualExplorer exp = new VisualExplorer(domain, v, initialState);
-////		exp.addKeyAction("w", ACTION_NORTH, "");
-////		exp.addKeyAction("s", ACTION_SOUTH, "");
-////		exp.addKeyAction("d", ACTION_EAST, "");
-////		exp.addKeyAction("a", ACTION_WEST, "");
-////		exp.addKeyAction("r", ACTION_PULL, "");
-////		exp.initGUI();
-////		exp.requestFocus();
-////		exp.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//
+//		Visualizer v = CleanupVisualizer.getVisualizer(width, height);
+//		VisualExplorer exp = new VisualExplorer(domain, v, initialState);
+//		exp.addKeyAction("w", ACTION_NORTH, "");
+//		exp.addKeyAction("s", ACTION_SOUTH, "");
+//		exp.addKeyAction("d", ACTION_EAST, "");
+//		exp.addKeyAction("a", ACTION_WEST, "");
+//		exp.addKeyAction("r", ACTION_PULL, "");
+//		exp.initGUI();
+//		exp.requestFocus();
+//		exp.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 //
 //
 //
-////        VisualActionObserver observer = new VisualActionObserver(domain, CleanupVisualizer.getVisualizer(cleanup.getWidth(), cleanup.getHeight()));
-////        observer.initGUI();
-////        env.addObservers(observer);
-////		String outputPath = "./output/";
-////		double gamma = 0.9;
-////		double qInit = 0;
-////		double learningRate = 0.01;
-////		int nEpisodes = 100;
-////		int maxEpisodeSize = 1001;
-////		int writeEvery = 1;
-////        LearningAgent agent = new QLearning(domain, gamma, hashingFactory, qInit, learningRate, maxEpisodeSize);
-////		for(int i = 0; i < nEpisodes; i++){
-////			Episode e = agent.runLearningEpisode(env, maxEpisodeSize);
-////			if (i % writeEvery == 0) {
-////				e.write(outputPath + "ql_" + i);
-////			}
-////			System.out.println(i + ": " + e.maxTimeStep());
-////			env.resetEnvironment();
-////		}
+//        VisualActionObserver observer = new VisualActionObserver(domain, CleanupVisualizer.getVisualizer(cleanup.getWidth(), cleanup.getHeight()));
+//        observer.initGUI();
+//        env.addObservers(observer);
+//		String outputPath = "./output/";
+//		double gamma = 0.9;
+//		double qInit = 0;
+//		double learningRate = 0.01;
+//		int nEpisodes = 100;
+//		int maxEpisodeSize = 1001;
+//		int writeEvery = 1;
+//        LearningAgent agent = new QLearning(domain, gamma, hashingFactory, qInit, learningRate, maxEpisodeSize);
+//		for(int i = 0; i < nEpisodes; i++){
+//			Episode e = agent.runLearningEpisode(env, maxEpisodeSize);
+//			if (i % writeEvery == 0) {
+//				e.write(outputPath + "ql_" + i);
+//			}
+//			System.out.println(i + ": " + e.maxTimeStep());
+//			env.resetEnvironment();
+//		}
 //
 //
 //
-////		Visualizer v = CleanupVisualizer.getVisualizer(width, height);
-////		EpisodeSequenceVisualizer esv = new EpisodeSequenceVisualizer(v, domain, outputPath);
-////		esv.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//		Visualizer v = CleanupVisualizer.getVisualizer(width, height);
+//		EpisodeSequenceVisualizer esv = new EpisodeSequenceVisualizer(v, domain, outputPath);
+//		esv.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
     public TerminalFunction getTf() {
         return tf;
     }
+
 }

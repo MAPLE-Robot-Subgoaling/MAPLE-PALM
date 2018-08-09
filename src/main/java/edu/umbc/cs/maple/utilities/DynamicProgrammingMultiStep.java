@@ -3,7 +3,6 @@ package edu.umbc.cs.maple.utilities;
 import burlap.behavior.policy.EnumerablePolicy;
 import burlap.behavior.policy.PolicyUtils;
 import burlap.behavior.policy.support.ActionProb;
-import burlap.behavior.singleagent.MDPSolver;
 import burlap.behavior.singleagent.options.Option;
 import burlap.behavior.singleagent.planning.stochastic.dpoperator.BellmanOperator;
 import burlap.behavior.singleagent.planning.stochastic.dpoperator.DPOperator;
@@ -19,19 +18,10 @@ import burlap.mdp.singleagent.model.SampleModel;
 import burlap.mdp.singleagent.model.TransitionProb;
 import burlap.statehashing.HashableState;
 import burlap.statehashing.HashableStateFactory;
-import java.io.BufferedWriter;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.yaml.snakeyaml.Yaml;
+
+import java.io.*;
+import java.util.*;
 
 public class DynamicProgrammingMultiStep extends MultiStepMDPSolver implements ValueFunction, QProvider {
 
@@ -90,7 +80,7 @@ public class DynamicProgrammingMultiStep extends MultiStepMDPSolver implements V
         if (this.model.terminal(sh.s())) {
             return 0.0D;
         } else {
-            Double V = (Double)this.valueFunction.get(sh);
+            Double V = this.valueFunction.get(sh);
             double v = V == null ? this.getDefaultValue(sh.s()) : V.doubleValue();
             return v;
         }

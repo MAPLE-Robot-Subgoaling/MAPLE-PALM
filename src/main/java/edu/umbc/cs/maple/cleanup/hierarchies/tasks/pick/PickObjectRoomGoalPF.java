@@ -8,6 +8,9 @@ import static edu.umbc.cs.maple.cleanup.Cleanup.ATT_REGION;
 
 public class PickObjectRoomGoalPF extends PropositionalFunction {
 
+    public PickObjectRoomGoalPF(){
+        super("pick", new String[]{});
+    }
     public PickObjectRoomGoalPF(String name, String[] parameterClasses) {
         super(name, parameterClasses);
     }

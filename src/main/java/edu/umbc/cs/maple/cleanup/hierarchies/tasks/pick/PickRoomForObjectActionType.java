@@ -14,6 +14,18 @@ public class PickRoomForObjectActionType extends ObjectParameterizedActionType {
         super(name, parameterClasses);
     }
 
+    public PickRoomForObjectActionType(){
+        super(null, null,null);
+    }
+
+    public void setParameterClasses(String[] parameterClasses){
+        this.parameterClasses= parameterClasses;
+    }
+
+    public void  setParameterOrderGroup(String[] parameterOrderGroup) {
+        this.parameterOrderGroup=parameterOrderGroup;
+    }
+
     @Override
     protected boolean applicableInState(State s, ObjectParameterizedAction objectParameterizedAction) {
         OOState state = (OOState) s;

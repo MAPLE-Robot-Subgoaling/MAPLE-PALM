@@ -103,4 +103,11 @@ public class TaxiHierGenTask5State extends TaxiHierGenState implements MutableOO
     public TaxiHierGenTask5Taxi getTaxi() {
         return taxi;
     }
+
+    @Override
+    public String toString() {
+        return "TaxiHierGenTask5State{" +
+                "taxi=" + taxi +
+                '}';
+    }
 }
