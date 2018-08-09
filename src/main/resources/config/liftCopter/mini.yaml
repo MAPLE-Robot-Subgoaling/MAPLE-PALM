@@ -1,4 +1,4 @@
-domain: !!edu.umbc.cs.maple.config.liftCopter.LCConfig
+domain: !!edu.umbc.cs.maple.config.liftcopter.LCConfig
   state: mini
   correct_move: 1.0
 
@@ -18,7 +18,7 @@ planning:
   rollouts: 1000
 
 rmax:
-  vmax: 10.0
+  vmax: 1.0
   threshold: 5
   max_delta: 0.000001
   max_delta_rmaxq: 0.000001

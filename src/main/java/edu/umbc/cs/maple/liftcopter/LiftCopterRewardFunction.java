@@ -38,8 +38,8 @@ public class LiftCopterRewardFunction implements RewardFunction {
      */
     public LiftCopterRewardFunction() {
         // scaled to fit goal at 1.0
-        stepReward = -0.05;//-1;
-        illegalActionReward = -0.5;//-10;
+        stepReward = -0.0005;//-1;
+        illegalActionReward = -0.005;//-10;
         goalReward = 1.0;//20;
         tf = new LiftCopterTerminalFunction();
     }
