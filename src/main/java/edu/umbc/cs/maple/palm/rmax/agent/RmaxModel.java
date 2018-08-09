@@ -306,9 +306,11 @@ public abstract class RmaxModel extends PALMModel {
             State storedState = outcome.getOutcome().o;
             HashableState storedHs = hashingFactory.hashState(storedState);
             if (!storedHs.equals(hs)) {
+                HashableState again1 = hashingFactory.hashState(hs.s());
+                HashableState again2 = hashingFactory.hashState(storedState);
+                Map test1 = getHsPrimeToOutcomes(storedHs, a);
+                Map test2 = getHsPrimeToOutcomes(hs, a);
                 throw new RuntimeException("hashcode collision");
-//                Map hsPrimeToOutcomesFromStoredHs = getHsPrimeToOutcomes(storedHs, a);
-//                Map hsPrimeToOutcomesFromNewerHs = getHsPrimeToOutcomes(hs, a);
             }
         }
 
