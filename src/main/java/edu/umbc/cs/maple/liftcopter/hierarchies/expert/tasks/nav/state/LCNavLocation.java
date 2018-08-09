@@ -19,6 +19,9 @@ public class LCNavLocation extends MutableObject {
             ATT_H,
             ATT_W
     );
+    public LCNavLocation() {
+        // for de/serialization
+    }
 
     public LCNavLocation(String name, double x, double y, double h, double w) {
         this(name, (Object) x, (Object) y, (Object) h, (Object) w);

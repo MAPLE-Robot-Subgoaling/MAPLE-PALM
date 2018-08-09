@@ -4,17 +4,27 @@ hierarchyConfigMap:
       children:
         - get_np
         - put_np
-      domainGenerator: !!edu.umbc.cs.maple.liftcopter.hierarchies.expert.tasks.root.LCRootDomain {}
       stateMapper: !!edu.umbc.cs.maple.liftcopter.hierarchies.expert.tasks.root.state.RootStateMapper {}
-      tf: &tf !!edu.umbc.cs.maple.hierarchy.framework.GoalFailTF
+      tf: &rootTF !!edu.umbc.cs.maple.hierarchy.framework.GoalFailTF
         goalPF: !!edu.umbc.cs.maple.liftcopter.hierarchies.functions.RootCompletedPF {}
         failPF: !!edu.umbc.cs.maple.liftcopter.hierarchies.functions.RootFailurePF {}
-      rf: !!edu.umbc.cs.maple.hierarchy.framework.GoalFailRF
-        tf: *tf
+      rf: &rootRF !!edu.umbc.cs.maple.hierarchy.framework.GoalFailRF
+        tf: *rootTF
         rewardDefault: 0.0
         rewardNoop: 0.0
+      domainGenerator: !!edu.umbc.cs.maple.hierarchy.framework.TaskDomainGenerator
+          tf: *rootTF
+          rf: *rootRF
+          stateClasses:
+            - className: agent
+              clasz: !!edu.umbc.cs.maple.liftcopter.hierarchies.expert.tasks.root.state.LCRootCopter {}
+            - className: cargo
+              clasz: !!edu.umbc.cs.maple.liftcopter.hierarchies.expert.tasks.root.state.LCRootCargo {}
+          actions:
+            - !!edu.umbc.cs.maple.liftcopter.hierarchies.expert.tasks.root.GetActionType {}
+            - !!edu.umbc.cs.maple.liftcopter.hierarchies.expert.tasks.root.PutActionType {}
       solver: !!edu.umbc.cs.maple.config.solver.ValueIterationMultistepConfig
-        maxDelta: 0.0001
+        maxDelta: 0.00001
         maxIterations: 1000
 
    get:
@@ -54,20 +64,29 @@ hierarchyConfigMap:
 
    nav:
       children:
-        - thrust|0.02|.5_p
-        - thrust|0.02|1.5_p
-        - thrust|0.02|0.0_p
-        - thrust|0.02|1_p
+        - thrust_p
         - noop_p
-      domainGenerator: !!edu.umbc.cs.maple.liftcopter.hierarchies.expert.tasks.nav.LCNavDomain {}
       stateMapper: !!edu.umbc.cs.maple.liftcopter.hierarchies.expert.tasks.nav.state.NavStateMapper {}
-      tf: &tf !!edu.umbc.cs.maple.hierarchy.framework.GoalFailTF
+      tf: &navTF !!edu.umbc.cs.maple.hierarchy.framework.GoalFailTF
         goalPF: !!edu.umbc.cs.maple.liftcopter.hierarchies.functions.NavCompletedPF {}
         failPF: !!edu.umbc.cs.maple.liftcopter.hierarchies.functions.NavFailurePF {}
-      rf: !!edu.umbc.cs.maple.hierarchy.framework.GoalFailRF
-        tf: *tf
+      rf: &navRF !!edu.umbc.cs.maple.hierarchy.framework.GoalFailRF
+        tf: *navTF
         rewardDefault: 0.0
         rewardNoop: 0.0
+      domainGenerator: !!edu.umbc.cs.maple.hierarchy.framework.TaskDomainGenerator
+          tf: *navTF
+          rf: *navRF
+          stateClasses:
+            - className: agent
+              clasz: !!edu.umbc.cs.maple.liftcopter.hierarchies.expert.tasks.nav.state.LCNavAgent {}
+            - className: location
+              clasz: !!edu.umbc.cs.maple.liftcopter.hierarchies.expert.tasks.nav.state.LCNavLocation {}
+            - className: wall
+              clasz: !!edu.umbc.cs.maple.liftcopter.hierarchies.expert.tasks.nav.state.LCNavWall {}
+          actions:
+            - !!edu.umbc.cs.maple.liftcopter.hierarchies.expert.tasks.root.GetActionType {}
+            - !!edu.umbc.cs.maple.liftcopter.hierarchies.expert.tasks.root.PutActionType {}
       solver: !!edu.umbc.cs.maple.config.solver.SarsaLambdaConfig
         lambda: 0.5
         learningRate: 0.02

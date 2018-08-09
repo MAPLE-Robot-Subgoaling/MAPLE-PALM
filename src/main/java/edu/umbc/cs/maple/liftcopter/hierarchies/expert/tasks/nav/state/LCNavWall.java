@@ -19,6 +19,9 @@ public class LCNavWall extends MutableObject {
             ATT_HEIGHT,
             ATT_WIDTH
     );
+    public LCNavWall() {
+        // for de/serialization
+    }
 
     public LCNavWall(String name, double startX, double startY, double width, double height) {
         this(name, (Object) startX, (Object) startY, (Object) width, (Object) height);

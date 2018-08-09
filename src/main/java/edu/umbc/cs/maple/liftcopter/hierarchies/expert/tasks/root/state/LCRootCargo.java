@@ -19,6 +19,11 @@ public class LCRootCargo extends MutableObject {
             ATT_GOAL_LOCATION
             );
 
+
+    public LCRootCargo() {
+        // for de/serialization
+    }
+
     public LCRootCargo(String name, String currentLocation) {
         this(name, (Object) currentLocation, null);
     }

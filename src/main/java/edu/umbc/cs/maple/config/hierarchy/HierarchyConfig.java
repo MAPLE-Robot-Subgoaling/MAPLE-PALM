@@ -42,15 +42,13 @@ public class HierarchyConfig {
             OOSADomain homeDomain = (OOSADomain) taskConfig.buildDomain();
             List<Task> childTasksList = new ArrayList<Task>();
             for (String childTaskName: taskConfig.getChildren()) {
-                ActionType childActionType = homeDomain.getAction(childTaskName.split("_")[0]);
+                String name = childTaskName.split("_")[0];
+                ActionType childActionType = homeDomain.getAction(name);
                 if(childTaskName.endsWith("_np")){
-                    childTasksList.add(buildTask(experimentConfig, childTaskName.split("_")[0], childActionType));
+                    childTasksList.add(buildTask(experimentConfig, name, childActionType));
                 }else if(childTaskName.endsWith("_p")){
                     // primitive actions need access to the "true" model to report the reward received when executed
                     homeDomain.setModel(((OOSADomain)experimentConfig.baseDomain).getModel());
-                    if(childTaskName.startsWith("thrust")){
-                        childActionType = homeDomain.getAction("thrust");
-                    }
                     childTasksList.add(new PrimitiveTask(childActionType, homeDomain));
                 }
             }

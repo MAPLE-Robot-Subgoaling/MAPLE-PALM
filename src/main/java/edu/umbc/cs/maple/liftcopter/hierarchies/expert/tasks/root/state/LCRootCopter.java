@@ -13,6 +13,11 @@ public class LCRootCopter extends MutableObject {
             ATT_LOCATION
     );
 
+
+    public LCRootCopter() {
+        // for de/serialization
+    }
+
     public LCRootCopter(String name, String currentLocation) {
         this(name, (Object) currentLocation);
     }

@@ -19,6 +19,11 @@ public class LCNavAgent extends MutableObject {
             ATT_W
             );
 
+
+    public LCNavAgent() {
+        // for de/serialization
+    }
+
     public LCNavAgent(String name, double x, double y, double h, double w) {
         this(name, x, y, 0.0, 0.0, h, w);
     }

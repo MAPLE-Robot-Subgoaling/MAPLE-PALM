@@ -91,10 +91,10 @@ public class LCNavDomain implements DomainGenerator {
         FactoredModel model = new FactoredModel(taxiModel, rf, tf);
         domain.setModel(model);
 
-        addStandardThrustDirections();
-        addStandardThrustValues();
-        domain.addActionTypes(new UniversalActionType(ACTION_IDLE))
-                .addActionTypes(new ThrustType(this.thrustValues, this.directionValues));
+//        addStandardThrustDirections();
+//        addStandardThrustValues();
+//        domain.addActionTypes(new UniversalActionType(ACTION_IDLE))
+//                .addActionTypes(new ThrustType(this.thrustValues, this.directionValues));
 
         return domain;
     }

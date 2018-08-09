@@ -11,6 +11,10 @@ import static edu.umbc.cs.maple.liftcopter.LiftCopterConstants.*;
 
 public class GetActionType extends ObjectParameterizedActionType {
 
+    public GetActionType() {
+        this(ACTION_GET, new String[]{CLASS_CARGO});
+    }
+
     public GetActionType(String name, String[] parameterClasses) {
         super(name, parameterClasses);
     }

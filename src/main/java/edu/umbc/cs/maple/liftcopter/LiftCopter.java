@@ -29,8 +29,8 @@ public class LiftCopter extends OOSADomainGenerator {
     private RewardFunction rf;
     private TerminalFunction tf;
     private double[][] moveDynamics;
-    protected List<Double> thrustValues = new ArrayList();
-    protected List<Double> directionValues = new ArrayList();
+    protected List<Double> thrustValues;
+    protected List<Double> directionValues;
     protected double correctMoveProbability;
 
     /**
@@ -132,9 +132,11 @@ public class LiftCopter extends OOSADomainGenerator {
         }
     }
     public void addStandardThrustValues() {
+        this.thrustValues = new ArrayList<>();
         this.thrustValues.add(0.02D);
     }
     public void addStandardThrustDirections() {
+        this.directionValues = new ArrayList<>();
         this.directionValues.add(0.0);
         this.directionValues.add(0.5*Math.PI);
         this.directionValues.add(Math.PI);
@@ -153,8 +155,8 @@ public class LiftCopter extends OOSADomainGenerator {
                 .addStateClass(CLASS_LOCATION, LiftCopterLocation.class)
                 .addStateClass(CLASS_WALL,LiftCopterWall.class);
 
-        addStandardThrustDirections();
-        addStandardThrustValues();
+        if (this.thrustValues == null) { addStandardThrustDirections(); }
+        if (this.directionValues == null) { addStandardThrustValues(); }
 
         domain.addActionType(new PutdownActionType(ACTION_PUTDOWN, new String[]{CLASS_CARGO}))
                 .addActionType(new PickupActionType(ACTION_PICKUP, new String[]{CLASS_CARGO}))
