@@ -1,4 +1,4 @@
-package edu.umbc.cs.maple.liftCopter.hierarchies.expert.tasks.root.state;
+package edu.umbc.cs.maple.liftcopter.hierarchies.expert.tasks.root.state;
 
 import burlap.mdp.core.oo.state.ObjectInstance;
 import edu.umbc.cs.maple.utilities.MutableObject;
@@ -6,7 +6,7 @@ import edu.umbc.cs.maple.utilities.MutableObject;
 import java.util.Arrays;
 import java.util.List;
 
-import static edu.umbc.cs.maple.liftCopter.LiftCopterConstants.*;
+import static edu.umbc.cs.maple.liftcopter.LiftCopterConstants.*;
 
 public class LCRootCopter extends MutableObject {
     private final static List<Object> keys = Arrays.<Object>asList(

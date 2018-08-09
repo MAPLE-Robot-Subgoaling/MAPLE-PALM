@@ -8,7 +8,7 @@ import edu.umbc.cs.maple.cleanup.state.CleanupBlock;
 import edu.umbc.cs.maple.cleanup.state.CleanupDoor;
 import edu.umbc.cs.maple.cleanup.state.CleanupRoom;
 import edu.umbc.cs.maple.cleanup.state.CleanupState;
-import edu.umbc.cs.maple.taxi.hierarchies.interfaces.MaskedParameterizedStateMapping;
+import edu.umbc.cs.maple.utilities.MaskedParameterizedStateMapping;
 import edu.umbc.cs.maple.utilities.MutableObject;
 
 import java.util.ArrayList;

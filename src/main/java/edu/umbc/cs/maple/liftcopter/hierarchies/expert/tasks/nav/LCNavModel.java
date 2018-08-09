@@ -3,6 +3,7 @@ package edu.umbc.cs.maple.liftcopter.hierarchies.expert.tasks.nav;
 import burlap.debugtools.RandomFactory;
 import burlap.mdp.core.StateTransitionProb;
 import burlap.mdp.core.action.Action;
+import burlap.mdp.core.oo.state.ObjectInstance;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.model.statemodel.FullStateModel;
 import edu.umbc.cs.maple.liftcopter.ThrustType.ThrustAction;

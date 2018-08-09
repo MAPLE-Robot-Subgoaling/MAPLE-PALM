@@ -52,8 +52,6 @@ public enum AgentType {
 
     },
     KAPPA("kappa", "κ"){
-=======
-    KAPPA("kappa", "κ"){
         @Override
         public LearningAgent getLearningAgent(Task root, HashableStateFactory hsf, ExperimentConfig config) {
             ExpectedRmaxModelGenerator modelGen = new ExpectedRmaxModelGenerator(hsf, config);
@@ -63,7 +61,6 @@ public enum AgentType {
 
     },
     Q_LEARNING("ql", "QL"){
->>>>>>> master
         @Override
         public LearningAgent getLearningAgent(Task root, HashableStateFactory hsf, ExperimentConfig config) {
             OOSADomain baseDomain = (OOSADomain) config.baseDomain;

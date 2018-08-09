@@ -1,4 +1,4 @@
-//package edu.umbc.cs.maple.liftCopter.hierarchies.expert;
+//package edu.umbc.cs.maple.liftcopter.hierarchies.expert;
 //
 //import burlap.mdp.core.action.ActionType;
 //import burlap.mdp.singleagent.oo.OOSADomain;

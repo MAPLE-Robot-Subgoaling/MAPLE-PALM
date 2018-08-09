@@ -8,6 +8,7 @@ import burlap.mdp.singleagent.oo.ObjectParameterizedActionType;
 import edu.umbc.cs.maple.liftcopter.hierarchies.expert.LCGetPutState;
 
 import static edu.umbc.cs.maple.liftcopter.LiftCopterConstants.ATT_LOCATION;
+import static edu.umbc.cs.maple.liftcopter.LiftCopterConstants.ATT_VAL_CRASHED;
 
 public class NavigateActionType extends ObjectParameterizedActionType {
 
