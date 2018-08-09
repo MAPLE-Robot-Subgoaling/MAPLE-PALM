@@ -5,7 +5,7 @@ domain: !!edu.umbc.cs.maple.config.liftcopter.LCConfig
 agents:
  # rmaxq: {taxi-expert}
   palm: {LC-expert}
- # qLearning: {taxi-expert}
+ # ql: {taxi-expert}
 
 seed: 3
 episodes: 700
@@ -52,4 +52,3 @@ output:
     width: 1
     height: 3
     
-
