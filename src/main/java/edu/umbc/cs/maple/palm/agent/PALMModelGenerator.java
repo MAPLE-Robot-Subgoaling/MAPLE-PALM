@@ -4,5 +4,6 @@ import edu.umbc.cs.maple.hierarchy.framework.GroundedTask;
 
 public interface PALMModelGenerator {
 
-    public PALMModel getModelForTask(GroundedTask t);
+    PALMModel getModelForTask(GroundedTask t);
+
 }

@@ -16,6 +16,7 @@ import burlap.mdp.singleagent.environment.EnvironmentOutcome;
 import burlap.mdp.singleagent.environment.SimulatedEnvironment;
 import burlap.mdp.singleagent.environment.extensions.EnvironmentServer;
 import burlap.mdp.singleagent.oo.OOSADomain;
+import burlap.mdp.singleagent.oo.ObjectParameterizedActionType;
 import burlap.statehashing.HashableStateFactory;
 import edu.umbc.cs.maple.config.ExperimentConfig;
 import edu.umbc.cs.maple.config.solver.FittedVIConfig;
@@ -25,7 +26,6 @@ import edu.umbc.cs.maple.hierarchy.framework.GroundedTask;
 import edu.umbc.cs.maple.hierarchy.framework.NonprimitiveTask;
 import edu.umbc.cs.maple.hierarchy.framework.StringFormat;
 import edu.umbc.cs.maple.hierarchy.framework.Task;
-import edu.umbc.cs.maple.taxi.hierarchies.tasks.put.state.TaxiPutState;
 import edu.umbc.cs.maple.utilities.DiscountProvider;
 import edu.umbc.cs.maple.utilities.IntegerParameterizedAction;
 import edu.umbc.cs.maple.utilities.ValueIterationMultiStep;
@@ -129,13 +129,14 @@ public class PALMLearningAgent implements LearningAgent {
         tabLevel = "";
         solveTask(null, groundedRoot, env, maxSteps);
         System.out.println(e.actionSequence.size() + " " + e.actionSequence);
-        //System.out.println("Discounted return: " + e.discountedReturn(getModel(groundedRoot).getDiscountProvider().getGamma()));
+        System.out.println("Discounted return: " + e.discountedReturn(getModel(groundedRoot).getDiscountProvider().getGamma()));
 
         System.out.println(models.size() + " models, " + taskNames.size() + " named tasks");
 
         // run a rollout on the models resulting from the episode just computed,
         // to check if the root AMDP has reached a solution yet
         Action action = runDebugRollout(groundedRoot, initialState, maxSteps);
+        System.out.println(e.rewardSequence.get(e.rewardSequence.size()-1));
         runDebugRollout(taskNames.get(action.toString()), initialState, maxSteps);
 
         long estimatedTime = System.nanoTime() - start;
@@ -195,7 +196,7 @@ public class PALMLearningAgent implements LearningAgent {
             //copy the action, and unmask the copy, execute the unmasked action
             //this allows the task to always store the masked version for model/planning purposes
             Action action;
-            if (parent.isMasked()) {
+            if (parent.isMasked() && maskedAction instanceof ObjectParameterizedAction) {
                 action = maskedAction.copy();
                 //for now, reliant on parent of masked task to be unmasked. This may not be a safe assumption
                 //there may be a need to traverse arbitrarily far up the task hierarchy to find an unmasked ancestor
@@ -206,7 +207,6 @@ public class PALMLearningAgent implements LearningAgent {
                 // action was not masked
                 action = maskedAction;
             }
-
             result = baseEnv.executeAction(action);
 
             SimulatedEnvironment simEnv = (SimulatedEnvironment) ((EnvironmentServer) baseEnv).getEnvironmentDelegate();
@@ -220,7 +220,6 @@ public class PALMLearningAgent implements LearningAgent {
             String[] params = getParams(task);
             result.r = task.getReward(pastStateAbstract, action, currentStateAbstract, params);
             steps++;
-
             boolean taskComplete = task.isComplete(currentStateAbstract);
             boolean taskFailed = task.isFailure(currentStateAbstract);
             boolean parentShouldUpdate = true;
@@ -234,10 +233,10 @@ public class PALMLearningAgent implements LearningAgent {
         while (
             // while task still valid
                 !(task.isFailure(currentStateAbstract) || task.isComplete(currentStateAbstract))
-                        // and still have steps it can take
-                        && (steps < maxSteps || maxSteps == -1)
+            // and still have steps it can take
+            && (steps < maxSteps || maxSteps == -1)
             // and it hasn't solved the root goal, keep planning
-            //  disabled for now: //  && !(groundedRoot.isComplete(groundedRoot.mapState(baseState)))
+            && !(groundedRoot.isComplete(groundedRoot.mapState(currentStateGrounded)))
                 ) {
 
             actionCount++;
@@ -259,7 +258,7 @@ public class PALMLearningAgent implements LearningAgent {
             int stepsAfter = steps;
             int stepsTaken = stepsAfter - stepsBefore;
             if (stepsTaken == 0) {
-                System.err.println("took a 0 step action");
+                System.err.println("took a 0 step action " + action + " for " + task);
             }
 
             tabLevel = tabLevel.substring(0, tabLevel.length() - 1);
@@ -317,26 +316,26 @@ public class PALMLearningAgent implements LearningAgent {
         return pseudoReward;
     }
 
-    /**
-     * add the children of the given task to the action name lookup
-     *
-     * @param gt the current grounded task
-     * @param s  the current state
-     */
     protected void addChildrenToMap(GroundedTask gt, State s) {
+        String taskName = gt.toString();
+        if (!taskNames.containsKey(taskName)) {
+            taskNames.put(taskName, gt);
+            System.out.println("Adding taskName: " + taskName);
+        }
         List<GroundedTask> children = gt.getGroundedChildTasks(s);
         for (GroundedTask child : children) {
-            taskNames.put(child.toString(), child);
+            String childName = child.toString();
+            if (!taskNames.containsKey(childName)) {
+                taskNames.put(childName, child);
+                System.out.println("Adding child taskName: " + childName);
+            }
         }
     }
 
     protected GroundedTask nextSubtask(GroundedTask task, Action action, State currentStateAbstract) {
         String actionName = StringFormat.parameterizedActionName(action);
+        addChildrenToMap(task, currentStateAbstract);
         GroundedTask subtask = this.taskNames.get(actionName);
-        if (subtask == null) {
-            addChildrenToMap(task, currentStateAbstract);
-            subtask = this.taskNames.get(actionName);
-        }
         return subtask;
     }
 
@@ -353,28 +352,29 @@ public class PALMLearningAgent implements LearningAgent {
         OOSADomain domain = task.getDomain(model, params);
         // must use discountProvider instead of gamma
         DiscountProvider discountProvider = model.getDiscountProvider();
-        SolverConfig solverConfig = ((NonprimitiveTask)task.getTask()).getSolver();
+        SolverConfig solverConfig = ((NonprimitiveTask)task.getTask()).getSolverConfig();
         Policy policy;
-        ValueFunction knownValueFunction;
-        if(solverConfig.getType() == "ValueIterationMultiStep"){
+        if(solverConfig.getType().equals("ValueIterationMultiStep")){
             solverConfig.setDomain(domain);
             solverConfig.setDiscountProvider(discountProvider);
             solverConfig.setHashingFactory(hashingFactory);
             solverConfig.setMaxDelta(maxDelta);
             solverConfig.setMaxIterations(maxIterationsInModelPlanner);
-        } else if(solverConfig.getType() == "FittedVI"){
+        } else if(solverConfig.getType().equals("FittedVI")){
             solverConfig.setDomain(domain);
             solverConfig.setMaxDelta(maxDelta);
             solverConfig.setMaxIterations(maxIterationsInModelPlanner);
             ((FittedVIConfig)solverConfig).setGamma(discountProvider.getGamma());
-        } else if(solverConfig.getType() == "SarsaLambda"){
+        } else if(solverConfig.getType().equals("SarsaLambda")){
             solverConfig.setDomain(domain);
             ((SarsaLambdaConfig)solverConfig).setGamma(discountProvider.getGamma());
         }
-        knownValueFunction = task.valueFunction;
-        Planner planner = solverConfig.generateSolver(knownValueFunction);
+
+//        ValueFunction knownValueFunction = task.valueFunction;
+        Planner planner = solverConfig.generateSolver(null);//knownValueFunction);
 
         policy = planner.planFromState(s);
+
         Action action = policy.action(s);
         boolean debug = false;
         if (debug) {
@@ -397,7 +397,7 @@ public class PALMLearningAgent implements LearningAgent {
         }
 
         // allows the planner to start from where it left off
-        task.valueFunction = (ValueFunction) planner;
+//        task.valueFunction = (ValueFunction) planner;
 
         // clear the model parameters (sanity check)
         model.setParams(null);
@@ -405,10 +405,24 @@ public class PALMLearningAgent implements LearningAgent {
     }
 
     protected PALMModel getModel(GroundedTask t) {
-        // idea: try to do lookup such that models are shared across certain AMDP classes
-        // for example, instead of 4 put passenger AMDPs, one for each passenger
-        // we mask the name of the passenger and share models, treating every passenger the same
-        String modelName = t.isMasked() && useModelSharing ? t.getAction().actionName() : t.toString();
+        String modelName;
+        //if we are using model sharing, we want to collapse all masked parameters
+        //but retain the unmasked parameters
+        if(t.isMasked() && useModelSharing){
+            StringBuilder mName = new StringBuilder(t.getAction().actionName());
+            String[] params = getParams(t);
+            String[] maskedParamTypes = t.getMaskedParameters();
+            String[] actionParamTypes = getParamClasses(t);
+            for(int i = 0; i < actionParamTypes.length; i++){
+                //if a parameter is of a type which is masked, don't include it
+                if (!Arrays.asList(maskedParamTypes).contains(actionParamTypes[i])){
+                    mName.append(" ");
+                    mName.append(params[i]);
+                }
+            }
+            modelName = mName.toString();
+        //if we aren't using model sharing, we want to retain all parameters, even potentially masked ones
+        } else modelName = t.toString();
         PALMModel model = models.get(modelName);
         if (model == null) {
             model = modelGenerator.getModelForTask(t);
@@ -431,6 +445,19 @@ public class PALMLearningAgent implements LearningAgent {
         }
         return params;
     }
+
+    protected String[] getParamClasses(GroundedTask task){
+        Action taskAction = task.getAction();
+        String[] params = null;
+        if (taskAction instanceof ObjectParameterizedAction) {
+            params = ((ObjectParameterizedActionType)task.getTask().getActionType()).getParameterClasses();
+        } else if (taskAction instanceof IntegerParameterizedAction) {
+            //TODO (will be some number of Integers based on task)
+        }
+        return params;
+    }
+
+
 
 }
 

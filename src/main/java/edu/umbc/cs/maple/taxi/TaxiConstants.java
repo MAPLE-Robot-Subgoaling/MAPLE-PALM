@@ -56,6 +56,7 @@ public class TaxiConstants {
     public static final int IND_PUTDOWN = 5;
 
     //hiergen related
+    public static final int NUM_PARAMS_TASK_5 = 2;
     public static final String ACTION_TASK_5 = "task5";
     public static final String ACTION_TASK_7 = "task7";
     public static final String ATT_DESTINATION_X = "destX";

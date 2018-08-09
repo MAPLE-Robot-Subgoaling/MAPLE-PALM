@@ -14,25 +14,22 @@ import burlap.mdp.singleagent.oo.OOSADomain;
 import edu.umbc.cs.maple.config.ExperimentConfig;
 import edu.umbc.cs.maple.config.hierarchy.HierarchyConfig;
 import edu.umbc.cs.maple.config.output.ChartConfig;
-import edu.umbc.cs.maple.hierarchy.framework.NonprimitiveTask;
 import edu.umbc.cs.maple.hierarchy.framework.Task;
 import edu.umbc.cs.maple.utilities.LearningAlgorithmExperimenter;
 
 import javax.swing.*;
 import java.util.*;
 
-import static edu.umbc.cs.maple.testing.AgentType.*;
-
 public class HierarchicalCharts {
 
 
-    public static void createCharts(final ExperimentConfig config, OOSADomain baseDomain,  StateGenerator stateGenerator) {
+    private static void createCharts(final ExperimentConfig config, OOSADomain baseDomain, StateGenerator stateGenerator) {
         SimulatedEnvironment env;
 
         env = new SimulatedEnvironment(baseDomain, stateGenerator);
 
         if(config.output.visualizer.enabled) {
-            VisualActionObserver obs = new VisualActionObserver(baseDomain, config.getVisualizer(config));
+            VisualActionObserver obs = new VisualActionObserver(baseDomain, config.getVisualizer(config), 550, 550);
             obs.setFrameDelay(0);
             obs.initGUI();
             obs.setDefaultCloseOperation(obs.EXIT_ON_CLOSE);
@@ -41,28 +38,15 @@ public class HierarchicalCharts {
 
         List<LearningAgentFactory> agents = new LinkedList<>();
         Map<String, Task> hierarchyMap = new HashMap<>();
-        String agentName = "";
-        for(Iterator<String> i = config.agents.keySet().iterator(); i.hasNext(); ){
-            agentName = i.next();
-//        }
-//        for( String agentName : config.agents.keySet()){
-            //String agentConfigLocation = "config/agent/" + agentName + ".yaml";
-            for ( String hierarchy : (LinkedHashSet<String>)config.agents.get(agentName)){
-                if(! (hierarchyMap.keySet().contains(hierarchy))){
+        for(String agentType : config.agents.keySet()){
+            for (String hierarchy : (LinkedHashSet<String>)config.agents.get(agentType)){
+                if(!(hierarchyMap.keySet().contains(hierarchy))){
                     HierarchyConfig hierarchyConfig = HierarchyConfig.load(config,"config/hierarchy/"+hierarchy+".yaml");
-                    hierarchyMap.put(hierarchy, hierarchyConfig.getRoot());
-
+                    hierarchyMap.put(hierarchy, hierarchyConfig.getRoot(config));
                 }
-                if(agentName.equals(PALM.getType())) {
-                    agents.add(PALM.generateLearningAgentFactory(hierarchyMap.get(hierarchy), config));
-                } else if(agentName.equals(RMAXQ.getType())) {
-                    agents.add( RMAXQ.generateLearningAgentFactory(hierarchyMap.get(hierarchy), config));
-                } else if(agentName.equals(KAPPA.getType())) {
-                    agents.add(KAPPA.generateLearningAgentFactory(hierarchyMap.get(hierarchy), config));
-                } else if(agentName.equals(Q_LEARNING.getType())){
-                    Task qLearningWrapper = new NonprimitiveTask(baseDomain);
-                    agents.add( Q_LEARNING.generateLearningAgentFactory(qLearningWrapper, config));
-                }
+                String agentName = hierarchy+"-"+agentType;
+                LearningAgentFactory factory = AgentType.generateLearningAgentFactory(hierarchyMap.get(hierarchy), config, agentType, agentName);
+                agents.add(factory);
             }
         }
 
@@ -85,64 +69,21 @@ public class HierarchicalCharts {
         }
 
         if (config.output.visualizer.episodes){
-            EpisodeSequenceVisualizer ev = new EpisodeSequenceVisualizer(config.getVisualizer(config), baseDomain, episodes);;
+            EpisodeSequenceVisualizer ev = new EpisodeSequenceVisualizer(config.getVisualizer(config), baseDomain, episodes, 550, 550);
             ev.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
             ev.initGUI();
         }
     }
 
     public static void run(ExperimentConfig config) {
-
-        // TODO ? possibly update this to permit more variable state generation procedures
         State source = config.generateState();
         StateGenerator stateGenerator = new ConstantStateGenerator(source);
-
-        OOSADomain base = (OOSADomain) config.domain.getDomainGenerator().generateDomain();
-//        Task[] hierarchies = new Task[2];
-////        if (config.domain instanceof TaxiConfig) {
-////
-//////            Task expertRoot = expert.createHierarchy(config, false);
-//////            Task hierGenRoot = hierGen.createHierarchy(config, false);
-//////            base = expert.getBaseDomain();
-//////            expert.setBaseDomain(base);
-//////            expert.setBaseDomain(base);
-//////            hierarchies[0] = expertRoot;
-//////            hierarchies[1] = hierGenRoot;
-////        } else if (config.domain instanceof CleanupConfig) {
-////
-////            CleanupHierarchyAMDP expert = new CleanupHierarchyAMDP();
-//////            CleanupHierarchyHierGen hierGen = new CleanupHierarchyHierGen();
-////            Task expertRoot = expert.createHierarchy(config, false);
-//////            Task hierGenRoot = hierGen.createHierarchy(config, false);
-////            base = expert.getBaseDomain();
-////            expert.setBaseDomain(base);
-//////            hierGen.setBaseDomain(base);
-////            hierarchies[0] = expertRoot;
-//////            hierarchies[1] = hierGenRoot;
-////        } else {
-////            throw new RuntimeException("Error: unknown domain in config file");
-////        }
-
-//        //runtime
-//        //get the starting time from execution
-//        long actualTimeElapsed = System.currentTimeMillis();
-//        SimpleDateFormat sdf = new SimpleDateFormat("MMM dd,yyyy HH:mm:ss");
-//        Date resultdate = new Date(actualTimeElapsed);
-//        System.out.println(sdf.format(resultdate));
-//        long startTime = System.nanoTime();
-//        System.out.println("Trial current nano time: " + startTime);
-
-        createCharts(config, base, stateGenerator);
-
-//        long estimatedTime = System.nanoTime() - startTime;
-//        System.out.println("The estimated elapsed trial time is " + estimatedTime);
-//        actualTimeElapsed = System.currentTimeMillis() - actualTimeElapsed;
-//        System.out.println("Estimated trial clock time elapsed: " + actualTimeElapsed);
+        createCharts(config, (OOSADomain) config.baseDomain, stateGenerator);
     }
 
     public static void main(String[] args) {
 
-        String configFile = "config/liftCopter/classic.yaml";
+        String configFile = "config/taxi/old/classic-2-fickle.yaml";
         if(args.length > 0) {
             configFile = args[0];
         }

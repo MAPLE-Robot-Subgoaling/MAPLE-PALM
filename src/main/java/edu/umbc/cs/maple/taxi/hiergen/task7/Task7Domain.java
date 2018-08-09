@@ -1,36 +1,19 @@
 package edu.umbc.cs.maple.taxi.hiergen.task7;
 
-import burlap.behavior.policy.Policy;
-import burlap.behavior.policy.PolicyUtils;
-import burlap.behavior.singleagent.Episode;
-import burlap.behavior.singleagent.planning.stochastic.valueiteration.ValueIteration;
 import burlap.mdp.auxiliary.DomainGenerator;
 import burlap.mdp.auxiliary.common.NullTermination;
 import burlap.mdp.core.TerminalFunction;
-import burlap.mdp.core.action.ActionType;
-import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.common.NullRewardFunction;
-import burlap.mdp.singleagent.environment.SimulatedEnvironment;
-import burlap.mdp.singleagent.model.FactoredModel;
 import burlap.mdp.singleagent.model.RewardFunction;
 import burlap.mdp.singleagent.oo.OOSADomain;
-import burlap.statehashing.HashableStateFactory;
-import burlap.statehashing.simple.SimpleHashableStateFactory;
 import edu.umbc.cs.maple.hierarchy.framework.GoalFailRF;
 import edu.umbc.cs.maple.hierarchy.framework.GoalFailTF;
 import edu.umbc.cs.maple.taxi.PickupActionType;
 import edu.umbc.cs.maple.taxi.functions.amdp.PutCompletedPF;
 import edu.umbc.cs.maple.taxi.functions.amdp.PutFailurePF;
-import edu.umbc.cs.maple.taxi.hierarchies.tasks.NavigateActionType;
-import edu.umbc.cs.maple.taxi.hierarchies.tasks.put.state.PutStateMapper;
-import edu.umbc.cs.maple.taxi.hierarchies.tasks.put.state.TaxiPutAgent;
-import edu.umbc.cs.maple.taxi.hierarchies.tasks.put.state.TaxiPutLocation;
-import edu.umbc.cs.maple.taxi.hierarchies.tasks.put.state.TaxiPutPassenger;
 import edu.umbc.cs.maple.taxi.hiergen.actions.HierGenTask5ActionType;
-import edu.umbc.cs.maple.taxi.hiergen.root.state.TaxiHierGenRootPassenger;
 import edu.umbc.cs.maple.taxi.hiergen.task7.state.TaxiHierGenTask7Passenger;
 import edu.umbc.cs.maple.taxi.hiergen.task7.state.TaxiHierGenTask7Taxi;
-import edu.umbc.cs.maple.taxi.stategenerator.TaxiStateFactory;
 
 import static edu.umbc.cs.maple.taxi.TaxiConstants.*;
 

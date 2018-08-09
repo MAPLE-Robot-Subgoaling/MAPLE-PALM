@@ -25,7 +25,6 @@ import edu.umbc.cs.maple.hierarchy.framework.GoalFailTF;
 import edu.umbc.cs.maple.liftcopter.hierarchies.expert.tasks.nav.state.LCNavAgent;
 import edu.umbc.cs.maple.liftcopter.hierarchies.expert.tasks.nav.state.LCNavLocation;
 import edu.umbc.cs.maple.liftcopter.hierarchies.expert.tasks.nav.state.NavStateMapper;
-
 import java.util.ArrayList;
 import java.util.List;
 

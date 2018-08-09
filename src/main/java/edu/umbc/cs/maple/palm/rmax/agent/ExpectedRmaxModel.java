@@ -1,25 +1,14 @@
 package edu.umbc.cs.maple.palm.rmax.agent;
 
-import burlap.debugtools.RandomFactory;
 import burlap.mdp.core.action.Action;
-import burlap.mdp.core.oo.state.MutableOOState;
-import burlap.mdp.core.oo.state.ObjectInstance;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.environment.EnvironmentOutcome;
-import burlap.mdp.singleagent.model.TransitionProb;
 import burlap.statehashing.HashableState;
 import burlap.statehashing.HashableStateFactory;
-import edu.umbc.cs.maple.hierarchy.framework.GroundedTask;
-import edu.umbc.cs.maple.hierarchy.framework.StringFormat;
 import edu.umbc.cs.maple.hierarchy.framework.Task;
-import edu.umbc.cs.maple.palm.agent.PALMModel;
 import edu.umbc.cs.maple.palm.agent.PossibleOutcome;
-import edu.umbc.cs.maple.utilities.DiscountProvider;
 import edu.umbc.cs.maple.utilities.ExpectedStepsDiscountProvider;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class ExpectedRmaxModel extends RmaxModel {

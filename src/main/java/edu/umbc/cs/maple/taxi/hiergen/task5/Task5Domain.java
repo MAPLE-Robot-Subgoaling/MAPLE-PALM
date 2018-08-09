@@ -3,17 +3,14 @@ package edu.umbc.cs.maple.taxi.hiergen.task5;
 import burlap.mdp.auxiliary.DomainGenerator;
 import burlap.mdp.auxiliary.common.NullTermination;
 import burlap.mdp.core.TerminalFunction;
-import burlap.mdp.core.action.ActionType;
 import burlap.mdp.core.action.UniversalActionType;
 import burlap.mdp.singleagent.common.NullRewardFunction;
 import burlap.mdp.singleagent.model.RewardFunction;
 import burlap.mdp.singleagent.oo.OOSADomain;
 import edu.umbc.cs.maple.hierarchy.framework.GoalFailRF;
 import edu.umbc.cs.maple.hierarchy.framework.GoalFailTF;
-import edu.umbc.cs.maple.taxi.PickupActionType;
 import edu.umbc.cs.maple.taxi.functions.amdp.PutCompletedPF;
 import edu.umbc.cs.maple.taxi.functions.amdp.PutFailurePF;
-import edu.umbc.cs.maple.taxi.hiergen.actions.HierGenTask5ActionType;
 import edu.umbc.cs.maple.taxi.hiergen.task7.state.TaxiHierGenTask7Passenger;
 import edu.umbc.cs.maple.taxi.hiergen.task7.state.TaxiHierGenTask7Taxi;
 

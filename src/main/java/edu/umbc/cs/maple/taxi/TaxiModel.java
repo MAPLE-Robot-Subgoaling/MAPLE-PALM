@@ -35,13 +35,12 @@ public class TaxiModel implements FullStateModel{
     /**
      * create a taxi model
      * @param moveprob array of movement probabilities
-     * @param fickle whether passengers are fickle
      * @param fickleprob transitionProbability the passengers are fickle
      */
-    public TaxiModel(double[][] moveprob, boolean fickle, double fickleprob) {
+    public TaxiModel(double[][] moveprob, double fickleprob) {
         this.moveProbability = moveprob;
         this.fickleChangeGoalProbaility = fickleprob;
-        this.fickle = fickle;
+        this.fickle = fickleprob != 0.0;
     }
 
     /**

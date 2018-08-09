@@ -1,6 +1,5 @@
 package edu.umbc.cs.maple.config.taxi;
 
-import burlap.mdp.auxiliary.DomainGenerator;
 import burlap.visualizer.Visualizer;
 import edu.umbc.cs.maple.config.DomainConfig;
 import edu.umbc.cs.maple.config.ExperimentConfig;
@@ -8,6 +7,7 @@ import edu.umbc.cs.maple.taxi.Taxi;
 import edu.umbc.cs.maple.taxi.TaxiVisualizer;
 import edu.umbc.cs.maple.taxi.state.TaxiState;
 import edu.umbc.cs.maple.taxi.stategenerator.TaxiStateFactory;
+import edu.umbc.cs.maple.utilities.OOSADomainGenerator;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -16,7 +16,9 @@ public class TaxiConfig extends DomainConfig {
     public double correct_move;
     public double fickle;
 
+    @Override
     public TaxiState generateState() {
+        System.out.println("Generating TaxiState of type: " + state);
         String passengerNumberRegex = "\\-(\\d+)passengers";
         Pattern r = Pattern.compile(passengerNumberRegex);
         Matcher m = r.matcher(state);
@@ -59,8 +61,14 @@ public class TaxiConfig extends DomainConfig {
             return TaxiStateFactory.createMehtaZigZag1State(numPassengers);
         } else if (state.matches("mehta-zigzag-2" + passengerNumberRegex)) {
             return TaxiStateFactory.createMehtaZigZag2State(numPassengers);
-        }  else if (state.matches("steptest" + passengerNumberRegex)) {
+        } else if (state.matches("steptest" + passengerNumberRegex)) {
             return TaxiStateFactory.createStepTest(numPassengers);
+        } else if (state.matches("discounttest" + passengerNumberRegex)) {
+            return TaxiStateFactory.createDiscountTest(numPassengers);
+        } else if (state.matches("discounttestbig" + passengerNumberRegex)) {
+            return TaxiStateFactory.createDiscountTestBig(numPassengers);
+        } else if (state.matches("discounttestsmall" + passengerNumberRegex)) {
+            return TaxiStateFactory.createDiscountTestSmall(numPassengers);
         } else {
             throw new RuntimeException("ERROR: invalid state passed to generateState in TaxiConfig: " + state);
         }
@@ -71,12 +79,4 @@ public class TaxiConfig extends DomainConfig {
         return TaxiVisualizer.getVisualizer(config.output.visualizer.width, config.output.visualizer.height);
     }
 
-    @Override
-    public DomainGenerator getDomainGenerator() {
-        if(fickle != 0){
-            return new Taxi(true, fickle, correct_move);
-        } else{
-            return new Taxi(false, 0.0, correct_move);
-        }
-    }
 }

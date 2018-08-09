@@ -8,7 +8,6 @@ import burlap.mdp.singleagent.model.RewardFunction;
 import burlap.mdp.singleagent.oo.OOSADomain;
 import edu.umbc.cs.maple.hierarchy.framework.GoalFailRF;
 import edu.umbc.cs.maple.hierarchy.framework.GoalFailTF;
-import edu.umbc.cs.maple.taxi.PickupActionType;
 import edu.umbc.cs.maple.taxi.PutdownActionType;
 import edu.umbc.cs.maple.taxi.functions.amdp.PutCompletedPF;
 import edu.umbc.cs.maple.taxi.functions.amdp.PutFailurePF;

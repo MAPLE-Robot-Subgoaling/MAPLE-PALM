@@ -6,6 +6,9 @@ import edu.umbc.cs.maple.cleanup.Cleanup;
 
 public class CleanupMove extends Cleanup {
 
+    public CleanupMove(){
+
+    }
     public CleanupMove(int minX, int minY, int maxX, int maxY, RewardFunction moveRF, TerminalFunction moveTF) {
         super(minX, minY, maxX, maxY);
         this.setRf(moveRF);

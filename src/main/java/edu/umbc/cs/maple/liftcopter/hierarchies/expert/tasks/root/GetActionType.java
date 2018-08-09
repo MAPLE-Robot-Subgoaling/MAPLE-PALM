@@ -6,7 +6,8 @@ import burlap.mdp.core.oo.state.ObjectInstance;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.oo.ObjectParameterizedActionType;
 
-import static edu.umbc.cs.maple.liftcopter.LiftCopterConstants.*;
+import static edu.umbc.cs.maple.liftcopter.LiftCopterConstants.ATT_LOCATION;
+import static edu.umbc.cs.maple.liftcopter.LiftCopterConstants.ATT_VAL_PICKED_UP;
 
 
 public class GetActionType extends ObjectParameterizedActionType {

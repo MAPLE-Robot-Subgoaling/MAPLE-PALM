@@ -1,0 +1,56 @@
+domain: !!edu.umbc.cs.maple.config.taxi.TaxiConfig
+  state: small-2passengers
+  correct_move: 1.0
+  fickle: 0.10
+
+agents:
+#  - palmExpert
+  - palmHierGen
+#  - kappaExpert
+  - kappaHierGen
+
+episodes: 1000
+max_steps: 1000
+trials: 1
+gamma: 0.95
+
+seed: 22242
+
+identifier_independent: false
+planning:
+  rollouts: 1000
+
+rmax:
+  vmax: 10.0
+  threshold: 10
+  max_delta: 0.00000001
+  max_delta_rmaxq: 0.0001
+  max_iterations_in_model: 1000
+  use_multitime_model: true
+  use_model_sharing: true
+
+output:
+  csv:
+    enabled: true
+    output: results/pex-classic.csv
+
+  chart:
+    enabled: true
+
+    width: 500
+    height: 230
+    columns: 2
+    max_height: 693
+    trial_mode: MOST_RECENT_AND_AVERAGE
+
+    metrics:
+      - STEPS_PER_EPISODE
+      - CUMULATIVE_REWARD_PER_STEP
+      - CUMULATIVE_REWARD_PER_EPISODE
+
+  visualizer:
+    enabled: true
+    episodes: true
+    width: 5
+    height: 5
+    

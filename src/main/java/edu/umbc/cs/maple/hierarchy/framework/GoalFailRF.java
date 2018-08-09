@@ -17,9 +17,8 @@ public class GoalFailRF implements RewardFunction {
 
     protected GoalFailTF tf;
 
-    //todo: make Bean
-
-    public GoalFailRF(){
+    public GoalFailRF() {
+        // for de/serialization
     }
 
     public GoalFailRF(GoalFailTF tf) {

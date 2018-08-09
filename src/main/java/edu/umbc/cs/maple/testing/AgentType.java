@@ -35,14 +35,21 @@ public enum AgentType {
             return agent;
         }
     },
-    RMAXQ("rmaxq", "RMAXQ-Expert"){
+    CROSS("cross", "Cross-PALM") {
+        @Override
+        public LearningAgent getLearningAgent(Task root, HashableStateFactory hsf, ExperimentConfig config) {
+            PALMModelGenerator modelGen = new PALMRmaxModelGenerator(hsf, config);
+            LearningAgent agent = new CrossPALMLearningAgent(root, modelGen, hsf, config);
+            return agent;
+        }
+    },
+    RMAXQ("rmaxq", "RMAXQ"){
         @Override
         public LearningAgent getLearningAgent(Task root, HashableStateFactory hsf, ExperimentConfig config) {
             return new RmaxQLearningAgent(root, hsf, config);
         }
 
     },
-
     KAPPA("kappa", "κ"){
         @Override
         public LearningAgent getLearningAgent(Task root, HashableStateFactory hsf, ExperimentConfig config) {
@@ -52,17 +59,26 @@ public enum AgentType {
         }
 
     },
-    Q_LEARNING("qLearning", "QL"){
+    Q_LEARNING("ql", "QL"){
         @Override
         public LearningAgent getLearningAgent(Task root, HashableStateFactory hsf, ExperimentConfig config) {
-            OOSADomain baseDomain = root.getDomain();
+            OOSADomain baseDomain = (OOSADomain) config.baseDomain;
             double qInit = DEFAULT_Q_INIT;
             double learningRate = DEFAULT_LEARNING_RATE;
             LearningAgent agent = new QLearning(baseDomain, config.gamma, hsf, qInit, learningRate);
             return agent;
         }
-
     },
+    PALM_EXPERT_NAV_GIVEN("palmExpertWithNavGiven", "PALM-Expert w/ Nav"){
+        @Override
+        public LearningAgent getLearningAgent(Task root, HashableStateFactory hsf, ExperimentConfig config) {
+            PALMModelGenerator modelGen = new ExpertNavModelGenerator(hsf, config);
+            LearningAgent agent = new PALMLearningAgent(root, modelGen, hsf, config);
+            return agent;
+        }
+
+    }
+
 
     ;
 
@@ -92,26 +108,12 @@ public enum AgentType {
         return getLearningAgent(root, hsf, config);
     }
 
-
+    public static HashableStateFactory hsf = null;
     public static HashableStateFactory initializeHashableStateFactory(boolean identifierIndependent) {
-//        return new CachedHashableStateFactory(identifierIndependent);
-//        return new SimpleHashableStateFactory(identifierIndependent);
-        return new BugfixHashableStateFactory(identifierIndependent);
-    }
-
-    public static LearningAgentFactory generate(String agentTypeString, ExperimentConfig config, Task expertRoot, Task hierGenRoot, Task qLearningWrapper) {
-        AgentType agentType = AgentType.getByType(agentTypeString);
-        Task root = null;
-        if (agentTypeString.contains("Expert")) {
-            root = expertRoot;
-        } else if (agentTypeString.contains("HierGen")) {
-            root = hierGenRoot;
-        } else if (agentTypeString.contains("qLearning")) {
-            root = qLearningWrapper;
-        } else {
-            throw new RuntimeException("Unknown root task for " + agentType + " in AgentType");
+        if (hsf == null) {
+            hsf = new BugfixHashableStateFactory(identifierIndependent);
         }
-        return agentType.generateLearningAgentFactory(root, config);
+        return hsf;
     }
 
     public static AgentType getByType(String name) {
@@ -124,17 +126,18 @@ public enum AgentType {
     }
 
     public static final boolean DEFAULT_IDENTIFIER_INDEPENDENT = false;
-    public LearningAgentFactory generateLearningAgentFactory(Task root, ExperimentConfig config) {
+    public static LearningAgentFactory generateLearningAgentFactory(Task root, ExperimentConfig config, String agentTypeName, String agentName) {
+        AgentType agentType = AgentType.getByType(agentTypeName);
+        String extra = agentName.contains("hier") ? "-H" : "";
+        String extra2 = agentName.contains("baseline") ? "-B" : "";
         LearningAgentFactory agent = new LearningAgentFactory() {
-
             @Override
             public String getAgentName() {
-                return getPlotterDisplayName();
+                return agentType.getPlotterDisplayName() + extra + extra2;
             }
-
             @Override
             public LearningAgent generateAgent() {
-                return getLearningAgent(root, config);
+                return agentType.getLearningAgent(root, config);
             }
         };
         return agent;

@@ -16,8 +16,6 @@ public class HierGenTask7ActionType extends ObjectParameterizedActionType {
 
     @Override
     protected boolean applicableInState(State s, ObjectParameterizedAction objectParameterizedAction) {
-        // always applicable ?
-//        return true;
         TaxiHierGenRootState state = (TaxiHierGenRootState) s;
         String[] params = objectParameterizedAction.getObjectParameters();
         String passengerName = params[0];

@@ -1,31 +1,7 @@
 //package edu.umbc.cs.maple.cleanup.hierarchies;
 //
-//import burlap.mdp.auxiliary.DomainGenerator;
-//import burlap.mdp.auxiliary.StateMapping;
-//import burlap.mdp.auxiliary.common.GoalConditionTF;
-//import burlap.mdp.core.TerminalFunction;
-//import burlap.mdp.core.action.ActionType;
-//import burlap.mdp.core.oo.propositional.PropositionalFunction;
-//import burlap.mdp.singleagent.model.RewardFunction;
-//import burlap.mdp.singleagent.oo.OOSADomain;
-//import edu.umbc.cs.maple.cleanup.Cleanup;
-//import edu.umbc.cs.maple.cleanup.CleanupGoal;
-//import edu.umbc.cs.maple.cleanup.CleanupGoalDescription;
-//import edu.umbc.cs.maple.cleanup.CleanupRF;
-//import edu.umbc.cs.maple.cleanup.hierarchies.tasks.move.BaseObjectToRegionActionType;
-//import edu.umbc.cs.maple.cleanup.hierarchies.tasks.move.CleanupMove;
-//import edu.umbc.cs.maple.cleanup.hierarchies.tasks.move.ObjectInRegionFailPF;
-//import edu.umbc.cs.maple.cleanup.hierarchies.tasks.move.ObjectInRegionGoalPF;
-//import edu.umbc.cs.maple.cleanup.hierarchies.tasks.pick.CleanupPick;
-//import edu.umbc.cs.maple.cleanup.hierarchies.tasks.pick.PickRF;
-//import edu.umbc.cs.maple.cleanup.hierarchies.tasks.pick.PickTF;
-//import edu.umbc.cs.maple.cleanup.hierarchies.tasks.root.CleanupRoot;
-//import edu.umbc.cs.maple.cleanup.hierarchies.tasks.root.CleanupRootGoalPF;
 //import edu.umbc.cs.maple.config.ExperimentConfig;
-//import edu.umbc.cs.maple.config.cleanup.CleanupConfig;
-//import edu.umbc.cs.maple.hierarchy.framework.*;
-//
-//import static edu.umbc.cs.maple.cleanup.Cleanup.*;
+//import edu.umbc.cs.maple.hierarchy.framework.Task;
 //
 //public class CleanupHierarchyRMAXQ extends CleanupHierarchyAMDP {
 //
