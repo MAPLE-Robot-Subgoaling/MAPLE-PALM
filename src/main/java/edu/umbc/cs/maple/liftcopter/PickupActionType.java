@@ -9,6 +9,7 @@ import edu.umbc.cs.maple.utilities.MutableObject;
 import static edu.umbc.cs.maple.liftcopter.LiftCopterConstants.*;
 
 public class PickupActionType extends ObjectParameterizedActionType {
+
     public PickupActionType(String name, String[] parameterClasses) {
         super(name, parameterClasses);
     }

@@ -12,8 +12,6 @@ import edu.umbc.cs.maple.utilities.OOSADomainGenerator;
 
 public abstract class DomainConfig {
     public String state;
-    public TerminalFunction tf;
-    public RewardFunction rf;
     public OOSADomainGenerator domainGenerator;
     public abstract State generateState();
     public abstract Visualizer getVisualizer(ExperimentConfig config);

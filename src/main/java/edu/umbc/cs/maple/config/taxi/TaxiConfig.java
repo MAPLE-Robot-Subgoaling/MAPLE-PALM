@@ -13,8 +13,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class TaxiConfig extends DomainConfig {
-    public double correct_move;
-    public double fickle;
 
     @Override
     public TaxiState generateState() {

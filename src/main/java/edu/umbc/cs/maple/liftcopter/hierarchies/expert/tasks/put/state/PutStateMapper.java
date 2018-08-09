@@ -4,9 +4,9 @@ import burlap.mdp.core.oo.state.OOState;
 import burlap.mdp.core.oo.state.ObjectInstance;
 import burlap.mdp.core.state.State;
 import edu.umbc.cs.maple.liftcopter.LiftCopter;
-import edu.umbc.cs.maple.liftcopter.hierarchies.interfaces.ParameterizedStateMapping;
 import edu.umbc.cs.maple.liftcopter.state.LiftCopterCargo;
 import edu.umbc.cs.maple.liftcopter.state.LiftCopterState;
+import edu.umbc.cs.maple.utilities.ParameterizedStateMapping;
 
 import java.util.ArrayList;
 import java.util.List;

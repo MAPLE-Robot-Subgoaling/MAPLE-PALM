@@ -13,7 +13,7 @@ agents:
 
 seed: 77665544
 episodes: 100
-max_steps: 100000
+max_steps: 10000
 trials: 1
 gamma: 0.95
 

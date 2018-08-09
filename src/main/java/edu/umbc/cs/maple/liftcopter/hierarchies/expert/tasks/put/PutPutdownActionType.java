@@ -25,4 +25,3 @@ public class PutPutdownActionType extends ObjectParameterizedActionType {
                 && !taxiLoc.equals(ATT_VAL_IN_AIR);
     }
 }
-

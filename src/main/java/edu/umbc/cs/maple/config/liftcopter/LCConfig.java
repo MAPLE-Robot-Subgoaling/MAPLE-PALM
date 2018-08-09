@@ -11,8 +11,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class LCConfig extends DomainConfig {
-    public double correct_move;
-    public double fickle;
 
     public LiftCopterState generateState() {
         String passengerNumberRegex = "\\-(\\d+)passengers";

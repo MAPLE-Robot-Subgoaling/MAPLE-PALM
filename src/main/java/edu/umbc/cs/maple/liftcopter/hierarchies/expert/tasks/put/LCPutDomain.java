@@ -17,6 +17,7 @@ import burlap.statehashing.HashableStateFactory;
 import burlap.statehashing.simple.SimpleHashableStateFactory;
 import edu.umbc.cs.maple.hierarchy.framework.GoalFailRF;
 import edu.umbc.cs.maple.hierarchy.framework.GoalFailTF;
+import edu.umbc.cs.maple.liftcopter.PutdownActionType;
 import edu.umbc.cs.maple.liftcopter.hierarchies.expert.tasks.NavigateActionType;
 import edu.umbc.cs.maple.liftcopter.hierarchies.expert.tasks.put.state.LCPutAgent;
 import edu.umbc.cs.maple.liftcopter.hierarchies.expert.tasks.put.state.LCPutCargo;

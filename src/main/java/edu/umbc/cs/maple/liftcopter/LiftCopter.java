@@ -25,12 +25,30 @@ import static edu.umbc.cs.maple.liftcopter.LiftCopterConstants.*;
 
 public class LiftCopter extends OOSADomainGenerator {
 
-    private double correctMoveprob;
     private RewardFunction rf;
     private TerminalFunction tf;
     private double[][] moveDynamics;
     protected List<Double> thrustValues = new ArrayList();
     protected List<Double> directionValues = new ArrayList();
+    private double correctMoveProbability;
+//    private double fickleProbability;
+
+    public double getCorrectMoveProbability() {
+        return correctMoveProbability;
+    }
+
+    public void setCorrectMoveProbability(double correctMoveProbability) {
+        this.correctMoveProbability = correctMoveProbability;
+    }
+
+//    public double getFickleProbability() {
+//        return fickleProbability;
+//    }
+//
+//    public void setFickleProbability(double fickleProbability) {
+//        this.fickleProbability = fickleProbability;
+//    }
+
     /**
      * create a liftcopter domain generator
      *
@@ -41,7 +59,7 @@ public class LiftCopter extends OOSADomainGenerator {
     public LiftCopter(RewardFunction r, TerminalFunction t, double correctMoveprob) {
         rf = r;
         tf = t;
-        this.correctMoveprob = correctMoveprob;
+        this.correctMoveProbability = correctMoveprob;
         setMoveDynamics(correctMoveprob);
     }
 
@@ -51,7 +69,7 @@ public class LiftCopter extends OOSADomainGenerator {
      * @param correctMoveprob transitionProbability the liftcopter will go in the correct direction they select
      */
     public LiftCopter(double correctMoveprob) {
-        this.correctMoveprob = correctMoveprob;
+        this.correctMoveProbability = correctMoveprob;
         setMoveDynamics(correctMoveprob);
         this.rf = new LiftCopterRewardFunction();
         this.tf = new LiftCopterTerminalFunction();
@@ -141,7 +159,7 @@ public class LiftCopter extends OOSADomainGenerator {
     @Override
     public OOSADomain generateDomain(){
 
-        setMoveDynamics(correctMoveprob);
+        setMoveDynamics(correctMoveProbability);
 
         OOSADomain domain = new OOSADomain();
 
@@ -228,14 +246,6 @@ public class LiftCopter extends OOSADomainGenerator {
 
     public void setDirectionValues(List<Double> directionValues) {
         this.directionValues = directionValues;
-    }
-
-    public double getCorrectMoveprob() {
-        return correctMoveprob;
-    }
-
-    public void setCorrectMoveprob(double correctMoveprob) {
-        this.correctMoveprob = correctMoveprob;
     }
 
     public double[][] getMoveDynamics() {

@@ -26,9 +26,9 @@ public class HierarchyConfig {
     public HierarchyConfig(){}
 
     public Task buildRoot(ExperimentConfig e){
-        taskMap = new HashMap<String,Task>();
+        taskMap = new HashMap<>();
         NonprimitiveTask root = (NonprimitiveTask) buildTask(e,"root", new SolveActionType());
-        AMDPRootGoalPF goalPF= (AMDPRootGoalPF) root.getTf().getGoalPF();
+        AMDPRootGoalPF goalPF = (AMDPRootGoalPF) root.getTf().getGoalPF();
         goalPF.setGoal(e.goal);
         return root;
     }
