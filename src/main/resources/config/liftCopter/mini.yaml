@@ -2,10 +2,6 @@ domain: !!edu.umbc.cs.maple.config.liftcopter.LCConfig
   state: mini
   domainGenerator: !!edu.umbc.cs.maple.liftcopter.LiftCopter
     correctMoveProbability: 1.0
-    thrustValues:
-     - 0.01
-    directionValues:
-     - 3.14159265358979323846
     tf: !!edu.umbc.cs.maple.liftcopter.LiftCopterTerminalFunction {}
     rf: !!edu.umbc.cs.maple.liftcopter.LiftCopterRewardFunction {}
 

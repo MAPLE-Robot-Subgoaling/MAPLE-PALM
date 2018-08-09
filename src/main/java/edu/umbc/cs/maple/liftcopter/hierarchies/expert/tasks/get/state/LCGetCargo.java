@@ -18,6 +18,10 @@ public class LCGetCargo extends MutableObject {
      */
     private final static List<Object> keys = Arrays.<Object>asList( ATT_LOCATION );
 
+    public LCGetCargo() {
+        // for de/serialization
+    }
+
     public LCGetCargo(String name, String currentLocation) {
         this(name, (Object) currentLocation);
     }

@@ -20,6 +20,10 @@ public class LCPutCargo extends MutableObject {
             ATT_LOCATION
             );
 
+    public LCPutCargo() {
+        // for de/serialization
+    }
+
     public LCPutCargo(String name, String goalLocation, String location){
         this(name, (Object) goalLocation, (Object) location);
     }

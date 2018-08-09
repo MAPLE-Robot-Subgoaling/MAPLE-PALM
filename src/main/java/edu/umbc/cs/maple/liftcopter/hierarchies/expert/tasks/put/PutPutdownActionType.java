@@ -9,6 +9,10 @@ import edu.umbc.cs.maple.liftcopter.hierarchies.expert.tasks.put.state.LCPutStat
 import static edu.umbc.cs.maple.liftcopter.LiftCopterConstants.*;
 
 public class PutPutdownActionType extends ObjectParameterizedActionType {
+    public PutPutdownActionType() {
+        super(ACTION_PUTDOWN, new String[]{CLASS_CARGO});
+    }
+
     public PutPutdownActionType(String name, String[] parameterClasses) {
         super(name, parameterClasses);
     }

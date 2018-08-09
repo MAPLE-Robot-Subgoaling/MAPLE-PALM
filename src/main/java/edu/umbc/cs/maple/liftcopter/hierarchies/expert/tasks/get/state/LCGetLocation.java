@@ -12,6 +12,10 @@ public class LCGetLocation extends MutableObject{
 
     private final static List<Object> keys = Arrays.<Object>asList( );
 
+    public LCGetLocation() {
+        // for de/serialization
+    }
+
     public LCGetLocation(String name) {
         this.setName(name);
     }

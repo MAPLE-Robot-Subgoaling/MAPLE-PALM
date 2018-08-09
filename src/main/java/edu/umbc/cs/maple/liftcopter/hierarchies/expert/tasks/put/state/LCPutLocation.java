@@ -17,6 +17,10 @@ public class LCPutLocation extends MutableObject{
         this.setName(name);;
     }
 
+    public LCPutLocation() {
+        // for de/serialization
+    }
+
     @Override
     public String className() {
         return CLASS_LOCATION;

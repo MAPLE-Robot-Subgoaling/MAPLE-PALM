@@ -10,8 +10,12 @@ import java.util.List;
 import java.util.Objects;
 
 public class ThrustType implements ActionType {
-    List<Action> actions;
-    String typeName = "thrust";
+    public List<Action> actions;
+    public String typeName = "thrust";
+
+    public ThrustType() {
+        // for de/serialization
+    }
 
     public ThrustType(List<Double> thrustValues, List<Double> directions) {
         this.actions = new ArrayList(thrustValues.size()*directions.size());
@@ -42,45 +46,5 @@ public class ThrustType implements ActionType {
         return this.actions;
     }
 
-    public static class ThrustAction implements Action {
-        public double thrust;
-        public double direction;
-        String typeName = "thrust";
 
-        public ThrustAction() {
-        }
-
-        public ThrustAction(double thrust, double direction) {
-            this.thrust = thrust;
-            this.direction = direction;
-            typeName = "thrust|" + this.thrust + "|" + (this.direction/Math.PI);
-        }
-
-        public String actionName() {
-            return "thrust|" + this.thrust + "|" + (this.direction/Math.PI);
-        }
-
-        public Action copy() {
-            return new ThrustAction(this.thrust, this.direction);
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            ThrustAction that = (ThrustAction) o;
-            return Double.compare(that.thrust, thrust) == 0 &&
-                    Double.compare(that.direction, direction) == 0;
-        }
-
-        @Override
-        public int hashCode() {
-
-            return Objects.hash(thrust, direction);
-        }
-
-        public String toString() {
-            return this.actionName();
-        }
-    }
 }

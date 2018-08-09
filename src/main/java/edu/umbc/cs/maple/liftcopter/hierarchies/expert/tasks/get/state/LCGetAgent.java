@@ -16,6 +16,10 @@ public class LCGetAgent extends MutableObject {
             ATT_LOCATION
             );
 
+    public LCGetAgent() {
+        // for de/serialization
+    }
+
     public LCGetAgent(String name, String location) {
         this(name, (Object)location);
     }

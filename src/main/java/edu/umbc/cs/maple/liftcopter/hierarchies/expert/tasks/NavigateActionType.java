@@ -6,10 +6,12 @@ import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.oo.ObjectParameterizedActionType;
 import edu.umbc.cs.maple.liftcopter.hierarchies.expert.LCGetPutState;
 
-import static edu.umbc.cs.maple.liftcopter.LiftCopterConstants.ATT_LOCATION;
-import static edu.umbc.cs.maple.liftcopter.LiftCopterConstants.ATT_VAL_CRASHED;
+import static edu.umbc.cs.maple.liftcopter.LiftCopterConstants.*;
 
 public class NavigateActionType extends ObjectParameterizedActionType {
+    public NavigateActionType() {
+        super(ACTION_NAV, new String[]{CLASS_LOCATION});
+    }
 
     public NavigateActionType(String name, String[] parameterClasses) {
         super(name, parameterClasses);

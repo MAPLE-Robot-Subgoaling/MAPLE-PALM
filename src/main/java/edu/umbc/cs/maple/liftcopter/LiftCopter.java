@@ -155,13 +155,14 @@ public class LiftCopter extends OOSADomainGenerator {
                 .addStateClass(CLASS_LOCATION, LiftCopterLocation.class)
                 .addStateClass(CLASS_WALL,LiftCopterWall.class);
 
-        if (this.thrustValues == null) { addStandardThrustDirections(); }
-        if (this.directionValues == null) { addStandardThrustValues(); }
+//        if (this.thrustValues == null) { addStandardThrustDirections(); }
+//        if (this.directionValues == null) { addStandardThrustValues(); }
 
         domain.addActionType(new PutdownActionType(ACTION_PUTDOWN, new String[]{CLASS_CARGO}))
                 .addActionType(new PickupActionType(ACTION_PICKUP, new String[]{CLASS_CARGO}))
                 .addActionType(new UniversalActionType(ACTION_IDLE))
-                .addActionType(new ThrustType(this.thrustValues, this.directionValues));
+//                .addActionType(new ThrustType(this.thrustValues, this.directionValues));
+        ;
 
         if (rf == null) {
             rf = new LiftCopterRewardFunction();

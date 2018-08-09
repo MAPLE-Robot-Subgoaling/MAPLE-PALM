@@ -15,6 +15,10 @@ public class LCPutAgent extends MutableObject {
             ATT_LOCATION
             );
 
+    public LCPutAgent() {
+        // for de/serialization
+    }
+
     public LCPutAgent(String name, String location) {
         this(name, (Object)location);
     }

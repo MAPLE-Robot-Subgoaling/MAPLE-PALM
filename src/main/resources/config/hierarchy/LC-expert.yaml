@@ -31,15 +31,28 @@ hierarchyConfigMap:
       children:
         - nav_np
         - pickup_p
-      domainGenerator: !!edu.umbc.cs.maple.liftcopter.hierarchies.expert.tasks.get.LCGetDomain {}
       stateMapper: !!edu.umbc.cs.maple.liftcopter.hierarchies.expert.tasks.get.state.GetStateMapper {}
-      tf: &tf !!edu.umbc.cs.maple.hierarchy.framework.GoalFailTF
+      tf: &getTF !!edu.umbc.cs.maple.hierarchy.framework.GoalFailTF
         goalPF: !!edu.umbc.cs.maple.liftcopter.hierarchies.functions.GetCompletedPF {}
         failPF: !!edu.umbc.cs.maple.liftcopter.hierarchies.functions.GetFailurePF {}
-      rf: !!edu.umbc.cs.maple.hierarchy.framework.GoalFailRF
-        tf: *tf
+      rf: &getRF !!edu.umbc.cs.maple.hierarchy.framework.GoalFailRF
+        tf: *getTF
         rewardDefault: 0.0
         rewardNoop: 0.0
+      domainGenerator: !!edu.umbc.cs.maple.hierarchy.framework.TaskDomainGenerator
+          tf: *getTF
+          rf: *getRF
+          stateClasses:
+            - className: agent
+              clasz: !!edu.umbc.cs.maple.liftcopter.hierarchies.expert.tasks.get.state.LCGetAgent {}
+            - className: cargo
+              clasz: !!edu.umbc.cs.maple.liftcopter.hierarchies.expert.tasks.get.state.LCGetCargo {}
+            - className: location
+              clasz: !!edu.umbc.cs.maple.liftcopter.hierarchies.expert.tasks.get.state.LCGetLocation {}
+          actions:
+            - !!edu.umbc.cs.maple.liftcopter.hierarchies.expert.tasks.NavigateActionType {}
+            - !!edu.umbc.cs.maple.liftcopter.hierarchies.expert.tasks.get.GetPickupActionType {}
+      solver: !!edu.umbc.cs.maple.config.solver.ValueIterationMultistepConfig
       solver: !!edu.umbc.cs.maple.config.solver.ValueIterationMultistepConfig
         maxDelta: 0.0001
         maxIterations: 1000
@@ -48,16 +61,27 @@ hierarchyConfigMap:
       children:
         - nav_np
         - putdown_p
-      domainGenerator: !!edu.umbc.cs.maple.liftcopter.hierarchies.expert.tasks.put.LCPutDomain {}
       stateMapper: !!edu.umbc.cs.maple.liftcopter.hierarchies.expert.tasks.put.state.PutStateMapper {}
-      tf: &tf !!edu.umbc.cs.maple.hierarchy.framework.GoalFailTF
+      tf: &putTF !!edu.umbc.cs.maple.hierarchy.framework.GoalFailTF
         goalPF: !!edu.umbc.cs.maple.liftcopter.hierarchies.functions.PutCompletedPF {}
         failPF: !!edu.umbc.cs.maple.liftcopter.hierarchies.functions.PutFailurePF {}
-
-      rf: !!edu.umbc.cs.maple.hierarchy.framework.GoalFailRF
-        tf: *tf
+      rf: &putRF !!edu.umbc.cs.maple.hierarchy.framework.GoalFailRF
+        tf: *putTF
         rewardDefault: 0.0
         rewardNoop: 0.0
+      domainGenerator: !!edu.umbc.cs.maple.hierarchy.framework.TaskDomainGenerator
+          tf: *putTF
+          rf: *putRF
+          stateClasses:
+            - className: agent
+              clasz: !!edu.umbc.cs.maple.liftcopter.hierarchies.expert.tasks.put.state.LCPutAgent {}
+            - className: cargo
+              clasz: !!edu.umbc.cs.maple.liftcopter.hierarchies.expert.tasks.put.state.LCPutCargo {}
+            - className: location
+              clasz: !!edu.umbc.cs.maple.liftcopter.hierarchies.expert.tasks.put.state.LCPutLocation {}
+          actions:
+            - !!edu.umbc.cs.maple.liftcopter.hierarchies.expert.tasks.NavigateActionType {}
+            - !!edu.umbc.cs.maple.liftcopter.hierarchies.expert.tasks.put.PutPutdownActionType {}
       solver: !!edu.umbc.cs.maple.config.solver.ValueIterationMultistepConfig
         maxDelta: 0.0001
         maxIterations: 1000
@@ -85,8 +109,29 @@ hierarchyConfigMap:
             - className: wall
               clasz: !!edu.umbc.cs.maple.liftcopter.hierarchies.expert.tasks.nav.state.LCNavWall {}
           actions:
-            - !!edu.umbc.cs.maple.liftcopter.hierarchies.expert.tasks.root.GetActionType {}
-            - !!edu.umbc.cs.maple.liftcopter.hierarchies.expert.tasks.root.PutActionType {}
+            - !!edu.umbc.cs.maple.liftcopter.ThrustType
+                typeName: thrust
+                actions:
+                  - !!edu.umbc.cs.maple.liftcopter.ThrustAction
+                    typeName: thrust
+                    thrust: 0.02
+                    direction: 0
+                  - !!edu.umbc.cs.maple.liftcopter.ThrustAction
+                    typeName: thrust
+                    thrust: 0.02
+                    direction: 1.57079632679
+                  - !!edu.umbc.cs.maple.liftcopter.ThrustAction
+                    typeName: thrust
+                    thrust: 0.02
+                    direction: 3.14159265358979323846
+                  - !!edu.umbc.cs.maple.liftcopter.ThrustAction
+                    typeName: thrust
+                    thrust: 0.02
+                    direction: 4.71238898038
+            - !!edu.umbc.cs.maple.hierarchy.framework.UniversalActionTypeBean
+                typeName: noop
+                action: !!burlap.mdp.core.action.SimpleAction
+                    name: noop
       solver: !!edu.umbc.cs.maple.config.solver.SarsaLambdaConfig
         lambda: 0.5
         learningRate: 0.02

@@ -6,11 +6,14 @@ import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.oo.ObjectParameterizedActionType;
 import edu.umbc.cs.maple.liftcopter.hierarchies.expert.tasks.get.state.LCGetState;
 
-import static edu.umbc.cs.maple.liftcopter.LiftCopterConstants.ATT_LOCATION;
-import static edu.umbc.cs.maple.liftcopter.LiftCopterConstants.ATT_VAL_CRASHED;
+import static edu.umbc.cs.maple.liftcopter.LiftCopterConstants.*;
 
 
 public class GetPickupActionType extends ObjectParameterizedActionType {
+    public GetPickupActionType() {
+        super(ACTION_PICKUP, new String[]{CLASS_CARGO});
+    }
+
     public GetPickupActionType(String name, String[] parameterClasses) {
         super(name, parameterClasses);
     }
