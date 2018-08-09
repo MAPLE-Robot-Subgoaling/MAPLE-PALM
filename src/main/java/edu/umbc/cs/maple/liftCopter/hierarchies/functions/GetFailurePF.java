@@ -19,7 +19,10 @@ public class GetFailurePF extends PropositionalFunction {
 
     @Override
     public boolean isTrue(OOState s, String... params) {
-        return (((LCGetState)s).getAgentAtt(ATT_LOCATION) == ATT_VAL_CRASHED);
+        List<ObjectInstance> agents = s.objectsOfClass(CLASS_AGENT);
+        if (agents.size() < 1) { return false; }
+        ObjectInstance agent = agents.get(0);
+        return agent.get(ATT_LOCATION).equals(ATT_VAL_CRASHED);
     }
 
 }

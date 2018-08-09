@@ -45,9 +45,12 @@ public class PutFailurePF extends PropositionalFunction{
 //
 //        }
         if (!(s instanceof LCPutState)) { return false; }
-        if( ((LCPutState) s).getAgentAtt(ATT_LOCATION) == ATT_VAL_CRASHED){
-            return true;
-        }
+
+        List<ObjectInstance> agents = s.objectsOfClass(CLASS_AGENT);
+        if (agents.size() < 1) { return false; }
+        ObjectInstance agent = agents.get(0);
+        if (agent.get(ATT_LOCATION).equals(ATT_VAL_CRASHED)) { return true; }
+
         String cargoName = params[0];
         MutableObject cargo = (MutableObject) s.object(cargoName);
         if (cargo == null) { return false; }

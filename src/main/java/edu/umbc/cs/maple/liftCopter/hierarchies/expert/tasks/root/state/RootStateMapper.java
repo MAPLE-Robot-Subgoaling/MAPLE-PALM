@@ -1,8 +1,10 @@
 package edu.umbc.cs.maple.liftCopter.hierarchies.expert.tasks.root.state;
 
 import burlap.mdp.auxiliary.StateMapping;
+import burlap.mdp.core.oo.state.OOState;
 import burlap.mdp.core.oo.state.ObjectInstance;
 import burlap.mdp.core.state.State;
+import edu.umbc.cs.maple.liftCopter.LiftCopter;
 import edu.umbc.cs.maple.liftCopter.state.LiftCopterState;
 
 import java.util.ArrayList;
@@ -16,7 +18,7 @@ public class RootStateMapper implements StateMapping {
         LiftCopterState st = (LiftCopterState) s;
         List<LCRootCargo> cargos = new ArrayList<>();
         LCRootCopter copter = new LCRootCopter(st.getCopter().name(), (String) st.getCopter().get(ATT_LOCATION));
-        copter.set(ATT_LOCATION,ATT_VAL_IN_AIR);
+        String agentLocation = ATT_VAL_IN_AIR;
         double ax = (double) st.getCopter().get(ATT_X);
         double ay = (double) st.getCopter().get(ATT_Y);
         double ah = (double) st.getCopter().get(ATT_H);
@@ -31,9 +33,11 @@ public class RootStateMapper implements StateMapping {
                     ax + aw > lx &&
                     ay < ly + lh &&
                     ay + ah > ly) {
-                copter.set(ATT_LOCATION, location.name());
+                agentLocation = location.name();
             }
         }
+        agentLocation = LiftCopter.collidedWithWall((OOState)s) ? ATT_VAL_CRASHED : agentLocation;
+        copter.set(ATT_LOCATION, agentLocation);
 
         for (ObjectInstance cargo : st.objectsOfClass(CLASS_CARGO)) {
             double cx = (double) cargo.get(ATT_X);

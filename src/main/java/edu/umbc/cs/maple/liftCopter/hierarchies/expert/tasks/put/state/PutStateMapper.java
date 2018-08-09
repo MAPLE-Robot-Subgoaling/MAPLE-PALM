@@ -1,7 +1,9 @@
 package edu.umbc.cs.maple.liftCopter.hierarchies.expert.tasks.put.state;
 
+import burlap.mdp.core.oo.state.OOState;
 import burlap.mdp.core.oo.state.ObjectInstance;
 import burlap.mdp.core.state.State;
+import edu.umbc.cs.maple.liftCopter.LiftCopter;
 import edu.umbc.cs.maple.liftCopter.state.LiftCopterCargo;
 import edu.umbc.cs.maple.liftCopter.state.LiftCopterState;
 import edu.umbc.cs.maple.utilities.ParameterizedStateMapping;
@@ -47,6 +49,7 @@ public class PutStateMapper implements ParameterizedStateMapping {
                 agentLocation = location.name();
             }
         }
+        agentLocation = LiftCopter.collidedWithWall((OOState)s) ? ATT_VAL_CRASHED : agentLocation;
         LCPutAgent agent = new LCPutAgent(CLASS_AGENT, agentLocation);
         for (ObjectInstance wall : walls) {
             double ww = (double) wall.get(ATT_WIDTH);

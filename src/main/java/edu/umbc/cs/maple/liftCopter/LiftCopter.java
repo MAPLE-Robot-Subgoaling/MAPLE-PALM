@@ -3,12 +3,15 @@ package edu.umbc.cs.maple.liftCopter;
 import burlap.mdp.auxiliary.DomainGenerator;
 import burlap.mdp.core.TerminalFunction;
 import burlap.mdp.core.action.UniversalActionType;
+import burlap.mdp.core.oo.state.OOState;
+import burlap.mdp.core.oo.state.ObjectInstance;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.model.FactoredModel;
 import burlap.mdp.singleagent.model.RewardFunction;
 import burlap.mdp.singleagent.oo.OOSADomain;
 import burlap.shell.visual.VisualExplorer;
 import burlap.visualizer.Visualizer;
+import edu.umbc.cs.maple.liftCopter.hierarchies.expert.tasks.nav.state.LCNavState;
 import edu.umbc.cs.maple.liftCopter.state.LiftCopterAgent;
 import edu.umbc.cs.maple.liftCopter.state.LiftCopterCargo;
 import edu.umbc.cs.maple.liftCopter.state.LiftCopterLocation;
@@ -69,6 +72,41 @@ public class LiftCopter implements DomainGenerator {
      */
     public LiftCopter() {
         this(1);
+    }
+
+    public static boolean collidedWithWall(OOState state) {
+        List<ObjectInstance> walls = state.objectsOfClass(CLASS_WALL);
+        ObjectInstance agent = state.objectsOfClass(CLASS_AGENT).get(0);
+        double ax = (double) agent.get(ATT_X);
+        double ay = (double) agent.get(ATT_Y);
+        double ah = (double) agent.get(ATT_H);
+        double aw = (double) agent.get(ATT_W);
+        double agentLeft = ax;
+        double agentRight = ax + aw;
+        double agentBottom = ay;
+        double agentTop = ay + ah;
+        for (ObjectInstance wall : walls) {
+            double wx = (double) wall.get(ATT_START_X);
+            double wy = (double) wall.get(ATT_START_Y);
+            double ww = (double) wall.get(ATT_WIDTH);
+            double wh = (double) wall.get(ATT_HEIGHT);
+            double wallLeft = wx;
+            double wallRight = wx + ww;
+            double wallBottom = wy;
+            double wallTop = wy + wh;
+            boolean wallOverlapX1 = agentRight < wallLeft;
+            boolean wallOverlapX2 = wallRight < agentLeft;
+            boolean wallOverlapY1 = agentTop < wallBottom;
+            boolean wallOverlapY2 = wallTop < agentBottom;
+            if (wallOverlapX1 || wallOverlapX2 || wallOverlapY1 || wallOverlapY2) {
+                // empty intersection
+                continue;
+            } else {
+//                System.out.println("Crashed into "+wall.name());
+                return true;
+            }
+        }
+        return false;
     }
 
     private void setMoveDynamics(double correctProb) {

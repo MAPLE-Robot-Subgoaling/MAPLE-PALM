@@ -1,7 +1,9 @@
 package edu.umbc.cs.maple.liftCopter.hierarchies.expert.tasks.get.state;
 
+import burlap.mdp.core.oo.state.OOState;
 import burlap.mdp.core.oo.state.ObjectInstance;
 import burlap.mdp.core.state.State;
+import edu.umbc.cs.maple.liftCopter.LiftCopter;
 import edu.umbc.cs.maple.liftCopter.state.LiftCopterCargo;
 import edu.umbc.cs.maple.liftCopter.state.LiftCopterState;
 import edu.umbc.cs.maple.utilities.ParameterizedStateMapping;
@@ -44,6 +46,7 @@ public class GetStateMapper implements ParameterizedStateMapping {
                 agentLocation = location.name();
             }
         }
+        agentLocation = LiftCopter.collidedWithWall((OOState)s) ? ATT_VAL_CRASHED : agentLocation;
         LCGetAgent agent = new LCGetAgent(CLASS_AGENT, agentLocation);
 
         // Get cargos
