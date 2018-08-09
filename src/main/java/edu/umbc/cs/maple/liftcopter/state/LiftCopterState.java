@@ -312,6 +312,7 @@ public class LiftCopterState implements MutableOOState, DeepCopyForShallowCopySt
         return false;
     }
 
+
     @Override
     public MutableOOState deepCopy() {
         LiftCopterState copy = this.copy();

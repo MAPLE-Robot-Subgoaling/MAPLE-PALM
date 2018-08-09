@@ -71,6 +71,7 @@ public class LCGetModel implements FullStateModel {
         String goal = a.getObjectParameters()[0];
 
         LCGetAgent nt = ns.touchAgent();
+
         nt.set(ATT_LOCATION, goal);
 
         tps.add(new StateTransitionProb(ns, 1.));

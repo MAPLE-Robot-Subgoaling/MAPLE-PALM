@@ -43,7 +43,7 @@ public class NavStateMapper implements StateMapping {
             double wy = (double) wall.get(ATT_START_Y);
             double wh = (double) wall.get(ATT_HEIGHT);
             double ww = (double) wall.get(ATT_WIDTH);
-            walls.add(new LCNavWall(wall.name(), wx, wy, wh, ww));
+            walls.add(new LCNavWall(wall.name(), wx, wy, ww, wh));
         }
 
         return new LCNavState(agent, locations, walls);

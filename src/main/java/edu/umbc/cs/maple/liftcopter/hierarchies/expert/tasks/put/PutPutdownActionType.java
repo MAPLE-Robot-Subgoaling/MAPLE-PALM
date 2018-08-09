@@ -16,6 +16,7 @@ public class PutPutdownActionType extends ObjectParameterizedActionType {
     @Override
     protected boolean applicableInState(State s, ObjectParameterizedAction objectParameterizedAction) {
         LCPutState state = (LCPutState) s;
+        if (state.getAgentAtt(ATT_LOCATION).equals(ATT_VAL_CRASHED)) { return false; }
         String[] params = objectParameterizedAction.getObjectParameters();
         String passengerName = params[0];
         ObjectInstance passenger = state.object(passengerName);

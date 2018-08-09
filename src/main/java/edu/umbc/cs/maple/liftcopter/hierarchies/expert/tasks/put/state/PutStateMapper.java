@@ -1,10 +1,12 @@
 package edu.umbc.cs.maple.liftcopter.hierarchies.expert.tasks.put.state;
 
+import burlap.mdp.core.oo.state.OOState;
 import burlap.mdp.core.oo.state.ObjectInstance;
 import burlap.mdp.core.state.State;
-import edu.umbc.cs.maple.liftcopter.hierarchies.interfaces.ParameterizedStateMapping;
+import edu.umbc.cs.maple.liftcopter.LiftCopter;
 import edu.umbc.cs.maple.liftcopter.state.LiftCopterCargo;
 import edu.umbc.cs.maple.liftcopter.state.LiftCopterState;
+import edu.umbc.cs.maple.utilities.ParameterizedStateMapping;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +31,9 @@ public class PutStateMapper implements ParameterizedStateMapping {
         double ay = (double)st.getCopter().get(ATT_Y);
         double ah = (double)st.getCopter().get(ATT_H);
         double aw = (double)st.getCopter().get(ATT_W);
+        List<ObjectInstance> walls = st.objectsOfClass(CLASS_WALL);
+
+
         for (ObjectInstance location : st.objectsOfClass(CLASS_LOCATION)) {
             double lx = (double) location.get(ATT_X);
             double ly = (double) location.get(ATT_Y);
@@ -44,8 +49,21 @@ public class PutStateMapper implements ParameterizedStateMapping {
                 agentLocation = location.name();
             }
         }
+        agentLocation = LiftCopter.collidedWithWall((OOState)s) ? ATT_VAL_CRASHED : agentLocation;
         LCPutAgent agent = new LCPutAgent(CLASS_AGENT, agentLocation);
+        for (ObjectInstance wall : walls) {
+            double ww = (double) wall.get(ATT_WIDTH);
+            double wh = (double) wall.get(ATT_HEIGHT);
+            double wx = (double) wall.get(ATT_START_X);
+            double wy = (double) wall.get(ATT_START_Y);
 
+            if (wx < ax + aw &&
+                    wx + ww > ax &&
+                    wy < ay + ah &&
+                    wy + wh > ay) {
+                agent.set(ATT_LOCATION, ATT_VAL_CRASHED);
+            }
+        }
         for(String cargoName : params){
             LiftCopterCargo cargo = (LiftCopterCargo) st.object(cargoName);
             String goal = (String) cargo.get(ATT_GOAL_LOCATION);

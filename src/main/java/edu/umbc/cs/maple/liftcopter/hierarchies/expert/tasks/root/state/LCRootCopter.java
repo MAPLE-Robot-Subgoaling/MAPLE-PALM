@@ -1,4 +1,4 @@
-package edu.umbc.cs.maple.liftcopter.hierarchies.expert.tasks.put.state;
+package edu.umbc.cs.maple.liftcopter.hierarchies.expert.tasks.root.state;
 
 import burlap.mdp.core.oo.state.ObjectInstance;
 import edu.umbc.cs.maple.utilities.MutableObject;
@@ -8,19 +8,17 @@ import java.util.List;
 
 import static edu.umbc.cs.maple.liftcopter.LiftCopterConstants.*;
 
-
-public class LCPutAgent extends MutableObject {
-
+public class LCRootCopter extends MutableObject {
     private final static List<Object> keys = Arrays.<Object>asList(
             ATT_LOCATION
-            );
+    );
 
-    public LCPutAgent(String name, String location) {
-        this(name, (Object)location);
+    public LCRootCopter(String name, String currentLocation) {
+        this(name, (Object) currentLocation);
     }
 
-    private LCPutAgent(String name, Object location) {
-        this.set(ATT_LOCATION, location);
+    private LCRootCopter(String name, Object currentLocation){
+        this.set(ATT_LOCATION, currentLocation);
         this.setName(name);
     }
 
@@ -31,17 +29,18 @@ public class LCPutAgent extends MutableObject {
 
     @Override
     public ObjectInstance copyWithName(String objectName) {
-        return new LCPutAgent( objectName, get(ATT_LOCATION));
-    }
-
-    @Override
-    public LCPutAgent copy() {
-        return (LCPutAgent) copyWithName(name());
+        return new LCRootCopter(
+                objectName,
+                get(ATT_LOCATION)
+        );
     }
 
     @Override
     public List<Object> variableKeys() {
         return keys;
     }
-
+    @Override
+    public LCRootCopter copy() {
+        return (LCRootCopter) copyWithName(name());
+    }
 }

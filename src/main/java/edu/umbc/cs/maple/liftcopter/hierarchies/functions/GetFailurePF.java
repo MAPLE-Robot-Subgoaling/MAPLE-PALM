@@ -2,8 +2,11 @@ package edu.umbc.cs.maple.liftcopter.hierarchies.functions;
 
 import burlap.mdp.core.oo.propositional.PropositionalFunction;
 import burlap.mdp.core.oo.state.OOState;
+import burlap.mdp.core.oo.state.ObjectInstance;
 
-import static edu.umbc.cs.maple.liftcopter.LiftCopterConstants.CLASS_CARGO;
+import java.util.List;
+
+import static edu.umbc.cs.maple.liftcopter.LiftCopterConstants.*;
 
 public class GetFailurePF extends PropositionalFunction {
     //get fails if any passenger if in taxi unless it is the right one
@@ -14,8 +17,10 @@ public class GetFailurePF extends PropositionalFunction {
 
     @Override
     public boolean isTrue(OOState s, String... params) {
-
-        return false;
+        List<ObjectInstance> agents = s.objectsOfClass(CLASS_AGENT);
+        if (agents.size() < 1) { return false; }
+        ObjectInstance agent = agents.get(0);
+        return agent.get(ATT_LOCATION).equals(ATT_VAL_CRASHED);
     }
 
 }

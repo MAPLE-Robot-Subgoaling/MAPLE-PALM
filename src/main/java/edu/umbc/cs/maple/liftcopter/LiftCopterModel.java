@@ -8,9 +8,8 @@ import burlap.mdp.core.oo.state.ObjectInstance;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.model.statemodel.FullStateModel;
 import edu.umbc.cs.maple.liftcopter.ThrustType.ThrustAction;
-import edu.umbc.cs.maple.liftcopter.state.LiftCopterAgent;
+import edu.umbc.cs.maple.liftcopter.state.*;
 import edu.umbc.cs.maple.liftcopter.state.LiftCopterCargo;
-import edu.umbc.cs.maple.liftcopter.state.LiftCopterState;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -91,8 +90,14 @@ public class LiftCopterModel implements FullStateModel{
 
 
         this.updateMotion(ns, force, direction);
-
-        tps.add(new StateTransitionProb(ns, 1));
+        if(hasLiftCopterCrashed(ns)){
+            LiftCopterState sc = s.copy();
+            sc.touchCopter().set(ATT_VX, 0.0);
+            sc.touchCopter().set(ATT_VY, 0.0);
+            tps.add(new StateTransitionProb(sc, 1));
+        }else{
+            tps.add(new StateTransitionProb(ns, 1));
+        }
     }
 
     /**
@@ -134,6 +139,8 @@ public class LiftCopterModel implements FullStateModel{
         LiftCopterState ns = s.copy();
         double tx = (double) s.getCopter().get(ATT_X);
         double ty = (double) s.getCopter().get(ATT_Y);
+        double tw = (double) s.getCopter().get(ATT_W);
+        double th = (double) s.getCopter().get(ATT_H);
 
         if((boolean) s.object(p).get(ATT_PICKED_UP)) {
             for (ObjectInstance location : s.objectsOfClass(CLASS_LOCATION)) {
@@ -141,10 +148,10 @@ public class LiftCopterModel implements FullStateModel{
                 double ly = (double) location.get(ATT_Y);
                 double lh = (double) location.get(ATT_H);
                 double lw = (double) location.get(ATT_W);
-                if (lx + lw/2 >= tx &&
-                        lx - lw/2 <= tx &&
-                        ly + lh/2 >= ty &&
-                        ly - lh/2 <= ty) {
+                if (lx + lw >= tx &&
+                        lx <= tx + tw &&
+                        ly + lh >= ty &&
+                        ly <= ty + th) {
                     LiftCopterCargo np = ns.touchCargo(p);
                     np.set(ATT_PICKED_UP, false);
                     np.set(ATT_X, lx);
@@ -164,10 +171,10 @@ public class LiftCopterModel implements FullStateModel{
      * @param direction
      */
     protected void updateMotion(LiftCopterState s, double thrust, double direction) {
-
+        if(hasLiftCopterCrashed(s)) return;
         double ti = 1.0D;
         double tt = ti * ti;
-        LiftCopterAgent agent = s.touchCopter();
+        LiftCopterAgent agent = s.getCopter();
         double x = (double)agent.get(ATT_X);
         double y = (double)agent.get(ATT_Y);
         double h = (double)agent.get(ATT_H);
@@ -201,14 +208,13 @@ public class LiftCopterModel implements FullStateModel{
         agent.set(ATT_Y, ny);
         agent.set(ATT_VX, nvx);
         agent.set(ATT_VY, nvy);
-
         for(ObjectInstance passenger : s.objectsOfClass(CLASS_CARGO)){
             boolean inTaxi = (boolean) passenger.get(ATT_PICKED_UP);
             if(inTaxi){
                 String passengerName = passenger.name();
                 LiftCopterCargo np = s.touchCargo(passengerName);
-                np.set(ATT_X, nx-((double)agent.get(ATT_W)/2));
-                np.set(ATT_Y, ny-((double)agent.get(ATT_H)/2));
+                np.set(ATT_X, (double)agent.get(ATT_X)-((double)agent.get(ATT_W)/2));
+                np.set(ATT_Y, (double)agent.get(ATT_Y)-((double)agent.get(ATT_H)/2));
             }
         }
 
@@ -230,5 +236,31 @@ public class LiftCopterModel implements FullStateModel{
         else if(aname.startsWith(ACTION_PUTDOWN))
             return IND_PUTDOWN;
         throw new RuntimeException("Invalid action " + aname);
+    }
+    public boolean hasLiftCopterCrashed(LiftCopterState s){
+        List<ObjectInstance> walls = s.objectsOfClass(CLASS_WALL);
+        double ax = (double) s.touchCopter().get(ATT_X);
+        double ay = (double) s.touchCopter().get(ATT_Y);
+        double ah = (double) s.touchCopter().get(ATT_H);
+        double aw = (double) s.touchCopter().get(ATT_W);
+        for (ObjectInstance wall : walls) {
+            double ww = (double) wall.get(ATT_WIDTH);
+            double wh = (double) wall.get(ATT_HEIGHT);
+            double wx = (double) wall.get(ATT_START_X);
+            double wy = (double) wall.get(ATT_START_Y);
+//            System.out.println("Compare: \n" +
+////                    "\t a:"+ax+","+ay+","+ah+","+aw+"\n" +
+////                    "\t w:"+wall.name() + ","+wx+","+wy+","+wh+","+ww
+////            );
+            if (wx < ax + aw &&
+                    wx + ww > ax &&
+                    wy < ay + ah &&
+                    wy + wh > ay) {
+               // s.getCopter().set(ATT_LOCATION, ATT_VAL_CRASHED);
+                return true;
+            }
+
+        }
+        return false;
     }
 }

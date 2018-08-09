@@ -1,10 +1,12 @@
 package edu.umbc.cs.maple.liftcopter.hierarchies.expert.tasks.get.state;
 
+import burlap.mdp.core.oo.state.OOState;
 import burlap.mdp.core.oo.state.ObjectInstance;
 import burlap.mdp.core.state.State;
-import edu.umbc.cs.maple.liftcopter.hierarchies.interfaces.ParameterizedStateMapping;
+import edu.umbc.cs.maple.liftcopter.LiftCopter;
 import edu.umbc.cs.maple.liftcopter.state.LiftCopterCargo;
 import edu.umbc.cs.maple.liftcopter.state.LiftCopterState;
+import edu.umbc.cs.maple.utilities.ParameterizedStateMapping;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,6 +46,7 @@ public class GetStateMapper implements ParameterizedStateMapping {
                 agentLocation = location.name();
             }
         }
+        agentLocation = LiftCopter.collidedWithWall((OOState)s) ? ATT_VAL_CRASHED : agentLocation;
         LCGetAgent agent = new LCGetAgent(CLASS_AGENT, agentLocation);
 
         // Get cargos
@@ -83,16 +86,13 @@ public class GetStateMapper implements ParameterizedStateMapping {
             double wh = (double) wall.get(ATT_HEIGHT);
             double wx = (double) wall.get(ATT_START_X);
             double wy = (double) wall.get(ATT_START_Y);
-//            System.out.println("Compare: \n" +
-//                    "\t a:"+ax+","+ay+","+ah+","+aw+"\n" +
-//                    "\t w:"+wall.name() + ","+wx+","+wy+","+wh+","+ww
-//            );
+
             if (wx < ax + aw &&
                     wx + ww > ax &&
                     wy < ay + ah &&
                     wy + wh > ay) {
-                //System.out.println("Crashed into "+wall.name());
                 getState.hasFailed = true;
+                getState.touchAgent().set(ATT_LOCATION, ATT_VAL_CRASHED);
             }
 
         }

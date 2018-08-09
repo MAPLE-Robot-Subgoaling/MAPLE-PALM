@@ -1,7 +1,10 @@
 package edu.umbc.cs.maple.liftcopter;
 
+import burlap.mdp.auxiliary.DomainGenerator;
 import burlap.mdp.core.TerminalFunction;
 import burlap.mdp.core.action.UniversalActionType;
+import burlap.mdp.core.oo.state.OOState;
+import burlap.mdp.core.oo.state.ObjectInstance;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.model.FactoredModel;
 import burlap.mdp.singleagent.model.RewardFunction;
@@ -13,7 +16,6 @@ import edu.umbc.cs.maple.liftcopter.state.LiftCopterCargo;
 import edu.umbc.cs.maple.liftcopter.state.LiftCopterLocation;
 import edu.umbc.cs.maple.liftcopter.state.LiftCopterWall;
 import edu.umbc.cs.maple.liftcopter.stategenerator.LiftCopterStateFactory;
-import edu.umbc.cs.maple.utilities.OOSADomainGenerator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,9 +23,8 @@ import java.util.List;
 import static edu.umbc.cs.maple.liftcopter.LiftCopterConstants.*;
 
 
-public class LiftCopter extends OOSADomainGenerator {
+public class LiftCopter implements DomainGenerator {
 
-    private double correctMoveprob;
     private RewardFunction rf;
     private TerminalFunction tf;
     private double[][] moveDynamics;
@@ -39,7 +40,6 @@ public class LiftCopter extends OOSADomainGenerator {
     public LiftCopter(RewardFunction r, TerminalFunction t, double correctMoveprob) {
         rf = r;
         tf = t;
-        this.correctMoveprob = correctMoveprob;
         setMoveDynamics(correctMoveprob);
     }
 
@@ -49,7 +49,6 @@ public class LiftCopter extends OOSADomainGenerator {
      * @param correctMoveprob transitionProbability the liftcopter will go in the correct direction they select
      */
     public LiftCopter(double correctMoveprob) {
-        this.correctMoveprob = correctMoveprob;
         setMoveDynamics(correctMoveprob);
         this.rf = new LiftCopterRewardFunction();
         this.tf = new LiftCopterTerminalFunction();
@@ -72,6 +71,41 @@ public class LiftCopter extends OOSADomainGenerator {
      */
     public LiftCopter() {
         this(1);
+    }
+
+    public static boolean collidedWithWall(OOState state) {
+        List<ObjectInstance> walls = state.objectsOfClass(CLASS_WALL);
+        ObjectInstance agent = state.objectsOfClass(CLASS_AGENT).get(0);
+        double ax = (double) agent.get(ATT_X);
+        double ay = (double) agent.get(ATT_Y);
+        double ah = (double) agent.get(ATT_H);
+        double aw = (double) agent.get(ATT_W);
+        double agentLeft = ax;
+        double agentRight = ax + aw;
+        double agentBottom = ay;
+        double agentTop = ay + ah;
+        for (ObjectInstance wall : walls) {
+            double wx = (double) wall.get(ATT_START_X);
+            double wy = (double) wall.get(ATT_START_Y);
+            double ww = (double) wall.get(ATT_WIDTH);
+            double wh = (double) wall.get(ATT_HEIGHT);
+            double wallLeft = wx;
+            double wallRight = wx + ww;
+            double wallBottom = wy;
+            double wallTop = wy + wh;
+            boolean wallOverlapX1 = agentRight < wallLeft;
+            boolean wallOverlapX2 = wallRight < agentLeft;
+            boolean wallOverlapY1 = agentTop < wallBottom;
+            boolean wallOverlapY2 = wallTop < agentBottom;
+            if (wallOverlapX1 || wallOverlapX2 || wallOverlapY1 || wallOverlapY2) {
+                // empty intersection
+                continue;
+            } else {
+//                System.out.println("Crashed into "+wall.name());
+                return true;
+            }
+        }
+        return false;
     }
 
     private void setMoveDynamics(double correctProb) {
@@ -103,9 +137,6 @@ public class LiftCopter extends OOSADomainGenerator {
 
     @Override
     public OOSADomain generateDomain(){
-
-        setMoveDynamics(correctMoveprob);
-
         OOSADomain domain = new OOSADomain();
 
         domain.addStateClass(CLASS_AGENT, LiftCopterAgent.class)
@@ -155,57 +186,5 @@ public class LiftCopter extends OOSADomainGenerator {
 
         exp.initGUI();
 
-    }
-
-    @Override
-    public void setTf(TerminalFunction tf) {
-        this.tf = tf;
-    }
-
-    @Override
-    public void setRf(RewardFunction rf) {
-        this.rf = rf;
-    }
-
-    @Override
-    public RewardFunction getRf() {
-        return rf;
-    }
-
-    @Override
-    public TerminalFunction getTf() {
-        return tf;
-    }
-
-    public List<Double> getThrustValues() {
-        return thrustValues;
-    }
-
-    public void setThrustValues(List<Double> thrustValues) {
-        this.thrustValues = thrustValues;
-    }
-
-    public List<Double> getDirectionValues() {
-        return directionValues;
-    }
-
-    public void setDirectionValues(List<Double> directionValues) {
-        this.directionValues = directionValues;
-    }
-
-    public double getCorrectMoveprob() {
-        return correctMoveprob;
-    }
-
-    public void setCorrectMoveprob(double correctMoveprob) {
-        this.correctMoveprob = correctMoveprob;
-    }
-
-    public double[][] getMoveDynamics() {
-        return moveDynamics;
-    }
-
-    public void setMoveDynamics(double[][] moveDynamics) {
-        this.moveDynamics = moveDynamics;
     }
 }

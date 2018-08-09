@@ -7,15 +7,14 @@ import burlap.mdp.singleagent.common.NullRewardFunction;
 import burlap.mdp.singleagent.model.FactoredModel;
 import burlap.mdp.singleagent.model.RewardFunction;
 import burlap.mdp.singleagent.oo.OOSADomain;
+import edu.umbc.cs.maple.liftcopter.hierarchies.expert.tasks.NavigateActionType;
 import edu.umbc.cs.maple.hierarchy.framework.GoalFailRF;
 import edu.umbc.cs.maple.hierarchy.framework.GoalFailTF;
-import edu.umbc.cs.maple.liftcopter.hierarchies.expert.tasks.NavigateActionType;
 import edu.umbc.cs.maple.liftcopter.hierarchies.expert.tasks.get.state.LCGetAgent;
 import edu.umbc.cs.maple.liftcopter.hierarchies.expert.tasks.get.state.LCGetCargo;
 import edu.umbc.cs.maple.liftcopter.hierarchies.expert.tasks.get.state.LCGetLocation;
 import edu.umbc.cs.maple.liftcopter.hierarchies.functions.GetCompletedPF;
 import edu.umbc.cs.maple.liftcopter.hierarchies.functions.GetFailurePF;
-
 import static edu.umbc.cs.maple.liftcopter.LiftCopterConstants.*;
 
 public class LCGetDomain implements DomainGenerator {
