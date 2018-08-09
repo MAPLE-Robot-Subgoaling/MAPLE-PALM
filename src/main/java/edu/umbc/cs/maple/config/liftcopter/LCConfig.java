@@ -11,8 +11,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class LCConfig extends DomainConfig {
-    public double correct_move;
-    public double fickle;
 
     public LiftCopterState generateState() {
         String passengerNumberRegex = "\\-(\\d+)passengers";
@@ -25,8 +23,10 @@ public class LCConfig extends DomainConfig {
         int numPassengers = "".equals(numPassengersString) ? 1 : Integer.parseInt(numPassengersString);
         if        (state.equals("classic")) {
             return LiftCopterStateFactory.createClassicState();
+        } else if (state.equals("mini")) {
+            return LiftCopterStateFactory.createMiniState();
         } else {
-            throw new RuntimeException("ERROR: invalid state passed to generateState in TaxiConfig: " + state);
+            throw new RuntimeException("ERROR: invalid state passed to generateState in config: " + state);
         }
     }
 

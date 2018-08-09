@@ -26,7 +26,6 @@ hierarchyConfigMap:
       tf: &tf !!edu.umbc.cs.maple.hierarchy.framework.GoalFailTF
         goalPF: !!edu.umbc.cs.maple.liftcopter.hierarchies.functions.GetCompletedPF {}
         failPF: !!edu.umbc.cs.maple.liftcopter.hierarchies.functions.GetFailurePF {}
-
       rf: !!edu.umbc.cs.maple.hierarchy.framework.GoalFailRF
         tf: *tf
         rewardDefault: 0.0
@@ -73,4 +72,4 @@ hierarchyConfigMap:
         lambda: 0.5
         learningRate: 0.02
         TCC: !!edu.umbc.cs.maple.config.tilecoding.LCTileCodingConfig
-          res: 10
+          res: 5

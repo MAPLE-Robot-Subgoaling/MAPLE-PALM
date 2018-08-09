@@ -16,6 +16,7 @@ import edu.umbc.cs.maple.liftcopter.state.LiftCopterCargo;
 import edu.umbc.cs.maple.liftcopter.state.LiftCopterLocation;
 import edu.umbc.cs.maple.liftcopter.state.LiftCopterWall;
 import edu.umbc.cs.maple.liftcopter.stategenerator.LiftCopterStateFactory;
+import edu.umbc.cs.maple.utilities.OOSADomainGenerator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,13 +24,15 @@ import java.util.List;
 import static edu.umbc.cs.maple.liftcopter.LiftCopterConstants.*;
 
 
-public class LiftCopter implements DomainGenerator {
+public class LiftCopter extends OOSADomainGenerator {
 
     private RewardFunction rf;
     private TerminalFunction tf;
     private double[][] moveDynamics;
     protected List<Double> thrustValues = new ArrayList();
     protected List<Double> directionValues = new ArrayList();
+    protected double correctMoveProbability;
+
     /**
      * create a liftcopter domain generator
      *
@@ -40,6 +43,7 @@ public class LiftCopter implements DomainGenerator {
     public LiftCopter(RewardFunction r, TerminalFunction t, double correctMoveprob) {
         rf = r;
         tf = t;
+        this.correctMoveProbability = correctMoveprob;
         setMoveDynamics(correctMoveprob);
     }
 
@@ -49,6 +53,7 @@ public class LiftCopter implements DomainGenerator {
      * @param correctMoveprob transitionProbability the liftcopter will go in the correct direction they select
      */
     public LiftCopter(double correctMoveprob) {
+        this.correctMoveProbability = correctMoveprob;
         setMoveDynamics(correctMoveprob);
         this.rf = new LiftCopterRewardFunction();
         this.tf = new LiftCopterTerminalFunction();
@@ -109,6 +114,7 @@ public class LiftCopter implements DomainGenerator {
     }
 
     private void setMoveDynamics(double correctProb) {
+        this.correctMoveProbability = correctProb;
         moveDynamics = new double[NUM_MOVE_ACTIONS][NUM_MOVE_ACTIONS];
 
         for (int choose = 0; choose < NUM_MOVE_ACTIONS; choose++) {
@@ -137,6 +143,9 @@ public class LiftCopter implements DomainGenerator {
 
     @Override
     public OOSADomain generateDomain(){
+
+        this.setMoveDynamics(this.correctMoveProbability);
+
         OOSADomain domain = new OOSADomain();
 
         domain.addStateClass(CLASS_AGENT, LiftCopterAgent.class)
@@ -186,5 +195,53 @@ public class LiftCopter implements DomainGenerator {
 
         exp.initGUI();
 
+    }
+
+    public RewardFunction getRf() {
+        return rf;
+    }
+
+    public void setRf(RewardFunction rf) {
+        this.rf = rf;
+    }
+
+    public TerminalFunction getTf() {
+        return tf;
+    }
+
+    public void setTf(TerminalFunction tf) {
+        this.tf = tf;
+    }
+
+    public double[][] getMoveDynamics() {
+        return moveDynamics;
+    }
+
+    public void setMoveDynamics(double[][] moveDynamics) {
+        this.moveDynamics = moveDynamics;
+    }
+
+    public List<Double> getThrustValues() {
+        return thrustValues;
+    }
+
+    public void setThrustValues(List<Double> thrustValues) {
+        this.thrustValues = thrustValues;
+    }
+
+    public List<Double> getDirectionValues() {
+        return directionValues;
+    }
+
+    public void setDirectionValues(List<Double> directionValues) {
+        this.directionValues = directionValues;
+    }
+
+    public double getCorrectMoveProbability() {
+        return correctMoveProbability;
+    }
+
+    public void setCorrectMoveProbability(double correctMoveProbability) {
+        this.correctMoveProbability = correctMoveProbability;
     }
 }

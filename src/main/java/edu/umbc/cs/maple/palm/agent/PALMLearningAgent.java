@@ -422,7 +422,9 @@ public class PALMLearningAgent implements LearningAgent {
             }
             modelName = mName.toString();
         //if we aren't using model sharing, we want to retain all parameters, even potentially masked ones
-        } else modelName = t.toString();
+        } else {
+            modelName = t.toString();
+        }
         PALMModel model = models.get(modelName);
         if (model == null) {
             model = modelGenerator.getModelForTask(t);

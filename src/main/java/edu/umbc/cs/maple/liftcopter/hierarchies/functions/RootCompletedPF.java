@@ -2,15 +2,16 @@ package edu.umbc.cs.maple.liftcopter.hierarchies.functions;
 
 import burlap.mdp.core.oo.propositional.PropositionalFunction;
 import burlap.mdp.core.oo.state.OOState;
+import edu.umbc.cs.maple.hierarchy.framework.AMDPRootGoalPF;
 import edu.umbc.cs.maple.liftcopter.hierarchies.expert.tasks.root.state.LCRootState;
 
 import static edu.umbc.cs.maple.liftcopter.LiftCopterConstants.*;
 
 
-public class RootCompletedPF extends PropositionalFunction {
+public class RootCompletedPF extends AMDPRootGoalPF {
 
     public RootCompletedPF() {
-        super("root", new String[]{});
+        super("rootCompletedPF", new String[]{});
     }
 
     @Override
