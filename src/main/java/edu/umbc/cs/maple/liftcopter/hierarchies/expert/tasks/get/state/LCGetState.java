@@ -14,7 +14,6 @@ import static edu.umbc.cs.maple.liftcopter.LiftCopterConstants.*;
 
 public class LCGetState extends LCGetPutState implements DeepCopyForShallowCopyState {
 
-    public boolean hasFailed = false;
     //this state has passengers and depots
     private LCGetAgent agent;
     private Map<String, LCGetCargo> cargos;
@@ -55,12 +54,14 @@ public class LCGetState extends LCGetPutState implements DeepCopyForShallowCopyS
         }
 
         ObjectInstance o = cargos.get(oname);
-        if(o != null)
+        if(o != null) {
             return o;
+        }
 
         o = locations.get(oname);
-        if(o != null)
+        if(o != null) {
             return o;
+        }
 
         return null;
     }
@@ -76,18 +77,20 @@ public class LCGetState extends LCGetPutState implements DeepCopyForShallowCopyS
 
     @Override
     public List<ObjectInstance> objectsOfClass(String oclass) {
-        if(oclass.equals(CLASS_AGENT))
-            return agent == null ? new ArrayList<ObjectInstance>() : Arrays.<ObjectInstance>asList(agent);
-        if(oclass.equals(CLASS_CARGO))
-            return new ArrayList<ObjectInstance>(cargos.values());
-        if(oclass.equals(CLASS_LOCATION))
-            return new ArrayList<ObjectInstance>(locations.values());
+        if (oclass.equals(CLASS_AGENT)) {
+            return agent == null ? new ArrayList<>() : Arrays.<ObjectInstance>asList(agent);
+        }
+        if (oclass.equals(CLASS_CARGO)) {
+            return new ArrayList<>(cargos.values());
+        } if(oclass.equals(CLASS_LOCATION)) {
+            return new ArrayList<>(locations.values());
+        }
         throw new RuntimeException("No object class " + oclass);
     }
 
     @Override
     public List<Object> variableKeys() {
-        return OOStateUtilities.flatStateKeys(this);
+        throw new RuntimeException("not implemented");
     }
 
     @Override
@@ -102,18 +105,7 @@ public class LCGetState extends LCGetPutState implements DeepCopyForShallowCopyS
 
     @Override
     public MutableState set(Object variableKey, Object value) {
-        OOVariableKey key = OOStateUtilities.generateKey(variableKey);
-
-        if(key.obName.equals(agent.name())) {
-            touchAgent().set(variableKey, value);
-        } else if(cargos.get(key.obName) != null){
-            touchCargo(key.obName).set(variableKey, value);
-        } else if(locations.get(key.obName) != null){
-            touchLocation(key.obName).set(variableKey, value);
-        } else {
-            throw new RuntimeException("ERROR: unable to set value for " + variableKey);
-        }
-        return this;
+        throw new RuntimeException("not implemented");
     }
 
     @Override
@@ -167,17 +159,8 @@ public class LCGetState extends LCGetPutState implements DeepCopyForShallowCopyS
     }
 
     public Map<String, LCGetCargo> touchCargos(){
-        this.cargos = new HashMap<String, LCGetCargo>(cargos);
+        this.cargos = new HashMap<>(cargos);
         return cargos;
-    }
-
-    //get values from objects
-    public String[] getCargos(){
-        String[] ret = new String[cargos.size()];
-        int i = 0;
-        for(String name : cargos.keySet())
-            ret[i++] = name;
-        return ret;
     }
 
     public LCGetLocation touchLocation(String name){
@@ -188,32 +171,9 @@ public class LCGetState extends LCGetPutState implements DeepCopyForShallowCopyS
     }
 
     public Map<String, LCGetLocation> touchLocations(){
-        this.locations = new HashMap<String, LCGetLocation>(locations);
+        this.locations = new HashMap<>(locations);
         return locations;
     }
-
-    //get values from objects
-    public String[] getLocations(){
-        String[] ret = new String[locations.size()];
-        int i = 0;
-        for(String name : locations.keySet())
-            ret[i++] = name;
-        return ret;
-    }
-
-    public Object getAgentAtt(String attName) {
-        if (agent == null) { return null; }
-        return agent.get(attName);
-    }
-
-    public Object getCargoAtt(String passName, String attName){
-        return cargos.get(passName).get(attName);
-    }
-
-    public Object getLocationAtt(String locName, String attName) {
-        return locations.get(locName).get(attName);
-    }
-
     @Override
     public String toString(){
         String out = "{ " + this.getClass().getSimpleName() + "\n";
@@ -237,20 +197,16 @@ public class LCGetState extends LCGetPutState implements DeepCopyForShallowCopyS
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         LCGetState that = (LCGetState) o;
-
-        if (agent != null ? !agent.equals(that.agent) : that.agent != null) return false;
-        if (cargos != null ? !cargos.equals(that.cargos) : that.cargos != null) return false;
-        return locations != null ? locations.equals(that.locations) : that.locations == null;
+        return Objects.equals(agent, that.agent) &&
+                Objects.equals(cargos, that.cargos) &&
+                Objects.equals(locations, that.locations);
     }
 
     @Override
     public int hashCode() {
-        int result = agent != null ? agent.hashCode() : 0;
-        result = 31 * result + (cargos != null ? cargos.hashCode() : 0);
-        result = 31 * result + (locations != null ? locations.hashCode() : 0);
-        return result;
+
+        return Objects.hash(agent, cargos, locations);
     }
 
     @Override

@@ -2,7 +2,10 @@ package edu.umbc.cs.maple.liftcopter.hierarchies.functions;
 
 import burlap.mdp.core.oo.propositional.PropositionalFunction;
 import burlap.mdp.core.oo.state.OOState;
+import burlap.mdp.core.oo.state.ObjectInstance;
 import edu.umbc.cs.maple.liftcopter.hierarchies.expert.tasks.nav.state.LCNavState;
+
+import java.util.List;
 
 import static edu.umbc.cs.maple.liftcopter.LiftCopterConstants.*;
 
@@ -15,24 +18,27 @@ public class NavCompletedPF extends PropositionalFunction {
 
     @Override
     public boolean isTrue(OOState s, String... params) {
-//		LCNavState st = new NavStateMapper().mapState(s);
-        if (!(s instanceof LCNavState)) { return false; }
-        LCNavState st = (LCNavState) s;
-        Double ax = (Double)st.touchCopter().get(ATT_X);
-        if (ax == null) { return false; }
-        double ay = (double)st.touchCopter().get(ATT_Y);
-        double ah = (double)st.touchCopter().get(ATT_H);
-        double aw = (double)st.touchCopter().get(ATT_W);
-        double lx = (double) st.getLocationAtt(params[0], ATT_X);
-        double ly = (double) st.getLocationAtt(params[0],ATT_Y);
-        double lh = (double) st.getLocationAtt(params[0],ATT_H);
-        double lw = (double) st.getLocationAtt(params[0],ATT_W);
-        return (lx < ax + aw &&
-                lx + lw > ax &&
-                ly < ay + ah &&
-                ly + lh > ay) ;
 
-
+        List<ObjectInstance> agents = s.objectsOfClass(CLASS_AGENT);
+        if (agents.size() < 1) {
+            return false;
+        }
+        ObjectInstance agent = agents.get(0);
+        String locationName = params[0];
+        ObjectInstance depot = s.object(locationName);
+        double agentX = (double) agent.get(ATT_X);
+        double agentY = (double) agent.get(ATT_Y);
+        double agentW = (double) agent.get(ATT_W);
+        double agentH = (double) agent.get(ATT_H);
+        double agentMiddleX = agentX + agentW * 0.5;
+        double agentMiddleY = agentY + agentH * 0.5;
+        double depotX = (double) depot.get(ATT_X);
+        double depotY = (double) depot.get(ATT_Y);
+        double depotW = (double) depot.get(ATT_W);
+        double depotH = (double) depot.get(ATT_H);
+        boolean xInside = agentMiddleX >= depotX && agentMiddleX <= depotX + depotW;
+        boolean yInside = agentMiddleY >= depotY && agentMiddleY <= depotY + depotH;
+        return xInside && yInside;
     }
 
 }

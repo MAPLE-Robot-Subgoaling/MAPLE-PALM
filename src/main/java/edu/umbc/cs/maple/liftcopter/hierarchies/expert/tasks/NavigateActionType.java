@@ -21,10 +21,12 @@ public class NavigateActionType extends ObjectParameterizedActionType {
     protected boolean applicableInState(State s, ObjectParameterizedAction objectParameterizedAction) {
 
         LCGetPutState state = (LCGetPutState) s;
-        if (state.getAgentAtt(ATT_LOCATION).equals(ATT_VAL_CRASHED)) { return false; }
+        ObjectInstance agent = state.objectsOfClass(CLASS_AGENT).get(0);
+        String agentLocation = (String) agent.get(ATT_LOCATION);
+        if (agentLocation.equals(ATT_VAL_CRASHED)) { return false; }
         String[] params = objectParameterizedAction.getObjectParameters();
         String locName = params[0];
         ObjectInstance location = state.object(locName);
-        return !location.name().equals(state.getAgentAtt(ATT_LOCATION));
+        return !location.name().equals(agentLocation);
     }
 }

@@ -8,12 +8,13 @@ domain: !!edu.umbc.cs.maple.config.liftcopter.LCConfig
 agents:
   palm: {LC-expert}
 
-seed: 3
-episodes: 700
+seed: 55
+episodes: 145
 max_steps: 1000
 trials: 1
 gamma: 0.99
 
+hashable_state_factory: !!edu.umbc.cs.maple.state.hashing.bugfix.FixDiscretizedHashableStateFactory {}
 identifier_independent: false
 planning:
   rollouts: 1000

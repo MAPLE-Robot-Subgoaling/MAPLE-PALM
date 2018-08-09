@@ -54,48 +54,47 @@ public class LCPutState extends LCGetPutState implements DeepCopyForShallowCopyS
         }
 
         ObjectInstance o = cargos.get(oname);
-        if(o != null)
+        if(o != null) {
             return o;
+        }
 
         o = locations.get(oname);
-        if(o != null)
+        if(o != null) {
             return o;
+        }
 
         return null;
     }
 
-    private List<ObjectInstance> cachedObjectList = null;
     @Override
     public List<ObjectInstance> objects() {
-        if (cachedObjectList == null) { cachedObjectList = new ArrayList<ObjectInstance>(); }
-        else { return cachedObjectList; }
         List<ObjectInstance> obj = new ArrayList<ObjectInstance>();
         if (agent != null) { obj.add(agent); }
         obj.addAll(cargos.values());
         obj.addAll(locations.values());
-        cachedObjectList = obj;
         return obj;
     }
 
     @Override
     public List<ObjectInstance> objectsOfClass(String oclass) {
-        if(oclass.equals(CLASS_AGENT))
-            return agent == null ? new ArrayList<ObjectInstance>() : Arrays.<ObjectInstance>asList(agent);
-        if(oclass.equals(CLASS_CARGO))
-            return new ArrayList<ObjectInstance>(cargos.values());
-        if(oclass.equals(CLASS_LOCATION))
-            return new ArrayList<ObjectInstance>(locations.values());
+        if(oclass.equals(CLASS_AGENT)) {
+            return agent == null ? new ArrayList<>() : Arrays.<ObjectInstance>asList(agent);
+        } if(oclass.equals(CLASS_CARGO)) {
+            return new ArrayList<>(cargos.values());
+        } if(oclass.equals(CLASS_LOCATION)) {
+            return new ArrayList<>(locations.values());
+        }
         throw new RuntimeException("No object class " + oclass);
     }
 
     @Override
     public List<Object> variableKeys() {
-        return OOStateUtilities.flatStateKeys(this);
+        throw new RuntimeException("not implemented");
     }
 
     @Override
     public Object get(Object variableKey) {
-        return OOStateUtilities.get(this, variableKey);
+        throw new RuntimeException("not implemented");
     }
 
     @Override
@@ -105,18 +104,7 @@ public class LCPutState extends LCGetPutState implements DeepCopyForShallowCopyS
 
     @Override
     public MutableState set(Object variableKey, Object value) {
-        OOVariableKey key = OOStateUtilities.generateKey(variableKey);
-
-        if(agent != null && key.obName.equals(agent.name())) {
-            touchAgent().set(variableKey, value);
-        } else if(cargos.get(key.obName) != null){
-            touchCargo(key.obName).set(variableKey, value);
-        } else if(locations.get(key.obName) != null){
-            touchLocation(key.obName).set(variableKey, value);
-        } else {
-            throw new RuntimeException("ERROR: unable to set value for " + variableKey);
-        }
-        return this;
+        throw new RuntimeException("not implemented");
     }
 
     @Override
@@ -130,7 +118,6 @@ public class LCPutState extends LCGetPutState implements DeepCopyForShallowCopyS
         } else {
             throw new RuntimeException("Can only add certain objects to state.");
         }
-        cachedObjectList = null;
         return this;
     }
 
@@ -149,7 +136,6 @@ public class LCPutState extends LCGetPutState implements DeepCopyForShallowCopyS
         } else {
             throw new RuntimeException("Error: unknown object of name: " + oname);
         }
-        cachedObjectList = null;
         return this;
     }
 
@@ -172,18 +158,10 @@ public class LCPutState extends LCGetPutState implements DeepCopyForShallowCopyS
     }
 
     public Map<String, LCPutCargo> touchCargos(){
-        this.cargos = new HashMap<String, LCPutCargo>(cargos);
+        this.cargos = new HashMap<>(cargos);
         return cargos;
     }
 
-    //get values from objects
-    public String[] getCargos(){
-        String[] ret = new String[cargos.size()];
-        int i = 0;
-        for(String name : cargos.keySet())
-            ret[i++] = name;
-        return ret;
-    }
 
     public LCPutLocation touchLocation(String locName){
         LCPutLocation loc = locations.get(locName).copy();
@@ -193,17 +171,8 @@ public class LCPutState extends LCGetPutState implements DeepCopyForShallowCopyS
     }
 
     public Map<String, LCPutLocation> touchLocations(){
-        this.locations = new HashMap<String, LCPutLocation>(locations);
+        this.locations = new HashMap<>(locations);
         return locations;
-    }
-
-    //get values from objects
-    public String[] getLocations(){
-        String[] ret = new String[locations.size()];
-        int i = 0;
-        for(String name : locations.keySet())
-            ret[i++] = name;
-        return ret;
     }
 
     public Object getAgentAtt(String attName) {
@@ -211,14 +180,6 @@ public class LCPutState extends LCGetPutState implements DeepCopyForShallowCopyS
             return null;
         }
         return agent.get(attName);
-    }
-
-    public Object getCargoAtt(String passname, String attName){
-        return cargos.get(passname).get(attName);
-    }
-
-    public Object getLocationAtt(String locname, String attName) {
-        return locations.get(locname).get(attName);
     }
 
     @Override
@@ -240,20 +201,16 @@ public class LCPutState extends LCGetPutState implements DeepCopyForShallowCopyS
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         LCPutState that = (LCPutState) o;
-
-        if (agent != null ? !agent.equals(that.agent) : that.agent != null) return false;
-        if (cargos != null ? !cargos.equals(that.cargos) : that.cargos != null) return false;
-        return locations != null ? locations.equals(that.locations) : that.locations == null;
+        return Objects.equals(agent, that.agent) &&
+                Objects.equals(cargos, that.cargos) &&
+                Objects.equals(locations, that.locations);
     }
 
     @Override
     public int hashCode() {
-        int result = agent != null ? agent.hashCode() : 0;
-        result = 31 * result + (cargos != null ? cargos.hashCode() : 0);
-        result = 31 * result + (locations != null ? locations.hashCode() : 0);
-        return result;
+
+        return Objects.hash(agent, cargos, locations);
     }
 
     @Override

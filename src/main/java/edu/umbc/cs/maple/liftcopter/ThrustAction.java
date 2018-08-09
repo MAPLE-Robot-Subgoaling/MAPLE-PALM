@@ -20,7 +20,8 @@ public class ThrustAction implements Action {
     }
 
     public String actionName() {
-        return "thrust|" + this.thrust + "|" + (this.direction/Math.PI);
+        double amount = Math.round((this.direction/Math.PI) * 100.0) / 100.0;
+        return "thrust|" + this.thrust + "|" + amount;
     }
 
     public Action copy() {

@@ -79,6 +79,7 @@ public class LiftCopter extends OOSADomainGenerator {
     }
 
     public static boolean collidedWithWall(OOState state) {
+        double buffer = 0.001;
         List<ObjectInstance> walls = state.objectsOfClass(CLASS_WALL);
         ObjectInstance agent = state.objectsOfClass(CLASS_AGENT).get(0);
         double ax = (double) agent.get(ATT_X);
@@ -98,10 +99,10 @@ public class LiftCopter extends OOSADomainGenerator {
             double wallRight = wx + ww;
             double wallBottom = wy;
             double wallTop = wy + wh;
-            boolean wallOverlapX1 = agentRight < wallLeft;
-            boolean wallOverlapX2 = wallRight < agentLeft;
-            boolean wallOverlapY1 = agentTop < wallBottom;
-            boolean wallOverlapY2 = wallTop < agentBottom;
+            boolean wallOverlapX1 = agentRight + buffer < wallLeft;
+            boolean wallOverlapX2 = wallRight + buffer < agentLeft;
+            boolean wallOverlapY1 = agentTop + buffer < wallBottom;
+            boolean wallOverlapY2 = wallTop + buffer < agentBottom;
             if (wallOverlapX1 || wallOverlapX2 || wallOverlapY1 || wallOverlapY2) {
                 // empty intersection
                 continue;

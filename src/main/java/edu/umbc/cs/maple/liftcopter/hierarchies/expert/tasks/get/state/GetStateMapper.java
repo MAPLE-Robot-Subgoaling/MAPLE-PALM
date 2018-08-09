@@ -91,7 +91,6 @@ public class GetStateMapper implements ParameterizedStateMapping {
                     wx + ww > ax &&
                     wy < ay + ah &&
                     wy + wh > ay) {
-                getState.hasFailed = true;
                 getState.touchAgent().set(ATT_LOCATION, ATT_VAL_CRASHED);
             }
 

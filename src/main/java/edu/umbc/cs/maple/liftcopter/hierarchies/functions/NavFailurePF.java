@@ -17,9 +17,6 @@ public class NavFailurePF extends PropositionalFunction {
     @Override
     public boolean isTrue(OOState s, String... params) {
         if (!(s instanceof LCNavState)) { return false; }
-        if (LiftCopter.collidedWithWall(s)) {
-            return true;
-        }
-        return false;
+        return LiftCopter.collidedWithWall(s);
     }
 }

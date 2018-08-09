@@ -12,7 +12,7 @@ import java.util.*;
 import static edu.umbc.cs.maple.liftcopter.LiftCopterConstants.*;
 
 public class LCRootState implements MutableOOState, DeepCopyForShallowCopyState {
-    public boolean hasFailed = false;
+
     //this state has cargos
     private Map<String, LCRootCargo> cargos;
     private LCRootCopter copter;
@@ -52,15 +52,11 @@ public class LCRootState implements MutableOOState, DeepCopyForShallowCopyState 
         return null;
     }
 
-    private List<ObjectInstance> cachedObjectList = null;
     @Override
     public List<ObjectInstance> objects() {
-        if (cachedObjectList == null) { cachedObjectList = new ArrayList<ObjectInstance>(); }
-        else { return cachedObjectList; }
         List<ObjectInstance> obj = new ArrayList<>();
         obj.addAll(cargos.values());
         if(copter != null) obj.add(copter);
-        cachedObjectList = obj;
         return obj;
     }
 
@@ -77,12 +73,12 @@ public class LCRootState implements MutableOOState, DeepCopyForShallowCopyState 
 
     @Override
     public List<Object> variableKeys() {
-        return OOStateUtilities.flatStateKeys(this);
+        throw new RuntimeException("not implemented");
     }
 
     @Override
     public Object get(Object variableKey) {
-        return OOStateUtilities.get(this, variableKey);
+        throw new RuntimeException("not implemented");
     }
 
     @Override
@@ -93,16 +89,7 @@ public class LCRootState implements MutableOOState, DeepCopyForShallowCopyState 
 
     @Override
     public MutableState set(Object variableKey, Object value) {
-        OOVariableKey key = OOStateUtilities.generateKey(variableKey);
-
-        if(copter != null && key.obName.equals(copter.name())) {
-            touchCopter().set(variableKey, value);
-        } else if(cargos.get(key.obName) != null){
-            touchCargo(key.obName).set(variableKey, value);
-        } else {
-            throw new RuntimeException("ERROR: unable to set value for " + variableKey);
-        }
-        return this;
+        throw new RuntimeException("not implemented");
     }
 
     @Override
@@ -153,27 +140,10 @@ public class LCRootState implements MutableOOState, DeepCopyForShallowCopyState 
         this.cargos = new HashMap<>(cargos);
         return cargos;
     }
+
     public LCRootCopter touchCopter(){
         if (copter != null) { this.copter = copter.copy(); }
         return copter;
-    }
-
-    //get values from objects
-    public String[] getCargos(){
-        String[] ret = new String[cargos.size()];
-        int i = 0;
-        for(String name : cargos.keySet())
-            ret[i++] = name;
-        return ret;
-    }
-
-    public Object getCargoAtt(String passname, String attName){
-        return cargos.get(passname).get(attName);
-    }
-
-    public Object getCopterAtt( String attName){
-        if(copter == null) return null;
-        return copter.get(attName);
     }
 
     @Override
@@ -216,26 +186,20 @@ public class LCRootState implements MutableOOState, DeepCopyForShallowCopyState 
         return buf.toString();
     }
 
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         LCRootState that = (LCRootState) o;
-
-        return (cargos != null ? cargos.equals(that.cargos) : that.cargos == null)
-                &&
-                (copter != null ? copter.equals(that.copter) : that.copter == null);
+        return Objects.equals(cargos, that.cargos) &&
+                Objects.equals(copter, that.copter);
     }
 
     @Override
     public int hashCode() {
-        int result = copter != null ? copter.hashCode() : 0;
-        result = 31 * result + (cargos != null ? cargos.hashCode() : 0);
-        return result;
-    }
 
+        return Objects.hash(cargos, copter);
+    }
 
     @Override
     public MutableOOState deepCopy() {

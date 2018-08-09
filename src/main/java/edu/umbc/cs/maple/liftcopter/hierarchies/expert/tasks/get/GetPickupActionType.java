@@ -21,12 +21,14 @@ public class GetPickupActionType extends ObjectParameterizedActionType {
     @Override
     protected boolean applicableInState(State s, ObjectParameterizedAction objectParameterizedAction) {
         LCGetState state = (LCGetState) s;
-        if (state.getAgentAtt(ATT_LOCATION).equals(ATT_VAL_CRASHED)) { return false; }
+        ObjectInstance agent = state.objectsOfClass(CLASS_AGENT).get(0);
+        String agentLocation = (String) agent.get(ATT_LOCATION);
+        if (agentLocation.equals(ATT_VAL_CRASHED)) { return false; }
         String[] params = objectParameterizedAction.getObjectParameters();
         String passengerName = params[0];
         ObjectInstance passenger = state.object(passengerName);
         // passenger location is not IN_TAXI if it matches Taxi location
-        boolean atPassenger =  passenger.get(ATT_LOCATION).equals(state.getAgentAtt(ATT_LOCATION));
+        boolean atPassenger =  passenger.get(ATT_LOCATION).equals(agentLocation);
         return atPassenger;
     }
 }

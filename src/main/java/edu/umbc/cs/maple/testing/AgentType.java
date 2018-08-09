@@ -5,7 +5,6 @@ import burlap.behavior.singleagent.learning.LearningAgentFactory;
 import burlap.behavior.singleagent.learning.tdmethods.QLearning;
 import burlap.mdp.singleagent.oo.OOSADomain;
 import burlap.statehashing.HashableStateFactory;
-import burlap.statehashing.simple.SimpleHashableStateFactory;
 import edu.umbc.cs.maple.config.ExperimentConfig;
 import edu.umbc.cs.maple.hierarchy.framework.Task;
 import edu.umbc.cs.maple.palm.agent.CrossPALMLearningAgent;
@@ -17,7 +16,8 @@ import edu.umbc.cs.maple.palm.rmax.agent.ExpertNavModelGenerator;
 import edu.umbc.cs.maple.palm.rmax.agent.PALMRmaxModelGenerator;
 import edu.umbc.cs.maple.rmaxq.agent.RmaxQLearningAgent;
 import edu.umbc.cs.maple.state.hashing.bugfix.BugfixHashableStateFactory;
-import edu.umbc.cs.maple.state.hashing.cached.CachedHashableStateFactory;
+import edu.umbc.cs.maple.state.hashing.bugfix.FixDiscretizedHashableStateFactory;
+import edu.umbc.cs.maple.utilities.BurlapConstants;
 
 import java.util.Arrays;
 import java.util.List;
@@ -105,14 +105,18 @@ public enum AgentType {
 
     public abstract LearningAgent getLearningAgent(Task root, HashableStateFactory hsf, ExperimentConfig config);
     public LearningAgent getLearningAgent(Task root, ExperimentConfig config) {
-        HashableStateFactory hsf = initializeHashableStateFactory(config.identifier_independent);
+        HashableStateFactory hsf = initializeHashableStateFactory(config.hashable_state_factory, config.identifier_independent);
         return getLearningAgent(root, hsf, config);
     }
 
     public static HashableStateFactory hsf = null;
-    public static HashableStateFactory initializeHashableStateFactory(boolean identifierIndependent) {
-        if (hsf == null) {
+    public static HashableStateFactory initializeHashableStateFactory(HashableStateFactory typeSource, boolean identifierIndependent) {
+        if (hsf == null && typeSource == null) {
             hsf = new BugfixHashableStateFactory(identifierIndependent);
+        } else if (typeSource instanceof FixDiscretizedHashableStateFactory){
+            hsf = new FixDiscretizedHashableStateFactory(identifierIndependent, BurlapConstants.DEFAULT_MULTIPLE_DISCRETIZATION);
+        } else {
+            throw new RuntimeException("bug in initialization of hashable state factory");
         }
         return hsf;
     }

@@ -319,6 +319,7 @@ public abstract class RmaxModel extends PALMModel {
         String actionName = StringFormat.parameterizedActionName(a);
         tempPair.setHs(hs);
         tempPair.setActionName(actionName);
+        int hashCode = tempPair.hashCode();
         Map<HashableState, PossibleOutcome> hsPrimeToOutcomes = approximateTransitions.get(tempPair);
         tempPair.setHs(null);
         tempPair.setActionName(null);

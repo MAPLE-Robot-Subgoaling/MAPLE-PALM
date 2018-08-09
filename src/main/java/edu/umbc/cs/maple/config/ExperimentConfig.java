@@ -3,6 +3,7 @@ package edu.umbc.cs.maple.config;
 import burlap.debugtools.RandomFactory;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.oo.OOSADomain;
+import burlap.statehashing.HashableStateFactory;
 import burlap.visualizer.Visualizer;
 import edu.umbc.cs.maple.cleanup.CleanupGoal;
 import edu.umbc.cs.maple.cleanup.CleanupGoalDescription;
@@ -34,6 +35,7 @@ public class ExperimentConfig {
     public int max_steps = UNSET_INT;
     public int trials = UNSET_INT;
     public Boolean identifier_independent = UNSET_BOOLEAN;
+    public HashableStateFactory hashable_state_factory;
 
     public DomainConfig domain;
     public PlanningConfig planning;

@@ -136,4 +136,4 @@ hierarchyConfigMap:
         lambda: 0.5
         learningRate: 0.02
         TCC: !!edu.umbc.cs.maple.config.tilecoding.LCTileCodingConfig
-          res: 5
+          res: 10

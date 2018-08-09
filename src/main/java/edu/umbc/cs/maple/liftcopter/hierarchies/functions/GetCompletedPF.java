@@ -21,6 +21,10 @@ public class GetCompletedPF extends PropositionalFunction{
         MutableObject cargo = (MutableObject) s.object(cargoName);
         if (cargo == null) { return false; }
         String cargo_loc = (String) cargo.get(ATT_LOCATION);
-        return cargo_loc.equals(ATT_VAL_PICKED_UP);//?????
+        boolean completed = cargo_loc.equals(ATT_VAL_PICKED_UP);
+        if (completed) {
+            return completed;
+        }
+        return completed;
     }
 }

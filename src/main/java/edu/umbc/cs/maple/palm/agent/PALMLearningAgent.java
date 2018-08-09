@@ -247,7 +247,7 @@ public class PALMLearningAgent implements LearningAgent {
             Action action = nextAction(task, currentStateAbstract);
             GroundedTask childTask = nextSubtask(task, action, currentStateAbstract);
 
-//            System.out.println(tabLevel + ">>>>> " + task.toString() + " >>>>> " + action);
+            System.out.println(tabLevel + ">>>>> " + task.toString() + " >>>>> " + action);
 
             int stepsBefore = steps;
             boolean[] results = solveTask(task, childTask, baseEnv, maxSteps);
@@ -371,8 +371,8 @@ public class PALMLearningAgent implements LearningAgent {
             ((SarsaLambdaConfig)solverConfig).setGamma(discountProvider.getGamma());
         }
 
-//        ValueFunction knownValueFunction = task.valueFunction;
-        Planner planner = solverConfig.generateSolver(null);//knownValueFunction);
+        ValueFunction knownValueFunction = task.valueFunction;
+        Planner planner = solverConfig.generateSolver(knownValueFunction);
 
         policy = planner.planFromState(s);
 
@@ -398,7 +398,7 @@ public class PALMLearningAgent implements LearningAgent {
         }
 
         // allows the planner to start from where it left off
-//        task.valueFunction = (ValueFunction) planner;
+        task.valueFunction = (ValueFunction) planner;
 
         // clear the model parameters (sanity check)
         model.setParams(null);
