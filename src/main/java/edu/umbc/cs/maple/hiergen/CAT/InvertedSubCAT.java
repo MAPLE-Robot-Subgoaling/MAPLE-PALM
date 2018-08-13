@@ -20,7 +20,7 @@ public class InvertedSubCAT {
             lowestIndex = Collections.min(subcat.getActionIndexes());
         }
         int firstIndex = cat.getFirstIndex();
-        for (int i = firstIndex + 1; i < lowestIndex; i++) {
+        for (int i = firstIndex; i < lowestIndex; i++) {
             this.precedingIndexes.add(i);
         }
     }

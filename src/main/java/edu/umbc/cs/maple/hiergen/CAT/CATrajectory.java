@@ -66,6 +66,9 @@ public class CATrajectory {
         // TODO: these may need to be recomputed...
         this.changedVariables = original.changedVariables;
         this.checkedVariables = original.checkedVariables;
+
+        // add a pseudoaction for END?
+
     }
 
     //parent structure  action -> variable/ R(reward) -> relevant var
@@ -283,14 +286,23 @@ public class CATrajectory {
 
     public int getStartIndex() {
         Set<Integer> actionIndexes = Utils.getKeysByValue(actions, CAT_PSEUDOACTION_START);
-        if (actionIndexes.size() != 1) { throw new RuntimeException("Error: wrong # keys for START pseudoaction"); }
+        if (actionIndexes.size() != 1) {
+            throw new RuntimeException("Error: wrong # keys for START pseudoaction");
+        }
         return (int) actionIndexes.toArray()[0];
     }
 
     public int getEndIndex() {
         Set<Integer> actionIndexes = Utils.getKeysByValue(actions, CAT_PSEUDOACTION_END);
-        if (actionIndexes.size() != 1) { throw new RuntimeException("Error: wrong # keys for END pseudoaction"); }
-        return (int) actionIndexes.toArray()[0];
+        int endIndex;
+        if (actionIndexes.size() > 1) {
+            throw new RuntimeException("Error: wrong # keys for END pseudoaction");
+        } else if (actionIndexes.size() < 1) {
+            endIndex = Collections.max(actions.keySet());
+        } else {
+            endIndex = (int) actionIndexes.toArray()[0];
+        }
+        return endIndex;
     }
 
     public String serialize(){

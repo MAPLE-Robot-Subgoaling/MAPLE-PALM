@@ -58,7 +58,7 @@ public class HierBuilder {
             List<CATrajectory> extractedCats = HierGenExtract.run(cats, invertedSubcats);
 
             // Line 12
-            Set<HierGenTask> taskSetQ = run(actionModels, extractedCats);
+            Set<HierGenTask> taskSetQ = HierBuilder.run(actionModels, extractedCats);
 
         } else {
             System.err.println("Debug: no unified subcats!");
