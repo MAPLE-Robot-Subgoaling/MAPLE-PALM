@@ -168,6 +168,10 @@ public class CATScan {
 
             enforceUniquePreconditions(subcat);
 
+            if (!subcat.includesVariables(variables)) {
+                return null;
+            }
+
             subCATs.add(subcat);
 
         }

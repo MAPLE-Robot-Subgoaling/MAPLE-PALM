@@ -69,12 +69,14 @@ public class SubCAT {
         first = true;
         List<Integer> sortedIndexes = getSortedIndexes();
         for (Integer i : sortedIndexes) {
+            String message = messages.get(i);
+            if (message == null || prunedIndexes.contains(i)) { continue; }
             if (!first) { sb.append(", "); } else { first = false; }
             sb.append(i);
             sb.append("(");
             sb.append(cat.getActions().get(i));
             sb.append(") ");
-            sb.append(messages.get(i));
+            sb.append(message);
         }
         sb.append("; Pruned: ");
         first = true;
@@ -121,5 +123,9 @@ public class SubCAT {
         List<Integer> indexes = new ArrayList<>(cat.getActions().keySet());
         Collections.sort(indexes);
         return indexes;
+    }
+
+    public boolean includesVariables(Collection<ObjectAttributePair> variables) {
+        return this.variables.containsAll(variables);
     }
 }

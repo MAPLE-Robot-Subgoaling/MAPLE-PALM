@@ -12,7 +12,7 @@ import java.util.*;
 /**
  *
  */
-public class HierGenAlgorithm {
+public class HierGen {
 
     public static HierGenTask generate(Map<String, Map<String, VariableTree>> trees, ArrayList<CATrajectory> cats) {
         throw new RuntimeException("not implemented");
@@ -111,7 +111,7 @@ public class HierGenAlgorithm {
         throw new RuntimeException("not implemented");
 //        System.out.println("Builder");
 //
-//        Map<OOVariableKey, Object> goal = HierGenAlgorithm.determineGoal(CATrajectories);
+//        Map<OOVariableKey, Object> goal = HierGen.determineGoal(CATrajectories);
 //        ArrayList<HierGenTask> finalTasks = new ArrayList<>();
 //        if (goal.isEmpty()) {
 //            return null;

@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class HierGenMain {
+public class HierLearningMain {
 
     public static final String DIRECTORY_PATH_HIERGEN_OUTPUT = "./output_hiergen/";
     public static final String DIRECTORY_PATH_TRAJECTORY = "trajectories/";

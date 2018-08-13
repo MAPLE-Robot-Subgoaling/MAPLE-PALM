@@ -37,28 +37,39 @@ public class HierBuilder {
         // Line 9
         List<SubCAT> unifiedSubcats = HierBuilderUnify.run(goalToSubcats);
 
+        List<List<SubCAT>> wrappedUnifiedSubcats = unifiedSubcats.stream().map(i -> {
+            List<SubCAT> wrapper = new ArrayList<>();
+            wrapper.add(i);
+            return wrapper;
+        }).collect(Collectors.toList());
+
+        // the new Psi
+        List<List<SubCAT>> leftoverSubcatSets = null;
+
         // Line 10
-        if (unifiedSubcats.size() > 0) {
+        if (wrappedUnifiedSubcats.size() > 0) {
 
             // Line 11
-//            goalToSubcats = goalToUnifiedSubcats;
+            leftoverSubcatSets = wrappedUnifiedSubcats;
 
             // Line 12
-            // ?????
+            for (List<SubCAT> wrappedUnifiedSubcat : wrappedUnifiedSubcats) {
 
-            // Line 13 (inner step, invert all subcats)
-            List<InvertedSubCAT> invertedSubcats = InvertedSubCAT.create(unifiedSubcats);
+                // Line 13 (inner step, invert all subcats)
+                List<InvertedSubCAT> invertedSubcats = InvertedSubCAT.create(wrappedUnifiedSubcat);
 
-            // Line 13 (inner step, extract preceding CATs)
-            List<CATrajectory> extractedInvertedCats = HierGenExtract.run(cats, invertedSubcats);
+                // Line 13 (inner step, extract preceding CATs)
+                List<CATrajectory> extractedInvertedCats = HierGenExtract.run(cats, invertedSubcats);
 
-            // Line 13
-            List<HierGenTask> taskSetQ = HierBuilder.run(actionModels, extractedInvertedCats);
+                // Line 13
+                List<HierGenTask> taskSetQ = HierBuilder.run(actionModels, extractedInvertedCats);
 
-            // Line 13
-            if (taskSetQ != null && taskSetQ.size() > 0) {
-                Object xgc = HierGen.run(actionModels, )
+                // Line 14
+//                if (taskSetQ != null && taskSetQ.size() > 0) {
+//                    Object xgc = HierGen.run(actionModels, )
+//                }
             }
+
 
 
         } else {
