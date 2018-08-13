@@ -17,7 +17,9 @@ public class HierGenExtract {
             CATrajectory original = cats.get(i);
             InvertedSubCAT range = invertedSubcats.get(i);
             CATrajectory cat = new CATrajectory(original, range);
-            extractedCats.add(cat);
+            if (!cat.isOnlySTART()) {
+                extractedCats.add(cat);
+            }
         }
 
         return extractedCats;

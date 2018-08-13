@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 
 public class HierBuilder {
 
-    public static Set<HierGenTask> run(Map<String, Map<String, VariableTree>> actionModels, List<CATrajectory> cats) {
+    public static List<HierGenTask> run(Map<String, Map<String, VariableTree>> actionModels, List<CATrajectory> cats) {
 
         // Line 1: G <- GoalCondition(Omega)
         Set<AttributeRelation> goals = CATGoal.determineGoal(cats);
@@ -40,32 +40,33 @@ public class HierBuilder {
         // Line 10
         if (unifiedSubcats.size() > 0) {
 
-            //Line 11
+            // Line 11
 //            goalToSubcats = goalToUnifiedSubcats;
 
-            // Line 12 (inner step, invert all subcats)
-//            List<SubCAT> subcats = goalToUnifiedSubcats
-//                    .entrySet()
-//                    .stream()
-//                    .map(Map.Entry::getValue)
-//                    .collect(Collectors.toList())
-//                    .stream()
-//                    .flatMap(List::stream)
-//                    .collect(Collectors.toList());
+            // Line 12
+            // ?????
+
+            // Line 13 (inner step, invert all subcats)
             List<InvertedSubCAT> invertedSubcats = InvertedSubCAT.create(unifiedSubcats);
 
-            // Line 12 (inner step, extract preceding CATs)
-            List<CATrajectory> extractedCats = HierGenExtract.run(cats, invertedSubcats);
+            // Line 13 (inner step, extract preceding CATs)
+            List<CATrajectory> extractedInvertedCats = HierGenExtract.run(cats, invertedSubcats);
 
-            // Line 12
-            Set<HierGenTask> taskSetQ = HierBuilder.run(actionModels, extractedCats);
+            // Line 13
+            List<HierGenTask> taskSetQ = HierBuilder.run(actionModels, extractedInvertedCats);
+
+            // Line 13
+            if (taskSetQ != null && taskSetQ.size() > 0) {
+                Object xgc = HierGen.run(actionModels, )
+            }
+
 
         } else {
             System.err.println("Debug: no unified subcats!");
         }
 
 
-        return null;
+        return tasks;
     }
 
 }

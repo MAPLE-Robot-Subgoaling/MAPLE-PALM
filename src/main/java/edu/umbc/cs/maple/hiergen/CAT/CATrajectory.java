@@ -17,6 +17,8 @@ import java.util.stream.IntStream;
 
 public class CATrajectory {
 
+    private static final int ERROR_INDEX = -404;
+
     public static final String CAT_PSEUDOACTION_START = "START";
     public static final String CAT_PSEUDOACTION_END = "END";
     public static final String CAT_REWARD_NAME = "R";
@@ -49,8 +51,10 @@ public class CATrajectory {
         List<Integer> indexes = new ArrayList<>(range.getPrecedingIndexes());
         Collections.sort(indexes);
         this.actions = new LinkedHashMap<>();
+        int lastExtractedIndex = Integer.MIN_VALUE;
         for (int index : indexes) {
             this.actions.put(index, original.actions.get(index));
+            lastExtractedIndex = Math.max(lastExtractedIndex, index);
         }
 
         this.edges = new TreeSet<>();
@@ -62,12 +66,24 @@ public class CATrajectory {
             }
         }
 
-        this.baseTrajectory = original.baseTrajectory;
-        // TODO: these may need to be recomputed...
-        this.changedVariables = original.changedVariables;
-        this.checkedVariables = original.checkedVariables;
+        int oneVariableSetPerAction = this.actions.size();
+        this.changedVariables = new Set[oneVariableSetPerAction]; // original.changedVariables;
+        for (int i = 0; i < lastExtractedIndex; i++) {
+            Set<String> variableSet = original.changedVariables[i];
+            this.changedVariables[i] = new HashSet<>(variableSet);
+        }
+        this.checkedVariables = new Set[oneVariableSetPerAction]; // original.checkedVariables;
+        for (int i = 0; i < lastExtractedIndex; i++) {
+            Set<String> variableSet = original.checkedVariables[i];
+            this.checkedVariables[i] = new HashSet<>(variableSet);
+        }
 
-        // add a pseudoaction for END?
+        this.baseTrajectory = original.baseTrajectory.copy();
+        // remove pieces not extracted to the new cat
+//        this.baseTrajectory.actionSequence = this.baseTrajectory.actionSequence.subList(startIndex, lastExtractedIndex);
+//        this.baseTrajectory.stateSequence = this.baseTrajectory.stateSequence.subList(startIndex, lastExtractedIndex);
+//        this.baseTrajectory.rewardSequence = this.baseTrajectory.rewardSequence.subList(startIndex, lastExtractedIndex);
+
 
     }
 
@@ -99,8 +115,8 @@ public class CATrajectory {
 
         for (int trajectoryIndex = 0; trajectoryIndex < actions.size(); trajectoryIndex++) {
             String actionName = actions.get(trajectoryIndex);
-            checkedVariables[trajectoryIndex] = new HashSet<String>();
-            changedVariables[trajectoryIndex] = new HashSet<String>();
+            checkedVariables[trajectoryIndex] = new HashSet<>();
+            changedVariables[trajectoryIndex] = new HashSet<>();
 
             // both pseudoaction always check/change the variables from the starting state (?)
             if (actionName.equals(CAT_PSEUDOACTION_START) || actionName.equals(CAT_PSEUDOACTION_END)) {
@@ -227,8 +243,10 @@ public class CATrajectory {
     }
 
     protected Set<String> getNontrivialVariables(Set<String>[] setOfVariables) {
-        int skipStart = 1; // don't read the 0th entry
-        int skipEnd = setOfVariables.length-1; // don't read the last entry
+        int startIndex = getStartIndex();
+        int skipStart = startIndex + 1; // don't read the START entry
+        int endIndex = getEndIndex();
+        int skipEnd = endIndex - 1; // don't read the END entry
         Set<String> nontrivialVariables = new HashSet<>();
         for (int i = skipStart; i < skipEnd; i++ ) {
             Set<String> variables = setOfVariables[i];
@@ -239,6 +257,9 @@ public class CATrajectory {
 
     public State getUltimateState() {
         int lastRealIndex = getLastRealIndex();
+        if (lastRealIndex == ERROR_INDEX) {
+            return null;
+        }
         // just to be overly specific and crystal clear what is going on here
         // we would translate the indexes by -1 to account for START
         // and then we want the state *after* the action, so add +1
@@ -374,7 +395,7 @@ public class CATrajectory {
                 .stream()
                 .filter(k -> !actions.get(k).equals(CAT_PSEUDOACTION_START) && !actions.get(k).equals(CAT_PSEUDOACTION_END))
                 .max(Integer::compareTo)
-                .orElse(Integer.MIN_VALUE);
+                .orElse(ERROR_INDEX);
     }
 
     public int getFirstRealIndex() {
@@ -382,6 +403,12 @@ public class CATrajectory {
                 .stream()
                 .filter(k -> !actions.get(k).equals(CAT_PSEUDOACTION_START) && !actions.get(k).equals(CAT_PSEUDOACTION_END))
                 .min(Integer::compareTo)
-                .orElse(Integer.MAX_VALUE);
+                .orElse(ERROR_INDEX);
     }
+
+    public boolean isOnlySTART() {
+        // CAT has no actions, or (we assume) only the START action
+        return this.actions.size() == 0 || (this.actions.size() == 1 && this.actions.values().contains(CAT_PSEUDOACTION_START));
+    }
+
 }
