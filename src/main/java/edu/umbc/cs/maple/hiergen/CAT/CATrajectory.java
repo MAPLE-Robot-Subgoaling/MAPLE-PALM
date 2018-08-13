@@ -244,11 +244,11 @@ public class CATrajectory {
 
     protected Set<String> getNontrivialVariables(Set<String>[] setOfVariables) {
         int startIndex = getStartIndex();
-        int skipStart = 1;
-        int skipEnd = 1;
-        int start = startIndex + skipStart; // don't read the START entry
+        int skipStart = 0; // if 1, don't read the START entry
+        int skipEnd = 0; // if 1, don't read the END entry
+        int start = startIndex + skipStart;
         int endIndex = getEndIndex();
-        int end = endIndex - skipEnd; // don't read the END entry
+        int end = endIndex - skipEnd;
         Set<String> nontrivialVariables = new HashSet<>();
         for (int i = start; i < end; i++ ) {
             Set<String> variables = setOfVariables[i];

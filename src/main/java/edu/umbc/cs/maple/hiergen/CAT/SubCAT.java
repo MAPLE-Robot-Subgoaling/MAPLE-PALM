@@ -1,7 +1,5 @@
 package edu.umbc.cs.maple.hiergen.CAT;
 
-import burlap.mdp.core.oo.state.OOVariableKey;
-
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -127,5 +125,102 @@ public class SubCAT {
 
     public boolean includesVariables(Collection<ObjectAttributePair> variables) {
         return this.variables.containsAll(variables);
+    }
+
+    public boolean isValid() {
+
+        // warning: this method is inefficient (for now)
+        System.err.println("isValid() is not efficient -- consider disabling");
+
+        // 1. there is at most one outgoing arc for every variable
+        if (!atMostOneOutgoingPerVariable()) {
+            return false;
+        }
+
+        // 2. all incoming arcs for a variable emanate from the same action (index) in the CAT
+        if (getInvalidIndexes().size() > 0) {
+            return false;
+        }
+
+        // 3. every member action, besides ones from which the outgoing arcs emanate,
+        //    must have an arc to another member action, and *only* to member actions
+        List<CausalEdge> outgoingEdges = getOutgoing();
+        List<Integer> invalidIndexes = actionIndexes
+        .stream()
+        .filter(i -> {
+            // must not be the start of an outgoing edge for this subcat
+            for (CausalEdge edge : outgoingEdges) {
+                if (edge.start == i) {
+                    // we can ignore this since
+                    return false;
+                }
+            }
+            // and must
+            List<CausalEdge> edges = cat.findOutgoingEdges(i);
+            for (CausalEdge edge : edges) {
+                int end = edge.end;
+                if (!actionIndexes.contains(end)) {
+                    // has its own outgoing edge that does not end inside the subcat
+                    return true;
+                }
+            }
+            return false;
+        })
+        .collect(Collectors.toList());
+        if (invalidIndexes.size() > 0) {
+            return false;
+        }
+
+
+        System.err.println("WARNING: need to finish isValid()");
+
+        return true;
+    }
+
+    public boolean atMostOneOutgoingPerVariable() {
+        for (ObjectAttributePair variable : variables) {
+            String variableString = variable.toString();
+            int outgoingCount = 0;
+            for (CausalEdge outgoing : getOutgoing()) {
+                String outgoingVariableString = outgoing.relevantVariable;
+                if (variableString.equals(outgoingVariableString)) {
+                    outgoingCount += 1;
+                    if (outgoingCount > 1) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
+    public Map<String,List<Integer>> getInvalidIndexes() {
+        Map<String, List<Integer>> possiblePruning = new HashMap<>();
+        List<CausalEdge> incomingEdges = getIncoming();
+        for (int i = 0; i < incomingEdges.size(); i++) {
+            CausalEdge incomingEdge = incomingEdges.get(i);
+            String incomingVariable = incomingEdge.getRelevantVariable();
+            int incomingEdgeStart = incomingEdge.getStart();
+            for (int j = i + 1; j < incomingEdges.size(); j++) {
+                CausalEdge otherEdge = incomingEdges.get(j);
+                String otherVariable = otherEdge.getRelevantVariable();
+                if (incomingVariable.equals(otherVariable)) {
+                    int otherEdgeStart = otherEdge.getStart();
+                    if (incomingEdgeStart != otherEdgeStart) {
+                        // this means two incoming arcs for the same variable
+                        // come from different causal actions (at different indexes)
+                        // this possibly violates the "unique precondition" requirement
+                        List<Integer> actionIndexes = possiblePruning.computeIfAbsent(incomingVariable, v -> new ArrayList<>());
+                        actionIndexes.add(incomingEdgeStart);
+                        actionIndexes.add(otherEdgeStart);
+//                        if (incomingVariable.contains("Passenger1:y") && subcat.getCat().getName().contains("19")) {
+//                            System.out.println("For subcat ... " + subcat);
+//                            System.out.println("considering to prune " + incomingEdge + " because other edge " + otherEdge + " had same variable " + incomingVariable);
+//                        }
+                    }
+                }
+            }
+        }
+        return possiblePruning;
     }
 }

@@ -16,26 +16,30 @@ public class HierBuilder {
         if (goals.isEmpty()) { return null; }
 
         // Line 4
-        Map<AttributeRelation, List<SubCAT>> goalToSubcats = new LinkedHashMap<>();
+        Map<ObjectAttributePair, List<SubCAT>> variableToSubcats = new LinkedHashMap<>();
+
+        // reduce goal relations to just the variable (left side of goal relation)
+        // and remove duplicates among the variables (only need be listed once)
+        List<ObjectAttributePair> variables = new ArrayList<>(goals.stream().map(Relation::getLeft).collect(Collectors.toSet()));
+        Collections.sort(variables);
 
         // Line 5
-        for (AttributeRelation relation : goals) {
+        for (ObjectAttributePair variable : variables) {
 
             // Line 6
-            ObjectAttributePair variable = relation.getLeft();
             Set<ObjectAttributePair> wrappedVariable = new LinkedHashSet<>();
             wrappedVariable.add(variable);
             List<SubCAT> subcats = CATScan.scan(cats, wrappedVariable);
 
             // Line 7
-            goalToSubcats.put(relation, subcats);
+            variableToSubcats.put(variable, subcats);
         }
 
         // Line 8
         List<HierGenTask> tasks = new ArrayList<>();
 
         // Line 9
-        List<SubCAT> unifiedSubcats = HierBuilderUnify.run(goalToSubcats);
+        List<SubCAT> unifiedSubcats = HierBuilderUnify.run(variableToSubcats);
 
         List<List<SubCAT>> wrappedUnifiedSubcats = unifiedSubcats.stream().map(i -> {
             List<SubCAT> wrapper = new ArrayList<>();
