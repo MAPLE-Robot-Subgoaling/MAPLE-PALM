@@ -1,7 +1,7 @@
 domain: !!edu.umbc.cs.maple.config.taxi.TaxiConfig
-  state: medium-1passengers
+  state: classic-1passengers
   domainGenerator: !!edu.umbc.cs.maple.taxi.Taxi
-    correctMoveProbability: 1.0
+    correctMoveProbability: 0.80
     fickleProbability: 0.0
     tf: !!edu.umbc.cs.maple.taxi.TaxiTerminalFunction {}
     rf: !!edu.umbc.cs.maple.taxi.TaxiRewardFunction {}
@@ -9,10 +9,11 @@ domain: !!edu.umbc.cs.maple.config.taxi.TaxiConfig
 goal: !!edu.umbc.cs.maple.taxi.TaxiGoal {}
 
 agents:
+  palm: {taxi-expert}
   kappa: {taxi-expert}
 
 seed: 77483839210
-episodes: 100
+episodes: 200
 max_steps: 10000
 trials: 1
 gamma: 0.99
