@@ -4,6 +4,12 @@ package edu.umbc.cs.maple.palm.agent;
 import burlap.behavior.policy.Policy;
 import burlap.behavior.policy.PolicyUtils;
 import burlap.behavior.singleagent.Episode;
+import burlap.behavior.singleagent.auxiliary.StateReachability;
+import burlap.behavior.singleagent.auxiliary.valuefunctionvis.ValueFunctionVisualizerGUI;
+import burlap.behavior.singleagent.auxiliary.valuefunctionvis.common.ArrowActionGlyph;
+import burlap.behavior.singleagent.auxiliary.valuefunctionvis.common.LandmarkColorBlendInterpolation;
+import burlap.behavior.singleagent.auxiliary.valuefunctionvis.common.PolicyGlyphPainter2D;
+import burlap.behavior.singleagent.auxiliary.valuefunctionvis.common.StateValuePainter2D;
 import burlap.behavior.singleagent.learning.LearningAgent;
 import burlap.behavior.singleagent.planning.Planner;
 import burlap.behavior.valuefunction.ValueFunction;
@@ -11,6 +17,7 @@ import burlap.mdp.core.action.Action;
 import burlap.mdp.core.oo.ObjectParameterizedAction;
 import burlap.mdp.core.oo.state.OOState;
 import burlap.mdp.core.state.State;
+import burlap.mdp.core.state.vardomain.VariableDomain;
 import burlap.mdp.singleagent.environment.Environment;
 import burlap.mdp.singleagent.environment.EnvironmentOutcome;
 import burlap.mdp.singleagent.environment.SimulatedEnvironment;
@@ -26,16 +33,20 @@ import edu.umbc.cs.maple.hierarchy.framework.GroundedTask;
 import edu.umbc.cs.maple.hierarchy.framework.NonprimitiveTask;
 import edu.umbc.cs.maple.hierarchy.framework.StringFormat;
 import edu.umbc.cs.maple.hierarchy.framework.Task;
+import edu.umbc.cs.maple.taxi.TaxiConstants;
 import edu.umbc.cs.maple.utilities.DiscountProvider;
 import edu.umbc.cs.maple.utilities.IntegerParameterizedAction;
 import edu.umbc.cs.maple.utilities.ValueIterationMultiStep;
 
+import java.awt.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.List;
 
 
 public class PALMLearningAgent implements LearningAgent {
 
+    public static boolean DEBUG = false;
     /**
      * The root of the task hierarchy
      */
@@ -135,9 +146,12 @@ public class PALMLearningAgent implements LearningAgent {
 
         // run a rollout on the models resulting from the episode just computed,
         // to check if the root AMDP has reached a solution yet
-        Action action = runDebugRollout(groundedRoot, initialState, maxSteps);
+        Action action = runDebugRollout(groundedRoot, initialState, maxSteps, false);
         System.out.println(e.rewardSequence.get(e.rewardSequence.size()-1));
-        runDebugRollout(taskNames.get(action.toString()), initialState, maxSteps);
+        Action action2 = runDebugRollout(taskNames.get(action.toString()), initialState, maxSteps, false);
+        if (DEBUG) {
+            Action action3 = runDebugRollout(taskNames.get(action2.toString()), initialState, maxSteps, true);
+        }
 
         long estimatedTime = System.nanoTime() - start;
         System.out.println("Nano time elapsed:  " + estimatedTime);
@@ -145,7 +159,7 @@ public class PALMLearningAgent implements LearningAgent {
         return e;
     }
 
-    private Action runDebugRollout(GroundedTask groundedTask, State fromState, int maxSteps) {
+    private Action runDebugRollout(GroundedTask groundedTask, State fromState, int maxSteps, boolean visualize) {
 
         State abstractInitialState = groundedTask.mapState(fromState);
         PALMModel model = getModel(groundedTask);
@@ -166,8 +180,59 @@ public class PALMLearningAgent implements LearningAgent {
         } else {
             System.out.println("    unconverged...");
         }
+
+        if (visualize) {
+            manualValueFunctionVis(planner, policy, abstractInitialState, domain);
+        }
+
+
         return ep.actionSequence.get(0);
     }
+
+
+    public void manualValueFunctionVis(ValueIterationMultiStep valueFunction, Policy p, State initialState, OOSADomain domain){
+
+        List<State> allStates = valueFunction.getAllStates();
+//        List<State> allStates = StateReachability.getReachableStates(initialState, domain, hashingFactory);
+
+        //define color function
+        LandmarkColorBlendInterpolation rb = new LandmarkColorBlendInterpolation();
+        rb.addNextLandMark(0., Color.RED);
+        rb.addNextLandMark(1., Color.BLUE);
+
+        //define a 2D painter of state values, specifying which attributes correspond to the x and y coordinates of the canvas
+        StateValuePainter2D svp = new StateValuePainter2D(rb);
+        svp.setXYKeys("Taxi:x", "Taxi:y", new VariableDomain(0, 5), new VariableDomain(0, 5), 1, 1);
+
+        //create our ValueFunctionVisualizer that paints for all states
+        //using the ValueFunction source and the state value painter we defined
+        ValueFunctionVisualizerGUI gui = new ValueFunctionVisualizerGUI(allStates, svp, valueFunction);
+
+        //define a policy painter that uses arrow glyphs for each of the grid world actions
+        PolicyGlyphPainter2D spp = new PolicyGlyphPainter2D();
+        spp.setXYKeys("Taxi:x", "Taxi:y", new VariableDomain(0, 5), new VariableDomain(0, 5), 1, 1);
+
+        spp.setActionNameGlyphPainter(TaxiConstants.ACTION_NORTH, new ArrowActionGlyph(0));
+        spp.setActionNameGlyphPainter(TaxiConstants.ACTION_SOUTH, new ArrowActionGlyph(1));
+        spp.setActionNameGlyphPainter(TaxiConstants.ACTION_EAST, new ArrowActionGlyph(2));
+        spp.setActionNameGlyphPainter(TaxiConstants.ACTION_WEST, new ArrowActionGlyph(3));
+        spp.setRenderStyle(PolicyGlyphPainter2D.PolicyGlyphRenderStyle.DISTSCALED);
+
+
+        //add our policy renderer to it
+        gui.setSpp(spp);
+        gui.setPolicy(p);
+
+        //set the background color for places where states are not rendered to grey
+        gui.setBgColor(Color.GRAY);
+
+        //start it
+        gui.initGUI();
+
+
+
+    }
+
 
     private String tabLevel = "";
 
