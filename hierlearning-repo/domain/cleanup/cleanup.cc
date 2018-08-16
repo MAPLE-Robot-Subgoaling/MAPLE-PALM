@@ -41,14 +41,17 @@ int Cleanup_State::variable_index (const string& variable) const
 	int variable_index = 0;
 	for (int j = 0; j < num_state_classes; ++j) {
 		string state_class_test = state_classes[j];
+		int state_class_num_variables = state_classes_num_variables[j];
 		int state_class_name_length = state_classes_name_lengths[j];
 		string state_class_name = variable.substr(0, state_class_name_length);
 		if (state_class_name == state_class_test) {
+			const char *variables[num_state_classes] = {0};
+			*variables = get_variables(state_class_test);
 			underscore = variable.find_first_of("_", state_class_name_length);
 			id = from_string<int>(variable.substr(state_class_name_length, underscore - state_class_name_length));
-			for (int i = 0; i < sizeof(agent_variables) / sizeof(agent_variables[0]); ++i) {
+			for (int i = 0; i < state_class_num_variables; ++i) {
 				string variable_name = variable.substr(underscore+1);
-				string variable_test = agent_variables[i];
+				string variable_test = variables[i];
 				variable_index += 1;
 				if (variable_name == variable_test) {
 					return variable_index;
@@ -60,38 +63,62 @@ int Cleanup_State::variable_index (const string& variable) const
 		}
 	}
 	throw HierException(__FILE__, __LINE__, "Unknown variable: " + variable);
-
-	/*if ( == "agent") {
-	} else if (variable.substr(0, block_length) == "block") {
-		length = block_length;
-		underscore = variable.find_first_of("_", length);
-		id = from_string<int>(variable.substr(length, underscore - length));
-	} else if (variable.substr(0, door_length) == "door") {
-		length = door_length;
-		underscore = variable.find_first_of("_", length);
-		id = from_string<int>(variable.substr(length, underscore - length));
-	} else if (variable.substr(0, room_length) == "room") {
-		length = room_length;
-		underscore = variable.find_first_of("_", length);
-		id = from_string<int>(variable.substr(length, underscore - length));
-	} else {
-		throw HierException(__FILE__, __LINE__, "Unknown variable: " + variable);
-	}*/
 }
 
 
 string Cleanup_State::variable_name (const int& variable_index) const
-{	int variable = variable_index;
-	switch (variable)
-	{	case 0:
-			return "agent_x";
-		case 1:
-			return "agent_y";
-		case 2:
-			return "agent_fuel";
-		default:
-			throw HierException(__FILE__, __LINE__, "Unknown variable: " + variable);
+{	
+	int variable = variable_index;
+	int test_index = 0;
+	for (int j = 0; j < num_state_classes; ++j) {
+		string state_class_test = state_classes[j];
+		int state_class_num_variables = state_classes_num_variables[j];
+		const char *variables[num_state_classes] = {0};
+		*variables = get_variables(state_class_test);
+		int num_objects = get_num_objects(state_class_test);
+		for (int i = 0; i < num_objects; ++i) {
+			test_index += state_class_num_variables;
+			if (variable < test_index) {
+				int id = i;
+				test_index -= state_class_num_variables;
+				int target = variable - test_index;
+				return state_class_test + to_string(id) + "_" + variables[target];
+			}
+		}
 	}
+	throw HierException(__FILE__, __LINE__, "Unknown variable index: " + variable);
+}
+
+int Cleanup_State::get_num_objects(string state_class_test) const {
+	int num;
+	if        (state_class_test == "agent") {
+		num = 1;
+	} else if (state_class_test == "block") {
+		num = num_blocks;
+	} else if (state_class_test == "door") {
+		num = num_doors;
+	} else if (state_class_test == "room") {
+		num = num_rooms;
+	} else {
+		throw HierException(__FILE__, __LINE__, "Unknown state_class_test: " + state_class_test);
+	}
+	return num;
+}
+
+const char *Cleanup_State::get_variables(string state_class_test) const {
+	const char *variables[num_state_classes] = {0};
+	if        (state_class_test == "agent") {
+		*variables = *agent_variables;
+	} else if (state_class_test == "block") {
+		*variables = *block_variables;
+	} else if (state_class_test == "door") {
+		*variables = *door_variables;
+	} else if (state_class_test == "room") {
+		*variables = *room_variables;
+	} else {
+		throw HierException(__FILE__, __LINE__, "Unknown state_class_test: " + state_class_test);
+	}
+	return *variables;
 }
 
 
