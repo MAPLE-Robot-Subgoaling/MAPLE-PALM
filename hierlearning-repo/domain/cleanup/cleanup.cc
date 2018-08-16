@@ -17,7 +17,7 @@ Cleanup_State::Cleanup_State (
 	const int& num_rooms)
 		: map_size(map_size), num_blocks(num_blocks), num_doors(num_doors), num_rooms(num_rooms)
 {	
-	num_variables = num_agent_variables + num_blocks * num_block_variables + num_doors * num_door_variables + num_rooms * num_room_variables;
+	num_variables = num_agent_variables_data + num_blocks * num_block_variables + num_doors * num_door_variables + num_rooms * num_room_variables;
 	blocks.resize(num_blocks);
 	doors.resize(num_doors);
 	rooms.resize(num_rooms);
@@ -124,42 +124,43 @@ const char *Cleanup_State::get_variables(string state_class_test) const {
 
 int Cleanup_State::variable_size (const int& variable_index) const
 {	
-	int variable = variable_index;
-	switch (variable)
-	{	case 0:   // agent_x
-			return map_size.x;
-		case 1:   // agent_y
-			return map_size.y;
-		default:
-			throw HierException(__FILE__, __LINE__, "Unknown variable: " + variable);
+	string variable = variable_name(variable_index);
+	if (variable.find("x") != string::npos) {
+		return max_x;
+	} else if (variable.find("y") != string::npos) {
+		return max_y;
+	} else if (variable.find("left") != string::npos) {
+		return max_x;
+	} else if (variable.find("right") != string::npos) {
+		return max_x;
+	} else if (variable.find("bottom") != string::npos) {
+		return max_y;
+	} else if (variable.find("top") != string::npos) {
+		return max_y;
+	} else if (variable.find("shape") != string::npos) {
+		return num_shapes;
+	} else if (variable.find("color") != string::npos) {
+		return num_colors;
+	} else if (variable.find("direction") != string::npos) {
+		return num_directions;
+	} else if (variable.find("locked") != string::npos) {
+		return max_locked_boolean_value;
+	} else {
+		throw HierException(__FILE__, __LINE__, "Unknown variable: " + variable);
 	}
 }
 
 
 int Cleanup_State::variable (const int& variable_index) const
 {	
-	int variable = variable_index;
-	switch (variable)
-	{	case 0:
-			return agent.location.x;
-		case 1:
-			return agent.location.y;
-		default:
-			throw HierException(__FILE__, __LINE__, "Unknown variable: " + variable);
-	}
+	
+	throw HierException(__FILE__, __LINE__, "Unknown variable: " + variable_index);
 }
 
 
 int& Cleanup_State::variable (const int& variable_index)
-{	int variable = variable_index;
-	switch (variable)
-	{	case 0:
-			return agent.location.x;
-		case 1:
-			return agent.location.y;
-		default:
-			throw HierException(__FILE__, __LINE__, "Unknown variable: " + variable);
-	}
+{	
+	throw HierException(__FILE__, __LINE__, "int& version of variable(vindex) not implemented " + variable_index);
 }
 
 
@@ -172,7 +173,8 @@ map<int,int> Cleanup_State::variables_mapper () const
 
 
 pair<bool,int> Cleanup_State::parse (string expression) const
-{	expression = replace(expression, " ", "");
+{	
+	expression = replace(expression, " ", "");
 	if (expression == "")
 		throw HierException(__FILE__, __LINE__, "Expression string is empty.");
 
@@ -199,7 +201,7 @@ pair<bool,int> Cleanup_State::parse (string expression) const
 				value = map_size.y;
 			else
 				//return make_pair(false, 0);
-				throw HierException(__FILE__, __LINE__, "Cannot parse " + expression);
+				throw HierException(__FILE__, __LINE__, "Cannot parse (uncomment the line above?) " + expression);
 		}
 		total += (expression[start-1] == '+') ? value : -value;
 
@@ -222,17 +224,83 @@ string Cleanup_State::print () const
 	ostringstream out;
 	
 	out << "(";
-	out << agent.location.x;
+	out << agent.x;
 	out << ",";
-	out << agent.location.y;
+	out << agent.y;
+	out << ",";
+	out << agent.left;
+	out << ",";
+	out << agent.right;
+	out << ",";
+	out << agent.bottom;
+	out << ",";
+	out << agent.top;
+	out << ",";
+	out << agent.shape;
+	out << ",";
+	out << agent.color;
+	out << ",";
+	out << agent.direction;
 	out << ")";
-
+	
 	for (const auto& block : blocks)
 	{
 		out << " (";
-		out << block.location.x;
+		out << block.x;
 		out << ",";
-		out << block.location.y;
+		out << block.y;
+		out << ",";
+		out << block.left;
+		out << ",";
+		out << block.right;
+		out << ",";
+		out << block.bottom;
+		out << ",";
+		out << block.top;
+		out << ",";
+		out << block.shape;
+		out << ",";
+		out << block.color;
+		out << ")";
+	}
+
+	for (const auto& door : doors)
+	{
+		out << " (";
+		out << door.x;
+		out << ",";
+		out << door.y;
+		out << ",";
+		out << door.left;
+		out << ",";
+		out << door.right;
+		out << ",";
+		out << door.bottom;
+		out << ",";
+		out << door.top;
+		out << ",";
+		out << door.shape;
+		out << ",";
+		out << door.color;
+		out << ",";
+		out << door.locked;
+		out << ")";
+	}
+
+	for (const auto& room : rooms)
+	{
+		out << " (";
+		out << room.left;
+		out << ",";
+		out << room.right;
+		out << ",";
+		out << room.bottom;
+		out << ",";
+		out << room.top;
+		out << ",";
+		out << room.shape;
+		out << ",";
+		out << room.color;
 		out << ")";
 	}
 
@@ -242,8 +310,8 @@ string Cleanup_State::print () const
 //*************************************************************************************************
 
 Cleanup::Cleanup (const string& name, const double& success_probability) : MDP(name,
-	new Cleanup_State()), reward_default(-1), reward_dropoff(20.0), reward_illegal(-10.0),
-	Pr_successful_execution(success_probability), noisy(false)
+	new Cleanup_State()), reward_default(0.0), reward_goal(1.0), reward_pull(0.0), reward_noop(0.0),
+	Pr_successful_execution(success_probability)
 {	
 	map_creator();
 	initialize();
@@ -252,7 +320,7 @@ Cleanup::Cleanup (const string& name, const double& success_probability) : MDP(n
 
 void Cleanup::map_creator (const int& mode)
 {	
-
+	throw HierException(__FILE__, __LINE__, "TODO: implement map_creator");
 }
 
 
@@ -263,6 +331,8 @@ void Cleanup::initialize (const bool& target)
 
 	_reward = 0.0;
 	_duration = 0.0;
+
+	throw HierException(__FILE__, __LINE__, "TODO: init the state");
 }
 
 
@@ -275,7 +345,7 @@ void Cleanup::process (const vector<int>& action)
 	{	case north:
 			if (rand_real() < Pr_successful_execution)
 			{	
-				++state().agent.location.y;
+				++state().agent.y;
 			} else {
 				throw new HierException(__FILE__, __LINE__, "Bad action roll?");
 			}
@@ -284,7 +354,7 @@ void Cleanup::process (const vector<int>& action)
 		case south:
 			if (rand_real() < Pr_successful_execution)
 			{	
-				--state().agent.location.y;
+				--state().agent.y;
 			} else {
 				throw new HierException(__FILE__, __LINE__, "Bad action roll?");
 			}
@@ -293,7 +363,7 @@ void Cleanup::process (const vector<int>& action)
 		case east:
 			if (rand_real() < Pr_successful_execution)
 			{	
-				++state().agent.location.x;
+				++state().agent.x;
 			} else {
 				throw new HierException(__FILE__, __LINE__, "Bad action roll?");
 			}
@@ -302,7 +372,7 @@ void Cleanup::process (const vector<int>& action)
 		case west:
 			if (rand_real() < Pr_successful_execution)
 			{
-				--state().agent.location.x;
+				--state().agent.x;
 			} else {
 				throw new HierException(__FILE__, __LINE__, "Bad action roll?");
 			}

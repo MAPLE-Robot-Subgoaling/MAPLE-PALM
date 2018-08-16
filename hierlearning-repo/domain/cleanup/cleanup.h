@@ -27,6 +27,16 @@ static const char *block_variables[] = {"x","y","left","right","bottom","top","s
 static const char *door_variables[] = {"x","y","left","right","bottom","top","shape","color","locked"};
 static const char *room_variables[] = {"left","right","bottom","top","shape","color"};
 
+static const int min_x = 0;
+static const int min_y = 0;
+static const int max_x = 7;
+static const int max_y = 5;
+static const int num_shapes = 4;
+static const int num_colors = 5;
+static const int num_directions = 4;
+static const int min_locked_boolean_value = 0;
+static const int max_locked_boolean_value = 1;
+
 struct Cleanup_State : public State
 {	
 	Coordinate map_size;
@@ -51,7 +61,7 @@ struct Cleanup_State : public State
 		Color color;
 		Direction direction;
 	} agent;
-	static const int num_agent_variables = 9;
+	static const int num_agent_variables_data = 9;
 
 	struct Block
 	{
@@ -95,7 +105,7 @@ struct Cleanup_State : public State
 	static const int num_room_variables = 6;
 
 	Cleanup_State(
-		const Coordinate& map_size = Coordinate(9,9),
+		const Coordinate& map_size = Coordinate(max_x,max_y),
 		const int& num_blocks = 1,
 		const int& num_doors = 1,
 		const int& num_rooms = 2
@@ -112,6 +122,7 @@ struct Cleanup_State : public State
 	int& variable(const int& variable_index);
 	map<int,int> variables_mapper() const;
 	pair<bool,int> parse(string expression) const;
+	unsigned num_agent_variables () const { return num_agent_variables_data; }
 	void read(istream& in);
 	string print() const;
 };
