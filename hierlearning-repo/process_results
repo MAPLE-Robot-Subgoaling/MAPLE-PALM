@@ -1,0 +1,12 @@
+#!/bin/sh
+
+if [ $# -lt 3 ]
+then
+echo "Usage: $0 <world> <agent> <total runs>"
+exit 1
+fi
+
+octave --silent --eval "coalesce("\""results/reward_${1}_${2}"\"",${3});"
+octave --silent --eval "coalesce("\""results/duration_${1}_${2}"\"",${3});"
+rm -fr results/reward_${1}_${2}_[0-9]*
+rm -fr results/duration_${1}_${2}_[0-9]*

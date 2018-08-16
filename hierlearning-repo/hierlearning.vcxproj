@@ -1,0 +1,185 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{948C4148-9B3E-47D5-A5DC-373FD22F71AF}</ProjectGuid>
+    <RootNamespace>hierlearning</RootNamespace>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectName>hierlearning</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <PlatformToolset>v110</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v110</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(Configuration)\</IntDir>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</LinkIncremental>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(Configuration)\</IntDir>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>true</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DisableSpecificWarnings>4250</DisableSpecificWarnings>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Console</SubSystem>
+      <RandomizedBaseAddress>false</RandomizedBaseAddress>
+      <DataExecutionPrevention>
+      </DataExecutionPrevention>
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Console</SubSystem>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <RandomizedBaseAddress>false</RandomizedBaseAddress>
+      <DataExecutionPrevention>
+      </DataExecutionPrevention>
+      <TargetMachine>MachineX86</TargetMachine>
+      <AdditionalDependencies>ws2_32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="domain\cleanup\cleanup.cc" />
+    <ClCompile Include="hiergen\catscan.cc" />
+    <ClCompile Include="hiergen\expression.cc" />
+    <ClCompile Include="hiergen\hierarchy.cc" />
+    <ClCompile Include="hiergen\model.cc" />
+    <ClCompile Include="hiergen\trajectory.cc" />
+    <ClCompile Include="learner\flat\generic\flat_learner.cc" />
+    <ClCompile Include="learner\flat\generic\function.cc" />
+    <ClCompile Include="learner\flat\h\h_function.cc" />
+    <ClCompile Include="learner\flat\q\q_function.cc" />
+    <ClCompile Include="learner\hier\generic\composite_task.cc" />
+    <ClCompile Include="learner\hier\generic\hier_learner.cc" />
+    <ClCompile Include="learner\hier\generic\sequenced_task.cc" />
+    <ClCompile Include="learner\hier\generic\task.cc" />
+    <ClCompile Include="learner\hier\hh\hh.cc" />
+    <ClCompile Include="learner\hier\hh\hh_composite_task.cc" />
+    <ClCompile Include="learner\hier\hh\hh_primitive_task.cc" />
+    <ClCompile Include="learner\hier\hh\hh_root_task.cc" />
+    <ClCompile Include="learner\hier\hh\hh_task.cc" />
+    <ClCompile Include="learner\hier\maxq\maxq.cc" />
+    <ClCompile Include="learner\hier\maxq\maxq_composite_task.cc" />
+    <ClCompile Include="learner\hier\maxq\maxq_primitive_task.cc" />
+    <ClCompile Include="main.cc" />
+    <ClCompile Include="simulator.cc" />
+    <ClCompile Include="lib\common.cc" />
+    <ClCompile Include="domain\taxi\taxi.cc" />
+    <ClCompile Include="domain\taxi\taxi_da.cc" />
+    <ClCompile Include="domain\taxi\taxi_mp.cc" />
+    <ClCompile Include="domain\taxi\taxi_mp_da.cc" />
+    <ClCompile Include="domain\bitflip\bitflip.cc" />
+    <ClCompile Include="domain\wargus\wargus.cc" />
+    <ClCompile Include="domain\wargus\wargus_goto.cc" />
+    <ClCompile Include="domain\wargus\wargus_nsew.cc" />
+    <ClCompile Include="domain\wargus\client\socket.cc" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="domain\cleanup\cleanup.h" />
+    <ClInclude Include="hiergen\catscan.h" />
+    <ClInclude Include="hiergen\expression.h" />
+    <ClInclude Include="hiergen\hierarchy.h" />
+    <ClInclude Include="hiergen\model.h" />
+    <ClInclude Include="hiergen\trajectory.h" />
+    <ClInclude Include="learner\flat\flat.h" />
+    <ClInclude Include="learner\flat\generic\flat_learner.h" />
+    <ClInclude Include="learner\flat\generic\function.h" />
+    <ClInclude Include="learner\flat\h\h.h" />
+    <ClInclude Include="learner\flat\h\h_function.h" />
+    <ClInclude Include="learner\flat\q\q_function.h" />
+    <ClInclude Include="learner\flat\q\q.h" />
+    <ClInclude Include="learner\hier\generic\composite_task.h" />
+    <ClInclude Include="learner\hier\generic\hier_learner.h" />
+    <ClInclude Include="learner\hier\generic\primitive_task.h" />
+    <ClInclude Include="learner\hier\generic\sequenced_task.h" />
+    <ClInclude Include="learner\hier\generic\task.h" />
+    <ClInclude Include="learner\hier\hh\hh.h" />
+    <ClInclude Include="learner\hier\hh\hh_composite_task.h" />
+    <ClInclude Include="learner\hier\hh\hh_primitive_task.h" />
+    <ClInclude Include="learner\hier\hh\hh_root_task.h" />
+    <ClInclude Include="learner\hier\hh\hh_task.h" />
+    <ClInclude Include="learner\hier\hier.h" />
+    <ClInclude Include="learner\hier\maxq\maxq.h" />
+    <ClInclude Include="learner\hier\maxq\maxq_composite_task.h" />
+    <ClInclude Include="learner\hier\maxq\maxq_primitive_task.h" />
+    <ClInclude Include="learner\hier\maxq\maxq_task.h" />
+    <ClInclude Include="simulator.h" />
+    <ClInclude Include="lib\common.h" />
+    <ClInclude Include="lib\graph.h" />
+    <ClInclude Include="lib\matrix.h" />
+    <ClInclude Include="domain\domains.h" />
+    <ClInclude Include="domain\mdp.h" />
+    <ClInclude Include="domain\taxi\taxi.h" />
+    <ClInclude Include="domain\taxi\taxi_da.h" />
+    <ClInclude Include="domain\taxi\taxi_mp.h" />
+    <ClInclude Include="domain\taxi\taxi_mp_da.h" />
+    <ClInclude Include="domain\bitflip\bitflip.h" />
+    <ClInclude Include="domain\wargus\wargus.h" />
+    <ClInclude Include="domain\wargus\wargus_goto.h" />
+    <ClInclude Include="domain\wargus\wargus_nsew.h" />
+    <ClInclude Include="domain\wargus\client\socket.h" />
+    <ClInclude Include="learner\learner.h" />
+    <ClInclude Include="learner\learners.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram.cd" />
+    <None Include="hiergen\hierarchy.inl" />
+    <None Include="learner\hier\generic\hier_learner.inl" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

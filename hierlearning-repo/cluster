@@ -1,0 +1,46 @@
+#!/bin/sh
+
+#########################
+#                       #
+# Qsub Script Creator   #
+#  Neville Mehta        #
+#                       #
+#########################
+
+if [ $# -lt 5 ]
+then
+echo "Usage: $0 <world> <learner> <trajectories> <runs> <episodes>"
+exit 1
+fi
+
+for ((r = 1; r <= $4; ++r)); do
+
+cat > qsub.sh <<QSUB
+#!/bin/csh
+
+# Job name
+#$ -N hierlearn
+# Current working directory
+#$ -cwd
+
+# Queue request
+#$ -q eecs1,eecs2
+
+# Output/error file (merged)
+#$ -o qsub.out
+#$ -j y
+
+# Command sequence
+
+#launch.pl -m maps/default.pud.gz hierlearn -z `od -An -N4 -t u4 /dev/urandom` -w $1 -l $2 -m output/$1/models_hand -n $3 -r 1 -o $r -e $5 _PORT_ maps/source/map_ 100 100 100 maps/target/map_ 100 300 300
+hierlearn -z `od -An -N4 -t u4 /dev/urandom` -w $1 -l $2 -n $3 -r 1 -o $r -e $5
+
+echo
+QSUB
+
+qsub qsub.sh
+
+sleep 1   # To avoid chdir errors
+done
+
+rm qsub.sh

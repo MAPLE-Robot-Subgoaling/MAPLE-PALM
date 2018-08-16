@@ -1,0 +1,32 @@
+digraph hierarchy {
+node [shape=rectangle]
+edge [arrowhead=empty]
+
+Root [label=<Root<br/>(<i>v</i><sub>7</sub> = 0 &amp; <i>av</i><sub>0</sub> = <i>v</i><sub>3</sub> &amp; <i>av</i><sub>0</sub> = <i>v</i><sub>5</sub> &amp; <i>av</i><sub>1</sub> = <i>v</i><sub>4</sub> &amp; <i>av</i><sub>1</sub> = <i>v</i><sub>6</sub>)<br/>{<i>av</i><sub>0</sub>,<i>av</i><sub>1</sub>,<i>v</i><sub>3</sub>,<i>v</i><sub>4</sub>,<i>v</i><sub>5</sub>,<i>v</i><sub>6</sub>,<i>v</i><sub>7</sub>}>]
+Root -> Dropoff
+Root -> Task7
+Root -> Task5 [label=<<i>v</i><sub>5</sub>,<i>v</i><sub>6</sub>>,fontsize=10]
+
+Task7 [label=<Task7<br/><i>v</i><sub>7</sub> = 1<br/>{<i>av</i><sub>0</sub>,<i>av</i><sub>1</sub>,<i>v</i><sub>3</sub>,<i>v</i><sub>4</sub>,<i>v</i><sub>7</sub>}>]
+Task7 -> Task5 [label=<<i>v</i><sub>3</sub>,<i>v</i><sub>4</sub>>,fontsize=10]
+Task7 -> Pickup
+
+Pickup [label=<Pickup<br/>{<i>av</i><sub>0</sub>,<i>av</i><sub>1</sub>,<i>v</i><sub>3</sub>,<i>v</i><sub>4</sub>,<i>v</i><sub>7</sub>}>,shape=ellipse]
+
+Task5 [label=<Task5(<i>x</i><sub>0</sub>,<i>x</i><sub>1</sub>)<br/>(<i>av</i><sub>1</sub> = <i>x</i><sub>1</sub> &amp; <i>av</i><sub>0</sub> = <i>x</i><sub>0</sub>)<br/>{<i>av</i><sub>0</sub>,<i>av</i><sub>1</sub>}>]
+Task5 -> North
+Task5 -> South
+Task5 -> East
+Task5 -> West
+
+West [label=<West<br/>{}>,shape=ellipse]
+
+East [label=<East<br/>{}>,shape=ellipse]
+
+South [label=<South<br/>{}>,shape=ellipse]
+
+North [label=<North<br/>{}>,shape=ellipse]
+
+Dropoff [label=<Dropoff<br/>{<i>av</i><sub>0</sub>,<i>av</i><sub>1</sub>,<i>v</i><sub>5</sub>,<i>v</i><sub>6</sub>,<i>v</i><sub>7</sub>}>,shape=ellipse]
+
+}

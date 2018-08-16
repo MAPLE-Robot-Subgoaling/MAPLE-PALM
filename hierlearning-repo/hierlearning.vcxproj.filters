@@ -1,0 +1,305 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="src">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="lib">
+      <UniqueIdentifier>{9e046b7b-1b71-46b9-b9e5-eb33cd196766}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="domain">
+      <UniqueIdentifier>{99ff5de3-c83a-4fd4-aeb6-7a9c9eeb6c84}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="domain\taxi">
+      <UniqueIdentifier>{3a9ca35c-afd8-4ecc-91d7-2b1d64d75cd7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="domain\bitflip">
+      <UniqueIdentifier>{62e8871c-f165-474b-9d75-335a47b90bdb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="domain\wargus">
+      <UniqueIdentifier>{f2c893a6-c9d1-4962-8f1c-96627cfe192f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="domain\wargus\client">
+      <UniqueIdentifier>{f115d054-edca-4b77-baed-df8af59cb5ed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="learner">
+      <UniqueIdentifier>{edb39f90-2ffd-4c72-831c-5b4e3556471b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="hiergen">
+      <UniqueIdentifier>{58f17055-337b-4426-b9fe-924e580ebdbc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="learner\hier">
+      <UniqueIdentifier>{2e5e0e2d-65c2-423f-b871-28ce8aa3b128}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="learner\flat">
+      <UniqueIdentifier>{ba79d84a-b176-4e9b-be85-65b2cd01562c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="learner\flat\q">
+      <UniqueIdentifier>{c9a9fd53-4626-4871-b812-0e03ddb14bf3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="learner\hier\maxq">
+      <UniqueIdentifier>{83388563-d05f-467b-a3ea-a598b589e94d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="learner\hier\hh">
+      <UniqueIdentifier>{acd97881-820d-449d-ab59-48b789d2df13}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="learner\hier\generic">
+      <UniqueIdentifier>{405e45c7-e59d-451f-a4fe-cec80f81c85d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="learner\flat\generic">
+      <UniqueIdentifier>{53cce233-40ff-49eb-8b8c-69d43fc6a797}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="learner\flat\h">
+      <UniqueIdentifier>{78913302-fdc3-401c-8fd2-ad0ddc593a6d}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cc">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="simulator.cc">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\common.cc">
+      <Filter>lib</Filter>
+    </ClCompile>
+    <ClCompile Include="domain\taxi\taxi.cc">
+      <Filter>domain\taxi</Filter>
+    </ClCompile>
+    <ClCompile Include="domain\taxi\taxi_da.cc">
+      <Filter>domain\taxi</Filter>
+    </ClCompile>
+    <ClCompile Include="domain\taxi\taxi_mp.cc">
+      <Filter>domain\taxi</Filter>
+    </ClCompile>
+    <ClCompile Include="domain\taxi\taxi_mp_da.cc">
+      <Filter>domain\taxi</Filter>
+    </ClCompile>
+    <ClCompile Include="domain\bitflip\bitflip.cc">
+      <Filter>domain\bitflip</Filter>
+    </ClCompile>
+    <ClCompile Include="domain\wargus\wargus.cc">
+      <Filter>domain\wargus</Filter>
+    </ClCompile>
+    <ClCompile Include="domain\wargus\wargus_goto.cc">
+      <Filter>domain\wargus</Filter>
+    </ClCompile>
+    <ClCompile Include="domain\wargus\wargus_nsew.cc">
+      <Filter>domain\wargus</Filter>
+    </ClCompile>
+    <ClCompile Include="domain\wargus\client\socket.cc">
+      <Filter>domain\wargus\client</Filter>
+    </ClCompile>
+    <ClCompile Include="hiergen\catscan.cc">
+      <Filter>hiergen</Filter>
+    </ClCompile>
+    <ClCompile Include="hiergen\expression.cc">
+      <Filter>hiergen</Filter>
+    </ClCompile>
+    <ClCompile Include="hiergen\hierarchy.cc">
+      <Filter>hiergen</Filter>
+    </ClCompile>
+    <ClCompile Include="hiergen\model.cc">
+      <Filter>hiergen</Filter>
+    </ClCompile>
+    <ClCompile Include="hiergen\trajectory.cc">
+      <Filter>hiergen</Filter>
+    </ClCompile>
+    <ClCompile Include="learner\hier\maxq\maxq.cc">
+      <Filter>learner\hier\maxq</Filter>
+    </ClCompile>
+    <ClCompile Include="learner\hier\maxq\maxq_composite_task.cc">
+      <Filter>learner\hier\maxq</Filter>
+    </ClCompile>
+    <ClCompile Include="learner\hier\maxq\maxq_primitive_task.cc">
+      <Filter>learner\hier\maxq</Filter>
+    </ClCompile>
+    <ClCompile Include="learner\hier\hh\hh.cc">
+      <Filter>learner\hier\hh</Filter>
+    </ClCompile>
+    <ClCompile Include="learner\hier\hh\hh_composite_task.cc">
+      <Filter>learner\hier\hh</Filter>
+    </ClCompile>
+    <ClCompile Include="learner\hier\hh\hh_primitive_task.cc">
+      <Filter>learner\hier\hh</Filter>
+    </ClCompile>
+    <ClCompile Include="learner\hier\hh\hh_root_task.cc">
+      <Filter>learner\hier\hh</Filter>
+    </ClCompile>
+    <ClCompile Include="learner\hier\hh\hh_task.cc">
+      <Filter>learner\hier\hh</Filter>
+    </ClCompile>
+    <ClCompile Include="learner\hier\generic\composite_task.cc">
+      <Filter>learner\hier\generic</Filter>
+    </ClCompile>
+    <ClCompile Include="learner\hier\generic\hier_learner.cc">
+      <Filter>learner\hier\generic</Filter>
+    </ClCompile>
+    <ClCompile Include="learner\hier\generic\sequenced_task.cc">
+      <Filter>learner\hier\generic</Filter>
+    </ClCompile>
+    <ClCompile Include="learner\hier\generic\task.cc">
+      <Filter>learner\hier\generic</Filter>
+    </ClCompile>
+    <ClCompile Include="learner\flat\q\q_function.cc">
+      <Filter>learner\flat\q</Filter>
+    </ClCompile>
+    <ClCompile Include="learner\flat\generic\flat_learner.cc">
+      <Filter>learner\flat\generic</Filter>
+    </ClCompile>
+    <ClCompile Include="learner\flat\generic\function.cc">
+      <Filter>learner\flat\generic</Filter>
+    </ClCompile>
+    <ClCompile Include="learner\flat\h\h_function.cc">
+      <Filter>learner\flat\h</Filter>
+    </ClCompile>
+    <ClCompile Include="domain\cleanup\cleanup.cc">
+      <Filter>src</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="simulator.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\common.h">
+      <Filter>lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\graph.h">
+      <Filter>lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\matrix.h">
+      <Filter>lib</Filter>
+    </ClInclude>
+    <ClInclude Include="domain\domains.h">
+      <Filter>domain</Filter>
+    </ClInclude>
+    <ClInclude Include="domain\mdp.h">
+      <Filter>domain</Filter>
+    </ClInclude>
+    <ClInclude Include="domain\taxi\taxi.h">
+      <Filter>domain\taxi</Filter>
+    </ClInclude>
+    <ClInclude Include="domain\taxi\taxi_da.h">
+      <Filter>domain\taxi</Filter>
+    </ClInclude>
+    <ClInclude Include="domain\taxi\taxi_mp.h">
+      <Filter>domain\taxi</Filter>
+    </ClInclude>
+    <ClInclude Include="domain\taxi\taxi_mp_da.h">
+      <Filter>domain\taxi</Filter>
+    </ClInclude>
+    <ClInclude Include="domain\bitflip\bitflip.h">
+      <Filter>domain\bitflip</Filter>
+    </ClInclude>
+    <ClInclude Include="domain\wargus\wargus.h">
+      <Filter>domain\wargus</Filter>
+    </ClInclude>
+    <ClInclude Include="domain\wargus\wargus_goto.h">
+      <Filter>domain\wargus</Filter>
+    </ClInclude>
+    <ClInclude Include="domain\wargus\wargus_nsew.h">
+      <Filter>domain\wargus</Filter>
+    </ClInclude>
+    <ClInclude Include="domain\wargus\client\socket.h">
+      <Filter>domain\wargus\client</Filter>
+    </ClInclude>
+    <ClInclude Include="learner\learner.h">
+      <Filter>learner</Filter>
+    </ClInclude>
+    <ClInclude Include="learner\learners.h">
+      <Filter>learner</Filter>
+    </ClInclude>
+    <ClInclude Include="hiergen\catscan.h">
+      <Filter>hiergen</Filter>
+    </ClInclude>
+    <ClInclude Include="hiergen\expression.h">
+      <Filter>hiergen</Filter>
+    </ClInclude>
+    <ClInclude Include="hiergen\hierarchy.h">
+      <Filter>hiergen</Filter>
+    </ClInclude>
+    <ClInclude Include="hiergen\model.h">
+      <Filter>hiergen</Filter>
+    </ClInclude>
+    <ClInclude Include="hiergen\trajectory.h">
+      <Filter>hiergen</Filter>
+    </ClInclude>
+    <ClInclude Include="learner\flat\q\q.h">
+      <Filter>learner\flat\q</Filter>
+    </ClInclude>
+    <ClInclude Include="learner\flat\flat.h">
+      <Filter>learner\flat</Filter>
+    </ClInclude>
+    <ClInclude Include="learner\hier\maxq\maxq.h">
+      <Filter>learner\hier\maxq</Filter>
+    </ClInclude>
+    <ClInclude Include="learner\hier\maxq\maxq_composite_task.h">
+      <Filter>learner\hier\maxq</Filter>
+    </ClInclude>
+    <ClInclude Include="learner\hier\maxq\maxq_primitive_task.h">
+      <Filter>learner\hier\maxq</Filter>
+    </ClInclude>
+    <ClInclude Include="learner\hier\maxq\maxq_task.h">
+      <Filter>learner\hier\maxq</Filter>
+    </ClInclude>
+    <ClInclude Include="learner\hier\hh\hh.h">
+      <Filter>learner\hier\hh</Filter>
+    </ClInclude>
+    <ClInclude Include="learner\hier\hh\hh_composite_task.h">
+      <Filter>learner\hier\hh</Filter>
+    </ClInclude>
+    <ClInclude Include="learner\hier\hh\hh_primitive_task.h">
+      <Filter>learner\hier\hh</Filter>
+    </ClInclude>
+    <ClInclude Include="learner\hier\hh\hh_root_task.h">
+      <Filter>learner\hier\hh</Filter>
+    </ClInclude>
+    <ClInclude Include="learner\hier\hh\hh_task.h">
+      <Filter>learner\hier\hh</Filter>
+    </ClInclude>
+    <ClInclude Include="learner\hier\generic\composite_task.h">
+      <Filter>learner\hier\generic</Filter>
+    </ClInclude>
+    <ClInclude Include="learner\hier\generic\hier_learner.h">
+      <Filter>learner\hier\generic</Filter>
+    </ClInclude>
+    <ClInclude Include="learner\hier\generic\primitive_task.h">
+      <Filter>learner\hier\generic</Filter>
+    </ClInclude>
+    <ClInclude Include="learner\hier\generic\sequenced_task.h">
+      <Filter>learner\hier\generic</Filter>
+    </ClInclude>
+    <ClInclude Include="learner\hier\generic\task.h">
+      <Filter>learner\hier\generic</Filter>
+    </ClInclude>
+    <ClInclude Include="learner\flat\q\q_function.h">
+      <Filter>learner\flat\q</Filter>
+    </ClInclude>
+    <ClInclude Include="learner\flat\generic\flat_learner.h">
+      <Filter>learner\flat\generic</Filter>
+    </ClInclude>
+    <ClInclude Include="learner\flat\generic\function.h">
+      <Filter>learner\flat\generic</Filter>
+    </ClInclude>
+    <ClInclude Include="learner\flat\h\h.h">
+      <Filter>learner\flat\h</Filter>
+    </ClInclude>
+    <ClInclude Include="learner\flat\h\h_function.h">
+      <Filter>learner\flat\h</Filter>
+    </ClInclude>
+    <ClInclude Include="learner\hier\hier.h">
+      <Filter>learner\hier</Filter>
+    </ClInclude>
+    <ClInclude Include="domain\cleanup\cleanup.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="hiergen\hierarchy.inl">
+      <Filter>hiergen</Filter>
+    </None>
+    <None Include="learner\hier\generic\hier_learner.inl">
+      <Filter>learner\hier\generic</Filter>
+    </None>
+    <None Include="ClassDiagram.cd" />
+  </ItemGroup>
+</Project>
