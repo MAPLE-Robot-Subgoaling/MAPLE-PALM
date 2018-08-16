@@ -14,6 +14,8 @@ import burlap.mdp.singleagent.model.FactoredModel;
 import burlap.mdp.singleagent.oo.OOSADomain;
 import burlap.statehashing.HashableState;
 import burlap.statehashing.HashableStateFactory;
+import edu.umbc.cs.maple.hierarchy.framework.GroundedTask;
+import edu.umbc.cs.maple.palm.agent.PALMModel;
 import edu.umbc.cs.maple.utilities.DiscountProvider;
 import edu.umbc.cs.maple.utilities.ValueIterationMultiStep;
 
@@ -27,7 +29,7 @@ public class UCRLAgent implements LearningAgent {
 
     public UCRLAgent(){
 
-        currentModel = new UCRLModel(base.terminalFunction(), );
+//        currentModel = new UCRLModel(base.terminalFunction(), );
     }
 
     protected Set<HashableState> getStateSet(OOSADomain domain, State start){
@@ -50,20 +52,10 @@ public class UCRLAgent implements LearningAgent {
             e.transition(eo);
             currentModel.updateModel(eo, 1);
         }
+        return e;
     }
 
-    public Action nextAction(State s){
-        OOSADomain domain = task.getDomain(model);
-//		double discount = model.gamma();
-        DiscountProvider discountProvider = model.getDiscountProvider();
-        ValueIterationMultiStep planner = new ValueIterationMultiStep(domain, hashingFactory, maxDelta, maxIterationsInModelPlanner, discountProvider);
-        planner.toggleReachabiltiyTerminalStatePruning(true);
-//		planner.toggleReachabiltiyTerminalStatePruning(false);
-        ValueFunction knownValueFunction = task.valueFunction;
-        if (knownValueFunction != null) {
-            planner.setValueFunctionInitialization(knownValueFunction);
-        }
-        Policy policy = planner.planFromState(s);
-        Action action = policy.action(s);
+    protected Action nextAction(State s) {
+        return currentModel.nextAction(s);
     }
 }

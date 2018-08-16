@@ -1,5 +1,6 @@
 package edu.umbc.cs.maple.palm.ucrl.agent;
 
+import burlap.behavior.policy.Policy;
 import burlap.mdp.core.TerminalFunction;
 import burlap.mdp.core.action.Action;
 import burlap.mdp.core.oo.state.MutableOOState;
@@ -71,6 +72,8 @@ public class UCRLModel extends PALMModel {
     protected GroundedTask task;
     protected TerminalFunction tf;
     protected Set<HashableState> stateSpace;
+
+    protected Policy current_policy;
 
     //knownness constants
     protected int MAG_S;
@@ -230,6 +233,7 @@ public class UCRLModel extends PALMModel {
             }
         }
         updateConvergedTransitions();
+        updatePolicy();
         batchCount++;
     }
 
@@ -256,6 +260,13 @@ public class UCRLModel extends PALMModel {
 
     }
 
+    public Action nextAction(State s){
+        return current_policy.action(s);
+    }
+
+    protected void updatePolicy(){
+        // extended vi
+    }
 
     //TODO: Define confidwence in transition
     protected boolean isConfident(HashableState hs, Action a){
@@ -368,7 +379,7 @@ public class UCRLModel extends PALMModel {
             stateInfo.put(a, stateActionInfo);
         }
 
-        Integer count = stateActionInfo.get(hsp):
+        Integer count = stateActionInfo.get(hsp);
         if(count == null){
             count = 0;
             stateActionInfo.put(hsp, count);
