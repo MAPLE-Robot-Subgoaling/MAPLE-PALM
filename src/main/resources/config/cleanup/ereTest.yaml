@@ -22,10 +22,10 @@ domain: !!edu.umbc.cs.maple.config.cleanup.CleanupConfig
 goal: *goal
 
 agents:
-  palm:  {cleanup-moveXY}
+  palm:  {cleanup-advancedBaseline, cleanup-baseline}
 
 seed: 555543
-episodes: 100
+episodes: 75
 max_steps: 10000
 trials: 1
 gamma: 0.99
@@ -36,7 +36,7 @@ planning:
 
 rmax:
   vmax: 10.0
-  threshold: 5
+  threshold: 2
   max_delta: 0.000001
   max_delta_rmaxq: 0.000001
   max_iterations_in_model: 1000
@@ -50,7 +50,6 @@ output:
 
   chart:
     enabled: true
-
     width: 400
     height: 200
     columns: 2
@@ -63,7 +62,7 @@ output:
       - CUMULATIVE_REWARD_PER_EPISODE
 
   visualizer:
-    enabled: true
+    enabled: false
     episodes: true
     width: 7
     height: 7
