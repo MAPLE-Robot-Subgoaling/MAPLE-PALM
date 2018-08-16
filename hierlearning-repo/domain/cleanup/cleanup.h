@@ -5,37 +5,6 @@
 
 **************************************************/
 
-/*------------------------------------------------------------------------
-
-        WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
-       W     |     W     |     |     W
-     4 W  R  |     W     |     |  G  W
-       W_____|_____W_____|_____|_____W
-       W     |     W     |     |     W
-     3 W     |     W     |     |     W
-       W_____|_____W_____|_____|_____W
-       W     |     |     |     |     W
-     2 W     |Clup |     |     |     W
-       W_____|_____|_____|_____|_____W
-       W     W     |     W     |     W
-     1 W     W     |     W     |     W
-       W_____W_____|_____W_____|_____W
-       W     W     |     W     |     W
-     0 W  Y  W     |  S  W  B  |     W
-       W     W     |     W     |     W
-       WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
-          0     1     2     3     4
-
-	R, G, B, Y, (S) => Pick-up/Drop-off locations
-
-	State variables: Cleanup's location, fuel; Passenger's location; Passenger's destination
-	Actions: North, South, East, West, Pick-up, Drop-off, Wait, Refuel
-	Rewards: Successful drop-off -> Reward_Dropoff = 20
-	         Illegal pick-up/drop-off -> Reward_Illegal = -10
-	         Every action -> Reward_Default = -1
-
--------------------------------------------------------------------------*/
-
 
 #pragma once
 
@@ -52,7 +21,10 @@
 struct Cleanup_State : public State
 {	
 	Coordinate map_size;
+	int num_variables;
 	int num_blocks;
+	int num_rooms;
+	int num_doors;
 	enum Shape {chair, bag, backpack, basket};
 	enum Color {blue, green, magenta, red, yellow};
 	enum Direction {north, south, east, west};
@@ -69,7 +41,7 @@ struct Cleanup_State : public State
 		Direction direction;
 	} agent;
 	static const int num_agent_variables = 9;
-
+	
 	struct Block
 	{
 		Coordinate location;
@@ -82,10 +54,41 @@ struct Cleanup_State : public State
 	};
 	vector<Block> blocks;
 	static const int num_block_variables = 8;
+	
+	struct Door
+	{
+		Coordinate location;
+		int left;
+		int right;
+		int bottom;
+		int top;
+		Shape shape;
+		Color color;
+		int locked;
+	};
+	vector<Door> doors;
+	static const int num_door_variables = 9;
 
-	Cleanup_State(const Coordinate& map_size = Coordinate(9,9), const int& num_blocks = 1);
+	struct Room
+	{
+		int left;
+		int right;
+		int bottom;
+		int top;
+		Shape shape;
+		Color color;
+	};
+	vector<Room> rooms;
+	static const int num_room_variables = 6;
+
+	Cleanup_State(
+		const Coordinate& map_size = Coordinate(9,9),
+		const int& num_blocks = 1,
+		const int& num_doors = 1,
+		const int& num_rooms = 2
+	);
 	unique_ptr<State> clone () const { return unique_ptr<State>(new Cleanup_State(*this)); }
-	unique_ptr<State> copy () const { return unique_ptr<State>(new Cleanup_State(map_size, num_blocks)); }
+	unique_ptr<State> copy () const { return unique_ptr<State>(new Cleanup_State(map_size, num_blocks, num_doors, num_rooms)); }
 	vector<int> variables() const;
 	int variable_index(const string& variable) const;
 	string variable_name(const int& variable_index) const;
@@ -93,7 +96,6 @@ struct Cleanup_State : public State
 	int variable(const int& variable_index) const;
 	int& variable(const int& variable_index);
 	map<int,int> variables_mapper() const;
-	unsigned num_agent_variables () const { return num_agent_variables; }
 	pair<bool,int> parse(string expression) const;
 	void read(istream& in);
 	string print() const;
