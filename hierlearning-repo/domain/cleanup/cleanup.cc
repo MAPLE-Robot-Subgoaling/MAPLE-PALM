@@ -36,39 +36,47 @@ vector<int> Cleanup_State::variables () const
 // Variable name to integer index
 int Cleanup_State::variable_index (const string& variable) const
 {	
-	if (variable == "agent_x")
-		return 0;
-	if (variable == "agent_y")
-		return 1;
-	if (variable == "agent_fuel")
-		return 2;
-
-	if (variable.substr(0, 9) == "passenger")
-	{	int passenger_id;
-		if (num_passengers == 1)
-			passenger_id = 0;   // In case the single passenger isn't tagged with the id
-		else
-			passenger_id = from_string<int>(variable.substr(9, variable.find_first_of("_", 9) - 9));
-
-		if (passenger_id >= 0 && passenger_id < num_passengers)
-		{	if (variable.substr(variable.find_first_of("_")) == "_location_x")
-				return num_cleanup_variables + passenger_id * num_passenger_variables + 0;
-			if (variable.substr(variable.find_first_of("_")) == "_location_y")
-				return num_cleanup_variables + passenger_id * num_passenger_variables + 1;
-			if (variable.substr(variable.find_first_of("_")) == "_destination_x")
-				return num_cleanup_variables + passenger_id * num_passenger_variables + 2;
-			if (variable.substr(variable.find_first_of("_")) == "_destination_y")
-				return num_cleanup_variables + passenger_id * num_passenger_variables + 3;
-			if (variable.substr(variable.find_first_of("_")) == "_in_cleanup")
-				return num_cleanup_variables + passenger_id * num_passenger_variables + 4;
-			if (variable.substr(variable.find_first_of("_")) == "_location")
-				return num_variables + passenger_id * num_passenger_accessors;
-			if (variable.substr(variable.find_first_of("_")) == "_destination")
-				return num_variables + passenger_id * num_passenger_accessors + 1;
+	int id;
+	int underscore;
+	int variable_index = 0;
+	for (int j = 0; j < num_state_classes; ++j) {
+		string state_class_test = state_classes[j];
+		int state_class_name_length = state_classes_name_lengths[j];
+		string state_class_name = variable.substr(0, state_class_name_length);
+		if (state_class_name == state_class_test) {
+			underscore = variable.find_first_of("_", state_class_name_length);
+			id = from_string<int>(variable.substr(state_class_name_length, underscore - state_class_name_length));
+			for (int i = 0; i < sizeof(agent_variables) / sizeof(agent_variables[0]); ++i) {
+				string variable_name = variable.substr(underscore+1);
+				string variable_test = agent_variables[i];
+				variable_index += 1;
+				if (variable_name == variable_test) {
+					return variable_index;
+				}
+			}
+			throw HierException(__FILE__, __LINE__, "Unknown variable: " + variable);
+		} else {
+			variable_index += state_classes_num_variables[j];
 		}
 	}
-
 	throw HierException(__FILE__, __LINE__, "Unknown variable: " + variable);
+
+	/*if ( == "agent") {
+	} else if (variable.substr(0, block_length) == "block") {
+		length = block_length;
+		underscore = variable.find_first_of("_", length);
+		id = from_string<int>(variable.substr(length, underscore - length));
+	} else if (variable.substr(0, door_length) == "door") {
+		length = door_length;
+		underscore = variable.find_first_of("_", length);
+		id = from_string<int>(variable.substr(length, underscore - length));
+	} else if (variable.substr(0, room_length) == "room") {
+		length = room_length;
+		underscore = variable.find_first_of("_", length);
+		id = from_string<int>(variable.substr(length, underscore - length));
+	} else {
+		throw HierException(__FILE__, __LINE__, "Unknown variable: " + variable);
+	}*/
 }
 
 

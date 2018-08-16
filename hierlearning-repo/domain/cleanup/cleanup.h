@@ -17,6 +17,15 @@
 #include "../../lib/matrix.h"
 #include "../mdp.h"
 
+static const int num_state_classes = 4;
+static const int state_classes_name_lengths[] = {5, 5, 4, 4};
+static const char *state_classes[] = {"agent", "block", "door", "room"};
+
+static const int state_classes_num_variables[] = {9, 8, 9, 6};
+static const char *agent_variables[] = {"x","y","left","right","bottom","top","shape","color","direction"};
+static const char *block_variables[] = {"x","y","left","right","bottom","top","shape","color"};
+static const char *door_variables[] = {"x","y","left","right","bottom","top","shape","color","locked"};
+static const char *room_variables[] = {"left","right","bottom","top","shape","color"};
 
 struct Cleanup_State : public State
 {	
@@ -25,13 +34,15 @@ struct Cleanup_State : public State
 	int num_blocks;
 	int num_rooms;
 	int num_doors;
+	//enum StateClass {agent, block, door, room};
 	enum Shape {chair, bag, backpack, basket};
 	enum Color {blue, green, magenta, red, yellow};
 	enum Direction {north, south, east, west};
 
 	struct Agent
 	{	
-		Coordinate location;
+		int x;
+		int y;
 		int left;
 		int right;
 		int bottom;
@@ -41,10 +52,11 @@ struct Cleanup_State : public State
 		Direction direction;
 	} agent;
 	static const int num_agent_variables = 9;
-	
+
 	struct Block
 	{
-		Coordinate location;
+		int x;
+		int y;
 		int left;
 		int right;
 		int bottom;
@@ -57,7 +69,8 @@ struct Cleanup_State : public State
 	
 	struct Door
 	{
-		Coordinate location;
+		int x;
+		int y;
 		int left;
 		int right;
 		int bottom;
