@@ -9,7 +9,6 @@ domain: !!edu.umbc.cs.maple.config.taxi.TaxiConfig
 goal: !!edu.umbc.cs.maple.taxi.TaxiGoal {}
 
 agents:
-  ql: {taxi-hiergen}
   palm: {taxi-hiergen}
 
 seed: 99610605
@@ -34,7 +33,7 @@ rmax:
 output:
   csv:
     enabled: true
-    output: results/taxi-hiergen-ql-palm-classic-fickle-4.csv
+    output: results/taxi-hiergen-palm-classic-fickle-4.csv
 
   chart:
     enabled: true
