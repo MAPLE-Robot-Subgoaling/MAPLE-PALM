@@ -3,8 +3,6 @@ package edu.umbc.cs.maple.palm.ucrl.agent;
 import burlap.behavior.policy.Policy;
 import burlap.mdp.core.TerminalFunction;
 import burlap.mdp.core.action.Action;
-import burlap.mdp.core.oo.state.MutableOOState;
-import burlap.mdp.core.oo.state.ObjectInstance;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.environment.EnvironmentOutcome;
 import burlap.mdp.singleagent.model.TransitionProb;
@@ -51,9 +49,8 @@ public class UCRLModel extends PALMModel {
     protected Map<HashableState, Map<Action, Map<HashableState, Double>>> transitionProbabilities;
 
     protected HashableState imaginedState;
-    protected double rmax;
     protected double gamma;
-    protected double epsilon;
+    protected double maxDelta;
 
     //t
     protected int timestep = 0;
@@ -72,7 +69,7 @@ public class UCRLModel extends PALMModel {
     protected GroundedTask task;
     protected TerminalFunction tf;
     protected Set<HashableState> stateSpace;
-
+    protected Set<Action> actions;
     protected Policy current_policy;
 
     //knownness constants
@@ -88,27 +85,26 @@ public class UCRLModel extends PALMModel {
     protected int U_max;
     protected int beta;
 
-    public UCRLModel(List<HashableState> baseStates, double gamma, double rmax, double epsilon,
+    public UCRLModel(List<HashableState> baseStates, double gamma, double maxDelta,
                      HashableStateFactory hashableStateFactory){
         this.initializeDiscountProvider(gamma);
         this.gamma = gamma;
-        this.rmax = rmax;
-        this.epsilon = epsilon;
+        this.maxDelta = maxDelta;
         this.hashingFactory = hashableStateFactory;
         this.delaying = false;
         defineConstants();
     }
 
-    public UCRLModel(GroundedTask task, List<HashableState> baseStates, double gamma, double rmax, double epsilon,
+    public UCRLModel(GroundedTask task, List<HashableState> baseStates, double gamma, double maxDelta,
                      HashableStateFactory hashableStateFactory){
-        this(baseStates, gamma, rmax, epsilon, hashableStateFactory);
+        this(baseStates, gamma, maxDelta, hashableStateFactory);
         this.task = task;
         defineStatesAndActions(baseStates);
     }
 
     public UCRLModel(TerminalFunction tf, List<HashableState> baseStates, List<Action> actions,
-                     double gamma, double rmax, double epsilon, HashableStateFactory hashableStateFactory){
-        this(baseStates, gamma, rmax, epsilon, hashableStateFactory);
+                     double gamma, double maxDelta, HashableStateFactory hashableStateFactory){
+        this(baseStates, gamma, maxDelta, hashableStateFactory);
         this.tf = tf;
         this.stateSpace = new HashSet<HashableState>(baseStates);
         this.MAG_A = actions.size();
@@ -143,11 +139,6 @@ public class UCRLModel extends PALMModel {
 
         List<TransitionProb> tps = new ArrayList<TransitionProb>();
         HashableState hs = hashingFactory.hashState(s);
-        if(! isConfident(hs, a)) {
-            tps.add(createImaginedTransition(hs, a));
-            return tps;
-        }
-
         Map<HashableState, Double> outcomes = getPossibleOutcomes(hs, a);
         Double r = getModelReward(hs, a);
         for(HashableState hsp : outcomes.keySet()){
@@ -232,27 +223,29 @@ public class UCRLModel extends PALMModel {
                 }
             }
         }
-        updateConvergedTransitions();
+        updateModelTransitions();
         updatePolicy();
         batchCount++;
     }
 
-    protected void updateConvergedTransitions(){
+    protected void updateModelTransitions(){
         for(HashableState hs : totalStateAction.keySet()){
             Map<Action, Map<HashableState, Integer>> stateInfo = totalStateActionState.get(hs);
             for (Action a : stateInfo.keySet()){
-                if(isConfident(hs, a)){
-                    double totReward = getTotalSAReward(hs, a);
-                    int saCount = getBatchStateAction(hs, a);
-                    double avgReward = (double) totReward / saCount;
-                    setModelReward(hs, a, avgReward);
+                double totReward = getTotalSAReward(hs, a);
+                int saCount = getTotalStateAction(hs, a);
+                int divider = 1;
+                if(saCount > 1){
+                    divider = saCount;
+                }
+                double avgReward = (double) totReward / divider;
+                setModelReward(hs, a, avgReward);
 
-                    Map<HashableState, Integer> possibleOutcomes = stateInfo.get(a);
-                    for(HashableState hsp : possibleOutcomes.keySet()){
-                        double totsasCount = getTotalStateActionState(hs, a, hsp);
-                        double avgTransition = (double) totsasCount / saCount;
-                        setModelTransition(hs, a, hsp, avgTransition);
-                    }
+                Map<HashableState, Integer> possibleOutcomes = stateInfo.get(a);
+                for(HashableState hsp : possibleOutcomes.keySet()){
+                    double totsaspCount = getTotalStateActionState(hs, a, hsp);
+                    double avgTransition = (double) totsaspCount / divider;
+                    setModelTransition(hs, a, hsp, avgTransition);
                 }
             }
         }
@@ -286,20 +279,45 @@ public class UCRLModel extends PALMModel {
         return discountProvider;
     }
 
+    public double getRewardBound(HashableState hs, Action a){
+        double top = 7 * Math.log(2 * MAG_S * MAG_A / (double) maxDelta);
+        int max = 1;
+        int saCount = getTotalStateAction(hs, a);
+        if(saCount > 1){
+            max = saCount;
+        }
+        int bottom = 2 * max;
+
+        return Math.sqrt(top / bottom);
+    }
+
+    public double getTransitionBound(HashableState hs, Action a){
+        double top = 14 * MAG_S * Math.log(2 * MAG_A / maxDelta);
+        int bottum = 1;
+        int saCount = getTotalStateAction(hs, a);
+        if(saCount > 1){
+            bottum = saCount;
+        }
+
+        return Math.sqrt(top / bottum);
+    }
+
     protected void defineStatesAndActions(List<HashableState> baseStates){
         if(task == null){
             // this should only run for use in modeling a task
             return;
         }
         stateSpace = new HashSet<HashableState>();
-        Set<GroundedTask> actions = new HashSet<GroundedTask>();
+        Set<Action> actions = new HashSet<Action>();
 
         for(HashableState hs : baseStates){
             State abstractState = task.mapState(hs.s());
             HashableState habstracte = hashingFactory.hashState(abstractState);
             stateSpace.add(habstracte);
             List<GroundedTask> stateActions = task.getGroundedChildTasks(abstractState);
-            actions.addAll(stateActions);
+            for(GroundedTask gt : stateActions) {
+                actions.add(gt.getAction());
+            }
         }
         MAG_A = actions.size();
     }
@@ -307,9 +325,9 @@ public class UCRLModel extends PALMModel {
     protected void defineConstants(){
         this.MAG_S = stateSpace.size();
 
-        this.W_MIN = epsilon * (1 - gamma) / 4 * ((double) MAG_S);
+        this.W_MIN = maxDelta * (1 - gamma) / 4 * ((double) MAG_S);
 
-        this.L_MAX = (int) Math.ceil((1 / Math.log(2)) * Math.log( (8 * MAG_S) / (epsilon * Math.pow(1 - gamma, 2)) ) );
+        this.L_MAX = (int) Math.ceil((1 / Math.log(2)) * Math.log( (8 * MAG_S) / (maxDelta * Math.pow(1 - gamma, 2)) ) );
 
         this.K_SET = new ArrayList<Integer>();
         int i = 1;
@@ -320,25 +338,66 @@ public class UCRLModel extends PALMModel {
             i++;
         }
 
-        this.H_delay = (int) Math.ceil((1 / (1 - gamma)) * Math.log(8 * MAG_S / (epsilon * (1 - gamma))));
+        this.H_delay = (int) Math.ceil((1 / (1 - gamma)) * Math.log(8 * MAG_S / (maxDelta * (1 - gamma))));
 
         this.U_max = MAG_S * MAG_A * K_SET.size() * (L_MAX + 1);
         this.beta = (int) Math.ceil(1 / (2 * Math.log(2)) * Math.log(1 / (1 - gamma)));
         this.delta_1 = delta / ((2 * MAG_S * MAG_A) * U_max);
         this.l_1 = Math.log(2 / delta_1);
-        this.m = (20 * l_1 * K_SET.size() * (L_MAX + 1) * Math.pow(2 * beta + 1, 2)) / (Math.pow(epsilon, 2) * Math.pow(1 - gamma, 2 + 2 / beta));
-    }
-
-    protected TransitionProb createImaginedTransition(HashableState hs, Action a){
-        if(imaginedState == null){
-            createImaginedState(hs);
-        }
-        EnvironmentOutcome eo = new EnvironmentOutcome(hs.s(), a, imaginedState.s(), rmax, false);
-        TransitionProb tp = new TransitionProb(1., eo);
-        return tp;
+        this.m = (20 * l_1 * K_SET.size() * (L_MAX + 1) * Math.pow(2 * beta + 1, 2)) / (Math.pow(maxDelta, 2) * Math.pow(1 - gamma, 2 + 2 / beta));
     }
 
     //________________________________________Getters and Setters_______________________
+
+
+    // current model
+    public double getModelReward(HashableState hs, Action a){
+        Map<Action, Double> stateRewards = rewards.get(hs);
+        if(stateRewards == null){
+            stateRewards = new HashMap<Action, Double>();
+            rewards.put(hs, stateRewards);
+        }
+
+        Double reward = stateRewards.get(a);
+        if(reward == null){
+            int saCount = getTotalStateAction(hs, a);
+            double totReward = getTotalSAReward(hs, a);
+            int diviser = 1;
+            if(saCount > 1){
+                diviser = saCount;
+            }
+            reward = (double) totReward / diviser;
+            stateRewards.put(a, reward);
+        }
+        return reward;
+    }
+
+    public double getModelTransition(HashableState hs, Action a, HashableState hsp){
+        Map<Action, Map<HashableState, Double>> stateTransitions = transitionProbabilities.get(hs);
+        if(stateTransitions == null){
+            stateTransitions = new HashMap<Action, Map<HashableState, Double>>();
+            transitionProbabilities.put(hs, stateTransitions);
+        }
+
+        Map<HashableState, Double> stateActionInfo = stateTransitions.get(a);
+        if(stateActionInfo == null){
+            stateActionInfo = new HashMap<HashableState, Double>();
+            stateTransitions.put(a, stateActionInfo);
+        }
+
+        Double p = stateActionInfo.get(hsp);
+        if(p == null){
+            int saCount = getTotalStateAction(hs, a);
+            int saspCount = getTotalStateActionState(hs, a, hsp);
+            int diviser = 1;
+            if(saCount > 1){
+                diviser = saCount;
+            }
+            p = (double) saspCount / diviser;
+            stateActionInfo.put(hsp, p);
+        }
+        return p;
+    }
 
     // getters
     protected int getTotalStateAction(HashableState hs, Action a){
@@ -356,16 +415,7 @@ public class UCRLModel extends PALMModel {
         return count;
     }
 
-    protected HashableState createImaginedState(HashableState basis) {
-        MutableOOState imaginedState = (MutableOOState) basis.s().copy();
-        List<ObjectInstance> objectInstances = new ArrayList<ObjectInstance>(imaginedState.objects());
-        for (ObjectInstance objectInstance : objectInstances) {
-            imaginedState.removeObject(objectInstance.name());
-        }
-        HashableState hImaginedState = hashingFactory.hashState(imaginedState);
-        this.imaginedState = hImaginedState;
-        return hImaginedState;
-    }
+
     protected int getTotalStateActionState(HashableState hs, Action a, HashableState hsp){
         Map<Action, Map<HashableState, Integer>> stateInfo = totalStateActionState.get(hs);
         if(stateInfo == null){
@@ -452,41 +502,6 @@ public class UCRLModel extends PALMModel {
         return reward;
     }
 
-    // current model
-    protected double getModelReward(HashableState hs, Action a){
-        Map<Action, Double> stateRewards = rewards.get(hs);
-        if(stateRewards == null){
-            stateRewards = new HashMap<Action, Double>();
-            rewards.put(hs, stateRewards);
-        }
-
-        Double reward = stateRewards.get(a);
-        if(reward == null){
-            reward = rmax;
-        }
-        return reward;
-    }
-
-    protected double getModelTransition(HashableState hs, Action a, HashableState hsp){
-        Map<Action, Map<HashableState, Double>> stateTransitions = transitionProbabilities.get(hs);
-        if(stateTransitions == null){
-            stateTransitions = new HashMap<Action, Map<HashableState, Double>>();
-            transitionProbabilities.put(hs, stateTransitions);
-        }
-
-        Map<HashableState, Double> stateActionInfo = stateTransitions.get(a);
-        if(stateActionInfo == null){
-            stateActionInfo = new HashMap<HashableState, Double>();
-            stateTransitions.put(a, stateActionInfo);
-        }
-
-        Double p = stateActionInfo.get(hsp);
-        if(p == null){
-            p = 0.;
-            stateActionInfo.put(hsp, p);
-        }
-        return p;
-    }
     protected Map<HashableState, Double> getPossibleOutcomes(HashableState hs, Action a){
         Map<Action, Map<HashableState, Double>> stateInfo = transitionProbabilities.get(hs);
         if(stateInfo == null){
