@@ -1,35 +1,39 @@
 package edu.umbc.cs.maple.palm.ucrl.agent;
 
-import burlap.behavior.policy.Policy;
 import burlap.behavior.singleagent.Episode;
 import burlap.behavior.singleagent.auxiliary.StateReachability;
 import burlap.behavior.singleagent.learning.LearningAgent;
-import burlap.behavior.valuefunction.ValueFunction;
 import burlap.mdp.core.action.Action;
-import burlap.mdp.core.oo.OODomain;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.environment.Environment;
 import burlap.mdp.singleagent.environment.EnvironmentOutcome;
-import burlap.mdp.singleagent.model.FactoredModel;
 import burlap.mdp.singleagent.oo.OOSADomain;
 import burlap.statehashing.HashableState;
 import burlap.statehashing.HashableStateFactory;
 import edu.umbc.cs.maple.hierarchy.framework.GroundedTask;
-import edu.umbc.cs.maple.palm.agent.PALMModel;
-import edu.umbc.cs.maple.utilities.DiscountProvider;
-import edu.umbc.cs.maple.utilities.ValueIterationMultiStep;
+import edu.umbc.cs.maple.hierarchy.framework.Task;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-public class UCRLAgent implements LearningAgent {
+public class FlatUCRLAgent implements LearningAgent {
 
     protected UCRLModel currentModel;
     protected HashableStateFactory hashingFactory;
+    protected List<HashableState> reachableStates;
+    protected double gamma;
+    protected double maxDelta;
 
-    public UCRLAgent(){
+    public FlatUCRLAgent(Task t, State start, double gamma, double maxDelta){
+        this.gamma = gamma;
+        this.maxDelta = maxDelta;
 
-//        currentModel = new UCRLModel(base.terminalFunction(), );
+        GroundedTask gt = t.getAllGroundedTasks(start).get(0);
+        OOSADomain base = gt.getDomain();
+        Set<HashableState> stateSet = getStateSet(base, start);
+        reachableStates = new ArrayList<HashableState>(stateSet);
+        currentModel = new UCRLModel(gt, reachableStates, gamma, maxDelta, hashingFactory);
     }
 
     protected Set<HashableState> getStateSet(OOSADomain domain, State start){

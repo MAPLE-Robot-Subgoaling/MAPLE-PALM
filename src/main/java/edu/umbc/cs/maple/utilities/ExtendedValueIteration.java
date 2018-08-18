@@ -1,7 +1,9 @@
 package edu.umbc.cs.maple.utilities;
 
+import burlap.behavior.policy.GreedyQPolicy;
 import burlap.behavior.policy.Policy;
 import burlap.behavior.singleagent.planning.Planner;
+import burlap.behavior.singleagent.planning.stochastic.DynamicProgramming;
 import burlap.behavior.valuefunction.ValueFunction;
 import burlap.mdp.core.Domain;
 import burlap.mdp.core.action.Action;
@@ -16,7 +18,7 @@ import java.util.*;
 
 import java.util.Map.Entry;
 
-public class ExtendedValueIteration implements Planner {
+public class ExtendedValueIteration extends DynamicProgramming implements Planner {
 
     /*
     @article{auer_near-optimal_nodate,
@@ -30,14 +32,13 @@ public class ExtendedValueIteration implements Planner {
     protected HashableStateFactory hashingFactory;
     protected ConfidenceModel model;
     protected double deltaThreshold;
-    protected List<HashableState> reachableStates;
-    protected List<Action> actions;
-    protected Map<HashableState, Double> stateValues;
+    protected Set<HashableState> reachableStates;
+    protected Set<Action> actions;
 
     protected Map<HashableState, Map<Action, Map<HashableState, Double>>> morphedTransitions;
 
-    public ExtendedValueIteration(ConfidenceModel observedModel, List<HashableState> states,
-                                  List<Action> actions, double delta, HashableStateFactory hsf){
+    public ExtendedValueIteration(ConfidenceModel observedModel, Set<HashableState> states,
+                                  Set<Action> actions, double delta, HashableStateFactory hsf){
         this.model = observedModel;
         this.reachableStates = states;
         this.actions = actions;
@@ -48,7 +49,7 @@ public class ExtendedValueIteration implements Planner {
     @Override
     public Policy planFromState(State state) {
         ValueFunction valueFn = runExtendedVI();
-
+        return new GreedyQPolicy(this);
     }
 
     protected ValueFunction runExtendedVI(){
@@ -63,7 +64,7 @@ public class ExtendedValueIteration implements Planner {
                     Map<HashableState, Double> outTransitions = getTransitions(hs, a);
                     double weightedValueSum = 0;
                     for (HashableState hsp : outTransitions.keySet()){
-                        double value = stateValues.get(hsp);
+                        double value = valueFunction.get(hsp);
                         weightedValueSum += outTransitions.get(hsp) * value;
                     }
 
@@ -74,9 +75,9 @@ public class ExtendedValueIteration implements Planner {
                         maxNewStateValue = newValue;
                     }
                 }
-                double oldValue = stateValues.get(hs);
+                double oldValue = valueFunction.get(hs);
                 double deltaValue = Math.abs(maxNewStateValue - oldValue);
-                stateValues.put(hs, maxNewStateValue);
+                valueFunction.put(hs, maxNewStateValue);
                 if(deltaValue > maxDelta){
                     maxDelta = deltaValue;
                 }
@@ -85,7 +86,7 @@ public class ExtendedValueIteration implements Planner {
             iteration++;
         }
 
-        return; new TabularValueFunction(hashingFactory, stateValues, 0);
+        return new TabularValueFunction(hashingFactory, valueFunction, 0);
     }
 
     // Figure 2
@@ -124,11 +125,11 @@ public class ExtendedValueIteration implements Planner {
         }
     }
 
-    protected List<HashableState sortStatesByValue(){
-        Set<Entry<HashableState, Double>> set = stateValues.entrySet();
+    protected List<HashableState> sortStatesByValue(){
+        Set<Entry<HashableState, Double>> set = valueFunction.entrySet();
         List<Entry<HashableState, Double>> list = new ArrayList<Entry<HashableState, Double>>(
                 set);
-        List.sort(list, new Comparator<Entry<HashableState, Double>>() {
+        Collections.sort(list, new Comparator<Entry<HashableState, Double>>() {
             public int compare(Entry<HashableState, Double> o1,
                                Entry<HashableState, Double> o2) {
                 return o2.getValue().compareTo(o1.getValue());
@@ -185,9 +186,9 @@ public class ExtendedValueIteration implements Planner {
     @Override
     public void resetSolver() {
         morphedTransitions.clear();
-        stateValues.clear();
+        valueFunction.clear();
         for(HashableState hs :reachableStates){
-            stateValues.put(hs, 0.);
+            valueFunction.put(hs, 0.);
         }
     }
 

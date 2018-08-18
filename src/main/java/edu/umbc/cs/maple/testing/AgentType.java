@@ -7,15 +7,15 @@ import burlap.mdp.singleagent.oo.OOSADomain;
 import burlap.statehashing.HashableStateFactory;
 import burlap.statehashing.simple.SimpleHashableStateFactory;
 import edu.umbc.cs.maple.config.ExperimentConfig;
+import edu.umbc.cs.maple.hierarchy.framework.GroundedTask;
 import edu.umbc.cs.maple.hierarchy.framework.Task;
 import edu.umbc.cs.maple.palm.agent.PALMLearningAgent;
 import edu.umbc.cs.maple.palm.agent.PALMModelGenerator;
 import edu.umbc.cs.maple.palm.rmax.agent.ExpectedRmaxModelGenerator;
 import edu.umbc.cs.maple.palm.rmax.agent.ExpertNavModelGenerator;
 import edu.umbc.cs.maple.palm.rmax.agent.PALMRmaxModelGenerator;
-import edu.umbc.cs.maple.palm.ucrl.agent.UCRLAgent;
+import edu.umbc.cs.maple.palm.ucrl.agent.FlatUCRLAgent;
 import edu.umbc.cs.maple.rmaxq.agent.RmaxQLearningAgent;
-import edu.umbc.cs.maple.state.hashing.cached.CachedHashableStateFactory;
 
 import java.util.Arrays;
 import java.util.List;
@@ -104,10 +104,8 @@ public enum AgentType {
     UCRL("ucrl", "ucb") {
         @Override
         public LearningAgent getLearningAgent(Task root, HashableStateFactory hsf, ExperimentConfig config) {
-            OOSADomain baseDomain = root.getDomain();
-            double qInit = DEFAULT_Q_INIT;
-            double learningRate = DEFAULT_LEARNING_RATE;
-            LearningAgent agent = new UCRLAgent();
+            LearningAgent agent = new FlatUCRLAgent(root, config.generateState(),
+                    config.gamma, config.rmax.max_delta);
             return agent;
         }
     }

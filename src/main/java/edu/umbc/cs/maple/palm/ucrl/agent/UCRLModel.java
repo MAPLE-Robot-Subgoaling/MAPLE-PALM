@@ -10,12 +10,14 @@ import burlap.statehashing.HashableState;
 import burlap.statehashing.HashableStateFactory;
 import edu.umbc.cs.maple.hierarchy.framework.GroundedTask;
 import edu.umbc.cs.maple.palm.agent.PALMModel;
+import edu.umbc.cs.maple.utilities.ConfidenceModel;
 import edu.umbc.cs.maple.utilities.ConstantDiscountProvider;
 import edu.umbc.cs.maple.utilities.DiscountProvider;
+import edu.umbc.cs.maple.utilities.ExtendedValueIteration;
 
 import java.util.*;
 
-public class UCRLModel extends PALMModel {
+public class UCRLModel extends PALMModel implements ConfidenceModel {
 
     /*
         Implementation of belop paper's Algorithm 1 writen by Matthew Landen
@@ -85,7 +87,7 @@ public class UCRLModel extends PALMModel {
     protected int U_max;
     protected int beta;
 
-    public UCRLModel(List<HashableState> baseStates, double gamma, double maxDelta,
+    protected UCRLModel(List<HashableState> baseStates, double gamma, double maxDelta,
                      HashableStateFactory hashableStateFactory){
         this.initializeDiscountProvider(gamma);
         this.gamma = gamma;
@@ -102,13 +104,13 @@ public class UCRLModel extends PALMModel {
         defineStatesAndActions(baseStates);
     }
 
-    public UCRLModel(TerminalFunction tf, List<HashableState> baseStates, List<Action> actions,
-                     double gamma, double maxDelta, HashableStateFactory hashableStateFactory){
-        this(baseStates, gamma, maxDelta, hashableStateFactory);
-        this.tf = tf;
-        this.stateSpace = new HashSet<HashableState>(baseStates);
-        this.MAG_A = actions.size();
-    }
+//    public UCRLModel(TerminalFunction tf, List<HashableState> baseStates, List<Action> actions,
+//                     double gamma, double maxDelta, HashableStateFactory hashableStateFactory){
+//        this(baseStates, gamma, maxDelta, hashableStateFactory);
+//        this.tf = tf;
+//        this.stateSpace = new HashSet<HashableState>(baseStates);
+//        this.MAG_A = actions.size();
+//    }
 
 
     public void initializeDiscountProvider(double gamma) {
@@ -259,11 +261,14 @@ public class UCRLModel extends PALMModel {
 
     protected void updatePolicy(){
         // extended vi
+        ExtendedValueIteration evi = new ExtendedValueIteration(this, stateSpace, actions,
+                maxDelta, hashingFactory);
+        current_policy = evi.planFromState(null);
     }
 
     //TODO: Define confidwence in transition
     protected boolean isConfident(HashableState hs, Action a){
-
+        return !checkKnowness();
     }
 
     //TODO: See how UCRL handles "convergence"
