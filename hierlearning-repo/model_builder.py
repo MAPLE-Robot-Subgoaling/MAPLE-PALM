@@ -4,13 +4,14 @@
 # Compatible with Weka 3.6.5
 # Note: numeric attributes are not allowed for J48
 
-
 import sys
 import subprocess
 import re
 import os
 import platform
 oper_sys = platform.system()
+
+## print(sys.argv)
 
 if len(sys.argv) != 5:
         print "Arguments: <trajectory filename> <output model directory> <confidence (0 = no pruning)> <display?>"
@@ -37,8 +38,11 @@ num_actions = len(actions)
 action_encoding = dict(zip(map(int, pattern.split(data[1].strip())), [i for i in range(num_actions)]))
 
 state_variables = pattern.split(data[2].strip())
+## ## print(state_variables)
 num_variables = len(state_variables)
+## ## print(num_variables)
 domain_size = map(int, pattern.split(data[3].strip()))
+## print(domain_size)
 
 if num_variables != len(domain_size):
 	print "The number of variables does not match the number of domain sizes."
@@ -57,8 +61,8 @@ for a in range(num_actions):
                 arff_file[a].append(open(directory + actions[a] + '__' + state_variables[x] + '.arff', 'w'))
                 arff_file[a][x].write('@relation ' + actions[a] + '__' + state_variables[x] + '\n')
                 for v in range(num_variables):
-                        arff_file[a][x].write('@attribute ' + state_variables[v] + ' {' + str(range(domain_size[v])).strip('[]') + '}\n')
-                arff_file[a][x].write('@attribute next_' + state_variables[x] + ' {' + str(range(domain_size[x])).strip('[]') + '}\n\n@data\n')
+                        arff_file[a][x].write('@attribute ' + state_variables[v] + ' {' + str(range(max(2,domain_size[v]))).strip('[]') + '}\n')
+                arff_file[a][x].write('@attribute next_' + state_variables[x] + ' {' + str(range(max(2,domain_size[x]))).strip('[]') + '}\n\n@data\n')
 
 reward_nominal_values = []
 reward_data = []
@@ -67,9 +71,13 @@ for a in range(num_actions):
         reward_data.append("")
 
 pattern = re.compile(r'[ \(\),\*]+')
+## print("")
 for i in range(5, len(data) - 3):
         state = [s for s in pattern.split(data[i].strip()) if s]
         if len(state) > 1:
+                ## print(state)
+                ## print("len(state)",len(state))
+                ## print("num_variables",num_variables)
                 if len(state) != num_variables:
                         print "The state does not contain the expected number of state variables."
                         sys.exit(1)
@@ -120,10 +128,11 @@ for a in range(num_actions):
 
 	for x in range(num_variables):
                 if not prune:
-        		model_str = subprocess.Popen(["java", "-cp", "C:/Users/JW/workspace/hierlearningAlt/lib/weka.jar", "weka.classifiers.trees.J48", "-v", "-no-cv", "-U", "-M", "1", "-t", directory + actions[a] + "__" + state_variables[x] + ".arff"], stdout = subprocess.PIPE).communicate()[0]
+        		## print(["java", "-cp", "./lib/weka.jar", "weka.classifiers.trees.J48", "-v", "-no-cv", "-U", "-M", "1", "-t", directory + actions[a] + "__" + state_variables[x] + ".arff"])
+        		model_str = subprocess.Popen(["java", "-cp", "./lib/weka.jar", "weka.classifiers.trees.J48", "-v", "-no-cv", "-U", "-M", "1", "-t", directory + actions[a] + "__" + state_variables[x] + ".arff"], stdout = subprocess.PIPE).communicate()[0]
        		else:
-        		model_str = subprocess.Popen(["java", "-cp", "C:/Users/JW/workspace/hierlearningAlt/lib/weka.jar", "weka.classifiers.trees.J48", "-v", "-no-cv", "-C", str(confidence), "-M", "1", "-t", directory + actions[a] + "__" + state_variables[x] + ".arff"], stdout = subprocess.PIPE).communicate()[0]
-
+        		## print(["java", "-cp", "./lib/weka.jar", "weka.classifiers.trees.J48", "-v", "-no-cv", "-C", str(confidence), "-M", "1", "-t", directory + actions[a] + "__" + state_variables[x] + ".arff"])
+        		model_str = subprocess.Popen(["java", "-cp", "./lib/weka.jar", "weka.classifiers.trees.J48", "-v", "-no-cv", "-C", str(confidence), "-M", "1", "-t", directory + actions[a] + "__" + state_variables[x] + ".arff"], stdout = subprocess.PIPE).communicate()[0]
 		if model_str != "":
 			model = line_pattern.split(model_str)
 			model_file = open(directory + actions[a] + '__' + state_variables[x] + '.model', 'w')
@@ -134,9 +143,9 @@ for a in range(num_actions):
 
 	if len(reward_nominal_values[a]) > 1:
                 if not prune:
-        		model_str = subprocess.Popen(["java", "-cp", "C:/Users/JW/workspace/hierlearningAlt/lib/weka.jar", "weka.classifiers.trees.J48", "-v", "-no-cv", "-U", "-M", "1", "-t", directory + actions[a] + "__reward.arff"], stdout = subprocess.PIPE).communicate()[0]
+        		model_str = subprocess.Popen(["java", "-cp", "./lib/weka.jar", "weka.classifiers.trees.J48", "-v", "-no-cv", "-U", "-M", "1", "-t", directory + actions[a] + "__reward.arff"], stdout = subprocess.PIPE).communicate()[0]
         	else:
-        		model_str = subprocess.Popen(["java", "-cp", "C:/Users/JW/workspace/hierlearningAlt/lib/weka.jar", "weka.classifiers.trees.J48", "-v", "-no-cv", "-C", str(confidence), "-M", "1", "-t", directory + actions[a] + "__reward.arff"], stdout = subprocess.PIPE).communicate()[0]
+        		model_str = subprocess.Popen(["java", "-cp", "./lib/weka.jar", "weka.classifiers.trees.J48", "-v", "-no-cv", "-C", str(confidence), "-M", "1", "-t", directory + actions[a] + "__reward.arff"], stdout = subprocess.PIPE).communicate()[0]
 
                 if model_str != "":
 			model = line_pattern.split(model_str)

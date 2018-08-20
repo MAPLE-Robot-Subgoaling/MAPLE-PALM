@@ -31,21 +31,26 @@ static const int min_x = 0;
 static const int min_y = 0;
 static const int max_x = 7;
 static const int max_y = 5;
-static const int num_shapes = 4;
-static const int num_colors = 5;
-static const int num_directions = 4;
 static const int min_locked_boolean_value = 0;
 static const int max_locked_boolean_value = 1;
-enum Shape {chair, bag, backpack, basket, agent_shape, door, room};
-enum Color {blue, green, red, yellow, magenta, cyan, orange, gray};
-enum Direction {north, south, east, west};
 
+enum Shape {chair, bag, backpack, basket, agent_shape, door, room};
+static const int num_shapes = 7;
+
+enum Color {blue, green, red, yellow, magenta, cyan, orange, gray};
+static const int num_colors = 8;
+
+enum Direction {north, south, east, west};
 static const Direction directions[] = {north, south, east, west};
+static const int num_directions = 4;
+
 static const Color room_colors[] = {blue, green, red, yellow, magenta, cyan, orange};
-static const Color block_colors[] = {blue, green, red, yellow, magenta};
-static const Shape block_shapes[] = {chair, bag, backpack, basket};
 static const int num_room_colors = 7;
+
+static const Color block_colors[] = {blue, green, red, yellow, magenta};
 static const int num_block_colors = 5;
+
+static const Shape block_shapes[] = {chair, bag, backpack, basket};
 static const int num_block_shapes = 4;
 
 struct Cleanup_State : public State

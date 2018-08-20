@@ -228,7 +228,8 @@ int main (int argc, char* argv[])
 		}
 	}
 	catch (const exception& e)
-	{	cerr << e.what() << endl << endl;
+	{	
+		cerr << e.what() << endl << endl;
 	}
 	catch (...)
 	{

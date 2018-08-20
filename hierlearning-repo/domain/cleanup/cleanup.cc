@@ -200,8 +200,8 @@ pair<bool,int> Cleanup_State::parse (string expression) const
 			else if (token.str() == "map_size.y")
 				value = map_size.y;
 			else
-				//return make_pair(false, 0);
-				throw HierException(__FILE__, __LINE__, "Cannot parse (uncomment the line above?) " + expression);
+				return make_pair(false, 0);
+				//throw HierException(__FILE__, __LINE__, "Cannot parse (uncomment the line above?) " + expression);
 		}
 		total += (expression[start-1] == '+') ? value : -value;
 
@@ -223,7 +223,10 @@ string Cleanup_State::print () const
 {	
 	ostringstream out;
 	
-	out << "Agent(";
+	// WARNING: the output MUST follow the exact same format as in taxi.cc 
+	// since this is processed by a regex and used in model-building
+
+	out << "(";
 	out << agent.x;
 	out << ",";
 	out << agent.y;
@@ -245,7 +248,7 @@ string Cleanup_State::print () const
 	
 	for (const auto& block : blocks)
 	{
-		out << " Block(";
+		out << " (";
 		out << block.x;
 		out << ",";
 		out << block.y;
@@ -266,7 +269,7 @@ string Cleanup_State::print () const
 
 	for (const auto& door : doors)
 	{
-		out << " Door(";
+		out << " (";
 		out << door.x;
 		out << ",";
 		out << door.y;
@@ -289,7 +292,7 @@ string Cleanup_State::print () const
 
 	for (const auto& room : rooms)
 	{
-		out << " Room(";
+		out << " (";
 		out << room.left;
 		out << ",";
 		out << room.right;
