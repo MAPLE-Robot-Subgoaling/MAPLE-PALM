@@ -34,10 +34,10 @@ rmax:
 output:
   csv:
     enabled: true
-    output: results/taxi-hiergen-ql-palm-small-fickle-5.csv
+    output: results/taxi-hiergen-ql-palm-small-fickle-4.csv
 
   chart:
-    enabled: true
+    enabled: false
 
     width: 500
     height: 230

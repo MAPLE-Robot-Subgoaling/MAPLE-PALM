@@ -17,14 +17,16 @@ domain: !!edu.umbc.cs.maple.config.cleanup.CleanupConfig
       defaultReward: 0.0
       noopReward: 0.0
       pullReward: 0.0
-  state: cigar-2blocks
+  state: threeRooms-2blocks
 
 goal: *goal
 
 agents:
-  rmaxq: {cleanup-advancedBaseline}
+  ql: {cleanup-baseline,cleanup-advancedBaseline,cleanup-jw}
+  rmaxq: {cleanup-baseline,cleanup-advancedBaseline,cleanup-jw}
+  palm:  {cleanup-baseline,cleanup-advancedBaseline,cleanup-jw}
 
-seed: 3488137963
+seed: 223362651
 episodes: 300
 max_steps: 10000
 trials: 2
@@ -46,7 +48,7 @@ rmax:
 output:
   csv:
     enabled: true
-    output: results/test.csv
+    output: results/cleanup-baseline-advancedBaseline-expert-3room-1.csv
 
   chart:
     enabled: true
@@ -63,7 +65,7 @@ output:
       - CUMULATIVE_REWARD_PER_EPISODE
 
   visualizer:
-    enabled: true
+    enabled: false
     episodes: true
     width: 7
     height: 5

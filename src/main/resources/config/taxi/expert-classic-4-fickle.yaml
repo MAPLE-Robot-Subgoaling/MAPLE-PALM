@@ -9,7 +9,6 @@ domain: !!edu.umbc.cs.maple.config.taxi.TaxiConfig
 goal: !!edu.umbc.cs.maple.taxi.TaxiGoal {}
 
 agents:
-  ql: {taxi-expert}
   palm: {taxi-expert}
 
 seed: 95424058
@@ -34,7 +33,7 @@ rmax:
 output:
   csv:
     enabled: true
-    output: results/taxi-expert-ql-palm-classic-fickle-4.csv
+    output: results/taxi-expert-palm-classic-fickle-4.csv
 
   chart:
     enabled: true

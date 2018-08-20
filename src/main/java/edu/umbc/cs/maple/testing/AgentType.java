@@ -131,11 +131,12 @@ public enum AgentType {
         AgentType agentType = AgentType.getByType(agentTypeName);
         String extra = agentName.contains("hier") ? "-H" : "";
         String extra2 = agentName.contains("baseline") ? "-B" : "";
+        String extra3 = agentName.contains("advancedBaseline") ? "-aB" : "";
+        String extra4 = agentName.contains("jw") ? "-expert" : "";
         LearningAgentFactory agent = new LearningAgentFactory() {
             @Override
             public String getAgentName() {
-                return agentType.getPlotterDisplayName() + extra + extra2;
-            }
+                return agentType.getPlotterDisplayName() + extra + extra2 + extra3 + extra4; }
             @Override
             public LearningAgent generateAgent() {
                 return agentType.getLearningAgent(root, config);

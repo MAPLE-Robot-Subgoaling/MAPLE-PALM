@@ -37,7 +37,7 @@ output:
     output: results/taxi-expert-ql-palm-small-fickle-4.csv
 
   chart:
-    enabled: true
+    enabled: false
 
     width: 500
     height: 230

@@ -852,9 +852,9 @@ public class CleanupRandomStateGenerator implements StateGenerator {
         int dy2 = bigRoomTop/2;
         int dy1 = bigRoomTop-1;
         int dy3 = bigRoomBottom+1;
-        CleanupDoor door1 = new CleanupDoor("door1", dx1, dx1, dy1, dy1,  Cleanup.LOCKABLE_STATES[0], Cleanup.SHAPE_DOOR, Cleanup.COLOR_GRAY);
-//        CleanupDoor door2 = new CleanupDoor("door0", dx2, dx2, dy2, dy2, Cleanup.LOCKABLE_STATES[0], Cleanup.SHAPE_DOOR, Cleanup.COLOR_GRAY);
-        CleanupDoor door3 = new CleanupDoor("door2", dx3, dx3, dy3, dy3, Cleanup.LOCKABLE_STATES[0], Cleanup.SHAPE_DOOR, Cleanup.COLOR_GRAY);
+//        CleanupDoor door1 = new CleanupDoor("door1", dx1, dx1, dy1, dy1,  Cleanup.LOCKABLE_STATES[0], Cleanup.SHAPE_DOOR, Cleanup.COLOR_GRAY);
+        CleanupDoor door0 = new CleanupDoor("door0", dx2, dx2, dy2, dy2, Cleanup.LOCKABLE_STATES[0], Cleanup.SHAPE_DOOR, Cleanup.COLOR_GRAY);
+//        CleanupDoor door3 = new CleanupDoor("door2", dx3, dx3, dy3, dy3, Cleanup.LOCKABLE_STATES[0], Cleanup.SHAPE_DOOR, Cleanup.COLOR_GRAY);
         // randomize agent's position
         int ax = minX;
         int ay = minY;
@@ -863,8 +863,7 @@ public class CleanupRandomStateGenerator implements StateGenerator {
         s.addObject(room1);
         s.addObject(room2);
 //        s.addObject(door2);
-        s.addObject(door1);
-        s.addObject(door3);
+        s.addObject(door0);
         do {
             ax = minX + rng.nextInt(getWidth());
             ay = minY + rng.nextInt(getHeight());
