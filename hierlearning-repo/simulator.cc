@@ -214,13 +214,28 @@ vector<vector<unique_ptr<State_Action_Reward>>> Simulator::trajectory_generator 
 				else
 					trajectories[t].emplace_back(new State_Action_Reward(mdp.state(), action));
 
+				if (trajectories[t].size() > 10) {
+					cout << "";
+				}
+				//State_Action_Reward sar = (*trajectories[t].at(trajectories[t].size()-1));
+				//cout << sar.reward;
+				//cout << ",";
+				//cout << sar.action;
+				//cout << "\n";
 				mdp.process(action);
+				
+				cout << "\n";
+				cout << action;
+				cout << "\n";
+				cout << mdp.state().print();
+				cout << "\n";
 
 				if (trajectory_file.is_open())
 					trajectory_file << mdp.reward()[0] << endl;
 				else
 					trajectories[t].back()->reward = mdp.reward();
 			}
+
 
 			if (trajectory_file.is_open())
 				trajectory_file << mdp.state().print() << "\n#\n";

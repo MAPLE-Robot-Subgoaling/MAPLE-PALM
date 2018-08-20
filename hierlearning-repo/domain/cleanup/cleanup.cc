@@ -223,7 +223,7 @@ string Cleanup_State::print () const
 {	
 	ostringstream out;
 	
-	out << "(";
+	out << "Agent(";
 	out << agent.x;
 	out << ",";
 	out << agent.y;
@@ -245,7 +245,7 @@ string Cleanup_State::print () const
 	
 	for (const auto& block : blocks)
 	{
-		out << " (";
+		out << " Block(";
 		out << block.x;
 		out << ",";
 		out << block.y;
@@ -266,7 +266,7 @@ string Cleanup_State::print () const
 
 	for (const auto& door : doors)
 	{
-		out << " (";
+		out << " Door(";
 		out << door.x;
 		out << ",";
 		out << door.y;
@@ -289,7 +289,7 @@ string Cleanup_State::print () const
 
 	for (const auto& room : rooms)
 	{
-		out << " (";
+		out << " Room(";
 		out << room.left;
 		out << ",";
 		out << room.right;
@@ -421,14 +421,18 @@ void Cleanup::three_rooms () {
 	// make blocks
 
 	for (auto& block : state().blocks) {
-		int ax = dx2;
-		int ay = dy2-1;
-		block.x = ax;
-		block.y = ay;
-		block.left = ax;
-		block.right = ax;
-		block.bottom = ay;
-		block.top = ay;
+		int bx = rand_int(max_x);
+		int by = rand_int(max_y);
+		while (wall_at(bx, by) || block_at(bx, by) || agent_at(bx, by)) {
+			bx = rand_int(max_x);
+			by = rand_int(max_y);
+		}
+		block.x = bx;
+		block.y = by;
+		block.left = bx;
+		block.right = bx;
+		block.bottom = by;
+		block.top = by;
 		block.color = block_colors[rand_int(num_block_colors)];
 		block.shape = block_shapes[rand_int(num_block_shapes)];
 	}
@@ -518,6 +522,7 @@ void Cleanup::do_move (int dx, int dy) {
 		if (block.x == nx && block.y == ny) {
 			block_in_the_way = true;
 			pushed_block = block;
+			break;
 		}
 	}
 	if (block_in_the_way) {
@@ -550,10 +555,10 @@ void Cleanup::do_move (int dx, int dy) {
 			pushed_block.top = nby;
 		}
 		Direction new_direction;
-		if (dy > 1) { new_direction = directions[0]; }
-		else if (dy < 1) { new_direction = directions[1]; }
-		else if (dx > 1) { new_direction = directions[2]; }
-		else if (dx < 1) { new_direction = directions[3]; }
+		if (dy > 1) { new_direction = Direction::north; }
+		else if (dy < 1) { new_direction = Direction::south; }
+		else if (dx > 1) { new_direction = Direction::east; }
+		else if (dx < 1) { new_direction = Direction::west; }
 		state().agent.x = nx;
 		state().agent.y = ny;
 		state().agent.left = nx;
@@ -628,6 +633,13 @@ bool Cleanup::is_open(int x, int y) {
 	return !(wall_at(x, y) || block_at(x, y));
 }
 
+bool Cleanup::agent_at(int x, int y) {
+	if (state().agent.x == x && state().agent.y == y) {
+		return true;
+	}
+	return false;
+}
+
 bool Cleanup::door_at(int x, int y) {
 	for (int i = 0; i < state().num_doors; ++i) {
 		Cleanup_State::Door door = state().doors[i];
@@ -673,6 +685,10 @@ bool Cleanup::wall_at(int x, int y) {
 bool Cleanup::is_inside(int block_index, int room_index) const {
 	Cleanup_State::Block block = state().blocks[block_index]; 
 	Cleanup_State::Room room = state().rooms[room_index]; 
+	return is_inside(block, room);
+}
+
+bool Cleanup::is_inside(Cleanup_State::Block block, Cleanup_State::Room room) const {
 	if (block.y > room.bottom && block.y < room.top && block.x > room.left && block.x < room.right) {
 		return true;
 	}
