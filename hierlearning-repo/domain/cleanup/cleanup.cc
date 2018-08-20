@@ -327,7 +327,7 @@ void Cleanup::three_rooms () {
 
 	// make rooms
 
-	Cleanup_State::Room big_room;
+	Cleanup_State::Room big_room = {};
 	big_room.left = 0;
 	big_room.right = max_x-1;
 	big_room.bottom = max_y/2;
@@ -335,7 +335,7 @@ void Cleanup::three_rooms () {
 	big_room.color = room_colors[rand_int(num_room_colors)];
 	big_room.shape = room;
 	
-	Cleanup_State::Room room1;
+	Cleanup_State::Room room1 = {};
 	room1.left = big_room.left;
 	room1.right = big_room.right/2;
 	room1.bottom = min_y;
@@ -343,7 +343,7 @@ void Cleanup::three_rooms () {
 	room1.color = room_colors[rand_int(num_room_colors)];
 	room1.shape = room;
 	
-	Cleanup_State::Room room2;
+	Cleanup_State::Room room2 = {};
 	room2.left = big_room.right/2;
 	room2.right = big_room.right;
 	room2.bottom = min_y;
@@ -351,14 +351,87 @@ void Cleanup::three_rooms () {
 	room2.color = room_colors[rand_int(num_room_colors)];
 	room2.shape = room;
 	
-
-
-
+	state().rooms[0] = big_room;
+	state().rooms[1] = room1;
+	state().rooms[2] = room2;
+	
 	// make doors
 
+	Cleanup_State::Door door0 = {};
+	Cleanup_State::Door door1 = {};
+	Cleanup_State::Door door2 = {};
+	int dx0 = big_room.right/3;
+	int dx1 = 2*big_room.right/3 + 1;
+	int dx2 = big_room.right/2;
+	int dy0 = big_room.bottom;
+	int dy1 = big_room.bottom;
+	int dy2 = big_room.bottom/2;
+
+	door0.x = dx0;
+	door0.y = dy0;
+	door0.left = dx0;
+	door0.right = dx0;
+	door0.bottom = dy0;
+	door0.top = dy0;
+	door0.color = gray;
+	door0.shape = door;
+	door0.locked = false;
+
+	door1.x = dx1;
+	door1.y = dy1;
+	door1.left = dx1;
+	door1.right = dx1;
+	door1.bottom = dy1;
+	door1.top = dy1;
+	door1.color = gray;
+	door1.shape = door;
+	door1.locked = false;
+
+	door2.x = dx2;
+	door2.y = dy2;
+	door2.left = dx2;
+	door2.right = dx2;
+	door2.bottom = dy2;
+	door2.top = dy2;
+	door2.color = gray;
+	door2.shape = door;
+	door2.locked = false;
+
+	state().doors[0] = door0;
+	state().doors[1] = door1;
+	state().doors[2] = door2;
+
 	// make agent
+	
+	int ax = dx2;
+	int ay = dy2;
+	Cleanup_State::Agent agent = {};
+	agent.x = ax;
+	agent.y = ay;
+	agent.left = ax;
+	agent.right = ax;
+	agent.bottom = ay;
+	agent.top = ay;
+	agent.color = gray;
+	agent.shape = agent_shape;
+	agent.direction = directions[rand_int(num_directions)];
+	
+	state().agent = agent;
 
 	// make blocks
+
+	for (auto& block : state().blocks) {
+		int ax = dx2;
+		int ay = dy2-1;
+		block.x = ax;
+		block.y = ay;
+		block.left = ax;
+		block.right = ax;
+		block.bottom = ay;
+		block.top = ay;
+		block.color = block_colors[rand_int(num_block_colors)];
+		block.shape = block_shapes[rand_int(num_block_shapes)];
+	}
 
 }
 
@@ -381,7 +454,7 @@ void Cleanup::process (const vector<int>& action)
 	{	case north:
 			if (rand_real() < Pr_successful_execution)
 			{	
-				++state().agent.y;
+				do_move(0,1);
 			} else {
 				throw new HierException(__FILE__, __LINE__, "Bad action roll?");
 			}
@@ -390,7 +463,7 @@ void Cleanup::process (const vector<int>& action)
 		case south:
 			if (rand_real() < Pr_successful_execution)
 			{	
-				--state().agent.y;
+				do_move(0,-1);
 			} else {
 				throw new HierException(__FILE__, __LINE__, "Bad action roll?");
 			}
@@ -399,7 +472,7 @@ void Cleanup::process (const vector<int>& action)
 		case east:
 			if (rand_real() < Pr_successful_execution)
 			{	
-				++state().agent.x;
+				do_move(1,0);
 			} else {
 				throw new HierException(__FILE__, __LINE__, "Bad action roll?");
 			}
@@ -408,7 +481,7 @@ void Cleanup::process (const vector<int>& action)
 		case west:
 			if (rand_real() < Pr_successful_execution)
 			{
-				--state().agent.x;
+				do_move(-1,0);
 			} else {
 				throw new HierException(__FILE__, __LINE__, "Bad action roll?");
 			}
@@ -417,7 +490,7 @@ void Cleanup::process (const vector<int>& action)
 		case pull:
 			if (rand_real() < Pr_successful_execution)
 			{ 
-				throw new HierException(__FILE__, __LINE__, "Bad action roll?");
+				do_pull();
 			} else {
 				throw new HierException(__FILE__, __LINE__, "Bad action roll?");
 			}
@@ -429,10 +502,78 @@ void Cleanup::process (const vector<int>& action)
 
 }
 
+void Cleanup::do_move (int dx, int dy) {
+	int nx = state().agent.x + dx;
+	int ny = state().agent.y + dy;
+	int nbx = nx;
+	int nby = ny;
+
+	bool agent_can_move = false;
+	bool block_can_move = false;
+
+	bool block_in_the_way = false;
+	Cleanup_State::Block pushed_block;
+	for (int i = 0; i < state().num_blocks; ++i) {
+		Cleanup_State::Block block = state().blocks[i];
+		if (block.x == nx && block.y == ny) {
+			block_in_the_way = true;
+			pushed_block = block;
+		}
+	}
+	if (block_in_the_way) {
+		int bx = pushed_block.x;
+		int by = pushed_block.y;
+		nbx = bx + dx;
+		nby = by + dy;
+		if (is_open(nbx, nby)) {
+			block_can_move = true;
+			agent_can_move = true;
+		}
+	}
+}
+
+void Cleanup::do_pull () {
+
+}
 
 bool Cleanup::terminated () const
 {	
-	throw HierException(__FILE__, __LINE__, "terminated not implemented.");
+	return is_inside(0, 1);
+}
+
+bool Cleanup::is_open(int x, int y) {
+	return !(wallAt(x, y) || blockAt(x, y));
+}
+
+bool Cleanup::wall_at(int x, int y) {
+	// trivially, there is a wall if out of bounds
+	if (x < min_x || x >= max_x || y < min_y || y >= max_y) {
+		return true;
+	}
+	for (int i = 0; i < state().num_rooms; ++i) {
+		Cleanup_State::Room room = state().rooms[i];
+		int left = room.left;
+		int right = room.right;
+		int bottom = room.bottom;
+		int top = room.top;
+		// if inside a wall
+		if (((x == left || x == right) && y >= bottom && y <= top) || ((y == bottom || y == top) && x >= left && x <= right)) {
+			// check if door is there
+			bool door_there = door_at(x, y);
+			return !door_there;
+		}
+	}
+	// not inside a wall
+	return false;
+}
+
+bool Cleanup::is_inside(int block_index, int room_index) const {
+	Cleanup_State::Block block = state().blocks[block_index]; 
+	Cleanup_State::Room room = state().rooms[room_index]; 
+	if (block.y > room.bottom && block.y < room.top && block.x > room.left && block.x < room.right) {
+		return true;
+	}
+	return false;
 }
 
 

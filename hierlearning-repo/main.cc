@@ -231,7 +231,8 @@ int main (int argc, char* argv[])
 	{	cerr << e.what() << endl << endl;
 	}
 	catch (...)
-	{	cerr << "\n Unhandled exception.\n";
+	{
+		cerr << "\n Unhandled exception.\n";
 	}
 
 	return 0;

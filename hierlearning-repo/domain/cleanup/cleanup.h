@@ -36,10 +36,11 @@ static const int num_colors = 5;
 static const int num_directions = 4;
 static const int min_locked_boolean_value = 0;
 static const int max_locked_boolean_value = 1;
-enum Shape {chair, bag, backpack, basket, agent, door, room};
-enum Color {blue, green, red, yellow, magenta, cyan, orange};
+enum Shape {chair, bag, backpack, basket, agent_shape, door, room};
+enum Color {blue, green, red, yellow, magenta, cyan, orange, gray};
 enum Direction {north, south, east, west};
 
+static const Direction directions[] = {north, south, east, west};
 static const Color room_colors[] = {blue, green, red, yellow, magenta, cyan, orange};
 static const Color block_colors[] = {blue, green, red, yellow, magenta};
 static const Shape block_shapes[] = {chair, bag, backpack, basket};
@@ -146,6 +147,9 @@ class Cleanup : public MDP
 
 		void map_creator(const int& mode = 0);
 		void three_rooms();
+		bool is_inside(int block_index, int room_index) const;
+		void do_move(int dx, int dy);
+		void do_pull();
 
 	public:
 		enum Action {north, south, east, west, pull};
