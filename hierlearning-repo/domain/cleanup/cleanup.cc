@@ -528,12 +528,95 @@ void Cleanup::do_move (int dx, int dy) {
 		if (is_open(nbx, nby)) {
 			block_can_move = true;
 			agent_can_move = true;
+		} else {
+			block_can_move = false;
+			agent_can_move = false;
 		}
+	} else {
+		if (wall_at(nx, ny)) {
+			agent_can_move = false;
+		} else {
+			agent_can_move = true;
+		}
+	}
+
+	if (agent_can_move) {
+		if (block_can_move) {
+			pushed_block.x = nbx;
+			pushed_block.y = nby;
+			pushed_block.left = nbx;
+			pushed_block.right = nbx;
+			pushed_block.bottom = nby;
+			pushed_block.top = nby;
+		}
+		Direction new_direction;
+		if (dy > 1) { new_direction = directions[0]; }
+		else if (dy < 1) { new_direction = directions[1]; }
+		else if (dx > 1) { new_direction = directions[2]; }
+		else if (dx < 1) { new_direction = directions[3]; }
+		state().agent.x = nx;
+		state().agent.y = ny;
+		state().agent.left = nx;
+		state().agent.right = nx;
+		state().agent.bottom = ny;
+		state().agent.top = ny;
+		state().agent.direction = new_direction;
 	}
 }
 
 void Cleanup::do_pull () {
-
+	int ax = state().agent.x;
+	int ay = state().agent.y;
+	int dx = 0;
+	int dy = 0;
+	Direction direction = state().agent.direction;
+	Direction new_direction;
+	if (direction == north) {
+		dy += 1;
+		new_direction = Direction::south;
+	} else if (direction == south) {
+		dy -= 1;
+		new_direction = Direction::north;
+	} else if (direction == east) {
+		dx += 1;
+		new_direction = Direction::west;
+	} else if (direction == west) {
+		dx -= 1;
+		new_direction = Direction::east;
+	} else {
+		throw HierException(__FILE__, __LINE__, "Unknown direction in do_pull");
+	}
+	int nx = ax + dx;
+	int ny = ay + dy;
+	bool block_in_the_way = false;
+	Cleanup_State::Block pulled_block;
+	for (int i = 0; i < state().num_blocks; ++i) {
+		Cleanup_State::Block block = state().blocks[i];
+		if (block.x == nx && block.y == ny) {
+			block_in_the_way = true;
+			pulled_block = block;
+		}
+	}
+	if (block_in_the_way) {
+		int bx = pulled_block.x;
+		int by = pulled_block.y;
+		int nbx = ax;
+		int nby = ay;
+		pulled_block.x = nbx;
+		pulled_block.y = nby;
+		pulled_block.left = nbx;
+		pulled_block.right = nbx;
+		pulled_block.bottom = nby;
+		pulled_block.top = nby;
+		
+		state().agent.x = nx;
+		state().agent.y = ny;
+		state().agent.left = nx;
+		state().agent.right = nx;
+		state().agent.bottom = ny;
+		state().agent.top = ny;
+		state().agent.direction = new_direction;
+	}
 }
 
 bool Cleanup::terminated () const
@@ -542,7 +625,27 @@ bool Cleanup::terminated () const
 }
 
 bool Cleanup::is_open(int x, int y) {
-	return !(wallAt(x, y) || blockAt(x, y));
+	return !(wall_at(x, y) || block_at(x, y));
+}
+
+bool Cleanup::door_at(int x, int y) {
+	for (int i = 0; i < state().num_doors; ++i) {
+		Cleanup_State::Door door = state().doors[i];
+		if (door.x == x && door.y == y) {
+			return true;
+		}
+	}
+	return false;
+}
+
+bool Cleanup::block_at(int x, int y) {
+	for (int i = 0; i < state().num_blocks; ++i) {
+		Cleanup_State::Block block = state().blocks[i];
+		if (block.x == x && block.y == y) {
+			return true;
+		}
+	}
+	return false;
 }
 
 bool Cleanup::wall_at(int x, int y) {

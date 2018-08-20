@@ -150,6 +150,10 @@ class Cleanup : public MDP
 		bool is_inside(int block_index, int room_index) const;
 		void do_move(int dx, int dy);
 		void do_pull();
+		bool is_open(int x, int y);
+		bool wall_at(int x, int y);
+		bool door_at(int x, int y);
+		bool block_at(int x, int y);
 
 	public:
 		enum Action {north, south, east, west, pull};
