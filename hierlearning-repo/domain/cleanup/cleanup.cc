@@ -320,19 +320,55 @@ Cleanup::Cleanup (const string& name, const double& success_probability) : MDP(n
 
 void Cleanup::map_creator (const int& mode)
 {	
-	throw HierException(__FILE__, __LINE__, "TODO: implement map_creator");
+	three_rooms();
+}
+
+void Cleanup::three_rooms () {
+
+	// make rooms
+
+	Cleanup_State::Room big_room;
+	big_room.left = 0;
+	big_room.right = max_x-1;
+	big_room.bottom = max_y/2;
+	big_room.top = max_y-1;
+	big_room.color = room_colors[rand_int(num_room_colors)];
+	big_room.shape = room;
+	
+	Cleanup_State::Room room1;
+	room1.left = big_room.left;
+	room1.right = big_room.right/2;
+	room1.bottom = min_y;
+	room1.top = big_room.bottom;
+	room1.color = room_colors[rand_int(num_room_colors)];
+	room1.shape = room;
+	
+	Cleanup_State::Room room2;
+	room2.left = big_room.right/2;
+	room2.right = big_room.right;
+	room2.bottom = min_y;
+	room2.top = big_room.bottom;
+	room2.color = room_colors[rand_int(num_room_colors)];
+	room2.shape = room;
+	
+
+
+
+	// make doors
+
+	// make agent
+
+	// make blocks
+
 }
 
 
 void Cleanup::initialize (const bool& target)
 {	
 
-	// TODO: init the state 
-
 	_reward = 0.0;
 	_duration = 0.0;
 
-	throw HierException(__FILE__, __LINE__, "TODO: init the state");
 }
 
 

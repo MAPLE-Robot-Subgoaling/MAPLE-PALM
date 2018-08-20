@@ -36,6 +36,16 @@ static const int num_colors = 5;
 static const int num_directions = 4;
 static const int min_locked_boolean_value = 0;
 static const int max_locked_boolean_value = 1;
+enum Shape {chair, bag, backpack, basket, agent, door, room};
+enum Color {blue, green, red, yellow, magenta, cyan, orange};
+enum Direction {north, south, east, west};
+
+static const Color room_colors[] = {blue, green, red, yellow, magenta, cyan, orange};
+static const Color block_colors[] = {blue, green, red, yellow, magenta};
+static const Shape block_shapes[] = {chair, bag, backpack, basket};
+static const int num_room_colors = 7;
+static const int num_block_colors = 5;
+static const int num_block_shapes = 4;
 
 struct Cleanup_State : public State
 {	
@@ -45,9 +55,6 @@ struct Cleanup_State : public State
 	int num_rooms;
 	int num_doors;
 	//enum StateClass {agent, block, door, room};
-	enum Shape {chair, bag, backpack, basket};
-	enum Color {blue, green, magenta, red, yellow};
-	enum Direction {north, south, east, west};
 
 	struct Agent
 	{	
@@ -107,8 +114,8 @@ struct Cleanup_State : public State
 	Cleanup_State(
 		const Coordinate& map_size = Coordinate(max_x,max_y),
 		const int& num_blocks = 1,
-		const int& num_doors = 1,
-		const int& num_rooms = 2
+		const int& num_doors = 3,
+		const int& num_rooms = 3
 	);
 	unique_ptr<State> clone () const { return unique_ptr<State>(new Cleanup_State(*this)); }
 	unique_ptr<State> copy () const { return unique_ptr<State>(new Cleanup_State(map_size, num_blocks, num_doors, num_rooms)); }
@@ -138,6 +145,7 @@ class Cleanup : public MDP
 		const double Pr_successful_execution;   ///< Probability that action is successful
 
 		void map_creator(const int& mode = 0);
+		void three_rooms();
 
 	public:
 		enum Action {north, south, east, west, pull};
