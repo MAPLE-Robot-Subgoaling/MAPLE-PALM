@@ -122,7 +122,7 @@ struct Cleanup_State : public State
 	unique_ptr<State> copy () const { return unique_ptr<State>(new Cleanup_State(map_size, num_blocks, num_doors, num_rooms)); }
 	vector<int> variables() const;
 	int variable_index(const string& variable) const;
-	const char *get_variables(string state_class_test) const;
+	const char **get_variables(string state_class_test) const;
 	int get_num_objects(string state_class_test) const;
 	string variable_name(const int& variable_index) const;
 	int variable_size(const int& variable_index) const;

@@ -45,8 +45,8 @@ int Cleanup_State::variable_index (const string& variable) const
 		int state_class_name_length = state_classes_name_lengths[j];
 		string state_class_name = variable.substr(0, state_class_name_length);
 		if (state_class_name == state_class_test) {
-			const char *variables[num_state_classes] = {0};
-			*variables = get_variables(state_class_test);
+			const char **variables;
+			variables = get_variables(state_class_test);
 			underscore = variable.find_first_of("_", state_class_name_length);
 			id = from_string<int>(variable.substr(state_class_name_length, underscore - state_class_name_length));
 			for (int i = 0; i < state_class_num_variables; ++i) {
@@ -73,8 +73,8 @@ string Cleanup_State::variable_name (const int& variable_index) const
 	for (int j = 0; j < num_state_classes; ++j) {
 		string state_class_test = state_classes[j];
 		int state_class_num_variables = state_classes_num_variables[j];
-		const char *variables[num_state_classes] = {0};
-		*variables = get_variables(state_class_test);
+		const char **variables;
+		variables = get_variables(state_class_test);
 		int num_objects = get_num_objects(state_class_test);
 		for (int i = 0; i < num_objects; ++i) {
 			test_index += state_class_num_variables;
@@ -105,20 +105,20 @@ int Cleanup_State::get_num_objects(string state_class_test) const {
 	return num;
 }
 
-const char *Cleanup_State::get_variables(string state_class_test) const {
-	const char *variables[num_state_classes] = {0};
+const char **Cleanup_State::get_variables(string state_class_test) const {
+	const char **variables;
 	if        (state_class_test == "agent") {
-		*variables = *agent_variables;
+		variables = agent_variables;
 	} else if (state_class_test == "block") {
-		*variables = *block_variables;
+		variables = block_variables;
 	} else if (state_class_test == "door") {
-		*variables = *door_variables;
+		variables = door_variables;
 	} else if (state_class_test == "room") {
-		*variables = *room_variables;
+		variables = room_variables;
 	} else {
 		throw HierException(__FILE__, __LINE__, "Unknown state_class_test: " + state_class_test);
 	}
-	return *variables;
+	return variables;
 }
 
 
@@ -320,7 +320,8 @@ Cleanup::Cleanup (const string& name, const double& success_probability) : MDP(n
 
 void Cleanup::map_creator (const int& mode)
 {	
-	three_rooms();
+	// used for things that persist across reseting the episode
+	// not needed for cleanup
 }
 
 void Cleanup::three_rooms () {
@@ -449,6 +450,7 @@ void Cleanup::initialize (const bool& target)
 	_reward = 0.0;
 	_duration = 0.0;
 
+	three_rooms();
 }
 
 
