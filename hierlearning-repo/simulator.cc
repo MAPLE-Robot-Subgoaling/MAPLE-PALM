@@ -226,6 +226,8 @@ vector<vector<unique_ptr<State_Action_Reward>>> Simulator::trajectory_generator 
 				
 				cout << "\n";
 				cout << action;
+				cout << " ";
+				cout << mdp.reward()[0];
 				cout << "\n";
 				cout << mdp.state().print();
 				cout << "\n";

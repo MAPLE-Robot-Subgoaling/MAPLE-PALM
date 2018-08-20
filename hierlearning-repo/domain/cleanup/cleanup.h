@@ -148,6 +148,7 @@ class Cleanup : public MDP
 		void map_creator(const int& mode = 0);
 		void three_rooms();
 		bool is_inside(int block_index, int room_index) const;
+		bool is_inside(Cleanup_State::Block block, int room_index) const;
 		bool is_inside(Cleanup_State::Block block, Cleanup_State::Room room) const;
 		void do_move(int dx, int dy);
 		void do_pull();

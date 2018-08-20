@@ -420,23 +420,26 @@ void Cleanup::three_rooms () {
 
 	// make blocks
 
-	for (auto& block : state().blocks) {
-		int bx = rand_int(max_x);
-		int by = rand_int(max_y);
-		while (wall_at(bx, by) || block_at(bx, by) || agent_at(bx, by)) {
+	for (int i = 0; i < state().num_blocks; ++i) {
+		Cleanup_State::Block block = {};
+		int bx = -99;
+		int by = -99;
+		while (wall_at(bx, by) || block_at(bx, by) || agent_at(bx, by) || is_inside(block, 0) || is_inside(block, 1) || is_inside(block, 2)) {
 			bx = rand_int(max_x);
 			by = rand_int(max_y);
+			block.x = bx;
+			block.y = by;
+			block.left = bx;
+			block.right = bx;
+			block.bottom = by;
+			block.top = by;
 		}
-		block.x = bx;
-		block.y = by;
-		block.left = bx;
-		block.right = bx;
-		block.bottom = by;
-		block.top = by;
 		block.color = block_colors[rand_int(num_block_colors)];
 		block.shape = block_shapes[rand_int(num_block_shapes)];
+		state().blocks[i] = block;
 	}
 
+	cout << "three rooms done\n";
 }
 
 
@@ -498,11 +501,19 @@ void Cleanup::process (const vector<int>& action)
 			} else {
 				throw new HierException(__FILE__, __LINE__, "Bad action roll?");
 			}
+			_reward += reward_pull;
 			break;
 
 		default:
 			throw HierException(__FILE__, __LINE__, "Unknown action.");
 	}
+
+	if (terminated()) {
+		_reward += reward_goal;
+	} else {
+		_reward += reward_default;
+	}
+
 
 }
 
@@ -516,12 +527,14 @@ void Cleanup::do_move (int dx, int dy) {
 	bool block_can_move = false;
 
 	bool block_in_the_way = false;
+	int pushed_block_index = -99;
 	Cleanup_State::Block pushed_block;
 	for (int i = 0; i < state().num_blocks; ++i) {
 		Cleanup_State::Block block = state().blocks[i];
 		if (block.x == nx && block.y == ny) {
 			block_in_the_way = true;
 			pushed_block = block;
+			pushed_block_index = i;
 			break;
 		}
 	}
@@ -553,6 +566,7 @@ void Cleanup::do_move (int dx, int dy) {
 			pushed_block.right = nbx;
 			pushed_block.bottom = nby;
 			pushed_block.top = nby;
+			state().blocks[pushed_block_index] = pushed_block;
 		}
 		Direction new_direction;
 		if (dy > 1) { new_direction = Direction::north; }
@@ -593,6 +607,7 @@ void Cleanup::do_pull () {
 	}
 	int nx = ax + dx;
 	int ny = ay + dy;
+	int pulled_block_index = -99;
 	bool block_in_the_way = false;
 	Cleanup_State::Block pulled_block;
 	for (int i = 0; i < state().num_blocks; ++i) {
@@ -600,6 +615,8 @@ void Cleanup::do_pull () {
 		if (block.x == nx && block.y == ny) {
 			block_in_the_way = true;
 			pulled_block = block;
+			pulled_block_index= i;
+			break;
 		}
 	}
 	if (block_in_the_way) {
@@ -613,6 +630,7 @@ void Cleanup::do_pull () {
 		pulled_block.right = nbx;
 		pulled_block.bottom = nby;
 		pulled_block.top = nby;
+		state().blocks[pulled_block_index] = pulled_block;
 		
 		state().agent.x = nx;
 		state().agent.y = ny;
@@ -626,7 +644,7 @@ void Cleanup::do_pull () {
 
 bool Cleanup::terminated () const
 {	
-	return is_inside(0, 1);
+	return is_inside(0, 1) || is_inside(0,0) || is_inside(0, 2);
 }
 
 bool Cleanup::is_open(int x, int y) {
@@ -687,6 +705,12 @@ bool Cleanup::is_inside(int block_index, int room_index) const {
 	Cleanup_State::Room room = state().rooms[room_index]; 
 	return is_inside(block, room);
 }
+
+bool Cleanup::is_inside(Cleanup_State::Block block, int room_index) const {
+	Cleanup_State::Room room = state().rooms[room_index]; 
+	return is_inside(block, room);
+}
+
 
 bool Cleanup::is_inside(Cleanup_State::Block block, Cleanup_State::Room room) const {
 	if (block.y > room.bottom && block.y < room.top && block.x > room.left && block.x < room.right) {
