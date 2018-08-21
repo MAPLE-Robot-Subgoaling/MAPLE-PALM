@@ -101,7 +101,7 @@ public class CleanupStandardStateGenerator implements StateGenerator {
         String room0Color = roomColors.get(7);
         rooms[0] = new CleanupRoom("room0", 0, numBlocks+1, 0, height-1, room0Color, Cleanup.SHAPE_ROOM);
         //orange
-        String room1Color = roomColors.get(5);
+        String room1Color = roomColors.get(4);
         //the right bound of room1 is
         rooms[1] = new CleanupRoom("room1", numBlocks+1, numBlocks*2+2, 0, height-1, room1Color, Cleanup.SHAPE_ROOM);
 
@@ -111,7 +111,7 @@ public class CleanupStandardStateGenerator implements StateGenerator {
         //initialize blocks
         CleanupBlock[] blocks = new CleanupBlock[numBlocks];
         for(int i = 0; i < numBlocks; i++) {
-            blocks[i] = new CleanupBlock("block" + i, i + 1, 1, (String) blockShapes.get(rng.nextInt(2)), roomColors.get(rng.nextInt(roomColors.size())));
+            blocks[i] = new CleanupBlock("block" + i, i + 1, 1, (String) blockShapes.get(rng.nextInt(2)), room1Color);
         }
 
 
@@ -145,8 +145,8 @@ public class CleanupStandardStateGenerator implements StateGenerator {
         //System.out.println("bigRoomsLeft is: "+ bigRoomTop);
         String bigRoomColor = roomColors.get(rng.nextInt(roomColors.size()));
         CleanupRoom bigRoom = new CleanupRoom("room0", bigRoomLeft, bigRoomRight, bigRoomBottom, bigRoomTop, bigRoomColor, Cleanup.SHAPE_ROOM);
-        String room1Color = roomColors.get(rng.nextInt(roomColors.size()));
-        String room2Color = roomColors.get(rng.nextInt(roomColors.size()));
+        String room1Color = blockColors.get(rng.nextInt(blockColors.size()));
+        String room2Color = blockColors.get(rng.nextInt(blockColors.size()));
         CleanupRoom room1 = new CleanupRoom("room1", bigRoomLeft, bigRoomRight/2, minY, bigRoomBottom, room1Color, Cleanup.SHAPE_ROOM);
         CleanupRoom room2 = new CleanupRoom("room2", bigRoomRight/2, bigRoomRight, minY, bigRoomBottom, room2Color, Cleanup.SHAPE_ROOM);
         int dx0 = bigRoomRight/3;
