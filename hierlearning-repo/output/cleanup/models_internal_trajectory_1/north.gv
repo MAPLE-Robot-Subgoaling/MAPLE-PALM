@@ -1,0 +1,320 @@
+digraph {
+edge [arrowhead=empty]
+
+subgraph cluster_agent0_x {
+label="agent0_x"
+agent0_x_n0 [label=<<i>v</i><sub>1</sub>>]
+agent0_x_n0 -> agent0_x_n1 [label=<1>]
+agent0_x_n1 [label="1"]
+agent0_x_n0 -> agent0_x_n2 [label=<2>]
+agent0_x_n2 [label="2"]
+agent0_x_n0 -> agent0_x_n3 [label=<3>]
+agent0_x_n3 [label="3"]
+agent0_x_n0 -> agent0_x_n4 [label=<4>]
+agent0_x_n4 [label="4"]
+agent0_x_n0 -> agent0_x_n5 [label=<5>]
+agent0_x_n5 [label="5"]
+}
+
+subgraph cluster_agent0_y {
+label="agent0_y"
+agent0_y_n0 [label=<<i>v</i><sub>2</sub>>]
+agent0_y_n0 -> agent0_y_n1 [label=<1>]
+agent0_y_n1 [label=<<i>v</i><sub>1</sub>>]
+agent0_y_n1 -> agent0_y_n2 [label=<1>]
+agent0_y_n2 [label="1"]
+agent0_y_n1 -> agent0_y_n3 [label=<2>]
+agent0_y_n3 [label="2"]
+agent0_y_n1 -> agent0_y_n4 [label=<3>]
+agent0_y_n4 [label="1"]
+agent0_y_n1 -> agent0_y_n5 [label=<4>]
+agent0_y_n5 [label="1"]
+agent0_y_n1 -> agent0_y_n6 [label=<5>]
+agent0_y_n6 [label="2"]
+agent0_y_n0 -> agent0_y_n7 [label=<2>]
+agent0_y_n7 [label="3"]
+agent0_y_n0 -> agent0_y_n8 [label=<3>]
+agent0_y_n8 [label="3"]
+}
+
+subgraph cluster_agent0_direction {
+label="agent0_direction"
+agent0_direction_n0 [label=<<i>v</i><sub>3</sub>>]
+agent0_direction_n0 -> agent0_direction_n1 [label=<0>]
+agent0_direction_n1 [label="0"]
+agent0_direction_n0 -> agent0_direction_n2 [label=<1>]
+agent0_direction_n2 [label=<<i>v</i><sub>1</sub>>]
+agent0_direction_n2 -> agent0_direction_n3 [label=<1>]
+agent0_direction_n3 [label="1"]
+agent0_direction_n2 -> agent0_direction_n4 [label=<2>]
+agent0_direction_n4 [label=<<i>v</i><sub>2</sub>>]
+agent0_direction_n4 -> agent0_direction_n5 [label=<1>]
+agent0_direction_n5 [label="3"]
+agent0_direction_n4 -> agent0_direction_n6 [label=<2>]
+agent0_direction_n6 [label="3"]
+agent0_direction_n4 -> agent0_direction_n7 [label=<3>]
+agent0_direction_n7 [label="1"]
+agent0_direction_n2 -> agent0_direction_n8 [label=<3>]
+agent0_direction_n8 [label="1"]
+agent0_direction_n2 -> agent0_direction_n9 [label=<4>]
+agent0_direction_n9 [label="1"]
+agent0_direction_n2 -> agent0_direction_n10 [label=<5>]
+agent0_direction_n10 [label=<<i>v</i><sub>2</sub>>]
+agent0_direction_n10 -> agent0_direction_n11 [label=<1>]
+agent0_direction_n11 [label="3"]
+agent0_direction_n10 -> agent0_direction_n12 [label=<2>]
+agent0_direction_n12 [label="3"]
+agent0_direction_n10 -> agent0_direction_n13 [label=<3>]
+agent0_direction_n13 [label="1"]
+agent0_direction_n0 -> agent0_direction_n14 [label=<2>]
+agent0_direction_n14 [label="2"]
+agent0_direction_n0 -> agent0_direction_n15 [label=<3>]
+agent0_direction_n15 [label="3"]
+}
+
+subgraph cluster_block0_x {
+label="block0_x"
+block0_x_n0 [label=<<i>v</i><sub>4</sub>>]
+block0_x_n0 -> block0_x_n1 [label=<2>]
+block0_x_n1 [label="2"]
+block0_x_n0 -> block0_x_n2 [label=<5>]
+block0_x_n2 [label="5"]
+}
+
+subgraph cluster_block0_y {
+label="block0_y"
+block0_y_n0 [label=<<i>v</i><sub>1</sub>>]
+block0_y_n0 -> block0_y_n1 [label=<1>]
+block0_y_n1 [label="2"]
+block0_y_n0 -> block0_y_n2 [label=<2>]
+block0_y_n2 [label=<<i>v</i><sub>4</sub>>]
+block0_y_n2 -> block0_y_n3 [label=<2>]
+block0_y_n3 [label=<<i>v</i><sub>2</sub>>]
+block0_y_n3 -> block0_y_n4 [label=<1>]
+block0_y_n4 [label="3"]
+block0_y_n3 -> block0_y_n5 [label=<3>]
+block0_y_n5 [label="2"]
+block0_y_n2 -> block0_y_n6 [label=<5>]
+block0_y_n6 [label="2"]
+block0_y_n0 -> block0_y_n7 [label=<3>]
+block0_y_n7 [label="2"]
+block0_y_n0 -> block0_y_n8 [label=<4>]
+block0_y_n8 [label="2"]
+block0_y_n0 -> block0_y_n9 [label=<5>]
+block0_y_n9 [label=<<i>v</i><sub>4</sub>>]
+block0_y_n9 -> block0_y_n10 [label=<2>]
+block0_y_n10 [label="2"]
+block0_y_n9 -> block0_y_n11 [label=<5>]
+block0_y_n11 [label=<<i>v</i><sub>2</sub>>]
+block0_y_n11 -> block0_y_n12 [label=<1>]
+block0_y_n12 [label="3"]
+block0_y_n11 -> block0_y_n13 [label=<3>]
+block0_y_n13 [label="2"]
+}
+
+subgraph cluster_block0_shape {
+label="block0_shape"
+block0_shape_n0 [label=<<i>v</i><sub>6</sub>>]
+block0_shape_n0 -> block0_shape_n1 [label=<0>]
+block0_shape_n1 [label="0"]
+block0_shape_n0 -> block0_shape_n2 [label=<1>]
+block0_shape_n2 [label="1"]
+block0_shape_n0 -> block0_shape_n3 [label=<2>]
+block0_shape_n3 [label="2"]
+block0_shape_n0 -> block0_shape_n4 [label=<3>]
+block0_shape_n4 [label="3"]
+}
+
+subgraph cluster_block0_color {
+label="block0_color"
+block0_color_n0 [label=<<i>v</i><sub>7</sub>>]
+block0_color_n0 -> block0_color_n1 [label=<0>]
+block0_color_n1 [label="0"]
+block0_color_n0 -> block0_color_n2 [label=<1>]
+block0_color_n2 [label="1"]
+block0_color_n0 -> block0_color_n3 [label=<2>]
+block0_color_n3 [label="2"]
+block0_color_n0 -> block0_color_n4 [label=<3>]
+block0_color_n4 [label="3"]
+block0_color_n0 -> block0_color_n5 [label=<4>]
+block0_color_n5 [label="4"]
+}
+
+subgraph cluster_door0_x {
+label="door0_x"
+door0_x_n0 [label="2"]
+}
+
+subgraph cluster_door0_y {
+label="door0_y"
+door0_y_n0 [label="2"]
+}
+
+subgraph cluster_door1_x {
+label="door1_x"
+door1_x_n0 [label="5"]
+}
+
+subgraph cluster_door1_y {
+label="door1_y"
+door1_y_n0 [label="2"]
+}
+
+subgraph cluster_door2_x {
+label="door2_x"
+door2_x_n0 [label="3"]
+}
+
+subgraph cluster_door2_y {
+label="door2_y"
+door2_y_n0 [label="1"]
+}
+
+subgraph cluster_room0_left {
+label="room0_left"
+room0_left_n0 [label="0"]
+}
+
+subgraph cluster_room0_right {
+label="room0_right"
+room0_right_n0 [label="6"]
+}
+
+subgraph cluster_room0_bottom {
+label="room0_bottom"
+room0_bottom_n0 [label="2"]
+}
+
+subgraph cluster_room0_top {
+label="room0_top"
+room0_top_n0 [label="4"]
+}
+
+subgraph cluster_room0_color {
+label="room0_color"
+room0_color_n0 [label=<<i>v</i><sub>14</sub>>]
+room0_color_n0 -> room0_color_n1 [label=<0>]
+room0_color_n1 [label="0"]
+room0_color_n0 -> room0_color_n2 [label=<1>]
+room0_color_n2 [label="1"]
+room0_color_n0 -> room0_color_n3 [label=<2>]
+room0_color_n3 [label="2"]
+room0_color_n0 -> room0_color_n4 [label=<3>]
+room0_color_n4 [label="3"]
+room0_color_n0 -> room0_color_n5 [label=<4>]
+room0_color_n5 [label="4"]
+room0_color_n0 -> room0_color_n6 [label=<5>]
+room0_color_n6 [label="5"]
+room0_color_n0 -> room0_color_n7 [label=<6>]
+room0_color_n7 [label="6"]
+}
+
+subgraph cluster_room1_left {
+label="room1_left"
+room1_left_n0 [label="0"]
+}
+
+subgraph cluster_room1_right {
+label="room1_right"
+room1_right_n0 [label="3"]
+}
+
+subgraph cluster_room1_bottom {
+label="room1_bottom"
+room1_bottom_n0 [label="0"]
+}
+
+subgraph cluster_room1_top {
+label="room1_top"
+room1_top_n0 [label="2"]
+}
+
+subgraph cluster_room1_color {
+label="room1_color"
+room1_color_n0 [label=<<i>v</i><sub>14</sub>>]
+room1_color_n0 -> room1_color_n1 [label=<0>]
+room1_color_n1 [label="0"]
+room1_color_n0 -> room1_color_n2 [label=<1>]
+room1_color_n2 [label="1"]
+room1_color_n0 -> room1_color_n3 [label=<2>]
+room1_color_n3 [label="2"]
+room1_color_n0 -> room1_color_n4 [label=<3>]
+room1_color_n4 [label="3"]
+room1_color_n0 -> room1_color_n5 [label=<4>]
+room1_color_n5 [label="4"]
+room1_color_n0 -> room1_color_n6 [label=<5>]
+room1_color_n6 [label="5"]
+room1_color_n0 -> room1_color_n7 [label=<6>]
+room1_color_n7 [label="6"]
+}
+
+subgraph cluster_room2_left {
+label="room2_left"
+room2_left_n0 [label="3"]
+}
+
+subgraph cluster_room2_right {
+label="room2_right"
+room2_right_n0 [label="6"]
+}
+
+subgraph cluster_room2_bottom {
+label="room2_bottom"
+room2_bottom_n0 [label="0"]
+}
+
+subgraph cluster_room2_top {
+label="room2_top"
+room2_top_n0 [label="2"]
+}
+
+subgraph cluster_room2_color {
+label="room2_color"
+room2_color_n0 [label=<<i>v</i><sub>14</sub>>]
+room2_color_n0 -> room2_color_n1 [label=<0>]
+room2_color_n1 [label="0"]
+room2_color_n0 -> room2_color_n2 [label=<1>]
+room2_color_n2 [label="1"]
+room2_color_n0 -> room2_color_n3 [label=<2>]
+room2_color_n3 [label="2"]
+room2_color_n0 -> room2_color_n4 [label=<3>]
+room2_color_n4 [label="3"]
+room2_color_n0 -> room2_color_n5 [label=<4>]
+room2_color_n5 [label="4"]
+room2_color_n0 -> room2_color_n6 [label=<5>]
+room2_color_n6 [label="5"]
+room2_color_n0 -> room2_color_n7 [label=<6>]
+room2_color_n7 [label="6"]
+}
+
+subgraph cluster_reward {
+label="reward"
+reward_n0 [label=<<i>v</i><sub>1</sub>>]
+reward_n0 -> reward_n1 [label=<1>]
+reward_n1 [label="0"]
+reward_n0 -> reward_n2 [label=<2>]
+reward_n2 [label=<<i>v</i><sub>4</sub>>]
+reward_n2 -> reward_n3 [label=<2>]
+reward_n3 [label=<<i>v</i><sub>2</sub>>]
+reward_n3 -> reward_n4 [label=<1>]
+reward_n4 [label="1"]
+reward_n3 -> reward_n5 [label=<3>]
+reward_n5 [label="0"]
+reward_n2 -> reward_n6 [label=<5>]
+reward_n6 [label="0"]
+reward_n0 -> reward_n7 [label=<3>]
+reward_n7 [label="0"]
+reward_n0 -> reward_n8 [label=<4>]
+reward_n8 [label="0"]
+reward_n0 -> reward_n9 [label=<5>]
+reward_n9 [label=<<i>v</i><sub>4</sub>>]
+reward_n9 -> reward_n10 [label=<2>]
+reward_n10 [label="0"]
+reward_n9 -> reward_n11 [label=<5>]
+reward_n11 [label=<<i>v</i><sub>2</sub>>]
+reward_n11 -> reward_n12 [label=<1>]
+reward_n12 [label="1"]
+reward_n11 -> reward_n13 [label=<3>]
+reward_n13 [label="0"]
+}
+}

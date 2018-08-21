@@ -1,0 +1,8 @@
+agent0_x = 1: 2
+agent0_x = 2
+|   agent0_y = 1: 3
+|   agent0_y = 2: 2
+|   agent0_y = 3: 3
+agent0_x = 3: 4
+agent0_x = 4: 5
+agent0_x = 5: 5

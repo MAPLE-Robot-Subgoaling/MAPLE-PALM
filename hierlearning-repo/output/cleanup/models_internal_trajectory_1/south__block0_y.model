@@ -1,0 +1,14 @@
+agent0_y = 1: 2
+agent0_y = 2: 2
+agent0_y = 3
+|   agent0_direction = 1
+|   |   agent0_x = 1: 2
+|   |   agent0_x = 2
+|   |   |   block0_x = 2: 1
+|   |   |   block0_x = 5: 2
+|   |   agent0_x = 3: 2
+|   |   agent0_x = 4: 2
+|   |   agent0_x = 5
+|   |   |   block0_x = 2: 2
+|   |   |   block0_x = 5: 1
+|   agent0_direction = 3: 2

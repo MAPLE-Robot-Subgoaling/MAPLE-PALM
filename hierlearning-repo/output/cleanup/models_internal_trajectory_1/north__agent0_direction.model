@@ -1,0 +1,15 @@
+agent0_direction = 0: 0
+agent0_direction = 1
+|   agent0_x = 1: 1
+|   agent0_x = 2
+|   |   agent0_y = 1: 3
+|   |   agent0_y = 2: 3
+|   |   agent0_y = 3: 1
+|   agent0_x = 3: 1
+|   agent0_x = 4: 1
+|   agent0_x = 5
+|   |   agent0_y = 1: 3
+|   |   agent0_y = 2: 3
+|   |   agent0_y = 3: 1
+agent0_direction = 2: 2
+agent0_direction = 3: 3
