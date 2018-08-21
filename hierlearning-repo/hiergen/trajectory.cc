@@ -63,13 +63,13 @@ Trajectory::Trajectory (const vector<unique_ptr<State_Action_Reward>>& sample_tr
 		for (auto sar_itr = sample_trajectory.cbegin(); sar_itr != sample_trajectory.cend(); ++sar_itr)
 		{	map<int,int> state = (*sar_itr)->state->variables_mapper();
 
-			cout << "NOT removing redundant loops in state space (for now)\n";
-			//// Removing redundant loops through the state space
-			//for (auto trj_itr = _trajectory.rbegin(); trj_itr != _trajectory.rend(); ++trj_itr)
-			//	if (trj_itr->state == state)
-			//	{	_trajectory.erase(trj_itr.base() - 1, _trajectory.end());
-			//		break;
-			//	}
+			//cout << "NOT removing redundant loops in state space (for now)\n";
+			// Removing redundant loops through the state space
+			for (auto trj_itr = _trajectory.rbegin(); trj_itr != _trajectory.rend(); ++trj_itr)
+				if (trj_itr->state == state)
+				{	_trajectory.erase(trj_itr.base() - 1, _trajectory.end());
+					break;
+				}
 
 			if (sar_itr + 1 != sample_trajectory.end())
 				_trajectory.emplace_back(state, (*sar_itr)->action.front(), (*sar_itr)->reward[0]);

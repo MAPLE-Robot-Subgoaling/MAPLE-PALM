@@ -42,7 +42,7 @@ void CompositeTask::add_subtask (const Subtask& subtask, const MDP& mdp)
 				if (!(par >> subtask_parameters[p].value) || subtask_parameters[p].value < 0 || subtask_parameters[p].value >= int(_parameter_size.size()))
 					throw HierException(__FILE__, __LINE__, "Unknown parameter specification.");
 			}
-			else if (subtask_parameters_str[p].substr(0, 6) == "agent_")   // Parameter binding value comes from the agent's state variable indexed by 'value'
+			else if (subtask_parameters_str[p].substr(0, 6) == "agent_" || subtask_parameters_str[p].substr(0, 5) == "agent")   // Parameter binding value comes from the agent's state variable indexed by 'value'
 			{	subtask_parameters[p].type = 2;
 				subtask_parameters[p].value = mdp.state().variable_index(subtask_parameters_str[p].substr(0, subtask_parameters_str[p].find_first_of("+- ")));
 			}

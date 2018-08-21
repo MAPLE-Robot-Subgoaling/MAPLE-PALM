@@ -26,7 +26,7 @@ Task::Task (const string& task_name, const string& parameters, const string& sta
 	// Tokenize state variables separated by ","
 	vector<string> state_variable_tokens = tokenize(state_variables, ", ");
 	for (const string& state_variable : state_variable_tokens)
-	{	if (state_variable.substr(0, 6) == "agent_")   // Agent-based
+	{	if (state_variable.substr(0, 6) == "agent_" || state_variable.substr(0, 5) == "agent")   // Agent-based
 			_variables.emplace_back(1, mdp.state().variable_index(state_variable));
 		else if (state_variable.substr(0, 10) == "parameter_")   // Parameter-based
 		{	int p = from_string<int>(state_variable.substr(10));
