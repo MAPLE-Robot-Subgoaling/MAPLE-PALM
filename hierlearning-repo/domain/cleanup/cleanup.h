@@ -21,9 +21,9 @@ static const int num_state_classes = 4;
 static const int state_classes_name_lengths[] = {5, 5, 4, 4};
 static const char *state_classes[] = {"agent", "block", "door", "room"};
 
-static const int state_classes_num_variables[] = {9, 8, 9, 6};
-static const char *agent_variables[] = {"x","y","left","right","bottom","top","shape","color","direction"};
-static const char *block_variables[] = {"x","y","left","right","bottom","top","shape","color"};
+static const int state_classes_num_variables[] = {5, 4, 9, 6};
+static const char *agent_variables[] = {"x","y","shape","color","direction"};
+static const char *block_variables[] = {"x","y","shape","color"};
 static const char *door_variables[] = {"x","y","left","right","bottom","top","shape","color","locked"};
 static const char *room_variables[] = {"left","right","bottom","top","shape","color"};
 
@@ -66,29 +66,21 @@ struct Cleanup_State : public State
 	{	
 		int x;
 		int y;
-		int left;
-		int right;
-		int bottom;
-		int top;
 		Shape shape;
 		Color color;
 		Direction direction;
 	} agent;
-	static const int num_agent_variables_data = 9;
+	static const int num_agent_variables_data = 5;
 
 	struct Block
 	{
 		int x;
 		int y;
-		int left;
-		int right;
-		int bottom;
-		int top;
 		Shape shape;
 		Color color;
 	};
 	vector<Block> blocks;
-	static const int num_block_variables = 8;
+	static const int num_block_variables = 4;
 	
 	struct Door
 	{

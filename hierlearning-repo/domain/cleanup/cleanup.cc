@@ -173,14 +173,6 @@ int Cleanup_State::variable (const int& variable_index) const
 						return agent.x;
 					} else if (variable_name == "y") {
 						return agent.y;
-					} else if (variable_name == "left") {
-						return agent.left;
-					} else if (variable_name == "right") {
-						return agent.right;
-					} else if (variable_name == "bottom") {
-						return agent.bottom;
-					} else if (variable_name == "top") {
-						return agent.top;
 					} else if (variable_name == "shape") {
 						return agent.shape;
 					} else if (variable_name == "color") {
@@ -195,14 +187,6 @@ int Cleanup_State::variable (const int& variable_index) const
 						return blocks[id].x;
 					} else if (variable_name == "y") {
 						return blocks[id].y;
-					} else if (variable_name == "left") {
-						return blocks[id].left;
-					} else if (variable_name == "right") {
-						return blocks[id].right;
-					} else if (variable_name == "bottom") {
-						return blocks[id].bottom;
-					} else if (variable_name == "top") {
-						return blocks[id].top;
 					} else if (variable_name == "shape") {
 						return blocks[id].shape;
 					} else if (variable_name == "color") {
@@ -286,17 +270,48 @@ pair<bool,int> Cleanup_State::parse (string expression) const
 		int value;
 		if (!(token >> value))   // If 'token' is not an integer
 		{
-			if (token.str() == "red")
+			string token_str = token.str();
+			if (token_str == "red")
 				value = red;
-			else if (token.str() == "green")
+			else if (token_str == "green")
 				value = green;
-			else if (token.str() == "blue")
+			else if (token_str == "blue")
 				value = blue;
-			else if (token.str() == "yellow")
+			else if (token_str == "yellow")
 				value = yellow;
-			else if (token.str() == "map_size.x")
+			else if (token_str == "magenta")
+				value = magenta;
+			else if (token_str == "cyan")
+				value = cyan;
+			else if (token_str == "orange")
+				value = orange;
+			else if (token_str == "gray")
+				value = gray;
+			else if (token_str == "chair")
+				value = chair;
+			else if (token_str == "bag")
+				value = bag;
+			else if (token_str == "backpack")
+				value = backpack;
+			else if (token_str == "basket")
+				value = basket;
+			else if (token_str == "agent_shape")
+				value = agent_shape;
+			else if (token_str == "door")
+				value = door;
+			else if (token_str == "room")
+				value = room;
+			else if (token_str == "north")
+				value = north;
+			else if (token_str == "south")
+				value = south;
+			else if (token_str == "east")
+				value = east;
+			else if (token_str == "west")
+				value = west;
+			else if (token_str == "map_size.x")
 				value = map_size.x;
-			else if (token.str() == "map_size.y")
+			else if (token_str == "map_size.y")
 				value = map_size.y;
 			else
 				return make_pair(false, 0);
@@ -330,14 +345,6 @@ string Cleanup_State::print () const
 	out << ",";
 	out << agent.y;
 	out << ",";
-	out << agent.left;
-	out << ",";
-	out << agent.right;
-	out << ",";
-	out << agent.bottom;
-	out << ",";
-	out << agent.top;
-	out << ",";
 	out << agent.shape;
 	out << ",";
 	out << agent.color;
@@ -351,14 +358,6 @@ string Cleanup_State::print () const
 		out << block.x;
 		out << ",";
 		out << block.y;
-		out << ",";
-		out << block.left;
-		out << ",";
-		out << block.right;
-		out << ",";
-		out << block.bottom;
-		out << ",";
-		out << block.top;
 		out << ",";
 		out << block.shape;
 		out << ",";
@@ -511,10 +510,6 @@ void Cleanup::three_rooms () {
 	Cleanup_State::Agent agent = {};
 	agent.x = ax;
 	agent.y = ay;
-	agent.left = ax;
-	agent.right = ax;
-	agent.bottom = ay;
-	agent.top = ay;
 	agent.color = gray;
 	agent.shape = agent_shape;
 	agent.direction = directions[rand_int(num_directions)];
@@ -532,10 +527,6 @@ void Cleanup::three_rooms () {
 			by = rand_int(max_y);
 			block.x = bx;
 			block.y = by;
-			block.left = bx;
-			block.right = bx;
-			block.bottom = by;
-			block.top = by;
 		}
 		block.color = block_colors[rand_int(num_block_colors)];
 		block.shape = block_shapes[rand_int(num_block_shapes)];
@@ -666,10 +657,6 @@ void Cleanup::do_move (int dx, int dy) {
 		if (block_can_move) {
 			pushed_block.x = nbx;
 			pushed_block.y = nby;
-			pushed_block.left = nbx;
-			pushed_block.right = nbx;
-			pushed_block.bottom = nby;
-			pushed_block.top = nby;
 			state().blocks[pushed_block_index] = pushed_block;
 		}
 		Direction new_direction;
@@ -679,10 +666,6 @@ void Cleanup::do_move (int dx, int dy) {
 		else if (dx < 1) { new_direction = Direction::west; }
 		state().agent.x = nx;
 		state().agent.y = ny;
-		state().agent.left = nx;
-		state().agent.right = nx;
-		state().agent.bottom = ny;
-		state().agent.top = ny;
 		state().agent.direction = new_direction;
 	}
 }
@@ -730,18 +713,10 @@ void Cleanup::do_pull () {
 		int nby = ay;
 		pulled_block.x = nbx;
 		pulled_block.y = nby;
-		pulled_block.left = nbx;
-		pulled_block.right = nbx;
-		pulled_block.bottom = nby;
-		pulled_block.top = nby;
 		state().blocks[pulled_block_index] = pulled_block;
 		
 		state().agent.x = nx;
 		state().agent.y = ny;
-		state().agent.left = nx;
-		state().agent.right = nx;
-		state().agent.bottom = ny;
-		state().agent.top = ny;
 		state().agent.direction = new_direction;
 	}
 }
