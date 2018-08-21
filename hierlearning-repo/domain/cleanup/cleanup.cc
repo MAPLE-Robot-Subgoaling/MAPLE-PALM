@@ -153,14 +153,113 @@ int Cleanup_State::variable_size (const int& variable_index) const
 
 int Cleanup_State::variable (const int& variable_index) const
 {	
-	
-	throw HierException(__FILE__, __LINE__, "Unknown variable: " + variable_index);
+	int variable = variable_index;
+	int test_index = 0;
+	for (int j = 0; j < num_state_classes; ++j) {
+		string state_class_test = state_classes[j];
+		int state_class_num_variables = state_classes_num_variables[j];
+		const char **variables;
+		variables = get_variables(state_class_test);
+		int num_objects = get_num_objects(state_class_test);
+		for (int i = 0; i < num_objects; ++i) {
+			test_index += state_class_num_variables;
+			if (variable < test_index) {
+				int id = i;
+				test_index -= state_class_num_variables;
+				int target = variable - test_index;
+				string variable_name = variables[target];
+				if (state_class_test == "agent") {
+					if (variable_name == "x") {
+						return agent.x;
+					} else if (variable_name == "y") {
+						return agent.y;
+					} else if (variable_name == "left") {
+						return agent.left;
+					} else if (variable_name == "right") {
+						return agent.right;
+					} else if (variable_name == "bottom") {
+						return agent.bottom;
+					} else if (variable_name == "top") {
+						return agent.top;
+					} else if (variable_name == "shape") {
+						return agent.shape;
+					} else if (variable_name == "color") {
+						return agent.color;
+					} else if (variable_name == "direction") {
+						return agent.direction;
+					} else {
+						throw HierException(__FILE__, __LINE__, "Unknown variable index: " + variable_index);
+					}
+				} else if (state_class_test == "block") {
+					if (variable_name == "x") {
+						return blocks[id].x;
+					} else if (variable_name == "y") {
+						return blocks[id].y;
+					} else if (variable_name == "left") {
+						return blocks[id].left;
+					} else if (variable_name == "right") {
+						return blocks[id].right;
+					} else if (variable_name == "bottom") {
+						return blocks[id].bottom;
+					} else if (variable_name == "top") {
+						return blocks[id].top;
+					} else if (variable_name == "shape") {
+						return blocks[id].shape;
+					} else if (variable_name == "color") {
+						return blocks[id].color;
+					} else {
+						throw HierException(__FILE__, __LINE__, "Unknown variable index: " + variable_index);
+					}
+				} else if (state_class_test == "door") {
+					if (variable_name == "x") {
+						return doors[id].x;
+					} else if (variable_name == "y") {
+						return doors[id].y;
+					} else if (variable_name == "left") {
+						return doors[id].left;
+					} else if (variable_name == "right") {
+						return doors[id].right;
+					} else if (variable_name == "bottom") {
+						return doors[id].bottom;
+					} else if (variable_name == "top") {
+						return doors[id].top;
+					} else if (variable_name == "shape") {
+						return doors[id].shape;
+					} else if (variable_name == "color") {
+						return doors[id].color;
+					} else if (variable_name == "locked") {
+						return doors[id].locked;
+					} else {
+						throw HierException(__FILE__, __LINE__, "Unknown variable index: " + variable_index);
+					}
+				} else if (state_class_test == "room") {
+					if (variable_name == "left") {
+						return rooms[id].left;
+					} else if (variable_name == "right") {
+						return rooms[id].right;
+					} else if (variable_name == "bottom") {
+						return rooms[id].bottom;
+					} else if (variable_name == "top") {
+						return rooms[id].top;
+					} else if (variable_name == "shape") {
+						return rooms[id].shape;
+					} else if (variable_name == "color") {
+						return rooms[id].color;
+					} else {
+						throw HierException(__FILE__, __LINE__, "Unknown variable index: " + variable_index);
+					}
+				} else {
+					throw HierException(__FILE__, __LINE__, "Unknown variable index: " + variable_index);
+				}
+			}
+		}
+	}
 }
 
 
 int& Cleanup_State::variable (const int& variable_index)
 {	
-	throw HierException(__FILE__, __LINE__, "int& version of variable(vindex) not implemented " + variable_index);
+	throw HierException(__FILE__, __LINE__, "Unknown variable index: " + variable_index);
 }
 
 
