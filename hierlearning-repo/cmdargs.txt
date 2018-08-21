@@ -1,5 +1,4 @@
 -d cleanup -l maxq -n 27 -r 10 -e 100 -z 912
 
+-d cleanup -l ql -n 50 -t cleanup_trajectory.out -z 995
 
-
-task.cc line 29

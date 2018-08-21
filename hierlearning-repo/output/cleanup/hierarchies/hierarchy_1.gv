@@ -2,41 +2,21 @@ digraph hierarchy {
 node [shape=rectangle]
 edge [arrowhead=empty]
 
-Root [label=<Root<br/>(<i>av</i><sub>1</sub> = 2 &amp; <i>v</i><sub>7</sub> = 2 &amp; <i>v</i><sub>8</sub> = 2 &amp; <i>v</i><sub>9</sub> = 5 &amp; <i>v</i><sub>10</sub> = 2 &amp; <i>v</i><sub>11</sub> = 3 &amp; <i>v</i><sub>12</sub> = 1 &amp; <i>v</i><sub>13</sub> = 0 &amp; <i>v</i><sub>14</sub> = 6 &amp; <i>v</i><sub>15</sub> = 2 &amp; <i>v</i><sub>16</sub> = 4 &amp; <i>v</i><sub>18</sub> = 0 &amp; <i>v</i><sub>19</sub> = 3 &amp; <i>v</i><sub>20</sub> = 0 &amp; <i>v</i><sub>21</sub> = 2 &amp; <i>v</i><sub>23</sub> = 3 &amp; <i>v</i><sub>24</sub> = 6 &amp; <i>v</i><sub>25</sub> = 0 &amp; <i>v</i><sub>26</sub> = 2 &amp; <i>av</i><sub>0</sub> = <i>v</i><sub>3</sub>)<br/>{<i>av</i><sub>1</sub>,<i>av</i><sub>2</sub>,<i>av</i><sub>3</sub>,<i>v</i><sub>4</sub>,<i>v</i><sub>5</sub>,<i>v</i><sub>6</sub>,<i>v</i><sub>7</sub>,<i>v</i><sub>8</sub>,<i>v</i><sub>9</sub>,<i>v</i><sub>8</sub>,<i>v</i><sub>9</sub>,<i>v</i><sub>8</sub>,<i>v</i><sub>9</sub>,<i>v</i><sub>10</sub>,<i>v</i><sub>11</sub>,<i>v</i><sub>12</sub>,<i>v</i><sub>13</sub>,<i>v</i><sub>10</sub>,<i>v</i><sub>11</sub>,<i>v</i><sub>12</sub>,<i>v</i><sub>13</sub>,<i>v</i><sub>10</sub>,<i>v</i><sub>11</sub>,<i>v</i><sub>12</sub>,<i>v</i><sub>13</sub>}>]
+Root [label=<Root<br/>(<i>av</i><sub>1</sub> = 2 &amp; <i>av</i><sub>2</sub> = 1 &amp; <i>v</i><sub>4</sub> = 1 &amp; <i>v</i><sub>7</sub> = 2 &amp; <i>v</i><sub>8</sub> = 2 &amp; <i>v</i><sub>9</sub> = 5 &amp; <i>v</i><sub>10</sub> = 2 &amp; <i>v</i><sub>11</sub> = 3 &amp; <i>v</i><sub>12</sub> = 1 &amp; <i>v</i><sub>13</sub> = 0 &amp; <i>v</i><sub>14</sub> = 6 &amp; <i>v</i><sub>15</sub> = 2 &amp; <i>v</i><sub>16</sub> = 4 &amp; <i>v</i><sub>18</sub> = 0 &amp; <i>v</i><sub>19</sub> = 3 &amp; <i>v</i><sub>20</sub> = 0 &amp; <i>v</i><sub>21</sub> = 2 &amp; <i>v</i><sub>23</sub> = 3 &amp; <i>v</i><sub>24</sub> = 6 &amp; <i>v</i><sub>25</sub> = 0 &amp; <i>v</i><sub>26</sub> = 2 &amp; <i>av</i><sub>0</sub> = <i>v</i><sub>3</sub>)<br/>{<i>av</i><sub>1</sub>,<i>av</i><sub>2</sub>,<i>av</i><sub>3</sub>,<i>v</i><sub>4</sub>,<i>v</i><sub>5</sub>,<i>v</i><sub>6</sub>,<i>v</i><sub>7</sub>,<i>v</i><sub>8</sub>,<i>v</i><sub>9</sub>,<i>v</i><sub>8</sub>,<i>v</i><sub>9</sub>,<i>v</i><sub>8</sub>,<i>v</i><sub>9</sub>,<i>v</i><sub>10</sub>,<i>v</i><sub>11</sub>,<i>v</i><sub>12</sub>,<i>v</i><sub>13</sub>,<i>v</i><sub>10</sub>,<i>v</i><sub>11</sub>,<i>v</i><sub>12</sub>,<i>v</i><sub>13</sub>,<i>v</i><sub>10</sub>,<i>v</i><sub>11</sub>,<i>v</i><sub>12</sub>,<i>v</i><sub>13</sub>}>]
 Root -> north
 Root -> south
+Root -> east
+Root -> west
 Root -> pull
-Root -> Task10
 
-Task10 [label=<Task10<br/><i>av</i><sub>2</sub> = 1<br/>{<i>av</i><sub>1</sub>,<i>av</i><sub>2</sub>,<i>av</i><sub>3</sub>,<i>v</i><sub>4</sub>,<i>v</i><sub>5</sub>,<i>v</i><sub>6</sub>,<i>v</i><sub>7</sub>,<i>v</i><sub>8</sub>}>]
-Task10 -> Task9
-Task10 -> east
-Task10 -> west
-
-Task9 [label=<Task9<br/><i>av</i><sub>1</sub> = 3<br/>{<i>av</i><sub>2</sub>,<i>av</i><sub>3</sub>,<i>v</i><sub>4</sub>,<i>v</i><sub>5</sub>,<i>v</i><sub>6</sub>,<i>v</i><sub>7</sub>}>]
-Task9 -> Task7
-Task9 -> north
-
-north [label=<north<br/>{<i>av</i><sub>2</sub>,<i>av</i><sub>3</sub>,<i>v</i><sub>4</sub>,<i>v</i><sub>5</sub>}>,shape=ellipse]
-
-Task7 [label=<Task7<br/>(<i>av</i><sub>1</sub> = 2 &amp; <i>av</i><sub>2</sub> = 3)<br/>{<i>av</i><sub>2</sub>,<i>av</i><sub>3</sub>,<i>v</i><sub>4</sub>,<i>v</i><sub>5</sub>,<i>v</i><sub>6</sub>}>]
-Task7 -> north
-Task7 -> Task6
-
-Task6 [label=<Task6<br/><i>av</i><sub>2</sub> = 1<br/>{<i>av</i><sub>2</sub>,<i>av</i><sub>3</sub>,<i>v</i><sub>4</sub>,<i>v</i><sub>5</sub>}>]
-Task6 -> east
-Task6 -> west
+pull [label=<pull<br/>{}>,shape=ellipse]
 
 west [label=<west<br/>{}>,shape=ellipse]
 
 east [label=<east<br/>{}>,shape=ellipse]
 
-north [label=<north<br/>{<i>av</i><sub>2</sub>,<i>av</i><sub>3</sub>,<i>v</i><sub>4</sub>,<i>v</i><sub>5</sub>}>,shape=ellipse]
+south [label=<south<br/>{<i>av</i><sub>2</sub>,<i>av</i><sub>3</sub>,<i>v</i><sub>5</sub>,<i>v</i><sub>6</sub>,<i>v</i><sub>7</sub>}>,shape=ellipse]
 
-pull [label=<pull<br/>{<i>av</i><sub>2</sub>,<i>av</i><sub>3</sub>,<i>v</i><sub>4</sub>,<i>v</i><sub>5</sub>,<i>v</i><sub>11</sub>}>,shape=ellipse]
-
-south [label=<south<br/>{<i>av</i><sub>2</sub>,<i>av</i><sub>3</sub>,<i>v</i><sub>4</sub>,<i>v</i><sub>5</sub>}>,shape=ellipse]
-
-north [label=<north<br/>{<i>av</i><sub>2</sub>,<i>av</i><sub>3</sub>,<i>v</i><sub>4</sub>,<i>v</i><sub>5</sub>}>,shape=ellipse]
+north [label=<north<br/>{}>,shape=ellipse]
 
 }

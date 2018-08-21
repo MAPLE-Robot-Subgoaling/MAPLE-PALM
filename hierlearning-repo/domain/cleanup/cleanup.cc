@@ -448,7 +448,7 @@ void Cleanup::three_rooms () {
 		Cleanup_State::Block block = {};
 		int bx = -99;
 		int by = -99;
-		while (wall_at(bx, by) || block_at(bx, by) || agent_at(bx, by) || is_inside(block, 0) || is_inside(block, 1) || is_inside(block, 2)) {
+		while (wall_at(bx, by) || block_at(bx, by) || agent_at(bx, by) || is_inside(block, 1)) {
 			bx = rand_int(max_x);
 			by = rand_int(max_y);
 			block.x = bx;
@@ -585,15 +585,15 @@ void Cleanup::do_move (int dx, int dy) {
 			pushed_block.y = nby;
 			state().blocks[pushed_block_index] = pushed_block;
 		}
-		Direction new_direction;
-		if (dy > 1) { new_direction = Direction::north; }
-		else if (dy < 1) { new_direction = Direction::south; }
-		else if (dx > 1) { new_direction = Direction::east; }
-		else if (dx < 1) { new_direction = Direction::west; }
 		state().agent.x = nx;
 		state().agent.y = ny;
-		state().agent.direction = new_direction;
 	}
+	Direction new_direction;
+	if (dy > 0) { new_direction = Direction::north; }
+	else if (dy < 0) { new_direction = Direction::south; }
+	else if (dx > 0) { new_direction = Direction::east; }
+	else if (dx < 0) { new_direction = Direction::west; }
+	state().agent.direction = new_direction;
 }
 
 void Cleanup::do_pull () {
@@ -649,7 +649,7 @@ void Cleanup::do_pull () {
 
 bool Cleanup::terminated () const
 {	
-	return is_inside(0, 1) || is_inside(0,0) || is_inside(0, 2);
+	return is_inside(0, 1); // || is_inside(0, 2); // || is_inside(0,0)
 }
 
 bool Cleanup::is_open(int x, int y) {
