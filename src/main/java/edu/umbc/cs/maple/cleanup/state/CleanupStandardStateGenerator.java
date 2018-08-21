@@ -111,7 +111,7 @@ public class CleanupStandardStateGenerator implements StateGenerator {
         //initialize blocks
         CleanupBlock[] blocks = new CleanupBlock[numBlocks];
         for(int i = 0; i < numBlocks; i++) {
-            blocks[i] = new CleanupBlock("block" + i, i + 1, 1, (String) blockShapes.get(rng.nextInt(2)),blockColors.get(0));
+            blocks[i] = new CleanupBlock("block" + i, i + 1, 1, (String) blockShapes.get(rng.nextInt(2)), roomColors.get(rng.nextInt(roomColors.size())));
         }
 
 
@@ -177,13 +177,21 @@ public class CleanupStandardStateGenerator implements StateGenerator {
         s.getAgent().set(Cleanup.ATT_X, ax);
         s.getAgent().set(Cleanup.ATT_Y, ay);
 
+        ArrayList<String> currentRoomColors = new ArrayList();
+        currentRoomColors.add((String) bigRoom.get(Cleanup.ATT_COLOR));
+        currentRoomColors.add((String) room1.get(Cleanup.ATT_COLOR));
+        currentRoomColors.add((String) room2.get(Cleanup.ATT_COLOR));
         int index = 0;
         while (numBlocks > 0) {
-            int bx = minY + rng.nextInt(getWidth());
+            int bx = minX + rng.nextInt(getWidth());
             int by = minY + rng.nextInt(getHeight());
             if (s.isOpen(bx, by) && !s.agentAt(bx, by)) {
                 String shape = (String) blockShapes.get(rng.nextInt(2));
-                String color = blockColors.get(rng.nextInt(blockColors.size()));
+                String color = currentRoomColors.get(rng.nextInt(currentRoomColors.size()));
+                String currentRoomColor = (String) s.regionContainingPoint(bx, by).get(Cleanup.ATT_COLOR);
+                if(color.equals(currentRoomColor)){
+                    continue;
+                }
                 s.addObject(new CleanupBlock("block" + index, bx, by, shape, color));
                 numBlocks -= 1;
                 index += 1;
