@@ -336,6 +336,11 @@ public class CleanupState implements MutableOOState, DeepCopyForShallowCopyState
         return !(wallAt(x, y) || blockAt(x, y));
     }
 
+    public ObjectInstance regionContainingPoint(int x, int y){
+        CleanupDoor door = doorContainingPoint(x,y);
+        return door != null ? door : roomContainingPoint(x,y);
+    }
+
     public boolean isObjectInRoom(ObjectInstance object, CleanupRoom room) {
         CleanupRoom roomContainingPoint = roomContainingPoint((int) object.get(ATT_X), (int) object.get(ATT_Y));
         return room.equals(roomContainingPoint);
@@ -347,12 +352,7 @@ public class CleanupState implements MutableOOState, DeepCopyForShallowCopyState
     }
 
     public ObjectInstance getContainingDoorOrRoom(ObjectInstance object) {
-        CleanupDoor door = doorContainingPoint((int) object.get(ATT_X), (int) object.get(ATT_Y));
-        if (door != null) {
-            return door;
-        }
-        CleanupRoom room = roomContainingPoint((int) object.get(ATT_X), (int) object.get(ATT_Y));
-        return room;
+       return regionContainingPoint((int)object.get(ATT_X),(int)object.get(ATT_Y));
     }
 
     public CleanupRoom roomContainingPointIncludingBorder(int x, int y) {
