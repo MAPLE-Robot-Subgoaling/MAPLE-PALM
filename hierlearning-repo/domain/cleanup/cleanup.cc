@@ -173,10 +173,6 @@ int Cleanup_State::variable (const int& variable_index) const
 						return agent.x;
 					} else if (variable_name == "y") {
 						return agent.y;
-					} else if (variable_name == "shape") {
-						return agent.shape;
-					} else if (variable_name == "color") {
-						return agent.color;
 					} else if (variable_name == "direction") {
 						return agent.direction;
 					} else {
@@ -199,20 +195,6 @@ int Cleanup_State::variable (const int& variable_index) const
 						return doors[id].x;
 					} else if (variable_name == "y") {
 						return doors[id].y;
-					} else if (variable_name == "left") {
-						return doors[id].left;
-					} else if (variable_name == "right") {
-						return doors[id].right;
-					} else if (variable_name == "bottom") {
-						return doors[id].bottom;
-					} else if (variable_name == "top") {
-						return doors[id].top;
-					} else if (variable_name == "shape") {
-						return doors[id].shape;
-					} else if (variable_name == "color") {
-						return doors[id].color;
-					} else if (variable_name == "locked") {
-						return doors[id].locked;
 					} else {
 						throw HierException(__FILE__, __LINE__, "Unknown variable index: " + variable_index);
 					}
@@ -225,8 +207,6 @@ int Cleanup_State::variable (const int& variable_index) const
 						return rooms[id].bottom;
 					} else if (variable_name == "top") {
 						return rooms[id].top;
-					} else if (variable_name == "shape") {
-						return rooms[id].shape;
 					} else if (variable_name == "color") {
 						return rooms[id].color;
 					} else {
@@ -285,8 +265,6 @@ pair<bool,int> Cleanup_State::parse (string expression) const
 				value = cyan;
 			else if (token_str == "orange")
 				value = orange;
-			else if (token_str == "gray")
-				value = gray;
 			else if (token_str == "chair")
 				value = chair;
 			else if (token_str == "bag")
@@ -295,12 +273,6 @@ pair<bool,int> Cleanup_State::parse (string expression) const
 				value = backpack;
 			else if (token_str == "basket")
 				value = basket;
-			else if (token_str == "agent_shape")
-				value = agent_shape;
-			else if (token_str == "door")
-				value = door;
-			else if (token_str == "room")
-				value = room;
 			else if (token_str == "north")
 				value = north;
 			else if (token_str == "south")
@@ -345,10 +317,6 @@ string Cleanup_State::print () const
 	out << ",";
 	out << agent.y;
 	out << ",";
-	out << agent.shape;
-	out << ",";
-	out << agent.color;
-	out << ",";
 	out << agent.direction;
 	out << ")";
 	
@@ -371,20 +339,6 @@ string Cleanup_State::print () const
 		out << door.x;
 		out << ",";
 		out << door.y;
-		out << ",";
-		out << door.left;
-		out << ",";
-		out << door.right;
-		out << ",";
-		out << door.bottom;
-		out << ",";
-		out << door.top;
-		out << ",";
-		out << door.shape;
-		out << ",";
-		out << door.color;
-		out << ",";
-		out << door.locked;
 		out << ")";
 	}
 
@@ -398,8 +352,6 @@ string Cleanup_State::print () const
 		out << room.bottom;
 		out << ",";
 		out << room.top;
-		out << ",";
-		out << room.shape;
 		out << ",";
 		out << room.color;
 		out << ")";
@@ -435,7 +387,6 @@ void Cleanup::three_rooms () {
 	big_room.bottom = max_y/2;
 	big_room.top = max_y-1;
 	big_room.color = room_colors[rand_int(num_room_colors)];
-	big_room.shape = room;
 	
 	Cleanup_State::Room room1 = {};
 	room1.left = big_room.left;
@@ -443,7 +394,6 @@ void Cleanup::three_rooms () {
 	room1.bottom = min_y;
 	room1.top = big_room.bottom;
 	room1.color = room_colors[rand_int(num_room_colors)];
-	room1.shape = room;
 	
 	Cleanup_State::Room room2 = {};
 	room2.left = big_room.right/2;
@@ -451,7 +401,6 @@ void Cleanup::three_rooms () {
 	room2.bottom = min_y;
 	room2.top = big_room.bottom;
 	room2.color = room_colors[rand_int(num_room_colors)];
-	room2.shape = room;
 	
 	state().rooms[0] = big_room;
 	state().rooms[1] = room1;
@@ -471,33 +420,12 @@ void Cleanup::three_rooms () {
 
 	door0.x = dx0;
 	door0.y = dy0;
-	door0.left = dx0;
-	door0.right = dx0;
-	door0.bottom = dy0;
-	door0.top = dy0;
-	door0.color = gray;
-	door0.shape = door;
-	door0.locked = false;
 
 	door1.x = dx1;
 	door1.y = dy1;
-	door1.left = dx1;
-	door1.right = dx1;
-	door1.bottom = dy1;
-	door1.top = dy1;
-	door1.color = gray;
-	door1.shape = door;
-	door1.locked = false;
 
 	door2.x = dx2;
 	door2.y = dy2;
-	door2.left = dx2;
-	door2.right = dx2;
-	door2.bottom = dy2;
-	door2.top = dy2;
-	door2.color = gray;
-	door2.shape = door;
-	door2.locked = false;
 
 	state().doors[0] = door0;
 	state().doors[1] = door1;
@@ -510,8 +438,6 @@ void Cleanup::three_rooms () {
 	Cleanup_State::Agent agent = {};
 	agent.x = ax;
 	agent.y = ay;
-	agent.color = gray;
-	agent.shape = agent_shape;
 	agent.direction = directions[rand_int(num_directions)];
 	
 	state().agent = agent;

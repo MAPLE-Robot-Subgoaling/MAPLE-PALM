@@ -21,11 +21,11 @@ static const int num_state_classes = 4;
 static const int state_classes_name_lengths[] = {5, 5, 4, 4};
 static const char *state_classes[] = {"agent", "block", "door", "room"};
 
-static const int state_classes_num_variables[] = {5, 4, 9, 6};
-static const char *agent_variables[] = {"x","y","shape","color","direction"};
+static const int state_classes_num_variables[] = {3, 4, 2, 5};
+static const char *agent_variables[] = {"x","y","direction"};
 static const char *block_variables[] = {"x","y","shape","color"};
-static const char *door_variables[] = {"x","y","left","right","bottom","top","shape","color","locked"};
-static const char *room_variables[] = {"left","right","bottom","top","shape","color"};
+static const char *door_variables[] = {"x","y"};
+static const char *room_variables[] = {"left","right","bottom","top","color"};
 
 static const int min_x = 0;
 static const int min_y = 0;
@@ -34,11 +34,11 @@ static const int max_y = 5;
 static const int min_locked_boolean_value = 0;
 static const int max_locked_boolean_value = 1;
 
-enum Shape {chair, bag, backpack, basket, agent_shape, door, room};
-static const int num_shapes = 7;
+enum Shape {chair, bag, backpack, basket};
+static const int num_shapes = 4;
 
-enum Color {blue, green, red, yellow, magenta, cyan, orange, gray};
-static const int num_colors = 8;
+enum Color {blue, green, red, yellow, magenta, cyan, orange};
+static const int num_colors = 7;
 
 enum Direction {north, south, east, west};
 static const Direction directions[] = {north, south, east, west};
@@ -66,11 +66,9 @@ struct Cleanup_State : public State
 	{	
 		int x;
 		int y;
-		Shape shape;
-		Color color;
 		Direction direction;
 	} agent;
-	static const int num_agent_variables_data = 5;
+	static const int num_agent_variables_data = 3;
 
 	struct Block
 	{
@@ -86,16 +84,9 @@ struct Cleanup_State : public State
 	{
 		int x;
 		int y;
-		int left;
-		int right;
-		int bottom;
-		int top;
-		Shape shape;
-		Color color;
-		int locked;
 	};
 	vector<Door> doors;
-	static const int num_door_variables = 9;
+	static const int num_door_variables = 2;
 
 	struct Room
 	{
@@ -103,14 +94,13 @@ struct Cleanup_State : public State
 		int right;
 		int bottom;
 		int top;
-		Shape shape;
 		Color color;
 	};
 	vector<Room> rooms;
-	static const int num_room_variables = 6;
+	static const int num_room_variables = 5;
 
 	Cleanup_State(
-		const Coordinate& map_size = Coordinate(max_x,max_y),
+		const Coordinate& map_size = Coordinate(max_x, max_y),
 		const int& num_blocks = 1,
 		const int& num_doors = 3,
 		const int& num_rooms = 3
