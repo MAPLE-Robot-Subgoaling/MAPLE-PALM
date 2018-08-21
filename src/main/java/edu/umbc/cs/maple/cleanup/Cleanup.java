@@ -602,7 +602,7 @@ public class Cleanup extends OOSADomainGenerator {
         OOSADomain domain = (OOSADomain) cleanup.generateDomain();
 
         CleanupGoalDescription[] goals = new CleanupGoalDescription[]{
-				new CleanupGoalDescription(new String[]{"block0", "room10"}, domain.propFunction(PF_BLOCK_IN_ROOM)),
+				new CleanupGoalDescription(new String[]{"block0", "room1"}, domain.propFunction(PF_BLOCK_IN_ROOM)),
 				//new CleanupGoalDescription(new String[]{"block1", "room1"}, domain.propFunction(PF_BLOCK_IN_ROOM)),
 				//new CleanupGoalDescription(new String[]{"block2", "room0"}, domain.propFunction(PF_BLOCK_IN_ROOM))
 		};
@@ -612,10 +612,10 @@ public class Cleanup extends OOSADomainGenerator {
         tf = new GoalConditionTF(goalCondition);
         cleanup.setRf(rf);
         cleanup.setTf(tf);
-        CleanupRandomStateGenerator gen = new CleanupRandomStateGenerator(cleanup);
+        CleanupStandardStateGenerator gen = new CleanupStandardStateGenerator(cleanup);
         domain = (OOSADomain) cleanup.generateDomain();
 
-        String configFile = "config/cleanup/old/2rooms2blocks.yaml";
+        String configFile = "config/cleanup/ereTest.yaml";
         if(args.length > 0) {
             configFile = args[0];
         }
@@ -623,6 +623,9 @@ public class Cleanup extends OOSADomainGenerator {
         ExperimentConfig config = ExperimentConfig.loadConfig(configFile);
 
         State state= config.generateState();
+        //check if state is standard
+        CleanupState cstate = (CleanupState) state;
+        cstate.isStandard();
 
 //        List<State> states = StateReachability.getReachableStates(state2, domain, new SimpleHashableStateFactory(true));
         List<Episode> episodes = new ArrayList<Episode>();

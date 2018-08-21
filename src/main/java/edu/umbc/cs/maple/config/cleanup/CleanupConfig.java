@@ -9,6 +9,7 @@ import edu.umbc.cs.maple.cleanup.Cleanup;
 import edu.umbc.cs.maple.cleanup.CleanupGoal;
 import edu.umbc.cs.maple.cleanup.CleanupVisualizer;
 import edu.umbc.cs.maple.cleanup.state.CleanupRandomStateGenerator;
+import edu.umbc.cs.maple.cleanup.state.CleanupStandardStateGenerator;
 import edu.umbc.cs.maple.cleanup.state.CleanupState;
 import edu.umbc.cs.maple.config.DomainConfig;
 import edu.umbc.cs.maple.config.DomainGoal;
@@ -29,7 +30,7 @@ public class CleanupConfig extends DomainConfig {
         int maxX = cleanup.getMaxX();
         int maxY = cleanup.getMaxY();
         //prevents generating states already solved/terminal
-        CleanupRandomStateGenerator gen = new CleanupRandomStateGenerator(minX, minY, maxX, maxY);
+        CleanupStandardStateGenerator gen = new CleanupStandardStateGenerator(minX, minY, maxX, maxY);
         State st;
         do{
             st = gen.getStateFor(state);

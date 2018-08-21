@@ -2,8 +2,8 @@ domain: !!edu.umbc.cs.maple.config.cleanup.CleanupConfig
   domainGenerator: !!edu.umbc.cs.maple.cleanup.Cleanup
     minX: 0
     minY: 0
-    maxX: 7
-    maxY: 7
+    maxX: 5
+    maxY: 5
     tf: !!edu.umbc.cs.maple.cleanup.CleanupTF
       goal: &goal !!edu.umbc.cs.maple.cleanup.CleanupGoal
         goalDescriptions:
@@ -17,7 +17,7 @@ domain: !!edu.umbc.cs.maple.config.cleanup.CleanupConfig
       defaultReward: 0.0
       noopReward: 0.0
       pullReward: 0.0
-  state: twoRooms
+  state: threeRooms
 
 goal: *goal
 
