@@ -7,10 +7,7 @@ domain: !!edu.umbc.cs.maple.config.cleanup.CleanupConfig
     tf: !!edu.umbc.cs.maple.cleanup.CleanupTF
       goal: &goal !!edu.umbc.cs.maple.cleanup.CleanupGoal
         goalDescriptions:
-          - pf: !!edu.umbc.cs.maple.cleanup.pfs.BlockInRoomPF {}
-            params:
-             - block0
-             - room1
+          - pf: !!edu.umbc.cs.maple.cleanup.pfs.StandardGoalPF {}
     rf: !!edu.umbc.cs.maple.cleanup.CleanupRF
       goal: *goal
       goalReward: 1.0
@@ -62,7 +59,7 @@ output:
       - CUMULATIVE_REWARD_PER_EPISODE
 
   visualizer:
-    enabled: false
+    enabled: true
     episodes: true
     width: 7
     height: 7
