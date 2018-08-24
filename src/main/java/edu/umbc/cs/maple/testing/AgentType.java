@@ -105,7 +105,7 @@ public enum AgentType {
         @Override
         public LearningAgent getLearningAgent(Task root, HashableStateFactory hsf, ExperimentConfig config) {
             LearningAgent agent = new FlatUCRLAgent(root, config.generateState(),
-                    config.gamma, config.rmax.max_delta);
+                    config.gamma, config.rmax.max_delta, hsf);
             return agent;
         }
     }

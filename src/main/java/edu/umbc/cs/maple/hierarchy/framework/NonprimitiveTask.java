@@ -39,6 +39,7 @@ public class NonprimitiveTask extends Task {
         super();
         // should only be used for wrapping the baseDomain, for non-hierarchical methods like Q Learning
         this.domain = baseDomain;
+        this.actionType = new SolveActionType();
     }
 
 

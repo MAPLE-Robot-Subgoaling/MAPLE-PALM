@@ -21,20 +21,20 @@ public abstract class Task {
     /**
      * actionType - the general action type acossiated with the task
      */
-    private ActionType actionType;
+    protected ActionType actionType;
 
     /**
      * children - the subtasks in a hierarchy
      */
-    private Task[] children;
+    protected Task[] children;
 
     /**
      * the function to map state at one level lower up to current level
      */
-    private StateMapping mapper;
+    protected StateMapping mapper;
 
-    private boolean masked;
-    private String[] maskedParameters;
+    protected boolean masked;
+    protected String[] maskedParameters;
     /**
      * Setup of variables
      * @param children the task's subtasks

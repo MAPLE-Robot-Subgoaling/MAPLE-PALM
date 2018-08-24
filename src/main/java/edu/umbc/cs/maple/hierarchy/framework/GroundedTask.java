@@ -97,6 +97,9 @@ public class GroundedTask {
      */
     public List<GroundedTask> getGroundedChildTasks(State s){
         Task[] children = t.getChildren();
+        if(children == null){
+            return null;
+        }
         List<GroundedTask> gts = new ArrayList<GroundedTask>();
         for(Task t : children){
             gts.addAll(t.getAllGroundedTasks(s));

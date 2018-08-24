@@ -6,6 +6,7 @@ import burlap.mdp.core.action.Action;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.environment.EnvironmentOutcome;
 import burlap.mdp.singleagent.model.TransitionProb;
+import burlap.mdp.singleagent.oo.OOSADomain;
 import burlap.statehashing.HashableState;
 import burlap.statehashing.HashableStateFactory;
 import edu.umbc.cs.maple.hierarchy.framework.GroundedTask;
@@ -69,7 +70,7 @@ public class UCRLModel extends PALMModel implements ConfidenceModel {
     protected DiscountProvider discountProvider;
 
     protected GroundedTask task;
-    protected TerminalFunction tf;
+    protected OOSADomain baseDomain;
     protected Set<HashableState> stateSpace;
     protected Set<Action> actions;
     protected Policy current_policy;
@@ -87,32 +88,34 @@ public class UCRLModel extends PALMModel implements ConfidenceModel {
     protected int U_max;
     protected int beta;
 
-    protected UCRLModel(List<HashableState> baseStates, double gamma, double maxDelta,
+    protected UCRLModel(double gamma, double maxDelta,
                      HashableStateFactory hashableStateFactory){
         this.initializeDiscountProvider(gamma);
         this.gamma = gamma;
         this.maxDelta = maxDelta;
         this.hashingFactory = hashableStateFactory;
         this.delaying = false;
-        defineConstants();
+
     }
 
     public UCRLModel(GroundedTask task, List<HashableState> baseStates, double gamma, double maxDelta,
                      HashableStateFactory hashableStateFactory){
-        this(baseStates, gamma, maxDelta, hashableStateFactory);
+        this(gamma, maxDelta, hashableStateFactory);
         this.task = task;
-        defineStatesAndActions(baseStates);
+        setup(baseStates);
     }
 
-//    public UCRLModel(TerminalFunction tf, List<HashableState> baseStates, List<Action> actions,
-//                     double gamma, double maxDelta, HashableStateFactory hashableStateFactory){
-//        this(baseStates, gamma, maxDelta, hashableStateFactory);
-//        this.tf = tf;
-//        this.stateSpace = new HashSet<HashableState>(baseStates);
-//        this.MAG_A = actions.size();
-//    }
+    public UCRLModel(OOSADomain baseDomain, List<HashableState> baseStates, double gamma, double maxDelta,
+                     HashableStateFactory hashableStateFactory){
+        this(gamma, maxDelta, hashableStateFactory);
+        this.baseDomain = baseDomain;
+        setup(baseStates);
+    }
 
-
+    protected void setup(List<HashableState> baseStates){
+        defineStatesAndActions(baseStates);
+        defineConstants();
+    }
     public void initializeDiscountProvider(double gamma) {
         this.discountProvider = new ConstantDiscountProvider(gamma);
     }
@@ -309,7 +312,8 @@ public class UCRLModel extends PALMModel implements ConfidenceModel {
 
     protected void defineStatesAndActions(List<HashableState> baseStates){
         if(task == null){
-            // this should only run for use in modeling a task
+            MAG_A = baseDomain.getActionTypes().size();
+            stateSpace = new HashSet<HashableState>(baseStates);
             return;
         }
         stateSpace = new HashSet<HashableState>();
@@ -320,8 +324,10 @@ public class UCRLModel extends PALMModel implements ConfidenceModel {
             HashableState habstracte = hashingFactory.hashState(abstractState);
             stateSpace.add(habstracte);
             List<GroundedTask> stateActions = task.getGroundedChildTasks(abstractState);
-            for(GroundedTask gt : stateActions) {
-                actions.add(gt.getAction());
+            if(stateActions != null) {
+                for (GroundedTask gt : stateActions) {
+                    actions.add(gt.getAction());
+                }
             }
         }
         MAG_A = actions.size();
