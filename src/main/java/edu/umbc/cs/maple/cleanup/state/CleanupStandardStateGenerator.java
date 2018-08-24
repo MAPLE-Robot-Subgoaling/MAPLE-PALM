@@ -143,7 +143,7 @@ public class CleanupStandardStateGenerator implements StateGenerator {
         //System.out.println("bigRoomsLeft is: "+ bigRoomBottom);
         int bigRoomTop = maxY-1;
         //System.out.println("bigRoomsLeft is: "+ bigRoomTop);
-        String bigRoomColor = roomColors.get(rng.nextInt(roomColors.size()));
+        String bigRoomColor = blockColors.get(rng.nextInt(blockColors.size()));
         CleanupRoom bigRoom = new CleanupRoom("room0", bigRoomLeft, bigRoomRight, bigRoomBottom, bigRoomTop, bigRoomColor, Cleanup.SHAPE_ROOM);
         String room1Color = blockColors.get(rng.nextInt(blockColors.size()));
         String room2Color = blockColors.get(rng.nextInt(blockColors.size()));
@@ -193,6 +193,7 @@ public class CleanupStandardStateGenerator implements StateGenerator {
                     continue;
                 }
                 s.addObject(new CleanupBlock("block" + index, bx, by, shape, color));
+                currentRoomColors.remove(color);
                 numBlocks -= 1;
                 index += 1;
             }

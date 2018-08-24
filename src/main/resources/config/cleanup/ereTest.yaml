@@ -2,8 +2,8 @@ domain: !!edu.umbc.cs.maple.config.cleanup.CleanupConfig
   domainGenerator: !!edu.umbc.cs.maple.cleanup.Cleanup
     minX: 0
     minY: 0
-    maxX: 5
-    maxY: 5
+    maxX: 10
+    maxY: 10
     tf: !!edu.umbc.cs.maple.cleanup.CleanupTF
       goal: &goal !!edu.umbc.cs.maple.cleanup.CleanupGoal
         goalDescriptions:
@@ -14,16 +14,16 @@ domain: !!edu.umbc.cs.maple.config.cleanup.CleanupConfig
       defaultReward: 0.0
       noopReward: 0.0
       pullReward: 0.0
-  state: threeRooms-2blocks
+  state: cigar-5blocks
 
 goal: *goal
 
 agents:
-  palm:  {cleanup-advancedBaseline, cleanup-baseline}
+  palm:  {cleanup-baseline}
 
-seed: 555543
-episodes: 75
-max_steps: 10000
+seed: 4326976557
+episodes: 3000
+max_steps: 100
 trials: 1
 gamma: 0.99
 
@@ -61,5 +61,5 @@ output:
   visualizer:
     enabled: true
     episodes: true
-    width: 7
-    height: 7
+    width: 10
+    height: 10
