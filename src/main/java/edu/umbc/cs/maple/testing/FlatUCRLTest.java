@@ -33,7 +33,10 @@ import static edu.umbc.cs.maple.testing.AgentType.Q_LEARNING;
 import static edu.umbc.cs.maple.testing.AgentType.UCRL;
 public class FlatUCRLTest {
 
-    public static void createCharts(final ExperimentConfig config, OOSADomain baseDomain, StateGenerator stateGenerator) {
+    public static void createCharts(final ExperimentConfig config, OOSADomain baseDomain, Task[] hierarchies, Task ucrlRoot, StateGenerator stateGenerator) {
+
+        final Task expertRoot = hierarchies[0];
+
         SimulatedEnvironment env;
         env = new SimulatedEnvironment(baseDomain, stateGenerator);
 
@@ -48,9 +51,11 @@ public class FlatUCRLTest {
         LearningAgentFactory[] agents = new LearningAgentFactory[config.agents.size()];
         for(int i = 0; i < config.agents.size(); i++) {
             String agent = config.agents.get(i);
-            if(agent.equals(UCRL.getType())) {
-                Task ucrlWrapper = new NonprimitiveTask(baseDomain);
-                agents[i] = UCRL.generateLearningAgentFactory(ucrlWrapper, config);
+            if(agent.equals(PALM_EXPERT.getType())) {
+                agents[i] = PALM_EXPERT.generateLearningAgentFactory(expertRoot, config);
+            } else if(agent.equals(UCRL.getType())) {
+                ucrlRoot.setDomain(baseDomain);
+                agents[i] = UCRL.generateLearningAgentFactory(ucrlRoot, config);
             } else if(agent.equals(Q_LEARNING.getType())){
                 Task qLearningWrapper = new NonprimitiveTask(baseDomain);
                 agents[i] = Q_LEARNING.generateLearningAgentFactory(qLearningWrapper, config);
@@ -95,9 +100,24 @@ public class FlatUCRLTest {
         }else{
             taxiDomain = new Taxi(true, domain.fickle, domain.correct_move);
         }
-
-        OOSADomain base = taxiDomain.generateDomain();
-        createCharts(config, base, stateGenerator);
+        OOSADomain base = null;
+        TaxiHierarchy ucrlHierarchy;
+        Task ucrlRoot = null;
+        Task[] hierarchies = new Task[2];
+        if (config.domain instanceof TaxiConfig) {
+            TaxiHierarchy expert = new TaxiHierarchyExpert();
+            TaxiHierarchy hierGen = new TaxiHierarchyHierGen();
+            ucrlHierarchy = new TaxiHierarchyExpert();
+            Task expertRoot = expert.createHierarchy(config, false);
+            Task hierGenRoot = hierGen.createHierarchy(config, false);
+            ucrlRoot = ucrlHierarchy.createHierarchy(config, false);
+            base = ucrlHierarchy.getBaseDomain();
+            expert.setBaseDomain(base);
+            expert.setBaseDomain(base);
+            hierarchies[0] = expertRoot;
+            hierarchies[1] = hierGenRoot;
+        }
+        createCharts(config, base, hierarchies, ucrlRoot, stateGenerator);
 
 //        long estimatedTime = System.nanoTime() - startTime;
 //        System.out.println("The estimated elapsed trial time is " + estimatedTime);
@@ -107,7 +127,7 @@ public class FlatUCRLTest {
 
     public static void main(String[] args) {
 
-        String configFile = "config/taxi/small-ucrl-flat.yaml";
+        String configFile = "config/taxi/small-ucrl-jw.yaml";
         if(args.length > 0) {
             configFile = args[0];
         }

@@ -145,4 +145,7 @@ public abstract class Task {
 
     public abstract double reward(State s, Action a, State sPrime);
 
+    public void setDomain(OOSADomain domain) {
+        this.domain = domain;
+    }
 }

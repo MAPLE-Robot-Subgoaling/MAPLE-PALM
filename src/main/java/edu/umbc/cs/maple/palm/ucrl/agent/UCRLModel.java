@@ -90,6 +90,7 @@ public class UCRLModel extends PALMModel implements ConfidenceModel {
     protected UCRLModel(List<HashableState> baseStates, double gamma, double maxDelta,
                      HashableStateFactory hashableStateFactory){
         this.initializeDiscountProvider(gamma);
+        this.stateSpace = new HashSet<>(baseStates);
         this.gamma = gamma;
         this.maxDelta = maxDelta;
         this.hashingFactory = hashableStateFactory;

@@ -26,6 +26,15 @@ import static edu.umbc.cs.maple.utilities.BurlapConstants.DEFAULT_Q_INIT;
 
 public enum AgentType {
 
+
+    UCRL("ucrl", "ucb") {
+        @Override
+        public LearningAgent getLearningAgent(Task root, HashableStateFactory hsf, ExperimentConfig config) {
+            LearningAgent agent = new FlatUCRLAgent(root, config.generateState(), hsf,
+                    config.gamma, config.rmax.max_delta);
+            return agent;
+        }
+    },
     PALM_EXPERT("palmExpert", "PALM-Expert"){
         @Override
         public LearningAgent getLearningAgent(Task root, HashableStateFactory hsf, ExperimentConfig config) {
@@ -101,14 +110,6 @@ public enum AgentType {
         }
 
     },
-    UCRL("ucrl", "ucb") {
-        @Override
-        public LearningAgent getLearningAgent(Task root, HashableStateFactory hsf, ExperimentConfig config) {
-            LearningAgent agent = new FlatUCRLAgent(root, config.generateState(),
-                    config.gamma, config.rmax.max_delta);
-            return agent;
-        }
-    }
 
     ;
 
