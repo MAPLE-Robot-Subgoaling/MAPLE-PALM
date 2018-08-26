@@ -50,7 +50,6 @@ public class UCRLModel extends PALMModel implements ConfidenceModel {
     protected Map<HashableState, Map<Action, Double>> rewards;
     protected Map<HashableState, Map<Action, Map<HashableState, Double>>> transitionProbabilities;
 
-    protected HashableState imaginedState;
     protected double gamma;
     protected double maxDelta;
 
@@ -86,23 +85,35 @@ public class UCRLModel extends PALMModel implements ConfidenceModel {
     protected double delta;
     protected int U_max;
     protected int beta;
+    protected ExtendedValueIteration evi;
 
-    protected UCRLModel(List<HashableState> baseStates, double gamma, double maxDelta,
+//    protected UCRLModel(List<HashableState> baseStates, double gamma, double maxDelta,
+//                     HashableStateFactory hashableStateFactory){
+//        this.initializeDiscountProvider(gamma);
+//        this.stateSpace = new HashSet<>(baseStates);
+//        this.gamma = gamma;
+//        this.maxDelta = maxDelta;
+//        this.hashingFactory = hashableStateFactory;
+//        this.delaying = false;
+//        defineConstants();
+//    }
+
+    public UCRLModel(GroundedTask task, List<HashableState> baseStates, double gamma, double maxDelta,
                      HashableStateFactory hashableStateFactory){
+//        this(baseStates, gamma, maxDelta, hashableStateFactory);
         this.initializeDiscountProvider(gamma);
+        initializeVariables();
         this.stateSpace = new HashSet<>(baseStates);
         this.gamma = gamma;
         this.maxDelta = maxDelta;
         this.hashingFactory = hashableStateFactory;
         this.delaying = false;
         defineConstants();
-    }
-
-    public UCRLModel(GroundedTask task, List<HashableState> baseStates, double gamma, double maxDelta,
-                     HashableStateFactory hashableStateFactory){
-        this(baseStates, gamma, maxDelta, hashableStateFactory);
         this.task = task;
         defineStatesAndActions(baseStates);
+        evi = new ExtendedValueIteration(this, stateSpace, actions,
+                maxDelta, hashingFactory);
+        updatePolicy();
     }
 
 //    public UCRLModel(TerminalFunction tf, List<HashableState> baseStates, List<Action> actions,
@@ -262,8 +273,7 @@ public class UCRLModel extends PALMModel implements ConfidenceModel {
 
     protected void updatePolicy(){
         // extended vi
-        ExtendedValueIteration evi = new ExtendedValueIteration(this, stateSpace, actions,
-                maxDelta, hashingFactory);
+        evi.resetSolver();
         current_policy = evi.planFromState(null);
     }
 
@@ -309,12 +319,8 @@ public class UCRLModel extends PALMModel implements ConfidenceModel {
     }
 
     protected void defineStatesAndActions(List<HashableState> baseStates){
-        if(task == null){
-            // this should only run for use in modeling a task
-            return;
-        }
         stateSpace = new HashSet<HashableState>();
-        Set<Action> actions = new HashSet<Action>();
+        actions = new HashSet<Action>();
 
         for(HashableState hs : baseStates){
             State abstractState = task.mapState(hs.s());
@@ -353,6 +359,16 @@ public class UCRLModel extends PALMModel implements ConfidenceModel {
         this.m = (20 * l_1 * K_SET.size() * (L_MAX + 1) * Math.pow(2 * beta + 1, 2)) / (Math.pow(maxDelta, 2) * Math.pow(1 - gamma, 2 + 2 / beta));
     }
 
+    protected void initializeVariables(){
+        totalStateAction = new HashMap<HashableState, Map<Action, Integer>>();
+        totalStateActionState = new HashMap<HashableState, Map<Action, Map<HashableState, Integer>>>();
+        totalReward = new HashMap<HashableState, Map<Action, Double>>() ;
+        batchStateAction = new HashMap<HashableState, Map<Action, Integer>>();
+        batchStateActionState = new HashMap<HashableState, Map<Action, Map<HashableState, Integer>>>();
+        batchReward = new HashMap<HashableState, Map<Action, Double>>();
+        rewards = new HashMap<HashableState, Map<Action, Double>>();
+        transitionProbabilities = new HashMap<HashableState, Map<Action, Map<HashableState, Double>>>();
+    }
     //________________________________________Getters and Setters_______________________
 
 

@@ -44,6 +44,9 @@ public class ExtendedValueIteration extends DynamicProgramming implements Planne
         this.actions = actions;
         this.deltaThreshold = delta;
         this.hashingFactory = hsf;
+        this.valueFunction = new HashMap<HashableState, Double>();
+        this.morphedTransitions = new HashMap<HashableState, Map<Action, Map<HashableState,Double>>>();
+        valueFunctionInit();
     }
 
     @Override
@@ -84,6 +87,7 @@ public class ExtendedValueIteration extends DynamicProgramming implements Planne
             }
             converged = maxDelta < deltaThreshold;
             iteration++;
+            System.out.println("Iteration: " + iteration);
         }
 
         return new TabularValueFunction(hashingFactory, valueFunction, 0);
@@ -187,6 +191,10 @@ public class ExtendedValueIteration extends DynamicProgramming implements Planne
     public void resetSolver() {
         morphedTransitions.clear();
         valueFunction.clear();
+        valueFunctionInit();
+    }
+
+    protected void valueFunctionInit(){
         for(HashableState hs :reachableStates){
             valueFunction.put(hs, 0.);
         }
