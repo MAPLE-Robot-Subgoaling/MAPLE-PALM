@@ -80,7 +80,14 @@ public class Cleanup extends OOSADomainGenerator {
     public static final String COLOR_GRAY = "gray";
 
     public static final String[] SHAPES = new String[]{"chair", "bag", "backpack", "basket"};
+    public enum Shape{
+        chair,
+        bag,
+        backpack,
+        basket
+    }
     public static final String[] SHAPES_BLOCKS = new String[]{"chair", "bag", "backpack", "basket"};
+
 
     public static final String SHAPE_ROOM = "shapeRoom";
     public static final String SHAPE_DOOR = "shapeDoor";

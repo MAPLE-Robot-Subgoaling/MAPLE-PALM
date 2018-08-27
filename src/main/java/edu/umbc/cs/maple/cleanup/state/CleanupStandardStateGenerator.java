@@ -195,6 +195,7 @@ public class CleanupStandardStateGenerator implements StateGenerator {
                     continue;
                 }
                 s.addObject(new CleanupBlock("block" + index, bx, by, shape, color));
+                currentRoomColors.remove(color);
                 numBlocks -= 1;
                 index += 1;
             }
