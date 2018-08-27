@@ -6,6 +6,7 @@ import burlap.mdp.core.action.Action;
 import burlap.mdp.core.action.ActionType;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.environment.EnvironmentOutcome;
+import burlap.mdp.singleagent.model.FullModel;
 import burlap.mdp.singleagent.model.TransitionProb;
 import burlap.mdp.singleagent.oo.OOSADomain;
 import burlap.statehashing.HashableState;
@@ -328,7 +329,7 @@ public class UCRLModel extends PALMModel implements ConfidenceModel {
             State abstractState = task.mapState(hs.s());
             HashableState habstracte = hashingFactory.hashState(abstractState);
             stateSpace.add(habstracte);
-            if (task.getDomain() == null) {
+            if (! (task.getDomain().getModel() instanceof FullModel)) {
                 List<GroundedTask> stateActions = task.getGroundedChildTasks(abstractState);
                 for (GroundedTask gt : stateActions) {
                     actions.add(gt.getAction());
@@ -337,7 +338,7 @@ public class UCRLModel extends PALMModel implements ConfidenceModel {
                 OOSADomain domain = task.getDomain();
                 List<ActionType> actionTypes = domain.getActionTypes();
                 for (ActionType actType : actionTypes){
-                    List<Action> actions = actType.allApplicableActions(hs.s());
+                    List<Action> actions = actType.allApplicableActions(abstractState);
                     actions.addAll(actions);
                 }
             }
