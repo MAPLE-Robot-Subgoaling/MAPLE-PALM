@@ -15,6 +15,8 @@ import edu.umbc.cs.maple.palm.rmax.agent.ExpectedRmaxModelGenerator;
 import edu.umbc.cs.maple.palm.rmax.agent.ExpertNavModelGenerator;
 import edu.umbc.cs.maple.palm.rmax.agent.PALMRmaxModelGenerator;
 import edu.umbc.cs.maple.palm.ucrl.agent.FlatUCRLAgent;
+import edu.umbc.cs.maple.palm.ucrl.agent.PALMUCRLModelGenerator;
+import edu.umbc.cs.maple.palm.ucrl.agent.UCRLPALMLearningAgent;
 import edu.umbc.cs.maple.rmaxq.agent.RmaxQLearningAgent;
 
 import java.util.Arrays;
@@ -60,10 +62,12 @@ public enum AgentType {
         }
 
     },
-    PALM_UCB("palmUcb", "PALM=UCB"){
+    PALM_UCRL("palmUcrl", "PALM=UCRL"){
         @Override
         public LearningAgent getLearningAgent(Task root, HashableStateFactory hsf, ExperimentConfig config) {
-            return  null;
+            PALMModelGenerator ucrlGen = new PALMUCRLModelGenerator(root, config.generateState(), config.gamma,
+                    config.rmax.max_delta, hsf);
+            return  new UCRLPALMLearningAgent(root, ucrlGen, hsf, config);
         }
     },
     RMAXQ_EXPERT("rmaxqExpert", "RMAXQ-Expert"){

@@ -3,9 +3,11 @@ package edu.umbc.cs.maple.palm.ucrl.agent;
 import burlap.behavior.policy.Policy;
 import burlap.mdp.core.TerminalFunction;
 import burlap.mdp.core.action.Action;
+import burlap.mdp.core.action.ActionType;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.environment.EnvironmentOutcome;
 import burlap.mdp.singleagent.model.TransitionProb;
+import burlap.mdp.singleagent.oo.OOSADomain;
 import burlap.statehashing.HashableState;
 import burlap.statehashing.HashableStateFactory;
 import edu.umbc.cs.maple.hierarchy.framework.GroundedTask;
@@ -326,9 +328,18 @@ public class UCRLModel extends PALMModel implements ConfidenceModel {
             State abstractState = task.mapState(hs.s());
             HashableState habstracte = hashingFactory.hashState(abstractState);
             stateSpace.add(habstracte);
-            List<GroundedTask> stateActions = task.getGroundedChildTasks(abstractState);
-            for(GroundedTask gt : stateActions) {
-                actions.add(gt.getAction());
+            if (task.getDomain() == null) {
+                List<GroundedTask> stateActions = task.getGroundedChildTasks(abstractState);
+                for (GroundedTask gt : stateActions) {
+                    actions.add(gt.getAction());
+                }
+            }else {
+                OOSADomain domain = task.getDomain();
+                List<ActionType> actionTypes = domain.getActionTypes();
+                for (ActionType actType : actionTypes){
+                    List<Action> actions = actType.allApplicableActions(hs.s());
+                    actions.addAll(actions);
+                }
             }
         }
         MAG_A = actions.size();

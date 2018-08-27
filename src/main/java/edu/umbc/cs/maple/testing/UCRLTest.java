@@ -31,7 +31,7 @@ import java.util.List;
 import static edu.umbc.cs.maple.testing.AgentType.*;
 import static edu.umbc.cs.maple.testing.AgentType.Q_LEARNING;
 import static edu.umbc.cs.maple.testing.AgentType.UCRL;
-public class FlatUCRLTest {
+public class UCRLTest {
 
     public static void createCharts(final ExperimentConfig config, OOSADomain baseDomain, Task[] hierarchies, Task ucrlRoot, StateGenerator stateGenerator) {
 
@@ -56,6 +56,8 @@ public class FlatUCRLTest {
             } else if(agent.equals(UCRL.getType())) {
                 ucrlRoot.setDomain(baseDomain);
                 agents[i] = UCRL.generateLearningAgentFactory(ucrlRoot, config);
+            }else if(agent.equals(PALM_UCRL.getType())){
+                agents[i] = PALM_UCRL.generateLearningAgentFactory(ucrlRoot, config);
             } else if(agent.equals(Q_LEARNING.getType())){
                 Task qLearningWrapper = new NonprimitiveTask(baseDomain);
                 agents[i] = Q_LEARNING.generateLearningAgentFactory(qLearningWrapper, config);
