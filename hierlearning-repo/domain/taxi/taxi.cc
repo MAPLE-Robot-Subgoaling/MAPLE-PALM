@@ -170,6 +170,15 @@ int Taxi_State::variable_size (const int& variable_index) const
 	}
 }
 
+int Taxi_State::debug_num_states() const 
+{
+	throw HierException(__FILE__, __LINE__, "ERROR: debug num states is being used (needed for Cleanup)");
+}
+
+int Taxi_State::variable_size_for_state (const int& variable_index) const
+{
+	return variable_size(variable_index);
+}
 
 int Taxi_State::variable (const int& variable_index) const
 {	int variable = variable_index;

@@ -193,9 +193,11 @@ int main (int argc, char* argv[])
 		{	unique_ptr<Learner> learner;   // A star is born
 			if (learner_name == "maxq" || learner_name == "hh")
 			{	unique_ptr<Hierarchy> hierarchy;
-				if (num_trajectories && trajectory_filename.empty())
-					hierarchy.reset(new Hierarchy(simulator.trajectory_generator("", *mdp, nullptr, num_trajectories), model_directory, run_index, *mdp));
-				else if (!trajectory_filename.empty())
+				if (num_trajectories && trajectory_filename.empty()) {
+					vector<vector<unique_ptr<State_Action_Reward>>> trajs = simulator.trajectory_generator("", *mdp, nullptr, num_trajectories);
+					Hierarchy *hhh = new Hierarchy(trajs, model_directory, run_index, *mdp);
+					hierarchy.reset(hhh);
+				} else if (!trajectory_filename.empty())
 					hierarchy.reset(new Hierarchy(trajectory_filename, model_directory, *mdp));
 
 				if (learner_name == "maxq")

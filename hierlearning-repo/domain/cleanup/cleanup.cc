@@ -143,8 +143,52 @@ int Cleanup_State::variable_size (const int& variable_index) const
 		return num_colors;
 	} else if (variable.find("direction") != string::npos) {
 		return num_directions;
-	} else if (variable.find("locked") != string::npos) {
-		return max_locked_boolean_value;
+	} else {
+		throw HierException(__FILE__, __LINE__, "Unknown variable: " + variable);
+	}
+}
+
+int Cleanup_State::debug_num_states () const 
+{
+	cout << "Warning: hard-coded of states\n";
+	return 100000;//2000;
+}
+
+int Cleanup_State::variable_size_for_state (const int& variable_index) const
+{	
+	string variable = variable_name(variable_index);
+	if (variable.find("x") != string::npos) {
+		// possible x coords for agent, block, or door
+		// 1, 2, 3, 4, 5
+		return 5;
+	} else if (variable.find("y") != string::npos) {
+		// possible y coords for agent, block, or door
+		// 1, 2, 3, 4, 5
+		return 5;
+	} else if (variable.find("left") != string::npos) {
+		// possible values for room
+		// 0, 3
+		return 2;
+	} else if (variable.find("right") != string::npos) {
+		// possible values for room
+		// 3, 6
+		return 2;
+	} else if (variable.find("bottom") != string::npos) {
+		// possible values for room
+		// 0, 3
+		return 2;
+	} else if (variable.find("top") != string::npos) {
+		// possible values for room
+		// 0, 3
+		return 3, 6;
+	} else if (variable.find("shape") != string::npos) {
+		// max num of shapes == num of blocks in this state
+		return num_blocks;
+	} else if (variable.find("color") != string::npos) {
+		// max num of colors == num of rooms + num blocks in this state
+		return num_rooms + num_blocks;
+	} else if (variable.find("direction") != string::npos) {
+		return num_directions;
 	} else {
 		throw HierException(__FILE__, __LINE__, "Unknown variable: " + variable);
 	}
@@ -170,9 +214,9 @@ int Cleanup_State::variable (const int& variable_index) const
 				string variable_name = variables[target];
 				if (state_class_test == "agent") {
 					if (variable_name == "x") {
-						return agent.x;
+						return agent.position.x;
 					} else if (variable_name == "y") {
-						return agent.y;
+						return agent.position.y;
 					} else if (variable_name == "direction") {
 						return agent.direction;
 					} else {
@@ -180,9 +224,9 @@ int Cleanup_State::variable (const int& variable_index) const
 					}
 				} else if (state_class_test == "block") {
 					if (variable_name == "x") {
-						return blocks[id].x;
+						return blocks[id].position.x;
 					} else if (variable_name == "y") {
-						return blocks[id].y;
+						return blocks[id].position.y;
 					} else if (variable_name == "shape") {
 						return blocks[id].shape;
 					} else if (variable_name == "color") {
@@ -192,9 +236,9 @@ int Cleanup_State::variable (const int& variable_index) const
 					}
 				} else if (state_class_test == "door") {
 					if (variable_name == "x") {
-						return doors[id].x;
+						return doors[id].position.x;
 					} else if (variable_name == "y") {
-						return doors[id].y;
+						return doors[id].position.y;
 					} else {
 						throw HierException(__FILE__, __LINE__, "Unknown variable index: " + variable_index);
 					}
@@ -261,10 +305,10 @@ pair<bool,int> Cleanup_State::parse (string expression) const
 				value = yellow;
 			else if (token_str == "magenta")
 				value = magenta;
-			else if (token_str == "cyan")
-				value = cyan;
-			else if (token_str == "orange")
-				value = orange;
+			//else if (token_str == "cyan")
+			//	value = cyan;
+			//else if (token_str == "orange")
+			//	value = orange;
 			else if (token_str == "chair")
 				value = chair;
 			else if (token_str == "bag")
@@ -313,9 +357,9 @@ string Cleanup_State::print () const
 	// since this is processed by a regex and used in model-building
 
 	out << "(";
-	out << agent.x;
+	out << agent.position.x;
 	out << ",";
-	out << agent.y;
+	out << agent.position.y;
 	out << ",";
 	out << agent.direction;
 	out << ")";
@@ -323,9 +367,9 @@ string Cleanup_State::print () const
 	for (const auto& block : blocks)
 	{
 		out << " (";
-		out << block.x;
+		out << block.position.x;
 		out << ",";
-		out << block.y;
+		out << block.position.y;
 		out << ",";
 		out << block.shape;
 		out << ",";
@@ -336,9 +380,9 @@ string Cleanup_State::print () const
 	for (const auto& door : doors)
 	{
 		out << " (";
-		out << door.x;
+		out << door.position.x;
 		out << ",";
-		out << door.y;
+		out << door.position.y;
 		out << ")";
 	}
 
@@ -394,6 +438,8 @@ void Cleanup::three_rooms () {
 	room1.bottom = min_y;
 	room1.top = big_room.bottom;
 	room1.color = room_colors[rand_int(num_room_colors)];
+	while (room1.color == big_room.color)
+	{ room1.color = room_colors[rand_int(num_room_colors)]; }
 	
 	Cleanup_State::Room room2 = {};
 	room2.left = big_room.right/2;
@@ -401,6 +447,8 @@ void Cleanup::three_rooms () {
 	room2.bottom = min_y;
 	room2.top = big_room.bottom;
 	room2.color = room_colors[rand_int(num_room_colors)];
+	while (room2.color == big_room.color || room2.color == room1.color)
+	{ room2.color = room_colors[rand_int(num_room_colors)]; }
 	
 	state().rooms[0] = big_room;
 	state().rooms[1] = room1;
@@ -418,48 +466,66 @@ void Cleanup::three_rooms () {
 	int dy1 = big_room.bottom;
 	int dy2 = big_room.bottom/2;
 
-	door0.x = dx0;
-	door0.y = dy0;
+	door0.position.x = dx0 - rand_int(2);
+	door0.position.y = dy0;
 
-	door1.x = dx1;
-	door1.y = dy1;
+	door1.position.x = dx1 - rand_int(2);
+	door1.position.y = dy1;
 
-	door2.x = dx2;
-	door2.y = dy2;
+	door2.position.x = dx2;
+	door2.position.y = dy2 + rand_int(2);
 
 	state().doors[0] = door0;
 	state().doors[1] = door1;
 	state().doors[2] = door2;
 
 	// make agent
-	
-	int ax = dx2;
-	int ay = dy2;
+	int ax = 0;
+	int ay = 0;
+	while (wall_at(ax, ay)) {
+		ax = rand_int(max_x);
+		ay = rand_int(max_y);
+	}
 	Cleanup_State::Agent agent = {};
-	agent.x = ax;
-	agent.y = ay;
+	agent.position.x = ax;
+	agent.position.y = ay;
 	agent.direction = directions[rand_int(num_directions)];
 	
 	state().agent = agent;
 
 	// make blocks
-
+	Color possible_block_colors[] = {big_room.color, room1.color, room2.color};
+	int num_possible_block_colors = 3;
 	for (int i = 0; i < state().num_blocks; ++i) {
 		Cleanup_State::Block block = {};
+		if (i == 0) {
+			// special, the first block MUST be a bag or backpack
+			// because it will be a goal block
+			block.shape = goal_block_shapes[rand_int(num_goal_block_shapes)];
+		} else {
+			//block.shape = nongoal_block_shapes[rand_int(num_nongoal_block_shapes)];
+			block.shape = block_shapes[rand_int(num_block_shapes)];
+		}
+		block.color = possible_block_colors[rand_int(num_possible_block_colors)];
+		state().blocks[i] = block;
+		//do {
+		//	block.color = block_colors[rand_int(num_block_colors)];
+		//} while(
+		//	!(block.color == big_room.color || block.color == room1.color || block.color == room2.color)
+		//);
 		int bx = -99;
 		int by = -99;
-		while (wall_at(bx, by) || block_at(bx, by) || agent_at(bx, by) || is_inside(block, 1)) {
+		while (wall_at(bx, by) || block_at(bx, by) || agent_at(bx, by) || terminated()
+			|| ((block.shape == bag || block.shape == backpack) && is_inside_room_of_same_color(block))) { //|| is_inside(block, 1)) {
 			bx = rand_int(max_x);
 			by = rand_int(max_y);
-			block.x = bx;
-			block.y = by;
+			block.position.x = bx;
+			block.position.y = by;
 		}
-		block.color = block_colors[rand_int(num_block_colors)];
-		block.shape = block_shapes[rand_int(num_block_shapes)];
 		state().blocks[i] = block;
 	}
 
-	cout << "three rooms done\n";
+	cout << "three rooms done.";
 }
 
 
@@ -535,12 +601,19 @@ void Cleanup::process (const vector<int>& action)
 		_reward += reward_default;
 	}
 
+	if (state().blocks[0].position.x == 0 || state().blocks[0].position.y == 0) {
+		cout << "ERROR blocks";
+	}
+	if (state().agent.position.x == 0 || state().agent.position.y == 0) {
+		cout << "ERROR agent";
+	}
+
 
 }
 
 void Cleanup::do_move (int dx, int dy) {
-	int nx = state().agent.x + dx;
-	int ny = state().agent.y + dy;
+	int nx = state().agent.position.x + dx;
+	int ny = state().agent.position.y + dy;
 	int nbx = nx;
 	int nby = ny;
 
@@ -552,7 +625,7 @@ void Cleanup::do_move (int dx, int dy) {
 	Cleanup_State::Block pushed_block;
 	for (int i = 0; i < state().num_blocks; ++i) {
 		Cleanup_State::Block block = state().blocks[i];
-		if (block.x == nx && block.y == ny) {
+		if (block.position.x == nx && block.position.y == ny) {
 			block_in_the_way = true;
 			pushed_block = block;
 			pushed_block_index = i;
@@ -560,8 +633,8 @@ void Cleanup::do_move (int dx, int dy) {
 		}
 	}
 	if (block_in_the_way) {
-		int bx = pushed_block.x;
-		int by = pushed_block.y;
+		int bx = pushed_block.position.x;
+		int by = pushed_block.position.y;
 		nbx = bx + dx;
 		nby = by + dy;
 		if (is_open(nbx, nby)) {
@@ -581,12 +654,12 @@ void Cleanup::do_move (int dx, int dy) {
 
 	if (agent_can_move) {
 		if (block_can_move) {
-			pushed_block.x = nbx;
-			pushed_block.y = nby;
+			pushed_block.position.x = nbx;
+			pushed_block.position.y = nby;
 			state().blocks[pushed_block_index] = pushed_block;
 		}
-		state().agent.x = nx;
-		state().agent.y = ny;
+		state().agent.position.x = nx;
+		state().agent.position.y = ny;
 	}
 	Direction new_direction;
 	if (dy > 0) { new_direction = Direction::north; }
@@ -597,8 +670,8 @@ void Cleanup::do_move (int dx, int dy) {
 }
 
 void Cleanup::do_pull () {
-	int ax = state().agent.x;
-	int ay = state().agent.y;
+	int ax = state().agent.position.x;
+	int ay = state().agent.position.y;
 	int dx = 0;
 	int dy = 0;
 	Direction direction = state().agent.direction;
@@ -625,7 +698,7 @@ void Cleanup::do_pull () {
 	Cleanup_State::Block pulled_block;
 	for (int i = 0; i < state().num_blocks; ++i) {
 		Cleanup_State::Block block = state().blocks[i];
-		if (block.x == nx && block.y == ny) {
+		if (block.position.x == nx && block.position.y == ny) {
 			block_in_the_way = true;
 			pulled_block = block;
 			pulled_block_index= i;
@@ -633,31 +706,42 @@ void Cleanup::do_pull () {
 		}
 	}
 	if (block_in_the_way) {
-		int bx = pulled_block.x;
-		int by = pulled_block.y;
+		int bx = pulled_block.position.x;
+		int by = pulled_block.position.y;
 		int nbx = ax;
 		int nby = ay;
-		pulled_block.x = nbx;
-		pulled_block.y = nby;
+		pulled_block.position.x = nbx;
+		pulled_block.position.y = nby;
 		state().blocks[pulled_block_index] = pulled_block;
 		
-		state().agent.x = nx;
-		state().agent.y = ny;
+		state().agent.position.x = nx;
+		state().agent.position.y = ny;
 		state().agent.direction = new_direction;
 	}
 }
 
 bool Cleanup::terminated () const
 {	
-	return is_inside(0, 1); // || is_inside(0, 2); // || is_inside(0,0)
+	return is_all_inside_room_of_same_color(bag) && is_all_inside_room_of_same_color(backpack); //is_inside_room_of_same_color(0);// && block_at(3, 3);//is_inside(0, 1); // || is_inside(0, 2); // || is_inside(0,0)
+}
+
+bool Cleanup::is_all_inside_room_of_same_color (Shape shape) const
+{
+	for (int i = 0; i < state().num_blocks; ++i) {
+		if (shape == state().blocks[i].shape) {
+			bool inside = is_inside_room_of_same_color(i);
+			if (!inside) return false;
+		}
+	}
+	return true;
 }
 
 bool Cleanup::is_open(int x, int y) {
 	return !(wall_at(x, y) || block_at(x, y));
 }
 
-bool Cleanup::agent_at(int x, int y) {
-	if (state().agent.x == x && state().agent.y == y) {
+bool Cleanup::agent_at(int x, int y) const {
+	if (state().agent.position.x == x && state().agent.position.y == y) {
 		return true;
 	}
 	return false;
@@ -666,17 +750,17 @@ bool Cleanup::agent_at(int x, int y) {
 bool Cleanup::door_at(int x, int y) {
 	for (int i = 0; i < state().num_doors; ++i) {
 		Cleanup_State::Door door = state().doors[i];
-		if (door.x == x && door.y == y) {
+		if (door.position.x == x && door.position.y == y) {
 			return true;
 		}
 	}
 	return false;
 }
 
-bool Cleanup::block_at(int x, int y) {
+bool Cleanup::block_at(int x, int y) const {
 	for (int i = 0; i < state().num_blocks; ++i) {
 		Cleanup_State::Block block = state().blocks[i];
-		if (block.x == x && block.y == y) {
+		if (block.position.x == x && block.position.y == y) {
 			return true;
 		}
 	}
@@ -705,6 +789,23 @@ bool Cleanup::wall_at(int x, int y) {
 	return false;
 }
 
+bool Cleanup::is_inside_room_of_same_color(int block_index) const {
+	Cleanup_State::Block block = state().blocks[block_index]; 
+	return is_inside_room_of_same_color(block);
+}
+
+bool Cleanup::is_inside_room_of_same_color(Cleanup_State::Block block) const {
+	for (int room_index = 0; room_index < state().num_rooms; ++room_index) {
+		if (is_inside(block, room_index)) {
+			Cleanup_State::Room room = state().rooms[room_index];
+			Color room_color = room.color;
+			Color block_color = block.color;
+			if (room_color == block_color) return true;
+		}
+	}
+	return false;
+}
+
 bool Cleanup::is_inside(int block_index, int room_index) const {
 	Cleanup_State::Block block = state().blocks[block_index]; 
 	Cleanup_State::Room room = state().rooms[room_index]; 
@@ -718,7 +819,7 @@ bool Cleanup::is_inside(Cleanup_State::Block block, int room_index) const {
 
 
 bool Cleanup::is_inside(Cleanup_State::Block block, Cleanup_State::Room room) const {
-	if (block.y > room.bottom && block.y < room.top && block.x > room.left && block.x < room.right) {
+	if (block.position.y > room.bottom && block.position.y < room.top && block.position.x > room.left && block.position.x < room.right) {
 		return true;
 	}
 	return false;

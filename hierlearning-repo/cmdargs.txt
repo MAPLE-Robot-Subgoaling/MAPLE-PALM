@@ -2,3 +2,7 @@
 
 -d cleanup -l ql -n 50 -t cleanup_trajectory.out -z 995
 
+./Debug/hierlearning.exe -d cleanup -l ql -n 1 -t output/cleanup_trajectories.out
+
+./Debug/hierlearning.exe -d cleanup -l maxq -t output/cleanup_trajectories.out
+

@@ -126,6 +126,10 @@ int Wargus_State::variable_size (const int& variable_index) const
 		return 2;   // Requisite gold & wood
 }
 
+int Wargus_State::variable_size_for_state (const int& variable_index) const
+{
+	return variable_size(variable_index);
+}
 
 int Wargus_State::variable (const int& variable_index) const
 {	if (variable_index >= 0)
@@ -216,6 +220,10 @@ void Wargus_State::draw_map () const
 	cout << endl;
 }
 
+int Wargus_State::debug_num_states() const 
+{
+	throw HierException(__FILE__, __LINE__, "ERROR: debug num states is being used (needed for Cleanup)");
+}
 
 pair<bool,int> Wargus_State::parse (string expression) const
 {	int total = 0;

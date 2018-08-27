@@ -40,10 +40,29 @@ Task::Task (const string& task_name, const string& parameters, const string& sta
 			_variables.emplace_back(0, mdp.state().variable_index(state_variable));
 	}
 
+	if (_variables.size() > 20) {
+		cout << "ERROR too many variables?";
+		cout << "ERROR too many variables?";
+		cout << "ERROR too many variables?";
+		cout << "ERROR too many variables?";
+		cout << "ERROR too many variables?";
+		cout << "ERROR too many variables?";
+		cout << "ERROR too many variables?";
+		cout << "ERROR too many variables?";
+		cout << "ERROR too many variables?";
+		cout << "ERROR too many variables?";
+		cout << "ERROR too many variables?";
+		cout << "ERROR too many variables?";
+		_num_states = mdp.state().debug_num_states();
+		return;
+	}
+	
 	// Determining the state space size of the task
 	_num_states = 1;
-	for (const auto& v : _variables)
-		_num_states *= mdp.state().variable_size(v.value);
+	for (const auto& v : _variables) {
+		_num_states *= mdp.state().variable_size_for_state(v.value);
+	}
+
 }
 
 

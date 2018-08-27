@@ -25,9 +25,11 @@ struct State
 	virtual unique_ptr<State> copy() const = 0;   // Reinitialized variables
 	virtual unsigned num_agents () const { return 1; }
 	virtual vector<int> variables() const = 0;
+	virtual int debug_num_states() const = 0;
 	virtual int variable_index(const string& variable) const = 0;
 	virtual string variable_name(const int& variable_index) const = 0;
 	virtual int variable_size(const int& variable_index) const = 0;
+	virtual int variable_size_for_state(const int& variable_index) const = 0;
 	virtual int variable(const int& variable_index) const = 0;
 	virtual int& variable(const int& variable_index) = 0;
 	virtual map<int,int> variables_mapper() const = 0;

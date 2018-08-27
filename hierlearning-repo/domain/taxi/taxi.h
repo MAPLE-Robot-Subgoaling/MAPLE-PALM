@@ -79,9 +79,11 @@ struct Taxi_State : public State
 	unique_ptr<State> clone () const { return unique_ptr<State>(new Taxi_State(*this)); }
 	unique_ptr<State> copy () const { return unique_ptr<State>(new Taxi_State(map_size, num_passengers, taxi_capacity, fuel_max)); }
 	vector<int> variables() const;
+	int debug_num_states() const;
 	int variable_index(const string& variable) const;
 	string variable_name(const int& variable_index) const;
 	int variable_size(const int& variable_index) const;
+	int variable_size_for_state(const int& variable_index) const;
 	int variable(const int& variable_index) const;
 	int& variable(const int& variable_index);
 	map<int,int> variables_mapper() const;

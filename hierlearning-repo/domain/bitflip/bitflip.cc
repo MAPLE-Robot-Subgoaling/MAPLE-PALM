@@ -47,6 +47,11 @@ int Bitflip_State::variable_size (const int& variable_index) const
 	throw HierException(__FILE__, __LINE__, "Unknown variable: " + to_string(variable_index));
 }
 
+int Bitflip_State::variable_size_for_state (const int& variable_index) const
+{
+	return variable_size(variable_index);
+}
+
 
 int Bitflip_State::variable (const int& variable_index) const
 {	if (variable_index >= 0 && variable_index < (int)bits.size())
@@ -170,6 +175,11 @@ void Bitflip::process (const vector<int>& action)
 	else   // Reset all bits with indices 0--action
 		for (int b = 0; b <= action[0]; ++b)
 			state().bits[b] = 0;
+}
+
+int Bitflip_State::debug_num_states() const 
+{
+	throw HierException(__FILE__, __LINE__, "ERROR: debug num states is being used (needed for Cleanup)");
 }
 
 

@@ -77,7 +77,9 @@ struct Wargus_State : public State
 	vector<int> variables() const;
 	int variable_index(const string& variable_name) const;
 	string variable_name(const int& variable_index) const;
+	int debug_num_states() const;
 	int variable_size(const int& variable_index) const;
+	int variable_size_for_state(const int& variable_index) const;
 	int variable(const int& variable_index) const;
 	int& variable(const int& variable_index);
 	map<int,int> variables_mapper() const;
