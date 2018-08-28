@@ -1,5 +1,5 @@
 domain: !!edu.umbc.cs.maple.config.taxi.TaxiConfig
-  state: classic20-1passengers
+  state: discounttestsmall-1passengers
   domainGenerator: !!edu.umbc.cs.maple.taxi.Taxi
     correctMoveProbability: 1.0
     fickleProbability: 0.0
@@ -9,9 +9,10 @@ domain: !!edu.umbc.cs.maple.config.taxi.TaxiConfig
 goal: !!edu.umbc.cs.maple.taxi.TaxiGoal {}
 
 agents:
-  palmExpertWithNavGiven: {taxi-expert}
+  ql: {taxi-expert}
+  palm: {taxi-expert}
 
-seed: 739264014
+seed: 7562819
 episodes: 300
 max_steps: 100000
 trials: 20
@@ -33,7 +34,7 @@ rmax:
 output:
   csv:
     enabled: true
-    output: results/taxi-expert-palmnav-big-1.csv
+    output: results/taxi-expert-ql-palm-discounttestsmall-1.csv
 
   chart:
     enabled: true
@@ -51,9 +52,9 @@ output:
       - CUMULATIVE_REWARD_PER_EPISODE
 
   visualizer:
-    enabled: true
+    enabled: false
     episodes: true
-    width: 20
-    height: 20
+    width: 5
+    height: 5
 
 
