@@ -15,6 +15,7 @@
 #include "hiergen/hierarchy.h"
 #include "simulator.h"
 
+#define NDEBUG true
 
 #if defined(NDEBUG)
 const bool display = false;

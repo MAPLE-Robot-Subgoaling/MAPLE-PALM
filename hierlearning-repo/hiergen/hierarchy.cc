@@ -23,8 +23,8 @@ const bool display = true;
 
 Hierarchy::Hierarchy (const string& trajectory_filename, const string& model_directory, const MDP& mdp) : _is_root(true), _primitive_action(0)
 {	ifstream tf(trajectory_filename.c_str());
-	if (!tf.is_open())
-		throw HierException(__FILE__, __LINE__, "Unable to open " + trajectory_filename + ".");
+	//if (!tf.is_open())
+	//	throw HierException(__FILE__, __LINE__, "Unable to open " + trajectory_filename + ".");
 
 	ActionModel action_model(trajectory_filename, model_directory, mdp);
 
@@ -224,13 +224,13 @@ string Hierarchy::abstraction_string (const set<int>& abstraction_variables, con
 
 
 void Hierarchy::print_cats (const string& directory, const vector<Trajectory>& trajectories, const MDP& mdp) const
-{	if (display) cout << "Printing cats ...";
-	create_directory(directory);
-	for (unsigned t = 0; t < trajectories.size(); ++t)
-	{	if (display) cout << " " << t + 1;
-		trajectories[t].print_gv(directory + "/cat_" + to_string(t + 1), mdp);
-	}
-	if (display) cout << ".\n";
+{	//if (display) cout << "Printing cats ...";
+	//create_directory(directory);
+	//for (unsigned t = 0; t < trajectories.size(); ++t)
+	//{	if (display) cout << " " << t + 1;
+	//	trajectories[t].print_gv(directory + "/cat_" + to_string(t + 1), mdp);
+	//}
+	//if (display) cout << ".\n";
 }
 
 

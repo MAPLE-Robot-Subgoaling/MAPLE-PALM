@@ -9,3 +9,6 @@ out/
 target/
 *.DS_Store
 results/
+hierlearning-repo/output/
+*.arff
+*.model

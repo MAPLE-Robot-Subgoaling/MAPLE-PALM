@@ -29,7 +29,9 @@ Trajectory::Trajectory (istream& in, const MDP& mdp, const ActionModel& action_m
 			{	in >> c;   // Check for trajectory separator symbol
 				if (c != '#')
 				{	in.putback(c);
-					if (!(in >> action) || !(in >> reward))
+					bool bb = in >> action;
+					bool cc = in >> reward;
+					if (!(bb) || !(cc))
 						throw HierException(__FILE__, __LINE__, "Bad trajectory format.");
 				}
 			}

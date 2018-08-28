@@ -284,7 +284,7 @@ ActionModel::ActionModel (const vector<vector<unique_ptr<State_Action_Reward>>>&
 		if (system(("python model_builder.py " + trajectory_filename + " " + action_model_directory + " " + to_string(pruning_confidence) + " " + (display ? "True" : "False")).c_str()))
 			throw HierException(__FILE__, __LINE__, "There was a problem building action models.");
 
-		remove(trajectory_filename.c_str());
+		//remove(trajectory_filename.c_str());
 	}
 	read(action_model_directory, mdp);
 	if (model_directory.empty())

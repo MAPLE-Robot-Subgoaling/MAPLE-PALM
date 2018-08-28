@@ -345,8 +345,46 @@ pair<bool,int> Cleanup_State::parse (string expression) const
 
 void Cleanup_State::read (istream& in)
 {
-	throw HierException(__FILE__, __LINE__, "Bad state read.");
+	in >> agent.position;
+	int direction;
+	in >> direction;
+	agent.direction = static_cast<Direction>(direction);
+	
+	for (int i = 0; i < num_blocks; ++i) {
+		Cleanup_State::Block block = blocks[i];
+		in >> block.position;
+		int shape;
+		in >> shape;
+		block.shape = static_cast<Shape>(shape);
+		int color;
+		in >> color;
+		block.color = static_cast<Color>(color);
+		blocks[i] = block;
+	}
+
+	for (int i = 0; i < num_doors; ++i) {
+		Cleanup_State::Door door = doors[i];
+		in >> door.position;
+		doors[i] = door;
+	}
+
+	for (int i = 0; i < num_rooms; ++i) {
+		Cleanup_State::Room room = rooms[i];
+		int left, right, bottom, top;
+		in >> left;
+		in >> right;
+		in >> bottom;
+		in >> top;
+		int color;
+		in >> color;
+		room.color = static_cast<Color>(color);
+		rooms[i] = room;
+	}
+
 }
+//{
+//	throw HierException(__FILE__, __LINE__, "ERROR: \nBad state read.\n");
+//}
 
 
 string Cleanup_State::print () const
@@ -360,45 +398,48 @@ string Cleanup_State::print () const
 	out << agent.position.x;
 	out << ",";
 	out << agent.position.y;
-	out << ",";
+	out << ") ";
 	out << agent.direction;
-	out << ")";
+	out << " ";
 	
 	for (const auto& block : blocks)
 	{
-		out << " (";
+		out << "(";
 		out << block.position.x;
 		out << ",";
 		out << block.position.y;
-		out << ",";
+		out << ") ";
 		out << block.shape;
-		out << ",";
+		out << " ";
 		out << block.color;
-		out << ")";
+		out << " ";
 	}
 
 	for (const auto& door : doors)
 	{
-		out << " (";
+		out << "(";
 		out << door.position.x;
 		out << ",";
 		out << door.position.y;
-		out << ")";
+		out << ") ";
 	}
 
+	bool first = true;
 	for (const auto& room : rooms)
 	{
-		out << " (";
+		if (!first) {
+			out << " ";
+		}
+		first = false;
 		out << room.left;
-		out << ",";
+		out << " ";
 		out << room.right;
-		out << ",";
+		out << " ";
 		out << room.bottom;
-		out << ",";
+		out << " ";
 		out << room.top;
-		out << ",";
+		out << " ";
 		out << room.color;
-		out << ")";
 	}
 
 	return out.str();
@@ -531,7 +572,6 @@ void Cleanup::three_rooms () {
 
 void Cleanup::initialize (const bool& target)
 {	
-
 	_reward = 0.0;
 	_duration = 0.0;
 
