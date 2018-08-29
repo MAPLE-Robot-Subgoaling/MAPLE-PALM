@@ -18,6 +18,7 @@ public class CleanupStandardStateGenerator implements StateGenerator {
 
     private static final int DEBUG_CODE = 932891293;
     private int numBlocks = 2;
+    private int numTargets = 1;
     private int minX = 0;
     private int minY = 0;
     private int maxX = 0;
@@ -52,31 +53,33 @@ public class CleanupStandardStateGenerator implements StateGenerator {
     }
 
     public State getStateFor(String stateType) {
-        String blockNumberRegex = "\\-(\\d+)blocks";
-        Pattern r = Pattern.compile(blockNumberRegex);
-        Matcher m = r.matcher(stateType);
-        String numString = "";
-        if (m.find()) {
-            numString = m.group(1);
-        }
-        if (numString.equals("")) {
-            //if block number is not specified, default 1 block
-            numBlocks = 1;
-            stateType += "-1blocks";
-        } else {
-            numBlocks = Integer.parseInt(numString);
-        }
+        String blockNumberRegex = "-(\\d+)blocks";
+        String targetNumberRegex = "(\\d+)targets";
+        Pattern r = Pattern.compile(blockNumberRegex), r2 = Pattern.compile(targetNumberRegex);
+        Matcher m = r.matcher(stateType), m2 = r2.matcher(stateType);
+        String numBlockString = m.find() ? m.group(1) : "";
+        String numTargetString = m2.find() ? m2.group(1) : "";
+
+        //if block number is not specified, default 1 block
+        numBlocks = numBlockString.equals("") ? 1 : Integer.parseInt(numBlockString);
+        //if target number is not specified, default 1 target
+        numTargets = numTargetString.equals("") ? 1 : Integer.parseInt(numTargetString);
+        if(numTargets>numBlocks) throw new RuntimeException("Error: cannot have more target blocks than blocks!");
+        System.out.println(numBlocks+" blocks with "+numTargets+" targets");
         State state;
-        if (stateType.matches("cigar" + blockNumberRegex)) {
+        if (stateType.startsWith("cigar")) {
+            //for cigar, the number of targets is always the number of blocks
+            //as all blocks must move to the other room
             state = generateCigar(numBlocks);
-        }else if(stateType.matches("threeRooms" + blockNumberRegex)){
-            state = generateThreeRooms(numBlocks);
-        }else if(stateType.matches("twoRooms" + blockNumberRegex)){
-            state = generateTwoRooms(numBlocks);
-        }else if(stateType.matches("cross" + blockNumberRegex)){
+        }else if(stateType.startsWith("threeRooms")){
+            state = generateThreeRooms(numBlocks, numTargets);
+        }else if(stateType.startsWith("twoRooms")){
+            state = generateTwoRooms(numBlocks, numTargets);
+        }else if(stateType.startsWith("cross")){
+            //for cross, the number of targets is always 1 (as one of the rooms is not reachable)
             state = generateCross(numBlocks);
-        }else if(stateType.matches("donut" + blockNumberRegex)){
-            state = generateDonut(numBlocks);
+        }else if(stateType.startsWith("donut")){
+            state = generateDonut(numBlocks, numTargets);
         } else {
             throw new RuntimeException("Error: unknown name for generating a random Cleanup state: " + stateType);
         }
@@ -128,7 +131,7 @@ public class CleanupStandardStateGenerator implements StateGenerator {
         return s;
     }
 
-    public OOState generateThreeRooms(int numBlocks) {
+    public OOState generateThreeRooms(int numBlocks, int numTargets) {
 
         Random rng = RandomFactory.getMapped(BurlapConstants.DEFAULT_RNG_INDEX);
 
@@ -208,7 +211,7 @@ public class CleanupStandardStateGenerator implements StateGenerator {
         return s;
     }
 
-    public OOState generateTwoRooms(int numBlocks) {
+    public OOState generateTwoRooms(int numBlocks, int numTargets) {
 
         Random rng = RandomFactory.getMapped(BurlapConstants.DEFAULT_RNG_INDEX);
 
@@ -326,7 +329,7 @@ public class CleanupStandardStateGenerator implements StateGenerator {
         return s;
     }
 
-    public OOState generateDonut(int numBlocks){
+    public OOState generateDonut(int numBlocks, int numTargets){
         Random rng = RandomFactory.getMapped(BurlapConstants.DEFAULT_RNG_INDEX);
 
         int numRooms = 3;
