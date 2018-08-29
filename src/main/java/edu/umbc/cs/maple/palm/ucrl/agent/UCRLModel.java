@@ -65,6 +65,7 @@ public class UCRLModel extends PALMModel implements ConfidenceModel {
     protected int actionDelay = 0;
     protected boolean delaying;
     protected int H_delay;
+    protected double rmax;
 
     protected HashableStateFactory hashingFactory;
 
@@ -102,8 +103,7 @@ public class UCRLModel extends PALMModel implements ConfidenceModel {
 //    }
 
     public UCRLModel(GroundedTask task, List<HashableState> baseStates, double gamma, double maxDelta,
-                     HashableStateFactory hashableStateFactory){
-//        this(baseStates, gamma, maxDelta, hashableStateFactory);
+                     double rmax, HashableStateFactory hashableStateFactory){
         this.initializeDiscountProvider(gamma);
         initializeVariables();
         this.stateSpace = new HashSet<>(baseStates);
@@ -111,6 +111,7 @@ public class UCRLModel extends PALMModel implements ConfidenceModel {
         this.maxDelta = maxDelta;
         this.hashingFactory = hashableStateFactory;
         this.delaying = false;
+        this.rmax = rmax;
         defineConstants();
         this.task = task;
         defineStatesAndActions(baseStates);
@@ -205,6 +206,9 @@ public class UCRLModel extends PALMModel implements ConfidenceModel {
         HashableState hs = hashingFactory.hashState(result.o);
         Action a = result.a;
         double reward = result.r;
+        // $scale reward to [0,1]
+        reward /= rmax;
+
         HashableState hsp = hashingFactory.hashState(result.op);
 
         incrementBatchStateAction(hs, a);

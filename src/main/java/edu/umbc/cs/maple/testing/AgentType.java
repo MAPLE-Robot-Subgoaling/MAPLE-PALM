@@ -32,8 +32,8 @@ public enum AgentType {
     UCRL("ucrl", "ucb") {
         @Override
         public LearningAgent getLearningAgent(Task root, HashableStateFactory hsf, ExperimentConfig config) {
-            LearningAgent agent = new FlatUCRLAgent(root, config.generateState(), hsf,
-                    config.gamma, config.rmax.max_delta);
+            LearningAgent agent = new FlatUCRLAgent(root, config.generateState(),
+                    config.gamma, config.rmax.max_delta, config.rmax.vmax, hsf);
             return agent;
         }
     },
@@ -66,7 +66,7 @@ public enum AgentType {
         @Override
         public LearningAgent getLearningAgent(Task root, HashableStateFactory hsf, ExperimentConfig config) {
             PALMModelGenerator ucrlGen = new PALMUCRLModelGenerator(root, config.generateState(), config.gamma,
-                    config.rmax.max_delta, hsf);
+                    config.rmax.max_delta, config.rmax.vmax, hsf);
             return  new UCRLPALMLearningAgent(root, ucrlGen, hsf, config);
         }
     },

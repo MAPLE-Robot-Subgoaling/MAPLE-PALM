@@ -23,11 +23,14 @@ public class PALMUCRLModelGenerator implements PALMModelGenerator {
     protected State start;
     protected Task root;
     protected Set<HashableState> baseStates;
+    protected double rmax;
 
-    public PALMUCRLModelGenerator(Task root, State start, double gamma, double maxDelta, HashableStateFactory hs){
+    public PALMUCRLModelGenerator(Task root, State start, double gamma, double maxDelta, double rmax,
+                                  HashableStateFactory hs){
         this.start = start;
         this.gamma = gamma;
         this.maxDelta = maxDelta;
+        this.rmax = rmax;
         this.hashingFactory = hs;
         GroundedTask groot = root.getAllGroundedTasks(start).get(0);
         baseStates = getStateSet(groot);
@@ -37,7 +40,7 @@ public class PALMUCRLModelGenerator implements PALMModelGenerator {
     public PALMModel getModelForTask(GroundedTask t) {
         start = t.mapState(start);
         List<HashableState> reachableStates = new ArrayList<HashableState>(baseStates);
-        return new UCRLModel(t, reachableStates, gamma, maxDelta, hashingFactory);
+        return new UCRLModel(t, reachableStates, gamma, maxDelta, rmax, hashingFactory);
     }
 
     protected Set<HashableState> getStateSet(GroundedTask groot){

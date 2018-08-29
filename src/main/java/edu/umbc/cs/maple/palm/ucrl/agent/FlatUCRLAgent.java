@@ -24,17 +24,20 @@ public class FlatUCRLAgent implements LearningAgent {
     protected List<HashableState> reachableStates;
     protected double gamma;
     protected double maxDelta;
+    protected double rmax;
 
-    public FlatUCRLAgent(Task t, State start, HashableStateFactory hsf, double gamma, double maxDelta){
+    public FlatUCRLAgent(Task t, State start, double gamma, double maxDelta, double rmax,
+                         HashableStateFactory hsf){
         this.gamma = gamma;
         this.maxDelta = maxDelta;
+        this.rmax = rmax;
 
         this.hashingFactory = hsf;
         GroundedTask gt = t.getAllGroundedTasks(start).get(0);
         OOSADomain base = gt.getDomain();
         Set<HashableState> stateSet = getStateSet(base, start);
         reachableStates = new ArrayList<HashableState>(stateSet);
-        currentModel = new UCRLModel(gt, reachableStates, gamma, maxDelta, hashingFactory);
+        currentModel = new UCRLModel(gt, reachableStates, gamma, maxDelta, rmax, hashingFactory);
     }
 
     protected Set<HashableState> getStateSet(OOSADomain domain, State start){

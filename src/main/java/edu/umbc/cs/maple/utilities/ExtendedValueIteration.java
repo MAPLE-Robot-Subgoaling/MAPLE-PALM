@@ -57,10 +57,15 @@ public class ExtendedValueIteration extends DynamicProgramming implements Planne
 
     protected ValueFunction runExtendedVI(){
         boolean converged = false;
-        int iteration = 0;
+        int iteration = 1;
         while (!converged){
+            System.out.println("Iteration: " + iteration);
+            Map<HashableState, Double> nextIterationValueFunction = new HashMap<HashableState, Double>();
+            int largeChanges = 0;
             double maxDelta = Double.MIN_VALUE;
             for(HashableState hs : reachableStates){
+                double oldValue = valueFunction.get(hs);
+
                 double maxNewStateValue = Double.MIN_VALUE;
                 for (Action a : actions){
                     morphProbabilities(hs, a);
@@ -74,20 +79,30 @@ public class ExtendedValueIteration extends DynamicProgramming implements Planne
                     double rewardBound = model.getRewardBound(hs, a);
                     double observedReward = model.getModelReward(hs, a);
                     double newValue = (observedReward + rewardBound) + weightedValueSum;
+
+                    if(Math.abs(newValue - oldValue) > 100){
+                        largeChanges++;
+                        System.out.println(largeChanges);
+                        System.out.println("Okd val: " + oldValue);
+                        System.out.println("New val: " + newValue);
+                        System.out.println("Probability sum: " + weightedValueSum);
+                        System.out.println("Reward bound: " + rewardBound);
+                        System.out.println("Observed reward: " + observedReward);
+                    }
                     if(maxNewStateValue < newValue){
                         maxNewStateValue = newValue;
                     }
                 }
-                double oldValue = valueFunction.get(hs);
+
                 double deltaValue = Math.abs(maxNewStateValue - oldValue);
-                valueFunction.put(hs, maxNewStateValue);
+                nextIterationValueFunction.put(hs, maxNewStateValue);
                 if(deltaValue > maxDelta){
                     maxDelta = deltaValue;
                 }
             }
+            valueFunction = nextIterationValueFunction;
             converged = maxDelta < deltaThreshold;
             iteration++;
-            System.out.println("Iteration: " + iteration);
         }
 
         return new TabularValueFunction(hashingFactory, valueFunction, 0);
@@ -117,9 +132,9 @@ public class ExtendedValueIteration extends DynamicProgramming implements Planne
         //morph probabilities
         Map<HashableState, Double> transitions = getTransitions(hs, a);
         int stateIdx = states.size();
-        while (sumOutTransitions(transitions) > 1){
+        while (sumUpTransitions(transitions) > 1){
             HashableState hsp = states.get(stateIdx);
-            double excludedSum = sumOutTransitions(transitions, hsp);
+            double excludedSum = sumUpTransitions(transitions, hsp);
             double newProbability = 1 - excludedSum;
             if(newProbability < 0){
                 newProbability = 0;
@@ -169,11 +184,11 @@ public class ExtendedValueIteration extends DynamicProgramming implements Planne
         return stateActionInfo;
     }
 
-    protected double sumOutTransitions(Map<HashableState, Double> outTransitions){
-        return sumOutTransitions(outTransitions, null);
+    protected double sumUpTransitions(Map<HashableState, Double> outTransitions){
+        return sumUpTransitions(outTransitions, null);
     }
 
-    protected double sumOutTransitions(Map<HashableState, Double> outTransitions, HashableState notIncluded){
+    protected double sumUpTransitions(Map<HashableState, Double> outTransitions, HashableState notIncluded){
         double sum = 0;
         for (HashableState hsp : outTransitions.keySet()){
             if(notIncluded == null || !hsp.equals(notIncluded)) {
