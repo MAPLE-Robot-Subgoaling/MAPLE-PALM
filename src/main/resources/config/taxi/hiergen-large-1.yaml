@@ -9,13 +9,13 @@ domain: !!edu.umbc.cs.maple.config.taxi.TaxiConfig
 goal: !!edu.umbc.cs.maple.taxi.TaxiGoal {}
 
 agents:
-  #palmExpertWithNavGiven: {taxi-hiergen}
+  palmExpertWithNavGiven: {taxi-hiergen}
   palm: {taxi-hiergen}
 
 seed: 7053829
-episodes: 1000
+episodes: 50000000
 max_steps: 100000
-trials: 1
+trials: 5
 gamma: 0.99
 
 identifier_independent: false
@@ -33,11 +33,11 @@ rmax:
 
 output:
   csv:
-    enabled: true
-    output: results/taxi-hiergen-palm-large-1.csv
+    enabled: false
+    output: results/taxi-hiergen-palm-palmnav-large-1.csv
 
   chart:
-    enabled: true
+    enabled: false
 
     width: 500
     height: 230

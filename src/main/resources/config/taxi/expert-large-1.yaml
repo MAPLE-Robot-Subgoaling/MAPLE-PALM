@@ -9,13 +9,13 @@ domain: !!edu.umbc.cs.maple.config.taxi.TaxiConfig
 goal: !!edu.umbc.cs.maple.taxi.TaxiGoal {}
 
 agents:
-  #palmExpertWithNavGiven: {taxi-expert}
+  palmExpertWithNavGiven: {taxi-expert}
   palm: {taxi-expert}
 
 seed: 739264014
-episodes: 1000
+episodes: 50
 max_steps: 100000
-trials: 1
+trials: 5
 gamma: 0.99
 
 identifier_independent: false
@@ -34,7 +34,7 @@ rmax:
 output:
   csv:
     enabled: true
-    output: results/taxi-expert-palm-large-1.csv
+    output: results/taxi-expert-palm-palmnav-large-1.csv
 
   chart:
     enabled: true

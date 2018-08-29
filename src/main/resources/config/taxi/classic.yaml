@@ -12,7 +12,7 @@ agents:
   palm: {taxi-expert}
 
 seed: 77665544
-episodes: 100
+episodes: 10000000
 max_steps: 100000
 trials: 1
 gamma: 0.95
@@ -33,11 +33,11 @@ rmax:
 
 output:
   csv:
-    enabled: true
+    enabled: false
     output: results/pex-classic-fickle.csv
 
   chart:
-    enabled: true
+    enabled: false
 
     width: 500
     height: 230
