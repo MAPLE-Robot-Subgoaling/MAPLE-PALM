@@ -75,7 +75,7 @@ struct Taxi_State : public State
 	static const int num_passenger_variables = 5;
 	static const int num_passenger_accessors = 2;
 
-	Taxi_State(const Coordinate& map_size = Coordinate(5,5), const int& num_passengers = 1, const int& taxi_capacity = 1, const int& fuel_max = 0);
+	Taxi_State(const Coordinate& map_size = Coordinate(5,5), const int& num_passengers = 2, const int& taxi_capacity = 1, const int& fuel_max = 0);
 	unique_ptr<State> clone () const { return unique_ptr<State>(new Taxi_State(*this)); }
 	unique_ptr<State> copy () const { return unique_ptr<State>(new Taxi_State(map_size, num_passengers, taxi_capacity, fuel_max)); }
 	vector<int> variables() const;

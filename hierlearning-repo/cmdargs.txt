@@ -6,3 +6,11 @@
 
 ./Debug/hierlearning.exe -d cleanup -l maxq -t output/cleanup_trajectories.out
 
+-d cleanup -l maxq -n 20 -r 10 -e 100 -z 1231
+
+-d cleanup -l maxq -n 20 -r 10 -e 100 -z 1231
+
+-d cleanup -l maxq -t output/cleanup/internal_trajectory_1.out -m output/cleanup/models_internal_trajectory_1
+
+-d cleanup -l maxq -t output/cleanup/internal_trajectory_1.out -m output/cleanup/models_internal_trajectory_1
+
