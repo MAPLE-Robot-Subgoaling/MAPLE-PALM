@@ -11,6 +11,7 @@ import edu.umbc.cs.maple.utilities.DeepCopyForShallowCopyState;
 
 import java.util.*;
 
+import static edu.umbc.cs.maple.cleanup.Cleanup.ATT_COLOR;
 import static edu.umbc.cs.maple.cleanup.Cleanup.ATT_X;
 import static edu.umbc.cs.maple.cleanup.Cleanup.ATT_Y;
 
@@ -64,6 +65,43 @@ public class CleanupState implements MutableOOState, DeepCopyForShallowCopyState
             return this;
         }
         throw new RuntimeException("Can only add certain objects to state.");
+    }
+
+    public void isStandard(){
+        //at least 2 rooms, 1 door
+        if(rooms.size() < 2 || doors.size() < 1)
+            throw new RuntimeException("Error: State is not standard: not enough rooms or doors.");
+
+        //backpacks and bags must have color that matches a room
+        Collection<CleanupBlock> blockArr = blocks.values();
+        Collection<CleanupRoom> roomArr = rooms.values();
+        List<CleanupBlock> goalBlocks = new ArrayList();
+        for(CleanupBlock block: blockArr){
+            if(block.get(Cleanup.ATT_SHAPE).equals("bag") || block.get(Cleanup.ATT_SHAPE).equals("backpack")){
+                goalBlocks.add(block);
+            }
+        }
+        boolean found = false;
+        for(CleanupBlock block: goalBlocks) {
+            String blockColor = (String) block.get(Cleanup.ATT_COLOR);
+            for(CleanupRoom room: roomArr) {
+                String roomColor = (String) room.get(Cleanup.ATT_COLOR);
+                if (blockColor.equals(roomColor))
+                    //block color matches a room
+                    //block is in matching room, not standard
+                    if(isObjectInRoom(block, room))
+                        throw new RuntimeException("Error: State is not standard: block initialized in same colored room.");
+                    found = true;
+            }
+            //block color doesn't match any room colors
+                if(found == false)
+                    throw new RuntimeException("Error: State is not standard: not all block colors match a room color.");
+                else
+                    //start over with next block
+                    found = false;
+
+        }
+
     }
 
     @Override
@@ -298,6 +336,11 @@ public class CleanupState implements MutableOOState, DeepCopyForShallowCopyState
         return !(wallAt(x, y) || blockAt(x, y));
     }
 
+    public ObjectInstance regionContainingPoint(int x, int y){
+        CleanupDoor door = doorContainingPoint(x,y);
+        return door != null ? door : roomContainingPoint(x,y);
+    }
+
     public boolean isObjectInRoom(ObjectInstance object, CleanupRoom room) {
         CleanupRoom roomContainingPoint = roomContainingPoint((int) object.get(ATT_X), (int) object.get(ATT_Y));
         return room.equals(roomContainingPoint);
@@ -309,12 +352,7 @@ public class CleanupState implements MutableOOState, DeepCopyForShallowCopyState
     }
 
     public ObjectInstance getContainingDoorOrRoom(ObjectInstance object) {
-        CleanupDoor door = doorContainingPoint((int) object.get(ATT_X), (int) object.get(ATT_Y));
-        if (door != null) {
-            return door;
-        }
-        CleanupRoom room = roomContainingPoint((int) object.get(ATT_X), (int) object.get(ATT_Y));
-        return room;
+       return regionContainingPoint((int)object.get(ATT_X),(int)object.get(ATT_Y));
     }
 
     public CleanupRoom roomContainingPointIncludingBorder(int x, int y) {

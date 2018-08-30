@@ -7,17 +7,14 @@ domain: !!edu.umbc.cs.maple.config.cleanup.CleanupConfig
     tf: !!edu.umbc.cs.maple.cleanup.CleanupTF
       goal: &goal !!edu.umbc.cs.maple.cleanup.CleanupGoal
         goalDescriptions:
-          - pf: !!edu.umbc.cs.maple.cleanup.pfs.BlockInRoomPF {}
-            params:
-             - block0
-             - room1
+          - pf: !!edu.umbc.cs.maple.cleanup.pfs.StandardGoalPF {}
     rf: !!edu.umbc.cs.maple.cleanup.CleanupRF
       goal: *goal
       goalReward: 1.0
       defaultReward: 0.0
       noopReward: 0.0
       pullReward: 0.0
-  state: cigar-2blocks
+  state: threeRooms
 
 goal: *goal
 
@@ -46,7 +43,7 @@ rmax:
 output:
   csv:
     enabled: true
-    output: results/test.csv
+    output: results/cleanup-ereTest.csv
 
   chart:
     enabled: true
@@ -66,4 +63,5 @@ output:
     enabled: true
     episodes: true
     width: 7
-    height: 5
+    height: 7
+

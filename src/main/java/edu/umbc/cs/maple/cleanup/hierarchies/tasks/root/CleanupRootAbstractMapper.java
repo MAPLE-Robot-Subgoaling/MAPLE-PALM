@@ -37,8 +37,8 @@ public class CleanupRootAbstractMapper implements StateMapping {
                         (int)r.get(Cleanup.ATT_RIGHT),
                         (int)r.get(Cleanup.ATT_BOTTOM),
                         (int)r.get(Cleanup.ATT_TOP),
-                        "",
-                        ""));
+                            (String)r.get(Cleanup.ATT_COLOR),
+                            (String)r.get(Cleanup.ATT_SHAPE)));
         }
 
         //abstract away colors and shapes for blocks
@@ -50,8 +50,8 @@ public class CleanupRootAbstractMapper implements StateMapping {
                     new CleanupBlock(b.getName(),
                         (int)b.get(Cleanup.ATT_X),
                         (int)b.get(Cleanup.ATT_Y),
-                        "",
-                        ""));
+                            (String)b.get(Cleanup.ATT_SHAPE),
+                            (String)b.get(Cleanup.ATT_COLOR)));
         }
 
         //abstract away locked, colors, and shapes of doors
