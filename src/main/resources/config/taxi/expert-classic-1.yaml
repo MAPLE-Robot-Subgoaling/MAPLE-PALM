@@ -1,5 +1,5 @@
 domain: !!edu.umbc.cs.maple.config.taxi.TaxiConfig
-  state: small
+  state: classic
   domainGenerator: !!edu.umbc.cs.maple.taxi.Taxi
     correctMoveProbability: 1.0
     fickleProbability: 0.0
@@ -9,11 +9,10 @@ domain: !!edu.umbc.cs.maple.config.taxi.TaxiConfig
 goal: !!edu.umbc.cs.maple.taxi.TaxiGoal {}
 
 agents:
-  ql: {taxi-expert}
   rmaxq: {taxi-expert}
   palm: {taxi-expert}
 
-seed: 45729239018
+seed: 66191922031
 episodes: 300
 max_steps: 100000
 trials: 20
