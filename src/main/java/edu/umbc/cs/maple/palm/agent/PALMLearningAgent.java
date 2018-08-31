@@ -6,6 +6,8 @@ import burlap.behavior.policy.PolicyUtils;
 import burlap.behavior.singleagent.Episode;
 import burlap.behavior.singleagent.learning.LearningAgent;
 import burlap.behavior.singleagent.planning.Planner;
+import burlap.behavior.singleagent.planning.stochastic.DynamicProgramming;
+import burlap.behavior.valuefunction.ConstantValueFunction;
 import burlap.behavior.valuefunction.ValueFunction;
 import burlap.mdp.core.action.Action;
 import burlap.mdp.core.oo.ObjectParameterizedAction;
@@ -27,6 +29,7 @@ import edu.umbc.cs.maple.hierarchy.framework.NonprimitiveTask;
 import edu.umbc.cs.maple.hierarchy.framework.StringFormat;
 import edu.umbc.cs.maple.hierarchy.framework.Task;
 import edu.umbc.cs.maple.utilities.DiscountProvider;
+import edu.umbc.cs.maple.utilities.DynamicProgrammingMultiStep;
 import edu.umbc.cs.maple.utilities.IntegerParameterizedAction;
 import edu.umbc.cs.maple.utilities.ValueIterationMultiStep;
 
@@ -339,6 +342,8 @@ public class PALMLearningAgent implements LearningAgent {
         return subtask;
     }
 
+    private ConstantValueFunction initializer = new ConstantValueFunction(0.0);
+
     /**
      * plan over the given task's model and pick the best action to do next favoring unmodeled actions
      *
@@ -370,8 +375,8 @@ public class PALMLearningAgent implements LearningAgent {
             ((SarsaLambdaConfig)solverConfig).setGamma(discountProvider.getGamma());
         }
 
-//        ValueFunction knownValueFunction = task.valueFunction;
-        Planner planner = solverConfig.generateSolver(null);//knownValueFunction);
+        ValueFunction knownValueFunction = task.valueFunction;
+        Planner planner = solverConfig.generateSolver(knownValueFunction);
 
         policy = planner.planFromState(s);
 
@@ -397,7 +402,9 @@ public class PALMLearningAgent implements LearningAgent {
         }
 
         // allows the planner to start from where it left off
-//        task.valueFunction = (ValueFunction) planner;
+        ((DynamicProgrammingMultiStep)planner).setValueFunctionInitialization(initializer);
+        task.valueFunction = (ValueFunction) planner;
+
 
         // clear the model parameters (sanity check)
         model.setParams(null);
