@@ -3,7 +3,7 @@ domain: !!edu.umbc.cs.maple.config.cleanup.CleanupConfig
     minX: 0
     minY: 0
     maxX: 7
-    maxY: 5
+    maxY: 7
     tf: !!edu.umbc.cs.maple.cleanup.CleanupTF
       goal: &goal !!edu.umbc.cs.maple.cleanup.CleanupGoal
         goalDescriptions:
@@ -14,18 +14,18 @@ domain: !!edu.umbc.cs.maple.config.cleanup.CleanupConfig
       defaultReward: 0.0
       noopReward: 0.0
       pullReward: 0.0
-  state: threeRooms
+  state: threeRooms-4blocks-3targets
 
 goal: *goal
 
 agents:
-  #will create ClassCastException in RmaxQLearningAgent, where SimpleAction cannot be cast to ObjectParameterizedAction
-  rmaxq: {cleanup-expert}
+  ql: {cleanup-baseline}
+  palm:  {cleanup-baseline,cleanup-advancedBaseline,cleanup-expert}
 
-seed: 3488137963
-episodes: 10
+seed: 71076903
+episodes: 300
 max_steps: 10000
-trials: 2
+trials: 20
 gamma: 0.99
 
 identifier_independent: false
@@ -44,7 +44,7 @@ rmax:
 output:
   csv:
     enabled: true
-    output: results/cleanup-ereTest.csv
+    output: results/cleanup-3room-7x7-4-3.csv
 
   chart:
     enabled: true
@@ -65,4 +65,3 @@ output:
     episodes: true
     width: 7
     height: 7
-
