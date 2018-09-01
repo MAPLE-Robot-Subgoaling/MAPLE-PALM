@@ -287,11 +287,13 @@ public class PALMLearningAgent implements LearningAgent {
             System.out.println(subtasksExecuted.size() + " " + subtasksExecuted);
         }
 
+        boolean rootTaskCompleted = groundedRoot.isComplete(groundedRoot.mapState(currentStateGrounded));
         boolean taskCompleted = task.isComplete(currentStateAbstract);
         boolean taskFailed = task.isFailure(currentStateAbstract);
-        boolean parentShouldUpdateModel = taskCompleted || taskFailed || actionCount == 0;
+        boolean parentShouldUpdateModel = taskCompleted || taskFailed || actionCount == 0 || rootTaskCompleted;
         parentShouldUpdateModel = parentShouldUpdateModel && allChildrenAtOrBeyondThreshold;
-        boolean[] results = new boolean[]{taskCompleted, taskFailed, parentShouldUpdateModel};
+        boolean completed = taskCompleted || rootTaskCompleted;
+        boolean[] results = new boolean[]{completed, taskFailed, parentShouldUpdateModel};
         return results;
     }
 

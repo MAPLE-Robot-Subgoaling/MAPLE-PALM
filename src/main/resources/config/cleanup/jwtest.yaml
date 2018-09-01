@@ -14,14 +14,14 @@ domain: !!edu.umbc.cs.maple.config.cleanup.CleanupConfig
       defaultReward: 0.0
       noopReward: 0.0
       pullReward: 0.0
-  state: threeRooms-2blocks
+  state: threeRooms-4blocks
 
 goal: *goal
 
 agents:
-  palm: {cleanup-expert}
+  palm:  {cleanup-expert,cleanup-advancedBaseline}
 
-seed: 66554454
+seed: 74372970
 episodes: 300
 max_steps: 10000
 trials: 1
@@ -38,12 +38,12 @@ rmax:
   max_delta_rmaxq: 0.000001
   max_iterations_in_model: 1000
   use_multitime_model: true
-  use_model_sharing: false
+  use_model_sharing: true
 
 output:
   csv:
     enabled: true
-    output: results/cleanup-3room-7x7-4-1.csv
+    output: results/cleanup-3room-7x5-4-1.csv
 
   chart:
     enabled: true
@@ -62,5 +62,5 @@ output:
   visualizer:
     enabled: true
     episodes: true
-    width: 9
+    width: 7
     height: 7
