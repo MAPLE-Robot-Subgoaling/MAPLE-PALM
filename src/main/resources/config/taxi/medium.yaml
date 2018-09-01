@@ -12,7 +12,7 @@ agents:
   palm: {taxi-expert}
 
 seed: 77665544
-episodes: 1000000
+episodes: 1000
 max_steps: 100000
 trials: 1
 gamma: 0.95

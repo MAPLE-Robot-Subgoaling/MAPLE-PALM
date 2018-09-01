@@ -16,7 +16,7 @@ agents:
   ql: {taxi-expert}
 
 seed: 323902920
-episodes: 500000
+episodes: 500
 max_steps: 100000
 trials: 1
 gamma: 0.99
