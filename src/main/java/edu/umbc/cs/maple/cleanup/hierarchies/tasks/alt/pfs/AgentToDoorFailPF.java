@@ -30,11 +30,14 @@ public class AgentToDoorFailPF extends PropositionalFunction {
         ObjectInstance agent = state.getAgent();
         ObjectInstance door = state.object(doorName);
         if (door == null) {
-            return false;
+            // it doesn't exist -- you failed
+            return true;
         }
         int ax = (int) agent.get(ATT_X);
         int ay = (int) agent.get(ATT_Y);
-        return !state.isObjectInDoor(agent, (CleanupDoor) door) && state.doorContainingPoint(ax, ay) != null;
+        boolean inTheDoor = state.isObjectInDoor(agent, (CleanupDoor) door);
+        boolean inSomeDoor = state.doorContainingPoint(ax, ay) != null;
+        return !inTheDoor && inSomeDoor;
     }
 
 }

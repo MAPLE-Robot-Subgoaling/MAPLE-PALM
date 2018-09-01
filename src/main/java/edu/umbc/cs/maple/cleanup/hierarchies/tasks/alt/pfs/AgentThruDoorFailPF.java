@@ -21,8 +21,9 @@ public class AgentThruDoorFailPF extends PropositionalFunction {
     }
 
     public static boolean isTrue(CleanupState state, String[] params) {
-        boolean notInDoor = AgentThruDoorGoalPF.isTrue(state, params);
-        return !notInDoor;
+//        boolean notInDoor = AgentThruDoorGoalPF.isTrue(state, params);
+//        return !notInDoor;
+        return false;
     }
 
 }

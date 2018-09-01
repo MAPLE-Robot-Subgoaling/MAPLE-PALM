@@ -387,6 +387,8 @@ public class CleanupState implements MutableOOState, DeepCopyForShallowCopyState
         if (countBoundary) {
             if (y >= bottom && y <= top && x >= left && x <= right) {
                 return true;
+            } else {
+                return false;
             }
         } else {
             if (y > bottom && y < top && x > left && x < right) {

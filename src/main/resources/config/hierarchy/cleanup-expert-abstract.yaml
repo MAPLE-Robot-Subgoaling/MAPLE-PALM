@@ -83,7 +83,7 @@ hierarchyConfigMap:
       - east_p
       - west_p
       - pull_p
-    stateMapper: !!edu.umbc.cs.maple.hierarchy.framework.IdentityMap {}
+    stateMapper: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.alt.OnlyThisRoomMapper {}
     tf: &a2dTF !!edu.umbc.cs.maple.hierarchy.framework.GoalFailTF
       goalPF: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.alt.pfs.AgentToDoorGoalPF {}
       failPF: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.alt.pfs.AgentToDoorFailPF {}
@@ -135,7 +135,7 @@ hierarchyConfigMap:
       - east_p
       - west_p
       - pull_p
-    stateMapper: !!edu.umbc.cs.maple.hierarchy.framework.IdentityMap {}
+    stateMapper: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.alt.OnlyThisRoomMapper {}
     tf: &b2dTF !!edu.umbc.cs.maple.hierarchy.framework.GoalFailTF
       goalPF: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.alt.pfs.BlockToDoorGoalPF {}
       failPF: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.alt.pfs.BlockToDoorFailPF {}
@@ -240,7 +240,7 @@ hierarchyConfigMap:
       - east_p
       - west_p
       - pull_p
-    stateMapper: !!edu.umbc.cs.maple.hierarchy.framework.IdentityMap {}
+    stateMapper: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.alt.OnlyThisRoomMapper {}
     tf: &bfdTF !!edu.umbc.cs.maple.hierarchy.framework.GoalFailTF
       goalPF: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.alt.pfs.BlockFromDoorGoalPF {}
       failPF: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.alt.pfs.BlockFromDoorFailPF {}
@@ -292,7 +292,7 @@ hierarchyConfigMap:
       - east_p
       - west_p
       - pull_p
-    stateMapper: !!edu.umbc.cs.maple.hierarchy.framework.IdentityMap {}
+    stateMapper: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.alt.OnlyThisRoomMapper {}
     tf: &atdTF !!edu.umbc.cs.maple.hierarchy.framework.GoalFailTF
       goalPF: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.alt.pfs.AgentThruDoorGoalPF {}
       failPF: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.alt.pfs.AgentThruDoorFailPF {}
@@ -344,7 +344,7 @@ hierarchyConfigMap:
       - east_p
       - west_p
       - pull_p
-    stateMapper: !!edu.umbc.cs.maple.hierarchy.framework.IdentityMap {}
+    stateMapper: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.alt.OnlyThisRoomMapper {}
     tf: &btdTF !!edu.umbc.cs.maple.hierarchy.framework.GoalFailTF
       goalPF: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.alt.pfs.BlockThruDoorGoalPF {}
       failPF: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.alt.pfs.BlockThruDoorFailPF {}

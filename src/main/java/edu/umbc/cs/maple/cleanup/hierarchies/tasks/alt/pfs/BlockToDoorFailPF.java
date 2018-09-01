@@ -32,11 +32,14 @@ public class BlockToDoorFailPF extends PropositionalFunction {
         ObjectInstance door = state.object(doorName);
 //        if(object == null) object = state.object(MoveMapper.moveBlockTargetAlias);
         if (object == null || door == null) {
-            return false;
+            // it doesn't exist -- you failed
+            return true;
         }
         int bx = (int) object.get(ATT_X);
         int by = (int) object.get(ATT_Y);
-        return !state.isObjectInDoor(object, (CleanupDoor) door) && state.doorContainingPoint(bx, by) != null;
+        boolean inTheDoor = state.isObjectInDoor(object, (CleanupDoor) door);
+        boolean inSomeDoor = state.doorContainingPoint(bx, by) != null;
+        return !inTheDoor && inSomeDoor;
     }
 
 }
