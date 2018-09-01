@@ -2,6 +2,8 @@ package edu.umbc.cs.maple.palm.rmax.agent;
 
 import burlap.statehashing.HashableState;
 
+import java.util.Objects;
+
 public class HashableStateActionPair {
 
     protected HashableState hs;
@@ -28,23 +30,6 @@ public class HashableStateActionPair {
         this.actionName = actionName;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        HashableStateActionPair that = (HashableStateActionPair) o;
-
-        if (hs == null || that.hs == null || hs.hashCode() != that.hs.hashCode()) return false;
-        return actionName != null ? actionName.equals(that.actionName) : that.actionName == null;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = hs != null ? hs.hashCode() : 0;
-        result = 97 * result + (actionName != null ? actionName.hashCode() : 0);
-        return result;
-    }
 
     @Override
     public String toString() {
@@ -53,5 +38,20 @@ public class HashableStateActionPair {
         return "{" + a +
                 ", " + s +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        HashableStateActionPair that = (HashableStateActionPair) o;
+        return Objects.equals(hs, that.hs) &&
+                Objects.equals(actionName, that.actionName);
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(hs, actionName);
     }
 }
