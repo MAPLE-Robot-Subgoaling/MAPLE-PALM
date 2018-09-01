@@ -4,7 +4,7 @@ hierarchyConfigMap:
     children:
       - a2d_np
       - b2d_np
-      - afd_np
+      #- afd_np
       - bfd_np
       - atd_np
       - btd_np
@@ -42,6 +42,7 @@ hierarchyConfigMap:
               - door
             parameterOrderGroup:
               - b2d.P0
+              - b2d.P1
         #- !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.alt.AgentFromDoorActionType
         #    name: afd
         #    parameterClasses:
@@ -55,6 +56,7 @@ hierarchyConfigMap:
               - door
             parameterOrderGroup:
               - bfd.P0
+              - bfd.P1
         - !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.alt.AgentThruDoorActionType
             name: atd
             parameterClasses:
@@ -68,6 +70,7 @@ hierarchyConfigMap:
               - door
             parameterOrderGroup:
               - btd.P0
+              - btd.P1
     solver: !!edu.umbc.cs.maple.config.solver.ValueIterationMultistepConfig
       maxDelta: 0.00001
       maxIterations: 1000
@@ -82,8 +85,8 @@ hierarchyConfigMap:
       - pull_p
     stateMapper: !!edu.umbc.cs.maple.hierarchy.framework.IdentityMap {}
     tf: &a2dTF !!edu.umbc.cs.maple.hierarchy.framework.GoalFailTF
-      goalPF: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.alt.AgentToDoorGoalPF {}
-      failPF: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.alt.AgentToDoorFailPF {}
+      goalPF: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.alt.pfs.AgentToDoorGoalPF {}
+      failPF: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.alt.pfs.AgentToDoorFailPF {}
     rf: &a2dRF !!edu.umbc.cs.maple.hierarchy.framework.GoalFailRF
       tf: *a2dTF
       rewardDefault: 0.0
@@ -134,8 +137,8 @@ hierarchyConfigMap:
       - pull_p
     stateMapper: !!edu.umbc.cs.maple.hierarchy.framework.IdentityMap {}
     tf: &b2dTF !!edu.umbc.cs.maple.hierarchy.framework.GoalFailTF
-      goalPF: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.alt.BlockToDoorGoalPF {}
-      failPF: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.alt.BlockToDoorFailPF {}
+      goalPF: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.alt.pfs.BlockToDoorGoalPF {}
+      failPF: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.alt.pfs.BlockToDoorFailPF {}
     rf: &b2dRF !!edu.umbc.cs.maple.hierarchy.framework.GoalFailRF
       tf: *b2dTF
       rewardDefault: 0.0
@@ -239,8 +242,8 @@ hierarchyConfigMap:
       - pull_p
     stateMapper: !!edu.umbc.cs.maple.hierarchy.framework.IdentityMap {}
     tf: &bfdTF !!edu.umbc.cs.maple.hierarchy.framework.GoalFailTF
-      goalPF: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.alt.BlockFromDoorGoalPF {}
-      failPF: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.alt.BlockFromDoorFailPF {}
+      goalPF: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.alt.pfs.BlockFromDoorGoalPF {}
+      failPF: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.alt.pfs.BlockFromDoorFailPF {}
     rf: &bfdRF !!edu.umbc.cs.maple.hierarchy.framework.GoalFailRF
       tf: *bfdTF
       rewardDefault: 0.0
@@ -291,8 +294,8 @@ hierarchyConfigMap:
       - pull_p
     stateMapper: !!edu.umbc.cs.maple.hierarchy.framework.IdentityMap {}
     tf: &atdTF !!edu.umbc.cs.maple.hierarchy.framework.GoalFailTF
-      goalPF: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.alt.AgentThruGoalPF {}
-      failPF: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.alt.AgentThruFailPF {}
+      goalPF: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.alt.pfs.AgentThruDoorGoalPF {}
+      failPF: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.alt.pfs.AgentThruDoorFailPF {}
     rf: &atdRF !!edu.umbc.cs.maple.hierarchy.framework.GoalFailRF
       tf: *atdTF
       rewardDefault: 0.0
@@ -343,8 +346,8 @@ hierarchyConfigMap:
       - pull_p
     stateMapper: !!edu.umbc.cs.maple.hierarchy.framework.IdentityMap {}
     tf: &btdTF !!edu.umbc.cs.maple.hierarchy.framework.GoalFailTF
-      goalPF: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.alt.BlockThruGoalPF {}
-      failPF: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.alt.BlockThruFailPF {}
+      goalPF: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.alt.pfs.BlockThruDoorGoalPF {}
+      failPF: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.alt.pfs.BlockThruDoorFailPF {}
     rf: &btdRF !!edu.umbc.cs.maple.hierarchy.framework.GoalFailRF
       tf: *btdTF
       rewardDefault: 0.0

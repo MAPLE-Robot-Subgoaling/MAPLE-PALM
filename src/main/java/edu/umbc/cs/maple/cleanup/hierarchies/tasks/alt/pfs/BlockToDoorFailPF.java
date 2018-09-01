@@ -1,20 +1,21 @@
-package edu.umbc.cs.maple.cleanup.hierarchies.tasks.alt;
+package edu.umbc.cs.maple.cleanup.hierarchies.tasks.alt.pfs;
 
 import burlap.mdp.core.oo.propositional.PropositionalFunction;
 import burlap.mdp.core.oo.state.OOState;
 import burlap.mdp.core.oo.state.ObjectInstance;
-import edu.umbc.cs.maple.cleanup.hierarchies.tasks.move.MoveMapper;
 import edu.umbc.cs.maple.cleanup.state.CleanupDoor;
-import edu.umbc.cs.maple.cleanup.state.CleanupRoom;
 import edu.umbc.cs.maple.cleanup.state.CleanupState;
 
-public class BlockInDoorGoalPF extends PropositionalFunction {
+import static edu.umbc.cs.maple.cleanup.Cleanup.ATT_X;
+import static edu.umbc.cs.maple.cleanup.Cleanup.ATT_Y;
 
-    public BlockInDoorGoalPF(){
-        super("BlockInDoorGoalPF", new String[]{});
+public class BlockToDoorFailPF extends PropositionalFunction {
+
+    public BlockToDoorFailPF(){
+        super("BlockToDoorFailPF", new String[]{});
     }
 
-    public BlockInDoorGoalPF(String name, String[] parameterClasses) {
+    public BlockToDoorFailPF(String name, String[] parameterClasses) {
         super(name, parameterClasses);
     }
 
@@ -33,7 +34,9 @@ public class BlockInDoorGoalPF extends PropositionalFunction {
         if (object == null || door == null) {
             return false;
         }
-        return state.isObjectInDoor(object, (CleanupDoor) door);
+        int bx = (int) object.get(ATT_X);
+        int by = (int) object.get(ATT_Y);
+        return !state.isObjectInDoor(object, (CleanupDoor) door) && state.doorContainingPoint(bx, by) != null;
     }
 
 }

@@ -1,4 +1,4 @@
-package edu.umbc.cs.maple.cleanup.hierarchies.tasks.alt;
+package edu.umbc.cs.maple.cleanup.hierarchies.tasks.alt.pfs;
 
 import burlap.mdp.core.oo.propositional.PropositionalFunction;
 import burlap.mdp.core.oo.state.OOState;
@@ -6,13 +6,13 @@ import burlap.mdp.core.oo.state.ObjectInstance;
 import edu.umbc.cs.maple.cleanup.state.CleanupDoor;
 import edu.umbc.cs.maple.cleanup.state.CleanupState;
 
-public class AgentThruDoorGoalPF extends PropositionalFunction {
+public class BlockFromDoorGoalPF extends PropositionalFunction {
 
-    public AgentThruDoorGoalPF(){
-        super("AgentThruDoorGoalPF", new String[]{});
+    public BlockFromDoorGoalPF(){
+        super("BlockFromDoorGoalPF", new String[]{});
     }
 
-    public AgentThruDoorGoalPF(String name, String[] parameterClasses) {
+    public BlockFromDoorGoalPF(String name, String[] parameterClasses) {
         super(name, parameterClasses);
     }
 
@@ -23,13 +23,15 @@ public class AgentThruDoorGoalPF extends PropositionalFunction {
     }
 
     public static boolean isTrue(CleanupState state, String[] params) {
-        String doorName = params[0];
-        ObjectInstance agent = state.getAgent();
+        String objectName = params[0];
+        String doorName = params[1];
+        ObjectInstance object = state.object(objectName);
         ObjectInstance door = state.object(doorName);
-        if (door == null) {
+//        if(object == null) object = state.object(MoveMapper.moveBlockTargetAlias);
+        if (object == null || door == null) {
             return false;
         }
-        return !state.isObjectInDoor(agent, (CleanupDoor) door);
+        return !state.isObjectInDoor(object, (CleanupDoor) door);
     }
 
 }

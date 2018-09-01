@@ -59,7 +59,7 @@ public class HierarchyConfig {
             taskMap.put(taskName, finalizedTask);
             return finalizedTask;
         }
-        throw new IllegalArgumentException("task is not present in Config map");
+        throw new IllegalArgumentException("task is not present in Config map " + taskName);
     }
 
     public Map<String, TaskConfig> getHierarchyConfigMap() {

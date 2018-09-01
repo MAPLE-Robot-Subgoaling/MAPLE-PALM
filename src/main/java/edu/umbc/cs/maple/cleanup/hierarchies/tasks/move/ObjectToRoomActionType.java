@@ -25,7 +25,7 @@ public class ObjectToRoomActionType extends ObjectParameterizedActionType {
     protected boolean applicableInState(State s, ObjectParameterizedAction objectParameterizedAction) {
         CleanupState state = (CleanupState) s;
         String[] params = objectParameterizedAction.getObjectParameters();
-        return !BlockInDoorGoalPF.isTrue(state, params);
+        return !ObjectInRoomGoalPF.isTrue(state, params);
     }
 
 }
