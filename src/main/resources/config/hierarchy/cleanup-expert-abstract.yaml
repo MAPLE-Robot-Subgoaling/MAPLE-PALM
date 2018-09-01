@@ -61,8 +61,10 @@ hierarchyConfigMap:
             name: atd
             parameterClasses:
               - door
+              - room
             parameterOrderGroup:
               - atd.P0
+              - atd.P1
         - !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.alt.BlockThruDoorActionType
             name: btd
             parameterClasses:

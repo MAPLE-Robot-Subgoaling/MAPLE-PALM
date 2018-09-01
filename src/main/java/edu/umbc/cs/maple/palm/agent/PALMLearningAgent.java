@@ -248,7 +248,7 @@ public class PALMLearningAgent implements LearningAgent {
             Action action = nextAction(task, currentStateAbstract);
             GroundedTask childTask = nextSubtask(task, action, currentStateAbstract);
 
-            System.out.println(tabLevel + ">>>>> " + task.toString() + " >>>>> " + action);
+//            System.out.println(tabLevel + ">>>>> " + task.toString() + " >>>>> " + action);
 
             int stepsBefore = steps;
             boolean[] results = solveTask(task, childTask, baseEnv, maxSteps);

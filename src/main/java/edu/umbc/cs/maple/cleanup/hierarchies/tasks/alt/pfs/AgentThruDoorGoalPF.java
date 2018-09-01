@@ -4,6 +4,7 @@ import burlap.mdp.core.oo.propositional.PropositionalFunction;
 import burlap.mdp.core.oo.state.OOState;
 import burlap.mdp.core.oo.state.ObjectInstance;
 import edu.umbc.cs.maple.cleanup.state.CleanupDoor;
+import edu.umbc.cs.maple.cleanup.state.CleanupRoom;
 import edu.umbc.cs.maple.cleanup.state.CleanupState;
 
 public class AgentThruDoorGoalPF extends PropositionalFunction {
@@ -24,12 +25,16 @@ public class AgentThruDoorGoalPF extends PropositionalFunction {
 
     public static boolean isTrue(CleanupState state, String[] params) {
         String doorName = params[0];
+        String roomName = params[1];
         ObjectInstance agent = state.getAgent();
         ObjectInstance door = state.object(doorName);
-        if (door == null) {
+        ObjectInstance room = state.object(roomName);
+        if (door == null || room == null) {
             return false;
         }
-        return !state.isObjectInDoor(agent, (CleanupDoor) door);
+        boolean inTheDoor = state.isObjectInDoor(agent, (CleanupDoor) door);
+        boolean inTheRoom = state.isObjectInRoom(agent, (CleanupRoom) room);
+        return !inTheDoor && inTheRoom;
     }
 
 }
