@@ -19,10 +19,11 @@ domain: !!edu.umbc.cs.maple.config.cleanup.CleanupConfig
 goal: *goal
 
 agents:
-  palm:  {cleanup-advancedBaseline,cleanup-expert}
+  palm: {cleanup-expert-abstract}
+  #{cleanup-advancedBaseline,cleanup-expert}
 
-seed: 117313131
-episodes: 1500
+seed: 7766565
+episodes: 300
 max_steps: 10000
 trials: 1
 gamma: 0.99
@@ -33,11 +34,11 @@ planning:
 
 rmax:
   vmax: 10.0
-  threshold: 5
+  threshold: 1
   max_delta: 0.000001
   max_delta_rmaxq: 0.000001
   max_iterations_in_model: 1000
-  use_multitime_model: true
+  use_multitime_model: false
   use_model_sharing: true
 
 output:

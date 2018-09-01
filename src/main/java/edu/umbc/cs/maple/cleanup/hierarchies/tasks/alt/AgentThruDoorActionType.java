@@ -1,19 +1,17 @@
-package edu.umbc.cs.maple.cleanup.hierarchies.tasks.move;
+package edu.umbc.cs.maple.cleanup.hierarchies.tasks.alt;
 
 import burlap.mdp.core.oo.ObjectParameterizedAction;
-import burlap.mdp.core.oo.state.ObjectInstance;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.oo.ObjectParameterizedActionType;
-import edu.umbc.cs.maple.cleanup.state.CleanupRoom;
 import edu.umbc.cs.maple.cleanup.state.CleanupState;
 
-public class ObjectToRoomActionType extends ObjectParameterizedActionType {
+public class AgentThruDoorActionType extends ObjectParameterizedActionType {
 
-    public ObjectToRoomActionType(){
+    public AgentThruDoorActionType() {
         super("ERRORNOTSET", new String[]{});
     }
 
-    public void setParameterClasses(String[] parameterClasses){
+    public void setParameterClasses(String[] parameterClasses) {
         this.parameterClasses = parameterClasses;
     }
 
@@ -25,7 +23,7 @@ public class ObjectToRoomActionType extends ObjectParameterizedActionType {
     protected boolean applicableInState(State s, ObjectParameterizedAction objectParameterizedAction) {
         CleanupState state = (CleanupState) s;
         String[] params = objectParameterizedAction.getObjectParameters();
-        return !BlockInDoorGoalPF.isTrue(state, params);
+        return !AgentThruDoorGoalPF.isTrue(state, params);
     }
 
 }

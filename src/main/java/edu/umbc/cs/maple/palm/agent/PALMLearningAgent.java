@@ -21,6 +21,7 @@ import burlap.mdp.singleagent.oo.OOSADomain;
 import burlap.mdp.singleagent.oo.ObjectParameterizedActionType;
 import burlap.statehashing.HashableStateFactory;
 import edu.umbc.cs.maple.config.ExperimentConfig;
+import edu.umbc.cs.maple.config.solver.BoundedRTDPConfig;
 import edu.umbc.cs.maple.config.solver.FittedVIConfig;
 import edu.umbc.cs.maple.config.solver.SarsaLambdaConfig;
 import edu.umbc.cs.maple.config.solver.SolverConfig;
@@ -28,10 +29,7 @@ import edu.umbc.cs.maple.hierarchy.framework.GroundedTask;
 import edu.umbc.cs.maple.hierarchy.framework.NonprimitiveTask;
 import edu.umbc.cs.maple.hierarchy.framework.StringFormat;
 import edu.umbc.cs.maple.hierarchy.framework.Task;
-import edu.umbc.cs.maple.utilities.DiscountProvider;
-import edu.umbc.cs.maple.utilities.DynamicProgrammingMultiStep;
-import edu.umbc.cs.maple.utilities.IntegerParameterizedAction;
-import edu.umbc.cs.maple.utilities.ValueIterationMultiStep;
+import edu.umbc.cs.maple.utilities.*;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -345,6 +343,7 @@ public class PALMLearningAgent implements LearningAgent {
     }
 
     private ConstantValueFunction initializer = new ConstantValueFunction(0.0);
+    private SolverConfig debugSolverConfig = new BoundedRTDPConfig();
 
     /**
      * plan over the given task's model and pick the best action to do next favoring unmodeled actions
@@ -359,8 +358,8 @@ public class PALMLearningAgent implements LearningAgent {
         OOSADomain domain = task.getDomain(model, params);
         // must use discountProvider instead of gamma
         DiscountProvider discountProvider = model.getDiscountProvider();
-        SolverConfig solverConfig = ((NonprimitiveTask)task.getTask()).getSolverConfig();
-        Policy policy;
+        SolverConfig solverConfig = debugSolverConfig;
+//        SolverConfig solverConfig = ((NonprimitiveTask)task.getTask()).getSolverConfig();
         if(solverConfig.getType().equals("ValueIterationMultiStep")){
             solverConfig.setDomain(domain);
             solverConfig.setDiscountProvider(discountProvider);
@@ -375,12 +374,20 @@ public class PALMLearningAgent implements LearningAgent {
         } else if(solverConfig.getType().equals("SarsaLambda")){
             solverConfig.setDomain(domain);
             ((SarsaLambdaConfig)solverConfig).setGamma(discountProvider.getGamma());
+        } else if (solverConfig instanceof BoundedRTDPConfig) {
+            solverConfig.setDomain(domain);
+            solverConfig.setDiscountProvider(discountProvider);
+            solverConfig.setHashingFactory(hashingFactory);
+            solverConfig.setMaxDelta(maxDelta);
+            solverConfig.setMaxIterations(maxIterationsInModelPlanner);
+        } else {
+            throw new RuntimeException("Error: unknown solver config " + solverConfig);
         }
 
         ValueFunction knownValueFunction = task.valueFunction;
         Planner planner = solverConfig.generateSolver(knownValueFunction);
 
-        policy = planner.planFromState(s);
+        Policy policy = planner.planFromState(s);
 
         Action action = policy.action(s);
         boolean debug = false;
@@ -404,9 +411,9 @@ public class PALMLearningAgent implements LearningAgent {
         }
 
         // allows the planner to start from where it left off
-        ((DynamicProgrammingMultiStep)planner).setValueFunctionInitialization(initializer);
+//        ((DynamicProgrammingMultiStep)planner).setValueFunctionInitialization(initializer);
+        ((BoundedRTDP)planner).setValueFunctionInitialization(initializer);
         task.valueFunction = (ValueFunction) planner;
-
 
         // clear the model parameters (sanity check)
         model.setParams(null);

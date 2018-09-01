@@ -345,6 +345,10 @@ public class CleanupState implements MutableOOState, DeepCopyForShallowCopyState
         CleanupRoom roomContainingPoint = roomContainingPoint((int) object.get(ATT_X), (int) object.get(ATT_Y));
         return room.equals(roomContainingPoint);
     }
+    public boolean isObjectInDoor(ObjectInstance object, CleanupDoor door) {
+        CleanupDoor doorContainingPoint = doorContainingPoint((int) object.get(ATT_X), (int) object.get(ATT_Y));
+        return door.equals(doorContainingPoint);
+    }
 
     public CleanupRoom roomContainingPoint(int x, int y) {
         List<ObjectInstance> rooms = objectsOfClass(Cleanup.CLASS_ROOM);
