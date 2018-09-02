@@ -48,6 +48,13 @@ public class OnlyThisRoomMapper implements StateMapping {
                 }
             }
 
+            // and any adjacent blocks
+            for (CleanupBlock block : state.getBlocks().values()) {
+                if (Cleanup.isAdjacent(state, new String[]{block.name()})) {
+                    onlyThisRoomState.addObject(block.copy());
+                }
+            }
+
             // return just these in the state
             return onlyThisRoomState;
         } else {

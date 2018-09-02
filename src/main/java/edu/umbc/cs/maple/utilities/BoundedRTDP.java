@@ -326,6 +326,7 @@ public class BoundedRTDP extends DynamicProgramming implements Planner {
             StateSelectionAndExpectedGap select = this.getNextState(csh.s(), mxU.a);
             csh = select.sh;
 
+
             if(select.expectedGap < this.maxDiff){
                 break;
             }
