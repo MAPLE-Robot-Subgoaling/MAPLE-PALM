@@ -21,8 +21,7 @@ public class BlockThruDoorFailPF extends PropositionalFunction {
     }
 
     public static boolean isTrue(CleanupState state, String[] params) {
-        boolean notInDoor = BlockThruDoorGoalPF.isTrue(state, params);
-        return !notInDoor;
+        return false;
     }
 
 }

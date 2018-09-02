@@ -30,6 +30,9 @@ public class BlockThruDoorGoalPF extends PropositionalFunction {
         if (door == null) {
             return false;
         }
+        if (object == null) {
+            return false;
+        }
         return !state.isObjectInDoor(object, (CleanupDoor) door);
     }
 

@@ -37,9 +37,18 @@ public class OnlyThisRoomMapper implements StateMapping {
         CleanupRoom inRoom = state.roomContainingPoint(ax, ay);
 
         if (inRoom == null) {
-            // in a door, add it and return
+            // in a door, add it
             CleanupDoor door = state.doorContainingPoint(ax, ay);
             onlyThisRoomState.addObject(door.copy());
+
+            // add the rooms on either side of the door
+            for (CleanupRoom room : state.getRooms().values()) {
+                if (CleanupState.regionContainsPoint(room, ax, ay, true)) {
+                    onlyThisRoomState.addObject(room.copy());
+                }
+            }
+
+            // return just these in the state
             return onlyThisRoomState;
         } else {
             // add the room
@@ -51,7 +60,7 @@ public class OnlyThisRoomMapper implements StateMapping {
         for (CleanupBlock block : state.getBlocks().values()) {
             int bx = (int) block.get(ATT_X);
             int by = (int) block.get(ATT_Y);
-            if (state.roomContainingPointIncludingBorder(bx, by).equals(inRoom)) {
+            if (CleanupState.regionContainsPoint(inRoom, bx, by, true)) {
                 onlyThisRoomState.addObject(block.copy());
             }
         }
@@ -60,7 +69,7 @@ public class OnlyThisRoomMapper implements StateMapping {
         for (CleanupDoor door : state.getDoors().values()) {
             int dx = (int) door.get(ATT_X);
             int dy = (int) door.get(ATT_Y);
-            if (state.roomContainingPointIncludingBorder(dx, dy).equals(inRoom)) {
+            if (CleanupState.regionContainsPoint(inRoom, dx, dy, true)) {
                 onlyThisRoomState.addObject(door.copy());
             }
         }

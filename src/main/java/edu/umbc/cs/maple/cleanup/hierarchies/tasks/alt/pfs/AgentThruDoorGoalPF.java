@@ -29,12 +29,17 @@ public class AgentThruDoorGoalPF extends PropositionalFunction {
         ObjectInstance agent = state.getAgent();
         ObjectInstance door = state.object(doorName);
         ObjectInstance room = state.object(roomName);
-        if (door == null || room == null) {
-            return false;
+        if (room != null) {
+            boolean inTheRoom = state.isObjectInRoom(agent, (CleanupRoom) room);
+            if (inTheRoom) { return true; }
+            else { return false; }
         }
-        boolean inTheDoor = state.isObjectInDoor(agent, (CleanupDoor) door);
-        boolean inTheRoom = state.isObjectInRoom(agent, (CleanupRoom) room);
-        return !inTheDoor && inTheRoom;
+        if (door != null) {
+            boolean inTheDoor = state.isObjectInDoor(agent, (CleanupDoor) door);
+            if (!inTheDoor) { return true; }
+            else { return false; }
+        }
+        return false;
     }
 
 }

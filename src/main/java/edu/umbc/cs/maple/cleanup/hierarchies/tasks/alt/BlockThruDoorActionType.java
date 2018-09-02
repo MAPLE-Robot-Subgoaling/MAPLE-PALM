@@ -31,8 +31,9 @@ public class BlockThruDoorActionType extends ObjectParameterizedActionType {
             return false;
         }
         boolean inDoorAlready = BlockThruDoorGoalPF.isTrue(state, params);
-        boolean agentAdjacent = Cleanup.isAdjacent(state, params);
-        return !inDoorAlready && agentAdjacent;
+//        boolean agentAdjacent = Cleanup.isAdjacent(state, params);
+//        return !inDoorAlready && agentAdjacent;
+        return inDoorAlready;
     }
 
 }

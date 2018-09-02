@@ -34,9 +34,10 @@ public class BlockFromDoorActionType extends ObjectParameterizedActionType {
             return false;
         }
         boolean inGoalCase = BlockFromDoorGoalPF.isTrue(state, params);
-        boolean agentAdjacent = Cleanup.isAdjacent(state, params);
+//        boolean agentAdjacent = Cleanup.isAdjacent(state, params);
         boolean inFailureCase = BlockFromDoorFailPF.isTrue(state, params);
-        return agentAdjacent && !inFailureCase && !inGoalCase;
+//        return agentAdjacent && !inFailureCase && !inGoalCase;
+        return !inFailureCase && !inGoalCase;
     }
 
 }

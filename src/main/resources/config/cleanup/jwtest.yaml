@@ -37,7 +37,7 @@ rmax:
   threshold: 1
   max_delta: 0.000001
   max_delta_rmaxq: 0.000001
-  max_iterations_in_model: 1000
+  max_iterations_in_model: 100
   use_multitime_model: false
   use_model_sharing: true
 
