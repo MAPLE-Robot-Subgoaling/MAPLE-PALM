@@ -19,6 +19,7 @@ import burlap.mdp.singleagent.environment.SimulatedEnvironment;
 import burlap.mdp.singleagent.environment.extensions.EnvironmentServer;
 import burlap.mdp.singleagent.oo.OOSADomain;
 import burlap.mdp.singleagent.oo.ObjectParameterizedActionType;
+import burlap.statehashing.HashableState;
 import burlap.statehashing.HashableStateFactory;
 import edu.umbc.cs.maple.config.ExperimentConfig;
 import edu.umbc.cs.maple.config.solver.BoundedRTDPConfig;
@@ -29,10 +30,14 @@ import edu.umbc.cs.maple.hierarchy.framework.GroundedTask;
 import edu.umbc.cs.maple.hierarchy.framework.NonprimitiveTask;
 import edu.umbc.cs.maple.hierarchy.framework.StringFormat;
 import edu.umbc.cs.maple.hierarchy.framework.Task;
+import edu.umbc.cs.maple.palm.rmax.agent.PALMRmaxModelGenerator;
 import edu.umbc.cs.maple.utilities.*;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
+
+import static edu.umbc.cs.maple.hierarchy.framework.GoalFailRF.PSEUDOREWARD_ON_FAIL;
+import static edu.umbc.cs.maple.hierarchy.framework.GoalFailRF.PSEUDOREWARD_ON_GOAL;
 
 
 public class PALMLearningAgent implements LearningAgent {
@@ -248,7 +253,7 @@ public class PALMLearningAgent implements LearningAgent {
             Action action = nextAction(task, currentStateAbstract);
             GroundedTask childTask = nextSubtask(task, action, currentStateAbstract);
 
-            System.out.println(tabLevel + ">>>>> " + task.toString() + " >>>>> " + action);
+//            System.out.println(tabLevel + ">>>>> " + task.toString() + " >>>>> " + action);
 
             int stepsBefore = steps;
             boolean[] results = solveTask(task, childTask, baseEnv, maxSteps);
@@ -358,8 +363,8 @@ public class PALMLearningAgent implements LearningAgent {
         OOSADomain domain = task.getDomain(model, params);
         // must use discountProvider instead of gamma
         DiscountProvider discountProvider = model.getDiscountProvider();
-        SolverConfig solverConfig = debugSolverConfig;
-//        SolverConfig solverConfig = ((NonprimitiveTask)task.getTask()).getSolverConfig();
+//        SolverConfig solverConfig = debugSolverConfig;
+        SolverConfig solverConfig = ((NonprimitiveTask)task.getTask()).getSolverConfig();
         if(solverConfig.getType().equals("ValueIterationMultiStep")){
             solverConfig.setDomain(domain);
             solverConfig.setDiscountProvider(discountProvider);
@@ -393,16 +398,17 @@ public class PALMLearningAgent implements LearningAgent {
         boolean debug = false;
         if (debug) {
             try {
-//				if (task.toString().contains("solve")) {
+				if (task.toString().contains("solve")) {
                 System.out.println("*****\n" + tabLevel + "    Task:    " + task.toString() + " " + s.toString());
                 Episode e = PolicyUtils.rollout(policy, s, model, 100);
                 OOState last = (OOState) e.stateSequence.get(e.stateSequence.size() - 1);
-                if (last.numObjects() > 0) {
                     System.out.println(tabLevel + "    Rollout: " + e.actionSequence);
                     System.out.println(tabLevel + "    Chose:   " + action);
                     System.out.println(tabLevel + "    Done?: " + task.isComplete(last));
-                }
-//				}
+                    if (last.numObjects() > 0) {
+                    System.out.println(tabLevel + "    objs?: " + last.numObjects());
+                    }
+				}
             } catch (Exception e) {
                 //             ignore, temp debug to assess palm
                 System.out.println(e);
@@ -411,13 +417,24 @@ public class PALMLearningAgent implements LearningAgent {
         }
 
         // allows the planner to start from where it left off
-//        ((DynamicProgrammingMultiStep)planner).setValueFunctionInitialization(initializer);
-        ((BoundedRTDP)planner).setValueFunctionInitialization(initializer);
+        clearImaginedValues((ValueIterationMultiStep) planner);
+        ((DynamicProgrammingMultiStep)planner).setValueFunctionInitialization(initializer);
+//        ((BoundedRTDP)planner).setValueFunctionInitialization(initializer);
         task.valueFunction = (ValueFunction) planner;
 
         // clear the model parameters (sanity check)
         model.setParams(null);
         return action;
+    }
+
+    private void clearImaginedValues(ValueIterationMultiStep planner) {
+        for (HashableState hs : planner.getValueFunction().keySet()) {
+            double value = planner.getValueFunction().get(hs);
+            if (value >= PSEUDOREWARD_ON_GOAL
+             || value <= PSEUDOREWARD_ON_FAIL) {
+                planner.getValueFunction().put(hs, 0.0);
+            }
+        }
     }
 
     protected PALMModel getModel(GroundedTask t) {

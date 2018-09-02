@@ -3,6 +3,7 @@ package edu.umbc.cs.maple.cleanup.hierarchies.tasks.alt2.pfs;
 import burlap.mdp.core.oo.propositional.PropositionalFunction;
 import burlap.mdp.core.oo.state.OOState;
 import burlap.mdp.core.oo.state.ObjectInstance;
+import edu.umbc.cs.maple.cleanup.Cleanup;
 import edu.umbc.cs.maple.cleanup.state.CleanupState;
 
 import static edu.umbc.cs.maple.cleanup.Cleanup.ATT_X;
@@ -43,6 +44,12 @@ public class PullBlockFromDoorFailPF extends PropositionalFunction {
         if (room == null) {
             return true;
         }
+
+//        boolean agentAdjacent = Cleanup.isAdjacent(state, params);
+//        if (!agentAdjacent) {
+//            return true;
+//        }
+
         int ox = (int) object.get(ATT_X);
         int oy = (int) object.get(ATT_Y);
         boolean objectInRoom = CleanupState.regionContainsPoint(room, ox, oy, false);

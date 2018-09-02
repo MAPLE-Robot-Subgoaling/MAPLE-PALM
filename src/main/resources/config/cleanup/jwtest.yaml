@@ -38,7 +38,7 @@ rmax:
   max_delta: 0.000001
   max_delta_rmaxq: 0.000001
   max_iterations_in_model: 10000
-  use_multitime_model: true
+  use_multitime_model: false
   use_model_sharing: true
 
 output:

@@ -8,7 +8,7 @@ hierarchyConfigMap:
       - bfd_np
       - btd_np
       - air_np
-    stateMapper: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.alt2.LocationMapper {}
+    stateMapper: !!edu.umbc.cs.maple.hierarchy.framework.IdentityMap {}
     tf: &rootTF !!edu.umbc.cs.maple.hierarchy.framework.GoalFailTF
       goalPF: &goalPF !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.root.CleanupRootGoalPF {}
       failPF: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.root.CleanupRootFailPF {}

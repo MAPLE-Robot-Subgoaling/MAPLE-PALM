@@ -9,9 +9,7 @@ import edu.umbc.cs.maple.cleanup.hierarchies.tasks.alt.OnlyThisRoomMapper;
 import edu.umbc.cs.maple.cleanup.state.CleanupState;
 import edu.umbc.cs.maple.utilities.Helpers;
 
-import static edu.umbc.cs.maple.cleanup.Cleanup.ATT_REGION;
-import static edu.umbc.cs.maple.cleanup.Cleanup.ATT_X;
-import static edu.umbc.cs.maple.cleanup.Cleanup.ATT_Y;
+import static edu.umbc.cs.maple.cleanup.Cleanup.*;
 
 public class PullBlockFromDoorActionType extends ObjectParameterizedActionType {
 
@@ -41,6 +39,8 @@ public class PullBlockFromDoorActionType extends ObjectParameterizedActionType {
             return false;
         }
 
+
+
         String blockName = params[0];
         String doorName = params[1];
         String roomName = params[2];
@@ -68,6 +68,21 @@ public class PullBlockFromDoorActionType extends ObjectParameterizedActionType {
 
         int ax = (int) agent.get(ATT_X);
         int ay = (int) agent.get(ATT_Y);
+//        String direction = (String) agent.get(ATT_DIR);
+//        int bx = (int) block.get(ATT_X);
+//        int by = (int) block.get(ATT_Y);
+//        if (direction.equals(ACTION_NORTH)) {
+//            if (!(ax == bx && ay + 1 == by) ) { return false; }
+//        } else if (direction.equals(ACTION_SOUTH)) {
+//            if (!(ax == bx && ay - 1 == by) ) { return false; }
+//        } else if (direction.equals(ACTION_EAST)) {
+//            if (!(ax + 1 == bx && ay == by) ) { return false; }
+//        } else if (direction.equals(ACTION_WEST)) {
+//            if (!(ax - 1 == bx && ay == by) ) { return false; }
+//        } else {
+//            throw new RuntimeException("unknown direction for agent in PullBlock task");
+//        }
+
         boolean agentInRoom = CleanupState.regionContainsPoint(room, ax, ay, false);
         if (!agentInRoom) { return false; }
 
