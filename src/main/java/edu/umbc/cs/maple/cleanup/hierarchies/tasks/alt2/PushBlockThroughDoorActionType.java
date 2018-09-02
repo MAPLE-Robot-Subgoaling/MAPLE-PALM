@@ -9,6 +9,7 @@ import edu.umbc.cs.maple.cleanup.hierarchies.tasks.alt.OnlyThisRoomMapper;
 import edu.umbc.cs.maple.cleanup.state.CleanupState;
 import edu.umbc.cs.maple.utilities.Helpers;
 
+import static edu.umbc.cs.maple.cleanup.Cleanup.ATT_REGION;
 import static edu.umbc.cs.maple.cleanup.Cleanup.ATT_X;
 import static edu.umbc.cs.maple.cleanup.Cleanup.ATT_Y;
 
@@ -46,14 +47,24 @@ public class PushBlockThroughDoorActionType extends ObjectParameterizedActionTyp
         ObjectInstance block = state.object(blockName);
         ObjectInstance door = state.object(doorName);
         ObjectInstance room = state.object(roomName);
-        int bx = (int) block.get(ATT_X);
-        int by = (int) block.get(ATT_Y);
 
-        boolean blockInDoor = CleanupState.regionContainsPoint(door, bx, by, true);
-        if (!blockInDoor) { return false; }
+        if (block instanceof LocationBlock) {
+            String region = (String) block.get(ATT_REGION);
+            if (!region.equals(doorName)) { return false; }
+        } else {
+            int bx = (int) block.get(ATT_X);
+            int by = (int) block.get(ATT_Y);
+            boolean blockInDoor = CleanupState.regionContainsPoint(door, bx, by, true);
+            if (!blockInDoor) { return false; }
+        }
 
-        boolean agentAdjacent = Cleanup.isAdjacent(state, params);
-        if (!agentAdjacent) { return false; }
+        if (block instanceof LocationBlock) {
+            boolean agentAdjacent = Cleanup.isAdjacent(state, new String[]{doorName});
+            if (!agentAdjacent) { return false; }
+        } else {
+            boolean agentAdjacent = Cleanup.isAdjacent(state, params);
+            if (!agentAdjacent) { return false; }
+        }
 
         int ax = (int) agent.get(ATT_X);
         int ay = (int) agent.get(ATT_Y);

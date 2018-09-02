@@ -3,11 +3,13 @@ package edu.umbc.cs.maple.cleanup.hierarchies.tasks.alt;
 import burlap.mdp.auxiliary.StateMapping;
 import burlap.mdp.core.state.State;
 import edu.umbc.cs.maple.cleanup.Cleanup;
+import edu.umbc.cs.maple.cleanup.hierarchies.tasks.alt2.LocationBlock;
 import edu.umbc.cs.maple.cleanup.state.*;
 import edu.umbc.cs.maple.taxi.hierarchies.interfaces.MaskedParameterizedStateMapping;
 import edu.umbc.cs.maple.taxi.hierarchies.interfaces.ParameterizedStateMapping;
 import edu.umbc.cs.maple.utilities.MutableObject;
 
+import javax.xml.stream.Location;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -50,6 +52,7 @@ public class OnlyThisRoomMapper implements StateMapping {
 
             // and any adjacent blocks
             for (CleanupBlock block : state.getBlocks().values()) {
+                if (block instanceof LocationBlock) { continue; }
                 if (Cleanup.isAdjacent(state, new String[]{block.name()})) {
                     onlyThisRoomState.addObject(block.copy());
                 }
@@ -65,6 +68,9 @@ public class OnlyThisRoomMapper implements StateMapping {
 
         // add all blocks in the room
         for (CleanupBlock block : state.getBlocks().values()) {
+            if (block instanceof LocationBlock) {
+                continue;
+            }
             int bx = (int) block.get(ATT_X);
             int by = (int) block.get(ATT_Y);
             if (CleanupState.regionContainsPoint(inRoom, bx, by, true)) {
