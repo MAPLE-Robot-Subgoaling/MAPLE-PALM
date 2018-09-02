@@ -417,7 +417,7 @@ public class PALMLearningAgent implements LearningAgent {
         }
 
         // allows the planner to start from where it left off
-        clearImaginedValues((ValueIterationMultiStep) planner);
+        clearImaginedValues(planner);
         ((DynamicProgrammingMultiStep)planner).setValueFunctionInitialization(initializer);
 //        ((BoundedRTDP)planner).setValueFunctionInitialization(initializer);
         task.valueFunction = (ValueFunction) planner;
@@ -427,14 +427,32 @@ public class PALMLearningAgent implements LearningAgent {
         return action;
     }
 
-    private void clearImaginedValues(ValueIterationMultiStep planner) {
+    private void clearImaginedValues(Planner p) {
+        ValueIterationMultiStep planner = (ValueIterationMultiStep) p;
         for (HashableState hs : planner.getValueFunction().keySet()) {
             double value = planner.getValueFunction().get(hs);
             if (value >= PSEUDOREWARD_ON_GOAL
-             || value <= PSEUDOREWARD_ON_FAIL) {
+                    || value <= PSEUDOREWARD_ON_FAIL) {
                 planner.getValueFunction().put(hs, 0.0);
             }
         }
+//        BoundedRTDP planner = (BoundedRTDP) p;
+//        Map<HashableState, Double> v = planner.getLowerBoundV();
+//        for (HashableState hs : v.keySet()) {
+//            double value = v.get(hs);
+//            if (value >= PSEUDOREWARD_ON_GOAL
+//                    || value <= PSEUDOREWARD_ON_FAIL) {
+//                v.put(hs, 0.0);
+//            }
+//        }
+//        v = planner.getUpperBoundV();
+//        for (HashableState hs : v.keySet()) {
+//            double value = v.get(hs);
+//            if (value >= PSEUDOREWARD_ON_GOAL
+//                    || value <= PSEUDOREWARD_ON_FAIL) {
+//                v.put(hs, 0.0);
+//            }
+//        }
     }
 
     protected PALMModel getModel(GroundedTask t) {
