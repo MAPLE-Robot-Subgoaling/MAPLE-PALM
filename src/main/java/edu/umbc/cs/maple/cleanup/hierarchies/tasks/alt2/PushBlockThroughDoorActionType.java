@@ -58,7 +58,7 @@ public class PushBlockThroughDoorActionType extends ObjectParameterizedActionTyp
         int ax = (int) agent.get(ATT_X);
         int ay = (int) agent.get(ATT_Y);
         boolean agentInRoom = CleanupState.regionContainsPoint(room, ax, ay, false);
-        if (agentInRoom) { return false; }
+        if (!agentInRoom) { return false; }
 
         return true;
     }

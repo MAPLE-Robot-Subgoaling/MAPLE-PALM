@@ -41,6 +41,12 @@ public class PushBlockThroughDoorGoalPF extends PropositionalFunction {
         if (door == null) {
             return false;
         }
+        int ax = (int) agent.get(ATT_X);
+        int ay = (int) agent.get(ATT_Y);
+        boolean agentInDoor = CleanupState.regionContainsPoint(door, ax, ay, true);
+        if (!agentInDoor) {
+            return false;
+        }
         // to be a goal state, the agent must be in the door
         // and the block must be in the goal room
         // and they are adjacent
@@ -48,12 +54,6 @@ public class PushBlockThroughDoorGoalPF extends PropositionalFunction {
         int oy = (int) object.get(ATT_Y);
         boolean objectInRoom = CleanupState.regionContainsPoint(room, ox, oy, false);
         if (!objectInRoom) {
-            return false;
-        }
-        int ax = (int) agent.get(ATT_X);
-        int ay = (int) agent.get(ATT_Y);
-        boolean agentInDoor = CleanupState.regionContainsPoint(door, ax, ay, true);
-        if (!agentInDoor) {
             return false;
         }
         return true;
