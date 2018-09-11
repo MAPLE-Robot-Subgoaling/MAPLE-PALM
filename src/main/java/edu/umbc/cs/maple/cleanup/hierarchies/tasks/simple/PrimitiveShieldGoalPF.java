@@ -24,6 +24,8 @@ public class PrimitiveShieldGoalPF extends PropositionalFunction {
 
     @Override
     public boolean isTrue(OOState ooState, String... strings) {
+        if(strings == null)
+            return false;
         String[] params = StringFormat.split(strings[0]);
         int x = Integer.parseInt(params[1]);
         int y = Integer.parseInt(params[2]);

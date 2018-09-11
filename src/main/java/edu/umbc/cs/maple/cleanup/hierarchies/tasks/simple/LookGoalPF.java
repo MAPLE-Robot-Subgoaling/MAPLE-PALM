@@ -26,6 +26,8 @@ public class LookGoalPF extends PropositionalFunction {
 
     @Override
     public boolean isTrue(OOState ooState, String... strings) {
+        if(strings == null)
+            return false;
         String[] params = StringFormat.split(strings[0]);
         int lx = Integer.parseInt(params[1]);
         int ly = Integer.parseInt(params[2]);

@@ -2,32 +2,29 @@ domain: !!edu.umbc.cs.maple.config.cleanup.CleanupConfig
   domainGenerator: !!edu.umbc.cs.maple.cleanup.Cleanup
     minX: 0
     minY: 0
-    maxX: 5
-    maxY: 5
+    maxX: 7
+    maxY: 6
     tf: !!edu.umbc.cs.maple.cleanup.CleanupTF
       goal: &goal !!edu.umbc.cs.maple.cleanup.CleanupGoal
         goalDescriptions:
-          - pf: !!edu.umbc.cs.maple.cleanup.pfs.BlockInRoomPF {}
-            params:
-             - block0
-             - room1
+          - pf: !!edu.umbc.cs.maple.cleanup.pfs.StandardGoalPF {}
     rf: !!edu.umbc.cs.maple.cleanup.CleanupRF
       goal: *goal
       goalReward: 1.0
       defaultReward: 0.0
       noopReward: 0.0
       pullReward: 0.0
-  state: twoRooms-2blocks
+  state: threeRooms-2blocks-1targets
 
 goal: *goal
 
 agents:
-  cross: {cleanup-jw, cleanup-baseline}
-  palm: {cleanup-jw, cleanup-baseline}
+  palm: {cleanup-expert-abstract}
+  #{cleanup-advancedBaseline,cleanup-expert}
 
-seed: 555543
+seed: 87522323
 episodes: 300
-max_steps: 10000
+max_steps: 1000
 trials: 1
 gamma: 0.99
 
@@ -40,14 +37,14 @@ rmax:
   threshold: 5
   max_delta: 0.000001
   max_delta_rmaxq: 0.000001
-  max_iterations_in_model: 1000
+  max_iterations_in_model: 10000
   use_multitime_model: true
   use_model_sharing: true
 
 output:
   csv:
     enabled: true
-    output: results/palm-cleanup-jwtest.csv
+    output: results/cleanup-3room-7x5-4-1.csv
 
   chart:
     enabled: true
@@ -64,7 +61,7 @@ output:
       - CUMULATIVE_REWARD_PER_EPISODE
 
   visualizer:
-    enabled: false
+    enabled: true
     episodes: true
-    width: 5
-    height: 5
+    width: 7
+    height: 7

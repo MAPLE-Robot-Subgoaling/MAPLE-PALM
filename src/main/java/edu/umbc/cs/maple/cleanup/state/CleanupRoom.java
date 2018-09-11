@@ -50,8 +50,8 @@ public class CleanupRoom extends MutableObject {
                 (int) get(Cleanup.ATT_RIGHT),
                 (int) get(Cleanup.ATT_BOTTOM),
                 (int) get(Cleanup.ATT_TOP),
-                (String) get(Cleanup.ATT_SHAPE),
-                (String) get(Cleanup.ATT_COLOR)
+                (String) get(Cleanup.ATT_COLOR),
+                (String) get(Cleanup.ATT_SHAPE)
         );
     }
 

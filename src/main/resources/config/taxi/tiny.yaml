@@ -33,11 +33,11 @@ rmax:
 
 output:
   csv:
-    enabled: true
+    enabled: false
     output: results/pex-classic-fickle.csv
 
   chart:
-    enabled: true
+    enabled: false
 
     width: 500
     height: 230

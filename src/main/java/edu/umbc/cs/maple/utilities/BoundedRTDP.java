@@ -86,6 +86,13 @@ public class BoundedRTDP extends DynamicProgramming implements Planner {
      */
     protected Map<HashableState, Double>		upperBoundV = new HashMap<HashableState, Double>();
 
+    public Map<HashableState, Double> getLowerBoundV() {
+        return lowerBoundV;
+    }
+
+    public Map<HashableState, Double> getUpperBoundV() {
+        return upperBoundV;
+    }
 
     /**
      * The lowerbound value function initialization
@@ -325,6 +332,7 @@ public class BoundedRTDP extends DynamicProgramming implements Planner {
 
             StateSelectionAndExpectedGap select = this.getNextState(csh.s(), mxU.a);
             csh = select.sh;
+
 
             if(select.expectedGap < this.maxDiff){
                 break;

@@ -55,7 +55,7 @@ public class GoalFailRF implements RewardFunction {
             r += rewardGoal;
         } else if (tf.atFailure(sPrime)) {
             r += rewardFail;
-        } else if (state.equals(sPrime)) {
+        } else if (sPrime.equals(state)) {
             r += rewardNoop;
         } else {
             // neither goal nor failure

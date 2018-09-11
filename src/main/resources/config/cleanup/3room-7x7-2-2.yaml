@@ -1,0 +1,67 @@
+domain: !!edu.umbc.cs.maple.config.cleanup.CleanupConfig
+  domainGenerator: !!edu.umbc.cs.maple.cleanup.Cleanup
+    minX: 0
+    minY: 0
+    maxX: 7
+    maxY: 7
+    tf: !!edu.umbc.cs.maple.cleanup.CleanupTF
+      goal: &goal !!edu.umbc.cs.maple.cleanup.CleanupGoal
+        goalDescriptions:
+          - pf: !!edu.umbc.cs.maple.cleanup.pfs.StandardGoalPF {}
+    rf: !!edu.umbc.cs.maple.cleanup.CleanupRF
+      goal: *goal
+      goalReward: 1.0
+      defaultReward: 0.0
+      noopReward: 0.0
+      pullReward: 0.0
+  state: threeRooms-2blocks-2targets
+
+goal: *goal
+
+agents:
+  ql: {cleanup-baseline}
+  palm:  {cleanup-baseline,cleanup-advancedBaseline,cleanup-expert}
+
+seed: 66746429
+episodes: 300
+max_steps: 10000
+trials: 20
+gamma: 0.99
+
+identifier_independent: false
+planning:
+  rollouts: 10000
+
+rmax:
+  vmax: 10.0
+  threshold: 5
+  max_delta: 0.000001
+  max_delta_rmaxq: 0.000001
+  max_iterations_in_model: 1000
+  use_multitime_model: true
+  use_model_sharing: false
+
+output:
+  csv:
+    enabled: true
+    output: results/cleanup-3room-7x7-2-2.csv
+
+  chart:
+    enabled: true
+
+    width: 400
+    height: 200
+    columns: 2
+    max_height: 650
+    trial_mode: MOST_RECENT_AND_AVERAGE
+
+    metrics:
+      - STEPS_PER_EPISODE
+      - CUMULATIVE_REWARD_PER_STEP
+      - CUMULATIVE_REWARD_PER_EPISODE
+
+  visualizer:
+    enabled: true
+    episodes: true
+    width: 7
+    height: 7

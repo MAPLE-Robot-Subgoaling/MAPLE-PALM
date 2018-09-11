@@ -3,31 +3,29 @@ domain: !!edu.umbc.cs.maple.config.cleanup.CleanupConfig
     minX: 0
     minY: 0
     maxX: 7
-    maxY: 7
+    maxY: 5
     tf: !!edu.umbc.cs.maple.cleanup.CleanupTF
       goal: &goal !!edu.umbc.cs.maple.cleanup.CleanupGoal
         goalDescriptions:
-          - pf: !!edu.umbc.cs.maple.cleanup.pfs.BlockInRoomPF {}
-            params:
-             - block0
-             - room1
+          - pf: !!edu.umbc.cs.maple.cleanup.pfs.StandardGoalPF {}
     rf: !!edu.umbc.cs.maple.cleanup.CleanupRF
       goal: *goal
       goalReward: 1.0
       defaultReward: 0.0
       noopReward: 0.0
       pullReward: 0.0
-  state: twoRooms
+  state: threeRooms
 
 goal: *goal
 
 agents:
-  palm:  {cleanup-advancedBaseline, cleanup-baseline}
+  #will create ClassCastException in RmaxQLearningAgent, where SimpleAction cannot be cast to ObjectParameterizedAction
+  rmaxq: {cleanup-expert}
 
-seed: 555543
-episodes: 75
+seed: 3488137963
+episodes: 10
 max_steps: 10000
-trials: 1
+trials: 2
 gamma: 0.99
 
 identifier_independent: false
@@ -36,7 +34,7 @@ planning:
 
 rmax:
   vmax: 10.0
-  threshold: 2
+  threshold: 5
   max_delta: 0.000001
   max_delta_rmaxq: 0.000001
   max_iterations_in_model: 1000
@@ -46,10 +44,11 @@ rmax:
 output:
   csv:
     enabled: true
-    output: results/palm-cleanup-3rooms2blocks.csv
+    output: results/cleanup-ereTest.csv
 
   chart:
     enabled: true
+
     width: 400
     height: 200
     columns: 2
@@ -62,7 +61,8 @@ output:
       - CUMULATIVE_REWARD_PER_EPISODE
 
   visualizer:
-    enabled: false
+    enabled: true
     episodes: true
     width: 7
     height: 7
+
