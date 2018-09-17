@@ -23,7 +23,7 @@ agents:
   #{cleanup-advancedBaseline,cleanup-expert}
 
 seed: 87522323
-episodes: 100
+episodes: 300
 max_steps: 1000
 trials: 1
 gamma: 0.99
@@ -43,8 +43,8 @@ rmax:
 
 output:
   csv:
-    enabled: false
-    output: results/cleanup-3room-7x5-4-1.csv
+    enabled: true
+    output: results/cleanup-advanced-aexpert-abstract-2room-7x5-1-1.csv
 
   chart:
     enabled: true
@@ -61,7 +61,7 @@ output:
       - CUMULATIVE_REWARD_PER_EPISODE
 
   visualizer:
-    enabled: true
+    enabled: false
     episodes: true
     width: 7
     height: 7

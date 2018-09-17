@@ -35,7 +35,7 @@ public class DirectionActionType extends IntegerParameterizedActionType {
 
     @Override
     public List<Action> allApplicableActions(State state) {
-        System.out.println("ARRIVED AT APPL DIRECTION\n\t\"" + dx + " " + dy);
+        //System.out.println("ARRIVED AT APPL DIRECTION\n\t\"" + dx + " " + dy);
         List<Action> actions = new ArrayList<>();
         CleanupState cstate = (CleanupState) state;
         CleanupAgent agent = cstate.getAgent();
@@ -62,7 +62,7 @@ public class DirectionActionType extends IntegerParameterizedActionType {
         }
         //else, can move!
         actions.add(createAction(goTo));
-        System.out.println("\tRETURN IS: " + actions.size());
+        //System.out.println("\tRETURN IS: " + actions.size());
         return actions;
     }
 }
