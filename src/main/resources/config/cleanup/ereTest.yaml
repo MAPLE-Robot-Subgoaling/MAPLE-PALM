@@ -2,8 +2,8 @@ domain: !!edu.umbc.cs.maple.config.cleanup.CleanupConfig
   domainGenerator: !!edu.umbc.cs.maple.cleanup.Cleanup
     minX: 0
     minY: 0
-    maxX: 10
-    maxY: 10
+    maxX: 7
+    maxY: 5
     tf: !!edu.umbc.cs.maple.cleanup.CleanupTF
       goal: &goal !!edu.umbc.cs.maple.cleanup.CleanupGoal
         goalDescriptions:
@@ -19,11 +19,11 @@ domain: !!edu.umbc.cs.maple.config.cleanup.CleanupConfig
 goal: *goal
 
 agents:
-  palm: {cleanup-expert-abstract}
+  palm: {cleanup-advanced-expert-abstract}
   #{cleanup-advancedBaseline,cleanup-expert}
 
 seed: 87522323
-episodes: 10
+episodes: 100
 max_steps: 1000
 trials: 1
 gamma: 0.99
@@ -43,7 +43,7 @@ rmax:
 
 output:
   csv:
-    enabled: true
+    enabled: false
     output: results/cleanup-3room-7x5-4-1.csv
 
   chart:
@@ -63,5 +63,5 @@ output:
   visualizer:
     enabled: true
     episodes: true
-    width: 10
-    height: 10
+    width: 7
+    height: 7

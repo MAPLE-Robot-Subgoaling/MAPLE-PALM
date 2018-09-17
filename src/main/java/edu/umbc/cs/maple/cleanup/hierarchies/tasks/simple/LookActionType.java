@@ -28,6 +28,7 @@ public class LookActionType extends DirectionActionType {
 
     @Override
     public List<Action> allApplicableActions(State state) {
+        System.out.println("ARRIVED AT APPL LOOK\n\t" + dx + " " + dy);
         List<Action> actions = new ArrayList<>();
         //get agent and block from state
         CleanupState cstate = (CleanupState) state;
@@ -62,6 +63,7 @@ public class LookActionType extends DirectionActionType {
 
                         actions.add(createAction(lookSquare));
             }
+            System.out.println("\tRETURN IS: " + actions.size());
         return actions;
     }
 }

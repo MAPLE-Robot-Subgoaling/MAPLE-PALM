@@ -1,0 +1,919 @@
+name: occupyspace
+hierarchyConfigMap:
+  root:
+    children:
+      - and_np
+      - b2d_np
+      - aid_np
+      - bfd_np
+      - btd_np
+      - air_np
+    stateMapper: !!edu.umbc.cs.maple.hierarchy.framework.IdentityMap {}
+    tf: &rootTF !!edu.umbc.cs.maple.hierarchy.framework.GoalFailTF
+      goalPF: &goalPF !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.root.CleanupRootGoalPF {}
+      failPF: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.root.CleanupRootFailPF {}
+    rf: &rootRF !!edu.umbc.cs.maple.hierarchy.framework.GoalFailRF
+      tf: *rootTF
+      rewardDefault: 0.0
+      rewardNoop: 0.0
+    domainGenerator: !!edu.umbc.cs.maple.hierarchy.framework.TaskDomainGenerator
+      tf: *rootTF
+      rf: *rootRF
+      stateClasses:
+        - className: agent
+          clasz: !!edu.umbc.cs.maple.cleanup.state.CleanupAgent {}
+        - className: block
+          clasz: !!edu.umbc.cs.maple.cleanup.state.CleanupBlock {}
+        - className: room
+          clasz: !!edu.umbc.cs.maple.cleanup.state.CleanupRoom {}
+        - className: door
+          clasz: !!edu.umbc.cs.maple.cleanup.state.CleanupDoor {}
+      actions:
+        - !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.alt2.MoveAgentNextToDoorActionType
+            name: and
+            parameterClasses:
+              - door
+            parameterOrderGroup:
+              - and.P0
+        - !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.alt2.MoveBlockToDoorActionType
+            name: b2d
+            parameterClasses:
+              - block
+              - door
+            parameterOrderGroup:
+              - b2d.P0
+              - b2d.P1
+        - !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.alt2.MoveAgentIntoDoorActionType
+            name: aid
+            parameterClasses:
+              - door
+            parameterOrderGroup:
+              - aid.P0
+        - !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.alt2.PullBlockFromDoorActionType
+            name: bfd
+            parameterClasses:
+              - block
+              - door
+              - room
+            parameterOrderGroup:
+              - bfd.P0
+              - bfd.P1
+              - bfd.P2
+        - !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.alt2.PushBlockThroughDoorActionType
+            name: btd
+            parameterClasses:
+              - block
+              - door
+              - room
+            parameterOrderGroup:
+              - btd.P0
+              - btd.P1
+              - btd.P2
+        - !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.alt2.MoveAgentIntoRoomActionType
+            name: air
+            parameterClasses:
+              - door
+              - room
+            parameterOrderGroup:
+              - air.P0
+              - air.P1
+    solver: !!edu.umbc.cs.maple.config.solver.ValueIterationMultistepConfig
+      maxDelta: 0.00001
+      maxIterations: 1000
+
+
+  and:
+    children:
+      - North_np
+      - South_np
+      - East_np
+      - West_np
+      - Pull_np
+      - LookNorth_np
+      - LookSouth_np
+      - LookEast_np
+      - LookWest_np
+    stateMapper: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.alt.OnlyThisRoomMapper {}
+    tf: &andTF !!edu.umbc.cs.maple.hierarchy.framework.GoalFailTF
+      goalPF: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.alt2.pfs.MoveAgentNextToDoorGoalPF {}
+      failPF: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.alt2.pfs.MoveAgentNextToDoorFailPF {}
+    rf: &andRF !!edu.umbc.cs.maple.hierarchy.framework.GoalFailRF
+      tf: *andTF
+      rewardDefault: 0.0
+      rewardNoop: 0.0
+    domainGenerator: !!edu.umbc.cs.maple.hierarchy.framework.TaskDomainGenerator
+      tf: *andTF
+      rf: *andRF
+      stateClasses:
+        - className: agent
+          clasz: !!edu.umbc.cs.maple.cleanup.state.CleanupAgent {}
+        - className: block
+          clasz: !!edu.umbc.cs.maple.cleanup.state.CleanupBlock {}
+        - className: room
+          clasz: !!edu.umbc.cs.maple.cleanup.state.CleanupRoom {}
+        - className: door
+          clasz: !!edu.umbc.cs.maple.cleanup.state.CleanupDoor {}
+      actions:
+        - !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.simple.DirectionActionType
+          name: North
+          dx: 0
+          dy: 1
+          parameterOrderGroups:
+            - North.P0
+            - North.P1
+        - !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.simple.DirectionActionType
+          name: South
+          dx: 0
+          dy: -1
+          parameterOrderGroups:
+            - South.P0
+            - South.P1
+        - !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.simple.DirectionActionType
+          name: East
+          dx: 1
+          dy: 0
+          parameterOrderGroups:
+            - East.P0
+            - East.P1
+        - !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.simple.DirectionActionType
+          name: West
+          dx: -1
+          dy: 0
+          parameterOrderGroups:
+            - West.P0
+            - West.P1
+        - !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.simple.PullActionType
+          name: Pull
+          parameterOrderGroups:
+            - Pull.P0
+            - Pull.P1
+        - !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.simple.LookActionType
+          name: LookNorth
+          dx: 0
+          dy: 1
+          parameterOrderGroup:
+            - LookNorth.P0
+            - LookNorth.P1
+        - !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.simple.LookActionType
+          name: LookSouth
+          dx: 0
+          dy: -1
+          parameterOrderGroup:
+            - LookSouth.P0
+            - LookSouth.P1
+        - !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.simple.LookActionType
+          name: LookEast
+          dx: 1
+          dy: 0
+          parameterOrderGroup:
+            - LookEast.P0
+            - LookEast.P1
+        - !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.simple.LookActionType
+          name: LookWest
+          dx: -1
+          dy: 0
+          parameterOrderGroup:
+            - LookWest.P0
+            - LookWest.P1
+    solver: !!edu.umbc.cs.maple.config.solver.ValueIterationMultistepConfig
+      maxDelta: 0.0001
+      maxIterations: 1000
+
+  b2d:
+    children:
+      - North_np
+      - South_np
+      - East_np
+      - West_np
+      - Pull_np
+      - LookNorth_np
+      - LookSouth_np
+      - LookEast_np
+      - LookWest_np
+    stateMapper: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.alt.OnlyThisRoomMapper {}
+    tf: &b2dTF !!edu.umbc.cs.maple.hierarchy.framework.GoalFailTF
+      goalPF: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.alt2.pfs.MoveBlockToDoorGoalPF {}
+      failPF: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.alt2.pfs.MoveBlockToDoorFailPF {}
+    rf: &b2dRF !!edu.umbc.cs.maple.hierarchy.framework.GoalFailRF
+      tf: *b2dTF
+      rewardDefault: 0.0
+      rewardNoop: 0.0
+    domainGenerator: !!edu.umbc.cs.maple.hierarchy.framework.TaskDomainGenerator
+      tf: *b2dTF
+      rf: *b2dRF
+      stateClasses:
+        - className: agent
+          clasz: !!edu.umbc.cs.maple.cleanup.state.CleanupAgent {}
+        - className: block
+          clasz: !!edu.umbc.cs.maple.cleanup.state.CleanupBlock {}
+        - className: room
+          clasz: !!edu.umbc.cs.maple.cleanup.state.CleanupRoom {}
+        - className: door
+          clasz: !!edu.umbc.cs.maple.cleanup.state.CleanupDoor {}
+      actions:
+        - !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.simple.DirectionActionType
+          name: North
+          dx: 0
+          dy: 1
+          parameterOrderGroups:
+            - North.P0
+            - North.P1
+        - !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.simple.DirectionActionType
+          name: South
+          dx: 0
+          dy: -1
+          parameterOrderGroups:
+            - South.P0
+            - South.P1
+        - !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.simple.DirectionActionType
+          name: East
+          dx: 1
+          dy: 0
+          parameterOrderGroups:
+            - East.P0
+            - East.P1
+        - !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.simple.DirectionActionType
+          name: West
+          dx: -1
+          dy: 0
+          parameterOrderGroups:
+            - West.P0
+            - West.P1
+        - !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.simple.PullActionType
+          name: Pull
+          parameterOrderGroups:
+            - Pull.P0
+            - Pull.P1
+        - !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.simple.LookActionType
+          name: LookNorth
+          dx: 0
+          dy: 1
+          parameterOrderGroup:
+            - LookNorth.P0
+            - LookNorth.P1
+        - !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.simple.LookActionType
+          name: LookSouth
+          dx: 0
+          dy: -1
+          parameterOrderGroup:
+            - LookSouth.P0
+            - LookSouth.P1
+        - !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.simple.LookActionType
+          name: LookEast
+          dx: 1
+          dy: 0
+          parameterOrderGroup:
+            - LookEast.P0
+            - LookEast.P1
+        - !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.simple.LookActionType
+          name: LookWest
+          dx: -1
+          dy: 0
+          parameterOrderGroup:
+            - LookWest.P0
+            - LookWest.P1
+    solver: !!edu.umbc.cs.maple.config.solver.ValueIterationMultistepConfig
+      maxDelta: 0.0001
+      maxIterations: 1000
+
+
+  aid:
+    children:
+      - North_np
+      - South_np
+      - East_np
+      - West_np
+      - Pull_np
+      - LookNorth_np
+      - LookSouth_np
+      - LookEast_np
+      - LookWest_np
+    stateMapper: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.alt.OnlyThisRoomMapper {}
+    tf: &aidTF !!edu.umbc.cs.maple.hierarchy.framework.GoalFailTF
+      goalPF: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.alt2.pfs.MoveAgentIntoDoorGoalPF {}
+      failPF: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.alt2.pfs.MoveAgentIntoDoorFailPF {}
+    rf: &aidRF !!edu.umbc.cs.maple.hierarchy.framework.GoalFailRF
+      tf: *aidTF
+      rewardDefault: 0.0
+      rewardNoop: 0.0
+    domainGenerator: !!edu.umbc.cs.maple.hierarchy.framework.TaskDomainGenerator
+      tf: *aidTF
+      rf: *aidRF
+      stateClasses:
+        - className: agent
+          clasz: !!edu.umbc.cs.maple.cleanup.state.CleanupAgent {}
+        - className: block
+          clasz: !!edu.umbc.cs.maple.cleanup.state.CleanupBlock {}
+        - className: room
+          clasz: !!edu.umbc.cs.maple.cleanup.state.CleanupRoom {}
+        - className: door
+          clasz: !!edu.umbc.cs.maple.cleanup.state.CleanupDoor {}
+      actions:
+        - !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.simple.DirectionActionType
+          name: North
+          dx: 0
+          dy: 1
+          parameterOrderGroups:
+            - North.P0
+            - North.P1
+        - !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.simple.DirectionActionType
+          name: South
+          dx: 0
+          dy: -1
+          parameterOrderGroups:
+            - South.P0
+            - South.P1
+        - !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.simple.DirectionActionType
+          name: East
+          dx: 1
+          dy: 0
+          parameterOrderGroups:
+            - East.P0
+            - East.P1
+        - !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.simple.DirectionActionType
+          name: West
+          dx: -1
+          dy: 0
+          parameterOrderGroups:
+            - West.P0
+            - West.P1
+        - !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.simple.PullActionType
+          name: Pull
+          parameterOrderGroups:
+            - Pull.P0
+            - Pull.P1
+        - !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.simple.LookActionType
+          name: LookNorth
+          dx: 0
+          dy: 1
+          parameterOrderGroup:
+            - LookNorth.P0
+            - LookNorth.P1
+        - !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.simple.LookActionType
+          name: LookSouth
+          dx: 0
+          dy: -1
+          parameterOrderGroup:
+            - LookSouth.P0
+            - LookSouth.P1
+        - !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.simple.LookActionType
+          name: LookEast
+          dx: 1
+          dy: 0
+          parameterOrderGroup:
+            - LookEast.P0
+            - LookEast.P1
+        - !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.simple.LookActionType
+          name: LookWest
+          dx: -1
+          dy: 0
+          parameterOrderGroup:
+            - LookWest.P0
+            - LookWest.P1
+    solver: !!edu.umbc.cs.maple.config.solver.ValueIterationMultistepConfig
+      maxDelta: 0.0001
+      maxIterations: 1000
+
+
+  bfd:
+    children:
+      - North_np
+      - South_np
+      - East_np
+      - West_np
+      - Pull_np
+      - LookNorth_np
+      - LookSouth_np
+      - LookEast_np
+      - LookWest_np
+    stateMapper: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.alt.OnlyThisRoomMapper {}
+    tf: &bfdTF !!edu.umbc.cs.maple.hierarchy.framework.GoalFailTF
+      goalPF: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.alt2.pfs.PullBlockFromDoorGoalPF {}
+      failPF: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.alt2.pfs.PullBlockFromDoorFailPF {}
+    rf: &bfdRF !!edu.umbc.cs.maple.hierarchy.framework.GoalFailRF
+      tf: *bfdTF
+      rewardDefault: 0.0
+      rewardNoop: 0.0
+    domainGenerator: !!edu.umbc.cs.maple.hierarchy.framework.TaskDomainGenerator
+      tf: *bfdTF
+      rf: *bfdRF
+      stateClasses:
+        - className: agent
+          clasz: !!edu.umbc.cs.maple.cleanup.state.CleanupAgent {}
+        - className: block
+          clasz: !!edu.umbc.cs.maple.cleanup.state.CleanupBlock {}
+        - className: room
+          clasz: !!edu.umbc.cs.maple.cleanup.state.CleanupRoom {}
+        - className: door
+          clasz: !!edu.umbc.cs.maple.cleanup.state.CleanupDoor {}
+      actions:
+        - !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.simple.DirectionActionType
+          name: North
+          dx: 0
+          dy: 1
+          parameterOrderGroups:
+            - North.P0
+            - North.P1
+        - !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.simple.DirectionActionType
+          name: South
+          dx: 0
+          dy: -1
+          parameterOrderGroups:
+            - South.P0
+            - South.P1
+        - !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.simple.DirectionActionType
+          name: East
+          dx: 1
+          dy: 0
+          parameterOrderGroups:
+            - East.P0
+            - East.P1
+        - !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.simple.DirectionActionType
+          name: West
+          dx: -1
+          dy: 0
+          parameterOrderGroups:
+            - West.P0
+            - West.P1
+        - !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.simple.PullActionType
+          name: Pull
+          parameterOrderGroups:
+            - Pull.P0
+            - Pull.P1
+        - !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.simple.LookActionType
+          name: LookNorth
+          dx: 0
+          dy: 1
+          parameterOrderGroup:
+            - LookNorth.P0
+            - LookNorth.P1
+        - !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.simple.LookActionType
+          name: LookSouth
+          dx: 0
+          dy: -1
+          parameterOrderGroup:
+            - LookSouth.P0
+            - LookSouth.P1
+        - !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.simple.LookActionType
+          name: LookEast
+          dx: 1
+          dy: 0
+          parameterOrderGroup:
+            - LookEast.P0
+            - LookEast.P1
+        - !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.simple.LookActionType
+          name: LookWest
+          dx: -1
+          dy: 0
+          parameterOrderGroup:
+            - LookWest.P0
+            - LookWest.P1
+    solver: !!edu.umbc.cs.maple.config.solver.ValueIterationMultistepConfig
+      maxDelta: 0.0001
+      maxIterations: 1000
+
+  btd:
+    children:
+      - North_np
+      - South_np
+      - East_np
+      - West_np
+      - Pull_np
+      - LookNorth_np
+      - LookSouth_np
+      - LookEast_np
+      - LookWest_np
+    stateMapper: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.alt.OnlyThisRoomMapper {}
+    tf: &btdTF !!edu.umbc.cs.maple.hierarchy.framework.GoalFailTF
+      goalPF: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.alt2.pfs.PushBlockThroughDoorGoalPF {}
+      failPF: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.alt2.pfs.PushBlockThroughDoorFailPF {}
+    rf: &btdRF !!edu.umbc.cs.maple.hierarchy.framework.GoalFailRF
+      tf: *btdTF
+      rewardDefault: 0.0
+      rewardNoop: 0.0
+    domainGenerator: !!edu.umbc.cs.maple.hierarchy.framework.TaskDomainGenerator
+      tf: *btdTF
+      rf: *btdRF
+      stateClasses:
+        - className: agent
+          clasz: !!edu.umbc.cs.maple.cleanup.state.CleanupAgent {}
+        - className: block
+          clasz: !!edu.umbc.cs.maple.cleanup.state.CleanupBlock {}
+        - className: room
+          clasz: !!edu.umbc.cs.maple.cleanup.state.CleanupRoom {}
+        - className: door
+          clasz: !!edu.umbc.cs.maple.cleanup.state.CleanupDoor {}
+      actions:
+        - !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.simple.DirectionActionType
+          name: North
+          dx: 0
+          dy: 1
+          parameterOrderGroups:
+            - North.P0
+            - North.P1
+        - !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.simple.DirectionActionType
+          name: South
+          dx: 0
+          dy: -1
+          parameterOrderGroups:
+            - South.P0
+            - South.P1
+        - !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.simple.DirectionActionType
+          name: East
+          dx: 1
+          dy: 0
+          parameterOrderGroups:
+            - East.P0
+            - East.P1
+        - !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.simple.DirectionActionType
+          name: West
+          dx: -1
+          dy: 0
+          parameterOrderGroups:
+            - West.P0
+            - West.P1
+        - !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.simple.PullActionType
+          name: Pull
+          parameterOrderGroups:
+            - Pull.P0
+            - Pull.P1
+        - !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.simple.LookActionType
+          name: LookNorth
+          dx: 0
+          dy: 1
+          parameterOrderGroup:
+            - LookNorth.P0
+            - LookNorth.P1
+        - !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.simple.LookActionType
+          name: LookSouth
+          dx: 0
+          dy: -1
+          parameterOrderGroup:
+            - LookSouth.P0
+            - LookSouth.P1
+        - !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.simple.LookActionType
+          name: LookEast
+          dx: 1
+          dy: 0
+          parameterOrderGroup:
+            - LookEast.P0
+            - LookEast.P1
+        - !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.simple.LookActionType
+          name: LookWest
+          dx: -1
+          dy: 0
+          parameterOrderGroup:
+            - LookWest.P0
+            - LookWest.P1
+    solver: !!edu.umbc.cs.maple.config.solver.ValueIterationMultistepConfig
+      maxDelta: 0.0001
+      maxIterations: 1000
+
+  air:
+    children:
+      - North_np
+      - South_np
+      - East_np
+      - West_np
+      - Pull_np
+      - LookNorth_np
+      - LookSouth_np
+      - LookEast_np
+      - LookWest_np
+    stateMapper: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.alt.OnlyThisRoomMapper {}
+    tf: &airTF !!edu.umbc.cs.maple.hierarchy.framework.GoalFailTF
+      goalPF: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.alt2.pfs.MoveAgentIntoRoomGoalPF {}
+      failPF: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.alt2.pfs.MoveAgentIntoRoomFailPF {}
+    rf: &airRF !!edu.umbc.cs.maple.hierarchy.framework.GoalFailRF
+      tf: *airTF
+      rewardDefault: 0.0
+      rewardNoop: 0.0
+    domainGenerator: !!edu.umbc.cs.maple.hierarchy.framework.TaskDomainGenerator
+      tf: *airTF
+      rf: *airRF
+      stateClasses:
+        - className: agent
+          clasz: !!edu.umbc.cs.maple.cleanup.state.CleanupAgent {}
+        - className: block
+          clasz: !!edu.umbc.cs.maple.cleanup.state.CleanupBlock {}
+        - className: room
+          clasz: !!edu.umbc.cs.maple.cleanup.state.CleanupRoom {}
+        - className: door
+          clasz: !!edu.umbc.cs.maple.cleanup.state.CleanupDoor {}
+      actions:
+        - !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.simple.DirectionActionType
+          name: North
+          dx: 0
+          dy: 1
+          parameterOrderGroups:
+            - North.P0
+            - North.P1
+        - !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.simple.DirectionActionType
+          name: South
+          dx: 0
+          dy: -1
+          parameterOrderGroups:
+            - South.P0
+            - South.P1
+        - !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.simple.DirectionActionType
+          name: East
+          dx: 1
+          dy: 0
+          parameterOrderGroups:
+            - East.P0
+            - East.P1
+        - !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.simple.DirectionActionType
+          name: West
+          dx: -1
+          dy: 0
+          parameterOrderGroups:
+            - West.P0
+            - West.P1
+        - !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.simple.PullActionType
+          name: Pull
+          parameterOrderGroups:
+            - Pull.P0
+            - Pull.P1
+        - !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.simple.LookActionType
+          name: LookNorth
+          dx: 0
+          dy: 1
+          parameterOrderGroup:
+            - LookNorth.P0
+            - LookNorth.P1
+        - !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.simple.LookActionType
+          name: LookSouth
+          dx: 0
+          dy: -1
+          parameterOrderGroup:
+            - LookSouth.P0
+            - LookSouth.P1
+        - !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.simple.LookActionType
+          name: LookEast
+          dx: 1
+          dy: 0
+          parameterOrderGroup:
+            - LookEast.P0
+            - LookEast.P1
+        - !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.simple.LookActionType
+          name: LookWest
+          dx: -1
+          dy: 0
+          parameterOrderGroup:
+            - LookWest.P0
+            - LookWest.P1
+    solver: !!edu.umbc.cs.maple.config.solver.ValueIterationMultistepConfig
+      maxDelta: 0.0001
+      maxIterations: 1000
+
+  North:
+    children:
+     - north_p
+    stateMapper: !!edu.umbc.cs.maple.hierarchy.framework.IdentityMap {}
+    tf: &tf !!edu.umbc.cs.maple.hierarchy.framework.GoalFailTF
+      goalPF: &goalPF !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.simple.PrimitiveShieldGoalPF {}
+      failPF: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.simple.PrimitiveShieldFailPF {}
+    rf: &rf !!edu.umbc.cs.maple.hierarchy.framework.GoalFailRF
+      tf: *tf
+      rewardDefault: 0.0
+      rewardNoop: 0.0
+    domainGenerator: !!edu.umbc.cs.maple.hierarchy.framework.TaskDomainGenerator
+       tf: *tf
+       rf: *rf
+       stateClasses:
+          - className: agent
+            clasz: !!edu.umbc.cs.maple.cleanup.state.CleanupAgent {}
+          - className: block
+            clasz: !!edu.umbc.cs.maple.cleanup.state.CleanupBlock {}
+       actions:
+         - !!edu.umbc.cs.maple.hierarchy.framework.UniversalActionTypeBean
+           typeName: north
+           action: !!burlap.mdp.core.action.SimpleAction
+              name: north
+    solver: !!edu.umbc.cs.maple.config.solver.ValueIterationMultistepConfig
+      maxDelta: 0.0001
+      maxIterations: 1000
+
+  South:
+    children:
+     - south_p
+    stateMapper: !!edu.umbc.cs.maple.hierarchy.framework.IdentityMap {}
+    tf: &tf !!edu.umbc.cs.maple.hierarchy.framework.GoalFailTF
+      goalPF: &goalPF !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.simple.PrimitiveShieldGoalPF {}
+      failPF: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.simple.PrimitiveShieldFailPF {}
+    rf: &rf !!edu.umbc.cs.maple.hierarchy.framework.GoalFailRF
+      tf: *tf
+      rewardDefault: 0.0
+      rewardNoop: 0.0
+    domainGenerator: !!edu.umbc.cs.maple.hierarchy.framework.TaskDomainGenerator
+       tf: *tf
+       rf: *rf
+       stateClasses:
+          - className: agent
+            clasz: !!edu.umbc.cs.maple.cleanup.state.CleanupAgent {}
+          - className: block
+            clasz: !!edu.umbc.cs.maple.cleanup.state.CleanupBlock {}
+       actions:
+         - !!edu.umbc.cs.maple.hierarchy.framework.UniversalActionTypeBean
+           typeName: south
+           action: !!burlap.mdp.core.action.SimpleAction
+              name: south
+    solver: !!edu.umbc.cs.maple.config.solver.ValueIterationMultistepConfig
+      maxDelta: 0.0001
+      maxIterations: 1000
+
+  East:
+    children:
+     - east_p
+    stateMapper: !!edu.umbc.cs.maple.hierarchy.framework.IdentityMap {}
+    tf: &tf !!edu.umbc.cs.maple.hierarchy.framework.GoalFailTF
+      goalPF: &goalPF !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.simple.PrimitiveShieldGoalPF {}
+      failPF: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.simple.PrimitiveShieldFailPF {}
+    rf: &rf !!edu.umbc.cs.maple.hierarchy.framework.GoalFailRF
+      tf: *tf
+      rewardDefault: 0.0
+      rewardNoop: 0.0
+    domainGenerator: !!edu.umbc.cs.maple.hierarchy.framework.TaskDomainGenerator
+       tf: *tf
+       rf: *rf
+       stateClasses:
+          - className: agent
+            clasz: !!edu.umbc.cs.maple.cleanup.state.CleanupAgent {}
+          - className: block
+            clasz: !!edu.umbc.cs.maple.cleanup.state.CleanupBlock {}
+       actions:
+         - !!edu.umbc.cs.maple.hierarchy.framework.UniversalActionTypeBean
+           typeName: east
+           action: !!burlap.mdp.core.action.SimpleAction
+              name: east
+    solver: !!edu.umbc.cs.maple.config.solver.ValueIterationMultistepConfig
+      maxDelta: 0.0001
+      maxIterations: 1000
+
+  West:
+    children:
+     - west_p
+    stateMapper: !!edu.umbc.cs.maple.hierarchy.framework.IdentityMap {}
+    tf: &tf !!edu.umbc.cs.maple.hierarchy.framework.GoalFailTF
+      goalPF: &goalPF !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.simple.PrimitiveShieldGoalPF {}
+      failPF: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.simple.PrimitiveShieldFailPF {}
+    rf: &rf !!edu.umbc.cs.maple.hierarchy.framework.GoalFailRF
+      tf: *tf
+      rewardDefault: 0.0
+      rewardNoop: 0.0
+    domainGenerator: !!edu.umbc.cs.maple.hierarchy.framework.TaskDomainGenerator
+       tf: *tf
+       rf: *rf
+       stateClasses:
+          - className: agent
+            clasz: !!edu.umbc.cs.maple.cleanup.state.CleanupAgent {}
+          - className: block
+            clasz: !!edu.umbc.cs.maple.cleanup.state.CleanupBlock {}
+       actions:
+         - !!edu.umbc.cs.maple.hierarchy.framework.UniversalActionTypeBean
+           typeName: west
+           action: !!burlap.mdp.core.action.SimpleAction
+              name: west
+    solver: !!edu.umbc.cs.maple.config.solver.ValueIterationMultistepConfig
+      maxDelta: 0.0001
+      maxIterations: 1000
+
+  Pull:
+    children:
+     - pull_p
+    stateMapper: !!edu.umbc.cs.maple.hierarchy.framework.IdentityMap {}
+    tf: &tf !!edu.umbc.cs.maple.hierarchy.framework.GoalFailTF
+      goalPF: &goalPF !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.simple.PrimitiveShieldGoalPF {}
+      failPF: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.simple.PrimitiveShieldFailPF {}
+    rf: &rf !!edu.umbc.cs.maple.hierarchy.framework.GoalFailRF
+      tf: *tf
+      rewardDefault: 0.0
+      rewardNoop: 0.0
+    domainGenerator: !!edu.umbc.cs.maple.hierarchy.framework.TaskDomainGenerator
+       tf: *tf
+       rf: *rf
+       stateClasses:
+          - className: agent
+            clasz: !!edu.umbc.cs.maple.cleanup.state.CleanupAgent {}
+          - className: block
+            clasz: !!edu.umbc.cs.maple.cleanup.state.CleanupBlock {}
+       actions:
+         - !!edu.umbc.cs.maple.hierarchy.framework.UniversalActionTypeBean
+           typeName: pull
+           action: !!burlap.mdp.core.action.SimpleAction
+              name: pull
+    solver: !!edu.umbc.cs.maple.config.solver.ValueIterationMultistepConfig
+      maxDelta: 0.0001
+      maxIterations: 1000
+
+  LookNorth:
+    children:
+     - north_p
+    stateMapper: !!edu.umbc.cs.maple.hierarchy.framework.IdentityMap {}
+    tf: &tf !!edu.umbc.cs.maple.hierarchy.framework.GoalFailTF
+      goalPF: &goalPF !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.simple.LookGoalPF {}
+      failPF: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.simple.LookFailPF {}
+    rf: &rf !!edu.umbc.cs.maple.hierarchy.framework.GoalFailRF
+      tf: *tf
+      rewardDefault: 0.0
+      rewardNoop: 0.0
+    domainGenerator: !!edu.umbc.cs.maple.hierarchy.framework.TaskDomainGenerator
+       tf: *tf
+       rf: *rf
+       stateClasses:
+          - className: agent
+            clasz: !!edu.umbc.cs.maple.cleanup.state.CleanupAgent {}
+          - className: block
+            clasz: !!edu.umbc.cs.maple.cleanup.state.CleanupBlock {}
+       actions:
+         - !!edu.umbc.cs.maple.hierarchy.framework.UniversalActionTypeBean
+           typeName: north
+           action: !!burlap.mdp.core.action.SimpleAction
+              name: north
+    solver: !!edu.umbc.cs.maple.config.solver.ValueIterationMultistepConfig
+      maxDelta: 0.0001
+      maxIterations: 1000
+
+  LookSouth:
+    children:
+     - south_p
+    stateMapper: !!edu.umbc.cs.maple.hierarchy.framework.IdentityMap {}
+    tf: &tf !!edu.umbc.cs.maple.hierarchy.framework.GoalFailTF
+      goalPF: &goalPF !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.simple.LookGoalPF {}
+      failPF: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.simple.LookFailPF {}
+    rf: &rf !!edu.umbc.cs.maple.hierarchy.framework.GoalFailRF
+      tf: *tf
+      rewardDefault: 0.0
+      rewardNoop: 0.0
+    domainGenerator: !!edu.umbc.cs.maple.hierarchy.framework.TaskDomainGenerator
+       tf: *tf
+       rf: *rf
+       stateClasses:
+          - className: agent
+            clasz: !!edu.umbc.cs.maple.cleanup.state.CleanupAgent {}
+          - className: block
+            clasz: !!edu.umbc.cs.maple.cleanup.state.CleanupBlock {}
+       actions:
+         - !!edu.umbc.cs.maple.hierarchy.framework.UniversalActionTypeBean
+           typeName: south
+           action: !!burlap.mdp.core.action.SimpleAction
+              name: south
+    solver: !!edu.umbc.cs.maple.config.solver.ValueIterationMultistepConfig
+      maxDelta: 0.0001
+      maxIterations: 1000
+
+  LookEast:
+    children:
+     - east_p
+    stateMapper: !!edu.umbc.cs.maple.hierarchy.framework.IdentityMap {}
+    tf: &tf !!edu.umbc.cs.maple.hierarchy.framework.GoalFailTF
+      goalPF: &goalPF !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.simple.LookGoalPF {}
+      failPF: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.simple.LookFailPF {}
+    rf: &rf !!edu.umbc.cs.maple.hierarchy.framework.GoalFailRF
+      tf: *tf
+      rewardDefault: 0.0
+      rewardNoop: 0.0
+    domainGenerator: !!edu.umbc.cs.maple.hierarchy.framework.TaskDomainGenerator
+       tf: *tf
+       rf: *rf
+       stateClasses:
+          - className: agent
+            clasz: !!edu.umbc.cs.maple.cleanup.state.CleanupAgent {}
+          - className: block
+            clasz: !!edu.umbc.cs.maple.cleanup.state.CleanupBlock {}
+       actions:
+         - !!edu.umbc.cs.maple.hierarchy.framework.UniversalActionTypeBean
+           typeName: east
+           action: !!burlap.mdp.core.action.SimpleAction
+              name: east
+    solver: !!edu.umbc.cs.maple.config.solver.ValueIterationMultistepConfig
+      maxDelta: 0.0001
+      maxIterations: 1000
+
+  LookWest:
+    children:
+     - west_p
+    stateMapper: !!edu.umbc.cs.maple.hierarchy.framework.IdentityMap {}
+    tf: &tf !!edu.umbc.cs.maple.hierarchy.framework.GoalFailTF
+      goalPF: &goalPF !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.simple.LookGoalPF {}
+      failPF: !!edu.umbc.cs.maple.cleanup.hierarchies.tasks.simple.LookFailPF {}
+    rf: &rf !!edu.umbc.cs.maple.hierarchy.framework.GoalFailRF
+      tf: *tf
+      rewardDefault: 0.0
+      rewardNoop: 0.0
+    domainGenerator: !!edu.umbc.cs.maple.hierarchy.framework.TaskDomainGenerator
+       tf: *tf
+       rf: *rf
+       stateClasses:
+          - className: agent
+            clasz: !!edu.umbc.cs.maple.cleanup.state.CleanupAgent {}
+          - className: block
+            clasz: !!edu.umbc.cs.maple.cleanup.state.CleanupBlock {}
+       actions:
+         - !!edu.umbc.cs.maple.hierarchy.framework.UniversalActionTypeBean
+           typeName: west
+           action: !!burlap.mdp.core.action.SimpleAction
+              name: west
+    solver: !!edu.umbc.cs.maple.config.solver.ValueIterationMultistepConfig
+      maxDelta: 0.0001
+      maxIterations: 1000
