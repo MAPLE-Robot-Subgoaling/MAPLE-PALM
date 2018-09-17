@@ -331,11 +331,11 @@ public class CleanupStandardStateGenerator implements StateGenerator {
         rooms = new CleanupRoom[4];
 
         //initializes rooms
-        String room0Color = blockColors.get(rng.nextInt(blockColors.size()));
+        String room0Color = "blue";
         rooms[0] = new CleanupRoom("room0", 0, 3, 3, 5, room0Color, Cleanup.SHAPE_ROOM);
-        String room1Color = blockColors.get(rng.nextInt(blockColors.size()));
+        String room1Color = "magenta";
         rooms[1] = new CleanupRoom("room1", 3, 5, 3, 5, room1Color, Cleanup.SHAPE_ROOM);
-        String room2Color = blockColors.get(rng.nextInt(blockColors.size()));
+        String room2Color = "green";
         rooms[2] = new CleanupRoom("room2", 5, 8, 3, 5, room2Color, Cleanup.SHAPE_ROOM);
         String room3Color = blockColors.get(rng.nextInt(blockColors.size()));
         rooms[3] = new CleanupRoom("room3", 3, 5, 0, 3, room3Color, Cleanup.SHAPE_ROOM);

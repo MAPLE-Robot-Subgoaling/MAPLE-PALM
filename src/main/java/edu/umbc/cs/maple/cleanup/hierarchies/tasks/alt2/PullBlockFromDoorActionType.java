@@ -6,6 +6,7 @@ import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.oo.ObjectParameterizedActionType;
 import edu.umbc.cs.maple.cleanup.Cleanup;
 import edu.umbc.cs.maple.cleanup.hierarchies.tasks.alt.OnlyThisRoomMapper;
+import edu.umbc.cs.maple.cleanup.state.CleanupAgent;
 import edu.umbc.cs.maple.cleanup.state.CleanupState;
 import edu.umbc.cs.maple.utilities.Helpers;
 
@@ -25,6 +26,25 @@ public class PullBlockFromDoorActionType extends ObjectParameterizedActionType {
         this.parameterOrderGroup = parameterOrderGroup;
     }
 
+    //method to calculate one more in agent direction
+    private int[] oneMore(int x, int y, ObjectInstance agent){
+        String direction = (String) agent.get(Cleanup.ATT_DIR);
+        //north
+        if(direction.equals(Cleanup.directions[0]))
+            y++;
+            //south
+        else if(direction.equals(Cleanup.directions[1]))
+            y--;
+            //east
+        else if(direction.equals(Cleanup.directions[2]))
+            x++;
+            //west
+        else if(direction.equals(Cleanup.directions[3]))
+            x--;
+        int[] answer = {x,y};
+        return answer;
+    }
+
     @Override
     protected boolean applicableInState(State s, ObjectParameterizedAction objectParameterizedAction) {
         CleanupState state = (CleanupState) s;//OnlyThisRoomMapper.mapper.mapState(s);
@@ -35,6 +55,16 @@ public class PullBlockFromDoorActionType extends ObjectParameterizedActionType {
         }
 
         ObjectInstance agent = state.getAgent();
+        int[] next = oneMore((int)agent.get(ATT_X), (int) agent.get(ATT_Y),agent);
+        int x = next[0];
+        int y = next[1];
+        //applicable only if agent is facing block
+        if(!state.blockAt(x,y))
+            return false;
+        //or if another block behind block in door, agent able to face it w/o moving in position
+        else if(!state.blockAt(oneMore(x,y,agent)[0], oneMore(x,y,agent)[1]))
+            return false;
+
         if (state.isObjectInAnyDoor(agent)) {
             return false;
         }
