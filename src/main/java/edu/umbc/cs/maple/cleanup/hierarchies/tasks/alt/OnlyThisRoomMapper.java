@@ -27,6 +27,8 @@ public class OnlyThisRoomMapper implements StateMapping {
 
         CleanupState state = (CleanupState) s;
         CleanupState onlyThisRoomState = new CleanupState();
+        onlyThisRoomState.setWidth(state.getWidth());
+        onlyThisRoomState.setHeight(state.getHeight());
         CleanupAgent agent = state.getAgent();
 
         // add the agent
