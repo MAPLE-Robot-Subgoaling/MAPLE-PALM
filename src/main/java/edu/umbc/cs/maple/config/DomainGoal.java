@@ -5,12 +5,14 @@ import burlap.mdp.core.oo.propositional.PropositionalFunction;
 
 import java.util.List;
 
+import static edu.umbc.cs.maple.utilities.BurlapConstants.EMPTY_ARRAY;
+
 public abstract class DomainGoal<T extends GoalDescription> extends PropositionalFunction implements StateConditionTest {
 
     protected List<T> goalDescriptions;
 
     public DomainGoal(){
-        this("ERRORNOTSET", new String[]{});
+        this("ERRORNOTSET", EMPTY_ARRAY);
     }
 
     public DomainGoal(String name, String[] params) {

@@ -77,4 +77,14 @@ public abstract class MutableObject implements MutableObjectInstance, Serializab
         }
         return name.equals(o.name);
     }
+
+    protected void mirror(MutableObject other) {
+        if (getClass() != other.getClass()) { throw new RuntimeException("ERROR: attempt to mirror objects of different classes"); }
+        if (!variableKeys().equals(other.variableKeys())) {
+            throw new RuntimeException("ERROR: attempt to mirror objects with different variable keys");
+        }
+        for (Object key : variableKeys()) {
+            this.set(key, other.get(key));
+        }
+    }
 }
