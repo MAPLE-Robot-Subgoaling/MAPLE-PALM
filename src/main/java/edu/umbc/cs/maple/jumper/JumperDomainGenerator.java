@@ -168,7 +168,7 @@ public class JumperDomainGenerator extends OOSADomainGenerator {
                 .gridDimension("target0:x", jdg.minX, jdg.maxX, gridPointCount)
                 .gridDimension("target0:y", jdg.minX, jdg.maxX, gridPointCount)
                 ;
-        double epsilon = 2.0;
+        double epsilon = 1.5;
         MutableState initialState = (MutableState) jsg.generateState();
         List<State> griddedStates = gridder.gridState(initialState);
         DistanceMetric metric = new EuclideanDistance();
@@ -205,14 +205,15 @@ public class JumperDomainGenerator extends OOSADomainGenerator {
 
     public static void main(String[] args) {
 
-        RandomFactory.getMapped(BurlapConstants.DEFAULT_RNG_INDEX).setSeed(24L);
+        long seed = 999L;
+        RandomFactory.getMapped(BurlapConstants.DEFAULT_RNG_INDEX).setSeed(seed);
 
         double minX = 0;
         double minY = 0;
         double maxX = 1.0;
         double maxY = 1.0;
         double jumpRadius = 0.1;
-        double goalRadius = 0.2;
+        double goalRadius = 0.1;
 
         DomainGoal goal = new JumperGoal(new AgentNearAnyTargetPF(goalRadius));
         GoalFailTF tf = new GoalFailTF(goal);
@@ -221,10 +222,10 @@ public class JumperDomainGenerator extends OOSADomainGenerator {
         OOSADomain domain = jdg.generateDomain();
         StateGenerator jsg = new JumperStateGenerator(minX, maxX, minY, maxY, goalRadius);
 
-        System.err.println("Using constant state");
-        System.err.println("Using constant state");
-        System.err.println("Using constant state");
-        jsg = new ConstantStateGenerator(jsg.generateState());
+//        System.err.println("Using constant state");
+//        System.err.println("Using constant state");
+//        System.err.println("Using constant state");
+//        jsg = new ConstantStateGenerator(jsg.generateState());
 
 //        SimulatedEnvironment env = new SimulatedEnvironment(domain, jsg);
 //        float width = (float) (maxX - minX);
@@ -239,14 +240,14 @@ public class JumperDomainGenerator extends OOSADomainGenerator {
 //        exp.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         SARSCollector collector = new SARSCollector.UniformRandomSARSCollector(domain);
-        int sampleCount = 10000;
+        int sampleCount = 100000;
         int maxEpisodeSteps = 100;
         SARSData dataset = collector.collectNInstances(jsg, domain.getModel(), sampleCount, maxEpisodeSteps, null);
 
         List<SARSData.SARS> toRemove = new ArrayList<>();
         int count = 0;
         double totalReward = 0.0;
-        int scale = 10;
+        int scale = 3;
         for (SARSData.SARS d : dataset.dataset) {
             if(d.r > 0) {
                 totalReward += d.r;
