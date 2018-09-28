@@ -10,6 +10,7 @@ import burlap.behavior.functionapproximation.dense.rbf.metrics.EuclideanDistance
 import burlap.behavior.policy.Policy;
 import burlap.behavior.policy.PolicyUtils;
 import burlap.behavior.singleagent.Episode;
+import burlap.behavior.singleagent.auxiliary.EpisodeSequenceVisualizer;
 import burlap.behavior.singleagent.auxiliary.gridset.FlatStateGridder;
 import burlap.behavior.singleagent.learning.lspi.LSPI;
 import burlap.behavior.singleagent.learning.lspi.SARSCollector;
@@ -64,19 +65,20 @@ public class JumperDomainGenerator extends OOSADomainGenerator {
     private double minY;
     private double maxY;
     private double jumpRadius;
+    private double goalRadius;
 
     private TerminalFunction tf;
     private RewardFunction rf;
 
-    public JumperDomainGenerator(double minX, double maxX, double minY, double maxY, double jumpRadius, TerminalFunction tf, RewardFunction rf) {
+    public JumperDomainGenerator(double minX, double maxX, double minY, double maxY, double jumpRadius, double goalRadius, TerminalFunction tf, RewardFunction rf) {
         this.minX = minX;
         this.maxX = maxX;
         this.minY = minY;
         this.maxY = maxY;
         this.jumpRadius = jumpRadius;
+        this.goalRadius = goalRadius;
         this.tf = tf;
         this.rf = rf;
-
     }
 
     @Override
@@ -131,6 +133,22 @@ public class JumperDomainGenerator extends OOSADomainGenerator {
         this.maxY = maxY;
     }
 
+    public double getJumpRadius() {
+        return jumpRadius;
+    }
+
+    public void setJumpRadius(double jumpRadius) {
+        this.jumpRadius = jumpRadius;
+    }
+
+    public double getGoalRadius() {
+        return goalRadius;
+    }
+
+    public void setGoalRadius(double goalRadius) {
+        this.goalRadius = goalRadius;
+    }
+
     @Override
     public OOSADomain generateDomain() {
         JumperModel model = new JumperModel(minX, maxX, minY, maxY, jumpRadius);
@@ -168,7 +186,7 @@ public class JumperDomainGenerator extends OOSADomainGenerator {
                 .gridDimension("target0:x", jdg.minX, jdg.maxX, gridPointCount)
                 .gridDimension("target0:y", jdg.minX, jdg.maxX, gridPointCount)
                 ;
-        double epsilon = 1.5;
+        double epsilon = 2.0;
         MutableState initialState = (MutableState) jsg.generateState();
         List<State> griddedStates = gridder.gridState(initialState);
         DistanceMetric metric = new EuclideanDistance();
@@ -176,7 +194,7 @@ public class JumperDomainGenerator extends OOSADomainGenerator {
             inFeatures.addRBF(new GaussianRBF(inputFeatures.features(g), metric, epsilon));
         }
 
-        double gamma = 0.99;
+        double gamma = 0.90;
         int actionCount = 4;
         int iterationCount = 100;
         double maxChange = 1e-6;
@@ -186,7 +204,8 @@ public class JumperDomainGenerator extends OOSADomainGenerator {
 
         SimulatedEnvironment env = new SimulatedEnvironment(domain, jsg);
 
-        int rolloutCount = 10;
+        List<Episode> episodes = new ArrayList<>();
+        int rolloutCount = 100;
         for (int i = 0; i < rolloutCount; i++){
             Episode e = PolicyUtils.rollout(p, env, maxEpisodeSteps);
             System.out.println("\n");
@@ -194,8 +213,15 @@ public class JumperDomainGenerator extends OOSADomainGenerator {
             System.out.println(e.stateSequence.get(e.stateSequence.size()-1));
             System.out.println(e.actionSequence);
             System.out.println(e.rewardSequence);
+            episodes.add(e);
             env.resetEnvironment();
         }
+
+        float width = (float) (jdg.maxX - jdg.minX);
+        float height = (float) (jdg.maxY - jdg.minY);
+        Visualizer v = JumperVisualizer.getVisualizer(width, height, (float) jdg.getGoalRadius());
+        EpisodeSequenceVisualizer esv = new EpisodeSequenceVisualizer(v, domain, episodes);
+        esv.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         System.out.println("Finished");
 
@@ -213,12 +239,12 @@ public class JumperDomainGenerator extends OOSADomainGenerator {
         double maxX = 1.0;
         double maxY = 1.0;
         double jumpRadius = 0.1;
-        double goalRadius = 0.1;
+        double goalRadius = 0.333;
 
         DomainGoal goal = new JumperGoal(new AgentNearAnyTargetPF(goalRadius));
         GoalFailTF tf = new GoalFailTF(goal);
         GoalFailRF rf = new GoalFailRF(tf);
-        JumperDomainGenerator jdg = new JumperDomainGenerator(minX, maxX, minY, maxY, jumpRadius, tf, rf);
+        JumperDomainGenerator jdg = new JumperDomainGenerator(minX, maxX, minY, maxY, jumpRadius, goalRadius, tf, rf);
         OOSADomain domain = jdg.generateDomain();
         StateGenerator jsg = new JumperStateGenerator(minX, maxX, minY, maxY, goalRadius);
 

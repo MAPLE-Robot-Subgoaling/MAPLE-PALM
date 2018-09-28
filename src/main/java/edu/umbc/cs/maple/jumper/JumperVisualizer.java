@@ -22,18 +22,20 @@ public class JumperVisualizer {
 
     private static float width;
     private static float height;
+    private static float goalRadius;
 
-    public static Visualizer getVisualizer(float w, float h){
-        Visualizer v = new Visualizer(getStateRenderLayer(w, h));
+    public static Visualizer getVisualizer(float w, float h, float goalRadius){
+        Visualizer v = new Visualizer(getStateRenderLayer(w, h, goalRadius));
         return v;
     }
 
-    public static StateRenderLayer getStateRenderLayer(float w, float h){
+    public static StateRenderLayer getStateRenderLayer(float w, float h, float goalRadius){
         StateRenderLayer rl = new StateRenderLayer();
         OOStatePainter oopainter = new OOStatePainter();
 
         width = w;
         height = h;
+        JumperVisualizer.goalRadius = goalRadius;
 
         oopainter.addObjectClassPainter(CLASS_AGENT, new JumperVisualizer.EllipsePainter(Color.BLUE));
         oopainter.addObjectClassPainter(CLASS_TARGET, new JumperVisualizer.EllipsePainter(Color.RED));
@@ -59,10 +61,14 @@ public class JumperVisualizer {
             JumperPoint p = (JumperPoint) ob;
             float x = (float) (double) p.get(ATT_X);
             float y = (float) (double) p.get(ATT_Y);
-            float w = cWidth / width;
-            float h = cHeight / height;
-            x *= w;
-            y *= h;
+            float w = cWidth / 10f;
+            float h = cHeight / 10f;
+            if (p instanceof JumperTarget) {
+                w = 2*goalRadius * cWidth;
+                h = 2*goalRadius * cHeight;
+            }
+            x *= cWidth;
+            y *= cHeight;
             y = cHeight - y;
             y -= h * 0.5f;
             x -= w * 0.5f;
