@@ -17,14 +17,14 @@ public class JumperStateGenerator implements StateGenerator {
     private double maxX;
     private double minY;
     private double maxY;
-    private double jumpRadius;
+    private double goalRadius;
 
-    public JumperStateGenerator(double minX, double maxX, double minY, double maxY, double jumpRadius) {
+    public JumperStateGenerator(double minX, double maxX, double minY, double maxY, double goalRadius) {
         this.minX = minX;
         this.maxX = maxX;
         this.minY = minY;
         this.maxY = maxY;
-        this.jumpRadius = jumpRadius;
+        this.goalRadius = goalRadius;
     }
 
     @Override
@@ -38,7 +38,7 @@ public class JumperStateGenerator implements StateGenerator {
         do {
             tX = MathCommon.nextDoubleInRange(rng, minX, maxX);
             tY = MathCommon.nextDoubleInRange(rng, minY, maxY);
-        } while (MathCommon.distance(aX, aY, tX, tY) <= jumpRadius);
+        } while (MathCommon.distance(aX, aY, tX, tY) <= goalRadius);
 
 
         JumperAgent agent = new JumperAgent(CLASS_AGENT + "0", aX, aY);
