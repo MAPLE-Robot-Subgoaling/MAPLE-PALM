@@ -231,7 +231,7 @@ public class JumperDomainGenerator extends OOSADomainGenerator {
 
     public static void main(String[] args) {
 
-        long seed = 999L;
+        long seed = 13412L;
         RandomFactory.getMapped(BurlapConstants.DEFAULT_RNG_INDEX).setSeed(seed);
 
         double minX = 0;
@@ -239,7 +239,7 @@ public class JumperDomainGenerator extends OOSADomainGenerator {
         double maxX = 1.0;
         double maxY = 1.0;
         double jumpRadius = 0.1;
-        double goalRadius = 0.333;
+        double goalRadius = 0.15;
 
         DomainGoal goal = new JumperGoal(new AgentNearAnyTargetPF(goalRadius));
         GoalFailTF tf = new GoalFailTF(goal);
@@ -266,7 +266,7 @@ public class JumperDomainGenerator extends OOSADomainGenerator {
 //        exp.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         SARSCollector collector = new SARSCollector.UniformRandomSARSCollector(domain);
-        int sampleCount = 100000;
+        int sampleCount = 300000;
         int maxEpisodeSteps = 100;
         SARSData dataset = collector.collectNInstances(jsg, domain.getModel(), sampleCount, maxEpisodeSteps, null);
 

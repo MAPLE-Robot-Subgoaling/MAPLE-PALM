@@ -61,12 +61,8 @@ public class JumperVisualizer {
             JumperPoint p = (JumperPoint) ob;
             float x = (float) (double) p.get(ATT_X);
             float y = (float) (double) p.get(ATT_Y);
-            float w = cWidth / 10f;
-            float h = cHeight / 10f;
-            if (p instanceof JumperTarget) {
-                w = 2*goalRadius * cWidth;
-                h = 2*goalRadius * cHeight;
-            }
+            float w = goalRadius * cWidth;
+            float h = goalRadius * cHeight;
             x *= cWidth;
             y *= cHeight;
             y = cHeight - y;

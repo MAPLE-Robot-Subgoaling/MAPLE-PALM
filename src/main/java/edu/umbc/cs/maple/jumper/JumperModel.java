@@ -89,10 +89,22 @@ public class JumperModel implements FullStateModel {
 
         aX += dX;
         aY += dY;
-        aX = Math.min(aX, maxX);
-        aY = Math.min(aY, maxY);
-        aX = Math.max(aX, minX);
-        aY = Math.max(aY, minY);
+//        aX = Math.min(aX, maxX);
+        if (aX >= maxX) {
+            aX = maxX - (aX - maxX);
+        }
+//        aY = Math.min(aY, maxY);
+        if (aY >= maxY) {
+            aY = maxY - (aY - maxY);
+        }
+//        aX = Math.max(aX, minX);
+        if (aX <= minX) {
+            aX = minX - (aX - minX);
+        }
+//        aY = Math.max(aY, minY);
+        if (aY <= minY) {
+            aY = minY - (aY - minY);
+        }
         agent.set(ATT_X, aX);
         agent.set(ATT_Y, aY);
         return state;
