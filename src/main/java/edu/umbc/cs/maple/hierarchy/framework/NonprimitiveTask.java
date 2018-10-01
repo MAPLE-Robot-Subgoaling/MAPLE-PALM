@@ -35,15 +35,13 @@ public class NonprimitiveTask extends Task {
 
     /**
      * uses the defined rewardTotal function to assign rewardTotal to states
-     * @param s the original state that is being transitioned from
      * @param a the action associated with the grounded version of this task
-     * @param sPrime the next state that is being transitioned into
      * @param params the parameters of the grounded version of this task
      * @return the rewardTotal assigned to s by the rewardTotal function
      */
     @Override
-    public double reward(State s, Action a, State sPrime, String[] params){
-        return rf.reward(s, a, sPrime, params);
+    public double reward(GroundedTask parent, State groundState, State abstractState, Action a, State groundStatePrime, State abstractStatePrime, String[] params){
+        return rf.reward(parent, groundState, abstractState, a, groundStatePrime, abstractStatePrime, params);
     }
 
     /**

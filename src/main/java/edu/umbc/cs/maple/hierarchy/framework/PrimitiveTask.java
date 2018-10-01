@@ -18,8 +18,8 @@ public class PrimitiveTask extends Task{
     }
 
     @Override
-    public double reward(State s, Action a, State sPrime, String[] params) {
-        return ((FactoredModel)this.domain.getModel()).getRf().reward(s, a, sPrime);
+    public double reward(GroundedTask parent, State groundState, State abstractState, Action a, State groundStatePrime, State abstractStatePrime, String[] params) {
+        return ((FactoredModel)this.domain.getModel()).getRf().reward(abstractState, a, abstractStatePrime);
     }
 
     @Override

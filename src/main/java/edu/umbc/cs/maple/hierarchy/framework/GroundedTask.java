@@ -150,14 +150,12 @@ public class GroundedTask {
     /**
      * each grounded task has a specific rewardTotal function
      * this returns the rewardTotal of a transition into the given state
-     * @param s the source of the transition
      * @param a the action just taken
-     * @param sPrime the result of the transition
      * @param params any parameters of this task
      * @return the grounded task's rewardTotal of a transition to s
      */
-    public double getReward(State s, Action a, State sPrime, String[] params) {
-        return t.reward(s, a, sPrime, params);
+    public double getReward(GroundedTask parent, State groundState, State abstractState, Action a, State groundStatePrime, State abstractStatePrime, String[] params) {
+        return t.reward(parent, groundState, abstractState, a, groundStatePrime, abstractStatePrime, params);
     }
 
     public boolean isMasked(){

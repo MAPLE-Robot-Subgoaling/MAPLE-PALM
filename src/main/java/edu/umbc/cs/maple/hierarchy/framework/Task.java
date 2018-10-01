@@ -158,7 +158,7 @@ public abstract class Task {
      */
     public abstract boolean isComplete(State s, String[] params, boolean unsetParamsWhenFinished);
 
-    public abstract double reward(State s, Action a, State sPrime, String[] params);
+    public abstract double reward(GroundedTask parent, State groundState, State abstractState, Action a, State groundStatePrime, State abstractStatePrime, String[] params);
 
     public static String[] parseParams(Action action) {
         String[] params = null;

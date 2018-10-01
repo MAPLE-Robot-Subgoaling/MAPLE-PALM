@@ -1,5 +1,6 @@
 package edu.umbc.cs.maple.hierarchy.framework;
 
+import burlap.mdp.auxiliary.StateMapping;
 import burlap.mdp.core.action.Action;
 import burlap.mdp.core.state.State;
 import burlap.mdp.singleagent.model.RewardFunction;
@@ -39,12 +40,29 @@ public class GoalFailRF implements RewardFunction {
         this.rewardNoop = rewardNoop;
     }
 
-    public double reward(State state, Action action, State sPrime, String[] params) {
+    public double reward(GroundedTask parent, State groundState, State abstractState, Action action, State groundStatePrime, State abstractStatePrime, String[] params) {
         tf.setGoalParams(params);
         tf.setFailParams(params);
-        double r = reward(state, action, sPrime);
+        double oldGoalReward = rewardGoal;
+        double oldDefaultReward = rewardDefault;
+        if (parent != null) {
+//            State parentState = parent.mapState(groundState);
+            State parentStatePrime = parent.mapState(groundStatePrime);
+//            double parentR = parent.getReward(null, groundState, parentState, action, groundStatePrime, parentStatePrime, null);
+//            System.out.println(parentR);
+//            if (parentR != 0.0) {
+//                scale = parentR;
+//            }
+            double v = parent.valueFunction.value(parentStatePrime);
+            if (v != 0.0) {
+                rewardGoal = v;
+            }
+        }
+        double r = reward(abstractState, action, abstractStatePrime);
         tf.setGoalParams(null);
         tf.setFailParams(null);
+        rewardGoal = oldGoalReward;
+        rewardDefault = oldDefaultReward;
         return r;
     }
 

@@ -224,7 +224,8 @@ public class PALMLearningAgent implements LearningAgent {
             result.a = action;
             result.op = currentStateAbstract;
             String[] params = getParams(task);
-            result.r = task.getReward(pastStateAbstract, action, currentStateAbstract, params);
+            // get the true ground reward
+            result.r = task.getReward(parent, result.o, pastStateAbstract, action, currentStateAbstract, result.op, params);
             steps++;
             boolean taskComplete = task.isComplete(currentStateAbstract);
             boolean taskFailed = task.isFailure(currentStateAbstract);
@@ -275,7 +276,7 @@ public class PALMLearningAgent implements LearningAgent {
             StringBuilder resultString = new StringBuilder(action.toString());
             resultString.append(childComplete ? "+" : "-");
             if (shouldUpdateModel) {
-                boolean atOrBeyondThreshold = updateModel(task, pastStateGrounded, pastStateAbstract, action, currentStateGrounded, currentStateAbstract, stepsTaken);
+                boolean atOrBeyondThreshold = updateModel(parent, task, pastStateGrounded, pastStateAbstract, action, currentStateGrounded, currentStateAbstract, stepsTaken);
                 resultString.append(atOrBeyondThreshold ? "+" : "-");
                 if (!atOrBeyondThreshold) {
                     allChildrenAtOrBeyondThreshold = false;
@@ -300,16 +301,16 @@ public class PALMLearningAgent implements LearningAgent {
         return results;
     }
 
-    protected boolean updateModel(GroundedTask task, State state, State abstractState, Action action, State statePrime, State abstractStatePrime, int stepsTaken) {
+    protected boolean updateModel(GroundedTask parent, GroundedTask task, State state, State abstractState, Action action, State statePrime, State abstractStatePrime, int stepsTaken) {
         String[] params = getParams(task);
-        double taskReward = getTaskReward(task, abstractState, action, abstractStatePrime, params);
+        double taskReward = getTaskReward(parent, task, state, abstractState, action, statePrime, abstractStatePrime, params);
         PALMModel model = getModel(task);
         EnvironmentOutcome result = new EnvironmentOutcome(abstractState, action, abstractStatePrime, taskReward, false);
         boolean atOrBeyondThreshold = model.updateModel(result, stepsTaken, params);
         return atOrBeyondThreshold;
     }
 
-    protected double getTaskReward(GroundedTask task, State abstractState, Action action, State abstractStatePrime, String[] params) {
+    protected double getTaskReward(GroundedTask parent, GroundedTask task, State state, State abstractState, Action action, State statePrime, State abstractStatePrime, String[] params) {
         // reward rollup scheme
 //            double sumChildRewards = e.rewardSequence.subList(stepsBefore, stepsAfter).stream().mapToDouble(Double::doubleValue).sum();
 //            double discount = 1.0;// getModel(task).getDiscountProvider().yield(pastState, a, currentState);
@@ -318,7 +319,7 @@ public class PALMLearningAgent implements LearningAgent {
 //            System.out.println(sumChildRewards + " " + discount + " " + discountOverTime + " " + discountedReward);
 //            double taskReward = discountedReward + task.getReward(pastStateAbstract, a, currentStateAbstract, params);
 //            double taskReward = discountedReward;
-        double pseudoReward = task.getReward(abstractState, action, abstractStatePrime, params);
+        double pseudoReward = task.getReward(parent, state, abstractState, action, statePrime, abstractStatePrime, params);
 //            double taskReward = pseudoReward <= PSEUDOREWARD_ON_FAIL || pseudoReward >= PSEUDOREWARD_ON_GOAL ? pseudoReward : discountedReward;
         //task.getReward(pastState, a, currentState);
         return pseudoReward;

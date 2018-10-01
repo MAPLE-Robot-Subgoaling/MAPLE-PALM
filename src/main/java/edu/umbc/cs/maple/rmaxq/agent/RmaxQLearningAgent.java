@@ -626,7 +626,7 @@ public class RmaxQLearningAgent implements LearningAgent {
             HashableState hashedAbstractState = cachingHSF.hashState(abstractState);
             GroundedTask task = taskStatePair.getTask();
             String[] finalParams = params;
-            newV = cachedGoalRewards.computeIfAbsent(task, i -> new HashMap<>()).computeIfAbsent(hashedAbstractState, i -> task.getReward(null, task.getAction(), abstractState, finalParams));
+            newV = cachedGoalRewards.computeIfAbsent(task, i -> new HashMap<>()).computeIfAbsent(hashedAbstractState, i -> task.getReward(null, null, null, task.getAction(), null, abstractState, finalParams));
 
         } else {
             GroundedTask task = taskStatePair.getTask();
