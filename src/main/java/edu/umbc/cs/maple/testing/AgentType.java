@@ -133,6 +133,8 @@ public enum AgentType {
         String extra2 = agentName.contains("baseline") ? "-B" : "";
         String extra3 = agentName.contains("advancedBaseline") ? "-aB" : "";
         String extra4 = agentName.contains("jw") ? "-expert" : "";
+        String extra5 = agentName.contains("advanced-expert-abstract") ? "-aBexpertA" : "";
+        String extra6 = agentName.contains("advanced-expert") ? "-aBexpert" : "";
         LearningAgentFactory agent = new LearningAgentFactory() {
             @Override
             public String getAgentName() {
